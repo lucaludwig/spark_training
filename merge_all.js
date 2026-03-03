@@ -24,11 +24,12 @@ function parseTextFile(filePath) {
     let content = fs.readFileSync(filePath, 'utf8');
     content = content.replace(/IT Certification Guaranteed, The Easy Way!/g, '');
     content = content.replace(/Page \d+/g, '');
-    // Remove standalone page numbers (lines with just 1-3 digits)
-    content = content.replace(/\n\d{1,3}\n/g, '\n');
-    content = content.replace(/^\d{1,3}\n/g, '');
-    // Remove form feed characters
-    content = content.replace(/\f/g, '');
+    // Remove form feed characters first
+    content = content.replace(/\f/g, '\n');
+    // Remove standalone page numbers (lines with only 1-3 digits surrounded by blank lines)
+    content = content.replace(/\n\n\d{1,3}\n\n/g, '\n\n');
+    content = content.replace(/^\d{1,3}\n\n/g, '');
+    content = content.replace(/\n\n\d{1,3}$/g, '');
     
     content = content.replace(/QUESTION NO:\s*\d+/g, '###SPLIT###');
     content = content.replace(/NO\.\d+/g, '###SPLIT###');
@@ -152,17 +153,26 @@ function mergeAll() {
             console.log(`  Parsed ${newQs.length} valid questions from ${file}`);
             
             let addedFromFile = 0;
+            let skippedShort = 0;
+            let skippedDupe = 0;
             newQs.forEach(q => {
-                if (q.question.length < 15) return;
+                if (q.question.length < 15) {
+                    skippedShort++;
+                    return;
+                }
                 const normQ = normalizeText(q.question);
                 if (!existingSet.has(normQ)) {
                     finalQuestions.push(q);
                     existingSet.add(normQ);
                     addedFromFile++;
                     totalAdded++;
+                } else {
+                    skippedDupe++;
                 }
             });
             console.log(`  Added ${addedFromFile} new unique questions.`);
+            if (skippedShort > 0) console.log(`  Skipped ${skippedShort} questions (too short)`);
+            if (skippedDupe > 0) console.log(`  Skipped ${skippedDupe} questions (duplicates)`);
         }
     });
     console.log(`Total new questions added: ${totalAdded}`);
