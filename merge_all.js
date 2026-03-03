@@ -135,7 +135,7 @@ function parseTextFile(filePath) {
 function mergeAll() {
     let finalQuestions = parseQuestionsJs('questions.js');
     console.log(`Starting with: ${finalQuestions.length} questions.`);
-    const files = ['MLA-C01 V12.35.txt', 'MLA-C01 V12.65.txt'];
+    const files = ['AIP-C01 V12.35.txt'];
     const existingSet = new Set();
     finalQuestions.forEach(q => existingSet.add(normalizeText(q.question)));
     let totalAdded = 0;

@@ -1,8 +1,8 @@
 # Exam Training Quiz
 
-This repository contains an interactive web-based quiz to practice for the AWS Certified Machine Learning Engineer - Associate (MLA-C01) exam.
+This repository contains an interactive web-based quiz to practice for the AWS Certified Generative AI Developer - Professional (AIP-C01) exam.
 
-The questions were extracted from the `MLA-C01 V12.35.pdf` document.
+The questions were extracted from the `AIP-C01 V12.35.pdf` document.
 
 ## How to Use Locally
 
