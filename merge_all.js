@@ -24,6 +24,11 @@ function parseTextFile(filePath) {
     let content = fs.readFileSync(filePath, 'utf8');
     content = content.replace(/IT Certification Guaranteed, The Easy Way!/g, '');
     content = content.replace(/Page \d+/g, '');
+    // Remove standalone page numbers (lines with just 1-3 digits)
+    content = content.replace(/\n\d{1,3}\n/g, '\n');
+    content = content.replace(/^\d{1,3}\n/g, '');
+    // Remove form feed characters
+    content = content.replace(/\f/g, '');
     
     content = content.replace(/QUESTION NO:\s*\d+/g, '###SPLIT###');
     content = content.replace(/NO\.\d+/g, '###SPLIT###');

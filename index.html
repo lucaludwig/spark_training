@@ -139,8 +139,8 @@
         <div id="feedback"></div>
         <div id="explanation"></div>
         <div id="navigation">
-            <button id="check-btn">Überprüfen</button>
-            <button id="next-btn" style="display: none;">Nächste Frage</button>
+            <button id="check-btn">Check Answer</button>
+            <button id="next-btn" style="display: none;">Next Question</button>
         </div>
     </div>
 
@@ -170,7 +170,7 @@
             }
 
             const currentQuestion = quizData[currentQuestionIndex];
-            questionNumberEl.innerText = `Frage ${currentQuestionIndex + 1} von ${quizData.length}`;
+            questionNumberEl.innerText = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
             questionEl.innerText = currentQuestion.question;
             optionsEl.innerHTML = '';
             currentQuestion.options.forEach((option, index) => {
@@ -197,7 +197,7 @@
         }
 
         function updateScore() {
-            scoreEl.innerText = `Punktestand: ${score} / ${currentQuestionIndex}`;
+            scoreEl.innerText = `Score: ${score} / ${currentQuestionIndex}`;
         }
         
         function updateProgressBar() {
@@ -208,7 +208,7 @@
         function checkAnswer() {
             const selectedOptions = document.querySelectorAll('input[name="option"]:checked');
             if (selectedOptions.length === 0) {
-                alert('Bitte wähle eine Antwort aus.');
+                alert('Please select an answer.');
                 return;
             }
 
@@ -222,10 +222,10 @@
 
             if (isCorrect) {
                 score++;
-                feedbackEl.innerText = 'Richtig!';
+                feedbackEl.innerText = 'Correct!';
                 feedbackEl.className = 'correct';
             } else {
-                feedbackEl.innerText = `Falsch. Die richtige Antwort ist ${currentQuestion.answer}.`;
+                feedbackEl.innerText = `Incorrect. The correct answer is ${currentQuestion.answer}.`;
                 feedbackEl.className = 'incorrect';
             }
 
@@ -237,7 +237,7 @@
             checkBtn.style.display = 'none';
             nextBtn.style.display = 'block';
             if (currentQuestionIndex === quizData.length - 1) {
-                nextBtn.innerText = 'Quiz beenden';
+                nextBtn.innerText = 'Finish Quiz';
             }
         }
         
@@ -253,9 +253,9 @@
         function endQuiz() {
              progressBar.style.width = `100%`;
              const finalScore = (score / quizData.length) * 100;
-             questionEl.innerText = 'Quiz beendet!';
+             questionEl.innerText = 'Quiz Complete!';
              questionNumberEl.innerText = '';
-             optionsEl.innerHTML = `Dein Endergebnis: ${score} von ${quizData.length} Fragen richtig (${finalScore.toFixed(2)}%).`;
+             optionsEl.innerHTML = `Your final score: ${score} of ${quizData.length} questions correct (${finalScore.toFixed(2)}%).`;
              document.getElementById('navigation').innerHTML = '';
              scoreEl.innerText = '';
         }
