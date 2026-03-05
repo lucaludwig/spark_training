@@ -20,8 +20,8 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
             width: 95%;
-            max-width: 600px;
-            padding: 20px;
+            max-width: 700px;
+            padding: 24px;
             box-sizing: border-box;
         }
         #progress-bar-container {
@@ -44,10 +44,25 @@
             color: #1c1e21;
         }
         .question-text {
-            font-size: 16px;
-            line-height: 1.4;
+            font-size: 15px;
+            line-height: 1.6;
             margin-bottom: 20px;
-            white-space: pre-wrap;
+        }
+        .question-text p {
+            margin: 0 0 10px 0;
+        }
+        .question-text p:last-child {
+            margin-bottom: 0;
+        }
+        .multi-select-hint {
+            display: inline-block;
+            background-color: #e7f3ff;
+            color: #1877f2;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 12px;
+            margin-bottom: 12px;
         }
         .options {
             list-style-type: none;
@@ -64,20 +79,28 @@
             border-radius: 6px;
             cursor: pointer;
             transition: background-color 0.2s, border-color 0.2s;
+            font-size: 14px;
+            line-height: 1.5;
         }
-        .options input[type="radio"] {
+        .options label:hover {
+            background-color: #f5f6f7;
+        }
+        .options input[type="radio"],
+        .options input[type="checkbox"] {
             display: none;
         }
-        .options input[type="radio"]:checked + label {
+        .options input[type="radio"]:checked + label,
+        .options input[type="checkbox"]:checked + label {
             background-color: #e7f3ff;
             border-color: #1877f2;
         }
         #feedback {
             margin-top: 15px;
-            padding: 10px;
+            padding: 12px 15px;
             border-radius: 6px;
             display: none;
             font-size: 14px;
+            font-weight: 600;
         }
         #feedback.correct {
             background-color: #42b72a;
@@ -89,12 +112,25 @@
         }
         #explanation {
             margin-top: 10px;
-            padding: 10px;
+            padding: 15px;
             border-radius: 6px;
-            background-color: #f0f2f5;
+            background-color: #f8f9fa;
             display: none;
             font-size: 14px;
+            line-height: 1.6;
             border: 1px solid #e9ebee;
+        }
+        #explanation .explanation-title {
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 10px;
+            color: #1c1e21;
+        }
+        #explanation p {
+            margin: 0 0 10px 0;
+        }
+        #explanation p:last-child {
+            margin-bottom: 0;
         }
         #navigation {
             margin-top: 20px;
@@ -134,7 +170,7 @@
         </div>
         <div id="score"></div>
         <h2 id="question-number"></h2>
-        <p id="question" class="question-text"></p>
+        <div id="question" class="question-text"></div>
         <ul id="options" class="options"></ul>
         <div id="feedback"></div>
         <div id="explanation"></div>
@@ -156,9 +192,42 @@
         const scoreEl = document.getElementById('score');
         const progressBar = document.getElementById('progress-bar');
 
-
         let currentQuestionIndex = 0;
         let score = 0;
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatText(text) {
+            let escaped = escapeHtml(text);
+            // Remove stray page numbers (standalone number on its own line)
+            escaped = escaped.replace(/\n\d{1,3}\n/g, '\n');
+            // Collapse 3+ newlines into double
+            escaped = escaped.replace(/\n{3,}/g, '\n\n');
+            // Split into paragraphs on double newlines
+            const paragraphs = escaped.split(/\n\n+/).map(p => p.trim()).filter(p => p);
+            // Within each paragraph, replace single newlines with spaces
+            const formatted = paragraphs.map(p => {
+                p = p.replace(/\n/g, ' ');
+                // Collapse multiple spaces
+                p = p.replace(/ {2,}/g, ' ');
+                // Bold "Option X" references
+                p = p.replace(/\b(Option [A-F])\b/g, '<strong>$1</strong>');
+                return '<p>' + p + '</p>';
+            }).join('');
+            return formatted;
+        }
+
+        function formatOptionText(text) {
+            let escaped = escapeHtml(text);
+            // Replace newlines with spaces for option text
+            escaped = escaped.replace(/\n/g, ' ');
+            escaped = escaped.replace(/ {2,}/g, ' ');
+            return escaped;
+        }
 
         function loadQuiz() {
             // Shuffle quiz data array
@@ -171,19 +240,26 @@
 
             const currentQuestion = quizData[currentQuestionIndex];
             questionNumberEl.innerText = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
-            questionEl.innerText = currentQuestion.question;
+
+            // Handle multiple correct answers
+            const isMultiSelect = currentQuestion.answer.length > 1;
+            const inputType = isMultiSelect ? 'checkbox' : 'radio';
+
+            // Format and display question
+            let questionHtml = formatText(currentQuestion.question);
+            if (isMultiSelect) {
+                questionHtml = `<span class="multi-select-hint">Select ${currentQuestion.answer.length} answers</span>` + questionHtml;
+            }
+            questionEl.innerHTML = questionHtml;
+
             optionsEl.innerHTML = '';
             currentQuestion.options.forEach((option, index) => {
                 const li = document.createElement('li');
                 const radioId = `option${index}`;
                 const letter = String.fromCharCode(65 + index);
-                // Handle multiple correct answers for questions with "Choose two" etc.
-                const isMultiSelect = currentQuestion.answer.length > 1;
-                const inputType = isMultiSelect ? 'checkbox' : 'radio';
-
                 li.innerHTML = `
                     <input type="${inputType}" name="option" id="${radioId}" value="${letter}">
-                    <label for="${radioId}">${option}</label>
+                    <label for="${radioId}">${formatOptionText(option)}</label>
                 `;
                 optionsEl.appendChild(li);
             });
@@ -199,7 +275,7 @@
         function updateScore() {
             scoreEl.innerText = `Score: ${score} / ${currentQuestionIndex}`;
         }
-        
+
         function updateProgressBar() {
             const progress = ((currentQuestionIndex) / quizData.length) * 100;
             progressBar.style.width = `${progress}%`;
@@ -217,7 +293,7 @@
             selectedOptions.forEach(option => {
                 selectedAnswers.push(option.value);
             });
-            
+
             const isCorrect = selectedAnswers.sort().join('') === [...currentQuestion.answer].sort().join('');
 
             if (isCorrect) {
@@ -225,14 +301,15 @@
                 feedbackEl.innerText = 'Correct!';
                 feedbackEl.className = 'correct';
             } else {
-                feedbackEl.innerText = `Incorrect. The correct answer is ${currentQuestion.answer}.`;
+                const answerDisplay = [...currentQuestion.answer].join(', ');
+                feedbackEl.innerText = `Incorrect. The correct answer is ${answerDisplay}.`;
                 feedbackEl.className = 'incorrect';
             }
 
             feedbackEl.style.display = 'block';
-            explanationEl.innerText = "Explanation:\n" + currentQuestion.explanation;
+            explanationEl.innerHTML = '<div class="explanation-title">Explanation</div>' + formatText(currentQuestion.explanation);
             explanationEl.style.display = 'block';
-            
+
             updateScore();
             checkBtn.style.display = 'none';
             nextBtn.style.display = 'block';
@@ -240,7 +317,7 @@
                 nextBtn.innerText = 'Finish Quiz';
             }
         }
-        
+
         function nextQuestion() {
             currentQuestionIndex++;
             if (currentQuestionIndex < quizData.length) {
@@ -253,7 +330,7 @@
         function endQuiz() {
              progressBar.style.width = `100%`;
              const finalScore = (score / quizData.length) * 100;
-             questionEl.innerText = 'Quiz Complete!';
+             questionEl.innerHTML = '<p>Quiz Complete!</p>';
              questionNumberEl.innerText = '';
              optionsEl.innerHTML = `Your final score: ${score} of ${quizData.length} questions correct (${finalScore.toFixed(2)}%).`;
              document.getElementById('navigation').innerHTML = '';
