@@ -794,7 +794,11 @@
 
         function isTableLine(line) {
             const t = line.trim();
-            return /^\+[-+]+\+$/.test(t) || /^\|.*\|$/.test(t);
+            // Standard table lines: +---+---+ or |col|col|
+            if (/^\+[-+]+\+$/.test(t) || /^\|.*\|$/.test(t)) return true;
+            // Numbered table lines: 1.+---+---+, 2.|col|col|, 4.| 1| 3|
+            if (/^\d+\.\+[-+]+\+$/.test(t) || /^\d+\.\|.*\|$/.test(t)) return true;
+            return false;
         }
 
         function formatText(text) {
@@ -817,7 +821,10 @@
                 if (isTableLine(line)) {
                     let tableLines = [];
                     while (i < lines.length && (isTableLine(lines[i]) || lines[i].trim() === '')) {
-                        if (lines[i].trim() !== '') tableLines.push(lines[i]);
+                        if (lines[i].trim() !== '') {
+                            // Strip numbered prefix (e.g. "1." "2.") from table lines
+                            tableLines.push(lines[i].trim().replace(/^\d+\./, ''));
+                        }
                         i++;
                     }
                     result += '<div class="data-table">' + tableLines.join('\n') + '</div>';
