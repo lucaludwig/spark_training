@@ -777,12 +777,18 @@
             // Numbered code lines: 1.spark.read..., 2.df.filter...
             if (/^\d+\.[\w(]/.test(t)) return true;
             // Common PySpark/Python patterns
-            if (/^(df|spark|result|from |import |filtered_|joined|\.|\(|#)/.test(t)) return true;
+            if (/^(df|spark|result|from |import |filtered_|joined|\.|\(|#|return |def |for |if |else:|query )/.test(t)) return true;
             if (/^(DataFrame\.|\.select|\.filter|\.groupBy|\.join|\.write|\.read|\.agg|\.withColumn|\.drop|\.show|\.count|\.cache|\.repartition|\.coalesce)/.test(t)) return true;
             // Lines with chained methods
             if (/^\.\w+\(/.test(t)) return true;
             // Assignment patterns: var = something.method()
             if (/^\w+\s*=\s*\w+\.\w+/.test(t)) return true;
+            // Variable followed by known PySpark method call (catches transactionsDf.join, itemsDf.select, etc.)
+            if (/^\w+\.(join|filter|where|select|drop|groupBy|groupby|orderBy|sort|write|read|format|persist|unpersist|cache|coalesce|repartition|withColumn|withColumnRenamed|agg|show|count|collect|union|unionByName|conf|createDataFrame|createOrReplaceTempView|printSchema|sample|sampleBy|dropna|dropDuplicates|writeStream|describe|summary|rdd|sql|foreach|apply|getOrCreate)\b/.test(t)) return true;
+            // SQL statements
+            if (/^(CREATE |SELECT |FROM |INSERT )/i.test(t)) return true;
+            // Decorator patterns
+            if (/^@\w+/.test(t)) return true;
             return false;
         }
 
