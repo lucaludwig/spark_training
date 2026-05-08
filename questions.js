@@ -236,6 +236,19 @@ const quizData = [
         "explanation": "The correct output mode for streaming aggregations that need to output the full updated\nresults at each trigger is \"complete\".\nFrom the official documentation:\n\"complete: The entire updated result table will be output to the sink every time there is a\ntrigger.\" This is ideal for aggregations, such as counts or averages grouped by a key, where\nthe result table changes incrementally over time.\nappend: only outputs newly added rows\nreplace and aggregate: invalid values for output mode"
     },
     {
+        "question": "A data scientist at an e-commerce company is working with user data obtained from its\n\n\nsubscriber database and has stored the data in a DataFrame df_user.\nBefore further processing, the data scientist wants to create another DataFrame\ndf_user_non_pii and store only the non-PII columns.\nThe PII columns in df_user are name, email, and birthdate.\nWhich code snippet can be used to meet this requirement?",
+        "options": [
+            "A. df_user_non_pii = df_user.drop(\"name\", \"email\", \"birthdate\")",
+            "B. df_user_non_pii = df_user.dropFields(\"name\", \"email\", \"birthdate\")",
+            "C. df_user_non_pii = df_user.select(\"name\", \"email\", \"birthdate\")",
+            "D. df_user_non_pii = df_user.remove(\"name\", \"email\", \"birthdate\")"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "To exclude sensitive (PII) columns from a DataFrame, the easiest method is to use the\n.drop() function with the list of column names to remove.\nCorrect syntax:\ndf_user_non_pii = df_user.drop(\"name\", \"email\", \"birthdate\")\nThis creates a new DataFrame containing all remaining columns.\nWhy the other options are incorrect:\nB: .dropFields() is not valid for standard DataFrames - it's used for struct fields only.\nC: .select() would keep only PII columns, not remove them.\nD: .remove() does not exist in Spark DataFrame API.\nReference:\nPySpark DataFrame API - drop() method for removing multiple columns.\nDatabricks Exam Guide (June 2025): Section \"Developing Apache Spark\nDataFrame/DataSet API Applications\" - data manipulation, selecting, and dropping columns."
+    },
+    {
         "question": "What is the risk associated with this operation when converting a large Pandas API on Spark\nDataFrame back to a Pandas DataFrame?",
         "options": [
             "A. The conversion will automatically distribute the data across worker nodes",
@@ -534,6 +547,19 @@ const quizData = [
         "explanation": "The provided code defines a Pandas UDF of type Series-to-Series, where a new instance of\nthe language model is created on each call, which happens per batch. This is inefficient and\nresults in significant overhead due to repeated model initialization.\nTo reduce the frequency of model loading, the engineer should convert the UDF to an\niterator-based Pandas UDF (Iterator[pd.Series] -> Iterator[pd.Series]). This allows the model\n\n\nto be loaded once per executor and reused across multiple batches, rather than once per\ncall.\nFrom the official Databricks documentation:\n\"Iterator of Series to Iterator of Series UDFs are useful when the UDF initialization is\nexpensive... For example, loading a ML model once per executor rather than once per\nrow/batch.\"\n- Databricks Official Docs: Pandas UDFs\nCorrect implementation looks like:\npython\nCopyEdit\n@pandas_udf(\"string\")\ndef translate_udf(batch_iter: Iterator[pd.Series]) -> Iterator[pd.Series]:\nmodel = get_translation_model(target_lang='es')\nfor batch in batch_iter:\nyield batch.apply(model)\nThis refactor ensures the get_translation_model() is invoked once per executor process, not\nper batch, significantly improving pipeline performance."
     },
     {
+        "question": "Given the following code snippet in my_spark_app.py:\n\nfrom pyspark.sql import SparkSession\n\nspark = SparkSession.builder.appName(\"CoreComponentsExample\").getOrCreate()\n\ndata = [(\"Alice\", 34), (\"Bob\", 36), (\"Cathy\", 31)]\ncolumns = [\"Name\", \"Age\"]\n\ndf = spark.createDataFrame(data, columns).withColumn(\"Status\", \"Pass\")\ndf_filtered = df.filter(df.Age > 35)\ndf_filtered.show()\n\nspark.stop()\n\nWhat is the role of the driver node?",
+        "options": [
+            "A. The driver node orchestrates the execution by transforming actions into tasks and\ndistributing them to worker nodes",
+            "B. The driver node only provides the user interface for monitoring the application",
+            "C. The driver node holds the DataFrame data and performs all computations locally",
+            "D. The driver node stores the final result after computations are completed by worker nodes"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "In the Spark architecture, the driver node is responsible for orchestrating the execution of a\nSpark application. It converts user-defined transformations and actions into a logical plan,\noptimizes it into a physical plan, and then splits the plan into tasks that are distributed to the\nexecutor nodes.\n\n\nAs per Databricks and Spark documentation:\n\"The driver node is responsible for maintaining information about the Spark application,\nresponding to a user's program or input, and analyzing, distributing, and scheduling work\nacross the executors.\" This means:\nOption A is correct because the driver schedules and coordinates the job execution.\nOption B is incorrect because the driver does more than just UI monitoring.\nOption C is incorrect since data and computations are distributed across executor nodes.\nOption D is incorrect; results are returned to the driver but not stored long-term by it."
+    },
+    {
         "question": "What is the relationship between jobs, stages, and tasks during execution in Apache Spark?",
         "options": [
             "A. A job contains multiple tasks, and each task contains multiple stages.",
@@ -664,6 +690,19 @@ const quizData = [
         "explanation": "To sort a Spark DataFrame by multiple columns, use .orderBy() (or .sort()) with column\n\n\nexpressions.\nCorrect syntax for descending and ascending mix:\nfrom pyspark.sql.functions import col\ndf1.orderBy(col(\"count\").desc(), col(\"Name\").asc())\nThis sorts primarily by count in descending order and secondarily by Name in ascending\norder (alphabetically).\nWhy the other options are incorrect:\nB/C: Default sort order is ascending; won't place highest counts first.\nD: Reverses sorting logic - sorts Name descending, not required.\nReference:\nPySpark DataFrame API - orderBy() and col() for sorting with direction.\nDatabricks Exam Guide (June 2025): Section \"Using Spark DataFrame APIs\" - sorting,\nordering, and column expressions."
     },
     {
+        "question": "A data scientist is working with a Spark DataFrame called customerDF that contains\ncustomer information.\nThe DataFrame has a column named email with customer email addresses.\nThe data scientist needs to split this column into username and domain parts.\nWhich code snippet splits the email column into username and domain columns?",
+        "options": [
+            "A. customerDF = customerDF \\\n.withColumn(\"username\", split(col(\"email\"), \"@\").getItem(0)) \\\n.withColumn(\"domain\", split(col(\"email\"), \"@\").getItem(1))",
+            "B. customerDF = customerDF.withColumn(\"username\", regexp_replace(col(\"email\"), \"@\", \"\"))",
+            "C. customerDF = customerDF.select(\"email\").alias(\"username\", \"domain\")",
+            "D. customerDF = customerDF.withColumn(\"domain\", col(\"email\").split(\"@\")[1])"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "The split() function in PySpark splits strings into an array based on a given delimiter.\nThen, .getItem(index) extracts a specific element from the array.\nCorrect usage:\nfrom pyspark.sql.functions import split, col\ncustomerDF = customerDF \\\n.withColumn(\"username\", split(col(\"email\"), \"@\").getItem(0)) \\\n.withColumn(\"domain\", split(col(\"email\"), \"@\").getItem(1))\nThis creates two new columns derived from the email field:\n\"username\" → text before @\n\"domain\" → text after @\nWhy the other options are incorrect:\nB: regexp_replace only replaces text; does not split into multiple columns.\n\n\nC: .select() cannot alias multiple derived columns like this.\nD: Column objects are not native Python strings; cannot use standard .split().\nReference:\nPySpark SQL Functions - split() and getItem().\nDatabricks Exam Guide (June 2025): Section \"Developing Apache Spark\nDataFrame/DataSet API Applications\" - manipulating and splitting column data."
+    },
+    {
         "question": "Given the code fragment:\nimport pyspark.pandas as ps\npdf = ps.DataFrame(data)\nWhich method is used to convert a Pandas API on Spark DataFrame\n(pyspark.pandas.DataFrame) into a standard PySpark DataFrame (pyspark.sql.DataFrame)?",
         "options": [
             "A. pdf.to_pandas()",
@@ -716,6 +755,19 @@ const quizData = [
         "explanation": "The groupBy() operation causes a shuffle because it requires all values for a specific key to\nbe brought together, which may involve moving data across partitions.\nIn contrast:\n\n\nfilter() and select() are narrow transformations and do not cause shuffles.\ncoalesce() tries to reduce the number of partitions and avoids shuffling by moving data to\nfewer partitions without a full shuffle (unlike repartition())."
     },
     {
+        "question": "A data scientist of an e-commerce company is working with user data obtained from its\nsubscriber database and has stored the data in a DataFrame df_user. Before further\nprocessing the data, the data scientist wants to create another DataFrame df_user_non_pii\nand store only the non-PII columns in this DataFrame. The PII columns in df_user are\nfirst_name, last_name, email, and birthdate.\nWhich code snippet can be used to meet this requirement?",
+        "options": [
+            "A. df_user_non_pii = df_user.drop(\"first_name\", \"last_name\", \"email\", \"birthdate\")",
+            "B. df_user_non_pii = df_user.drop(\"first_name\", \"last_name\", \"email\", \"birthdate\")",
+            "C. df_user_non_pii = df_user.dropfields(\"first_name\", \"last_name\", \"email\", \"birthdate\")",
+            "D. df_user_non_pii = df_user.dropfields(\"first_name, last_name, email, birthdate\")"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "To remove specific columns from a PySpark DataFrame, the drop() method is used. This\nmethod returns a new DataFrame without the specified columns. The correct syntax for\ndropping multiple columns is to pass each column name as a separate argument to the\ndrop() method.\nCorrect Usage:\ndf_user_non_pii = df_user.drop(\"first_name\", \"last_name\", \"email\", \"birthdate\") This line of\ncode will return a new DataFrame df_user_non_pii that excludes the specified PII columns.\nExplanation of Options:\nA . Correct. Uses the drop() method with multiple column names passed as separate\narguments, which is the standard and correct usage in PySpark.\nB . Although it appears similar to Option A, if the column names are not enclosed in quotes or\nif there's a syntax error (e.g., missing quotes or incorrect variable names), it would result in\nan error. However, as written, it's identical to Option A and thus also correct.\nC . Incorrect. The dropfields() method is not a method of the DataFrame class in PySpark. It's\nused with StructType columns to drop fields from nested structures, not top-level DataFrame\ncolumns.\nD . Incorrect. Passing a single string with comma-separated column names to dropfields() is\nnot valid syntax in PySpark.\nReference:\nPySpark Documentation: DataFrame.drop\nStack Overflow Discussion: How to delete columns in PySpark DataFrame"
+    },
+    {
         "question": "A data scientist is working with a massive dataset that exceeds the memory capacity of a\nsingle machine. The data scientist is considering using Apache Spark™ instead of traditional\nsingle-machine languages like standard Python scripts.\nWhich two advantages does Apache Spark™ offer over a normal single-machine language in\n\n\nthis scenario? (Choose 2 answers)",
         "options": [
             "A. It can distribute data processing tasks across a cluster of machines, enabling horizontal\nscalability.",
@@ -742,6 +794,19 @@ const quizData = [
             "C"
         ],
         "explanation": "To view the schema of a Parquet file, you must use the DataFrameReader to load the\n\n\nParquet data and call the .printSchema() method.\nCorrect syntax:\nspark.read.parquet(\"events.parquet\").printSchema()\nThis command loads the file metadata (without triggering a full read) and prints the column\nnames, data types, and nullability information in a tree format.\nWhy the other options are incorrect:\nA/D: SQL queries can't directly introspect file schemas.\nB: .show() displays data rows, not schema.\nReference:\nPySpark DataFrameReader API - read.parquet() and DataFrame.printSchema().\nDatabricks Exam Guide (June 2025): Section \"Using Spark SQL\" - describes reading files and\nexamining schemas in Spark SQL and DataFrame APIs."
+    },
+    {
+        "question": "A data engineer is asked to build an ingestion pipeline for a set of Parquet files delivered by an upstream team on a nightly basis. The data is stored in a directory structure with a base path of \"/path/events/data\". The upstream team drops daily data into the underlying subdirectories following the convention year/month/day.\nA few examples of the directory structure are:\n\n/path/events/data/2024/01/01\n/path/events/data/2024/01/02\n/path/events/data/2024/01/03\n/path/events/data/2023/01/01\n/path/events/data/2023/01/02\n/path/events/data/2023/01/03\n\nWhich of the following code snippets will read all the data within the directory structure?",
+        "options": [
+            "A. df = spark.read.option(\"inferSchema\", \"true\").parquet(\"/path/events/data/\")",
+            "B. df = spark.read.option(\"recursiveFileLookup\", \"true\").parquet(\"/path/events/data/\")",
+            "C. df = spark.read.parquet(\"/path/events/data/*\")",
+            "D. df = spark.read.parquet(\"/path/events/data/\")"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "To read all files recursively within a nested directory structure, Spark requires the\nrecursiveFileLookup option to be explicitly enabled. According to Databricks official\ndocumentation, when dealing with deeply nested Parquet files in a directory tree (as shown in\nthis example), you should set:\ndf = spark.read.option(\"recursiveFileLookup\", \"true\").parquet(\"/path/events/data/\") This\nensures that Spark searches through all subdirectories under /path/events/data/ and reads\nany Parquet files it finds, regardless of the folder depth.\nOption A is incorrect because while it includes an option, inferSchema is irrelevant here and\ndoes not enable recursive file reading.\n\n\nOption C is incorrect because wildcards may not reliably match deep nested structures\nbeyond one directory level.\nOption D is incorrect because it will only read files directly within /path/events/data/ and not\nsubdirectories like /2023/01/01.\nDatabricks documentation reference:\n\"To read files recursively from nested folders, set the recursiveFileLookup option to true. This\nis useful when data is organized in hierarchical folder structures\" - Databricks documentation\non Parquet files ingestion and options."
     },
     {
         "question": "Given this code:\n.withWatermark(\"event_time\", \"10 minutes\")\n.groupBy(window(\"event_time\", \"15 minutes\"))\n.count()\nWhat happens to data that arrives after the watermark threshold?\nOptions:",
@@ -794,6 +859,45 @@ const quizData = [
             "D"
         ],
         "explanation": "Spark's best practice is to estimate partition count based on data volume and a reasonable\npartition size - typically 128 MB to 256 MB per partition.\nWith 1 TB of data: 1 TB / 128 MB ≈ ~8000 partitions\nThis ensures that tasks are distributed across available CPUs for parallelism and that each\ntask processes an optimal volume of data.\nOption A (equal to cores) may result in partitions that are too large.\nOption B (fixed 200) is arbitrary and may underutilize the cluster.\nOption C (nodes) gives too few partitions (10), limiting parallelism."
+    },
+    {
+        "question": "A developer wants to refactor some older Spark code to leverage built-in functions introduced in Spark 3.5.0. The existing code performs array manipulations manually.\n\nExisting code:\nimport pyspark.sql.functions as F\n\nmin_price = 110.50\n\nresult_df = prices_df \\\n    .filter(F.col(\"spot_price\") >= F.lit(min_price)) \\\n    .agg(F.count(\"*\"))\n\nWhich of the following code snippets utilizes new built-in functions in Spark 3.5.0 for array operations?",
+        "options": [
+            "A. result_df = prices_df \\\n.withColumn(\"valid_price\", F.when(F.col(\"spot_price\") > F.lit(min_price), 1).otherwise(0))",
+            "B. \n\nresult_df = prices_df \\\n.agg(F.count_if(F.col(\"spot_price\") >= F.lit(min_price)))",
+            "C. result_df = prices_df \\\n.agg(F.min(\"spot_price\"), F.max(\"spot_price\"))",
+            "D. result_df = prices_df \\\n.agg(F.count(\"spot_price\").alias(\"spot_price\")) \\\n.filter(F.col(\"spot_price\") > F.lit(\"min_price\"))"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "count_if(condition) counts the number of rows that meet the specified boolean condition.\nIn this example, it directly counts how many times spot_price >= min_price evaluates to true,\nreplacing the older verbose combination of when/otherwise and filtering or summing.\nOfficial Spark 3.5.0 documentation notes the addition of count_if to simplify this kind of logic:\n\"Added count_if aggregate function to count only the rows where a boolean condition holds\n(SPARK-43773).\" Why other options are incorrect or outdated:\nA uses a legacy-style method of adding a flag column (when().otherwise()), which is verbose\ncompared to count_if.\nC performs a simple min/max aggregation-useful but unrelated to conditional array\noperations or the updated functionality.\nD incorrectly applies .filter() after .agg() which will cause an error, and misuses string\n\"min_price\" rather than the variable.\nTherefore, B is the only option leveraging new functionality from Spark 3.5.0 correctly and\nefficiently.\nExplanation:\nThe correct answer is B because it uses the new function count_if, introduced in Spark 3.5.0,\nwhich simplifies conditional counting within aggregations."
+    },
+    {
+        "question": "A data engineer is working on the DataFrame:\n\n+---+----------+-----+----------------------------------+\n| Id|      Name|count|                         timestamp|\n+---+----------+-----+----------------------------------+\n|  4|Washington|   10|2024-09-19T10:10:40.000+00:00     |\n|  1|     Delhi|   20|2024-09-19T10:10:10.000+00:00     |\n|  2|    London|   50|2024-09-19T10:10:20.000+00:00     |\n|  1|     Delhi|   50|2024-09-19T10:10:50.000+00:00     |\n|  3|     Paris|   20|2024-09-19T10:11:20.000+00:00     |\n|  1|     Delhi|   10|2024-09-19T10:11:10.000+00:00     |\n|  3|     Paris|   30|2024-09-19T10:10:30.000+00:00     |\n|  4|Washington|   40|2024-09-19T10:11:00.000+00:00     |\n+---+----------+-----+----------------------------------+\n\nWhich code fragment should the engineer use to extract the unique values in the Name column into an alphabetically ordered list?",
+        "options": [
+            "A. df.select(\"Name\").orderBy(df[\"Name\"].asc())",
+            "B. df.select(\"Name\").distinct().orderBy(df[\"Name\"])",
+            "C. df.select(\"Name\").distinct()",
+            "D. df.select(\"Name\").distinct().orderBy(df[\"Name\"].desc())"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "To extract unique values from a column and sort them alphabetically:\ndistinct() is required to remove duplicate values.\norderBy() is needed to sort the results alphabetically (ascending by default).\nCorrect code:\ndf.select(\"Name\").distinct().orderBy(df[\"Name\"])\nThis is directly aligned with standard DataFrame API usage in PySpark, as documented in\nthe official Databricks Spark APIs. Option A is incorrect because it may not remove\nduplicates. Option C omits sorting. Option D sorts in descending order, which doesn't meet\nthe requirement for alphabetical (ascending) order."
+    },
+    {
+        "question": "A DataFrame df has columns name, age, and salary. The developer needs to sort the\nDataFrame by age in ascending order and salary in descending order.\nWhich code snippet meets the requirement of the developer?",
+        "options": [
+            "A. df.orderBy(col(\"age\").asc(), col(\"salary\").asc()).show()",
+            "B. df.sort(\"age\", \"salary\", ascending=[True, True]).show()",
+            "C. df.sort(\"age\", \"salary\", ascending=[False, True]).show()",
+            "D. df.orderBy(\"age\", \"salary\", ascending=[True, False]).show()"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "To sort a PySpark DataFrame by multiple columns with mixed sort directions, the correct\nusage is:\npython\nCopyEdit\ndf.orderBy(\"age\", \"salary\", ascending=[True, False])\nage will be sorted in ascending order\nsalary will be sorted in descending order\nThe orderBy() and sort() methods in PySpark accept a list of booleans to specify the sort\ndirection for each column.\nDocumentation Reference: PySpark API - DataFrame.orderBy"
     },
     {
         "question": "Which command overwrites an existing JSON file when writing a DataFrame?",
@@ -1071,6 +1175,19 @@ const quizData = [
         "explanation": "In Spark, when a CSV row does not match the provided schema, Spark does not raise an\nerror by default. Instead, it returns null for fields that cannot be parsed correctly.\nIn the first row, \"hello\" cannot be cast to Integer for the age field → Spark sets age=None In\nthe second row, \"20\" is a valid integer → age=20 So the output will be:\n[Row(name='bambi', age=None), Row(name='alladin', age=20)]\nFinal answer: C"
     },
     {
+        "question": "A data engineer wants to create an external table from a JSON file located at /data/input.json\nwith the following requirements:\nCreate an external table named users\nAutomatically infer schema\nMerge records with differing schemas\nWhich code snippet should the engineer use?\nOptions:",
+        "options": [
+            "A. CREATE TABLE users USING json OPTIONS (path '/data/input.json')",
+            "B. CREATE EXTERNAL TABLE users USING json OPTIONS (path '/data/input.json')",
+            "C. CREATE EXTERNAL TABLE users USING json OPTIONS (path '/data/input.json',\nmergeSchema 'true')",
+            "D. CREATE EXTERNAL TABLE users USING json OPTIONS (path '/data/input.json',\nschemaMerge 'true')"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "To create an external table and enable schema merging, the correct syntax is:\nCREATE EXTERNAL TABLE users\nUSING json\nOPTIONS (\npath '/data/input.json',\nmergeSchema 'true'\n)\nmergeSchema is the correct option key (not schemaMerge)\nEXTERNAL allows Spark to query files without managing their lifecycle"
+    },
+    {
         "question": "A data scientist wants each record in the DataFrame to contain:\nThe first attempt at the code does read the text files but each record contains a single line.\nThis code is shown below:\n\n\n \nThe entire contents of a file\nThe full file path\nThe issue: reading line-by-line rather than full text per file.\nCode:\ncorpus = spark.read.text(\"/datasets/raw_txt/*\") \\\n.select('*', '_metadata.file_path')\nWhich change will ensure one record per file?\nOptions:",
         "options": [
             "A. Add the option wholetext=True to the text() function",
@@ -1253,6 +1370,19 @@ const quizData = [
         "explanation": "When reading Parquet files, Spark infers a unified schema automatically only if all files share\nidentical structures.\nIf files have different but compatible schemas, you must enable schema merging by setting\nthe option mergeSchema=True.\nCorrect syntax:\ndf = spark.read.option(\"mergeSchema\", True).parquet(\"/data/parquet/\")\nThis option ensures Spark merges all discovered fields across Parquet files into one unified\nDataFrame schema.\nWhy the other options are incorrect:\nA: Loads files but ignores extra columns - uses only the first file's schema.\nC: inferSchema applies to CSV/JSON, not Parquet.\nD: mergeAllCols is not a valid Spark option.\nReference:\nSpark SQL Data Sources - Parquet options (mergeSchema, path).\nDatabricks Exam Guide (June 2025): Section \"Using Spark DataFrame APIs\" - reading/writing\nDataFrames with schema evolution and merging."
     },
     {
+        "question": "A data engineer is working with Spark SQL and has a large JSON file stored at\n/data/input.json.\nThe file contains records with varying schemas, and the engineer wants to create an external\ntable in Spark SQL that:\nReads directly from /data/input.json.\nInfers the schema automatically.\nMerges differing schemas.\nWhich code snippet should the engineer use?",
+        "options": [
+            "A. CREATE EXTERNAL TABLE users\nUSING json\nOPTIONS (path '/data/input.json', mergeSchema 'true');",
+            "B. CREATE TABLE users\nUSING json\nOPTIONS (path '/data/input.json');",
+            "C. CREATE EXTERNAL TABLE users\nUSING json\nOPTIONS (path '/data/input.json', inferSchema 'true');",
+            "D. CREATE EXTERNAL TABLE users\nUSING json\nOPTIONS (path '/data/input.json', mergeAll 'true');"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "To handle JSON files with evolving or differing schemas, Spark SQL supports the option\nmergeSchema 'true', which merges all fields across files into a unified schema.\nCorrect syntax:\nCREATE EXTERNAL TABLE users\nUSING json\nOPTIONS (path '/data/input.json', mergeSchema 'true');\nThis creates an external table directly on the JSON data, inferring schema automatically and\nmerging variations.\nWhy the other options are incorrect:\nB: Missing schema merge configuration - fails with inconsistent files.\nC: inferSchema applies to CSV/other file types, not JSON.\nD: mergeAll is not a valid Spark SQL option.\nReference:\nSpark SQL Data Sources - JSON file options (mergeSchema, path).\nDatabricks Exam Guide (June 2025): Section \"Using Spark SQL\" - creating external tables\nand schema inference for JSON data."
+    },
+    {
         "question": "A data engineer wants to write a Spark job that creates a new managed table. If the table\nalready exists, the job should fail and not modify anything.\nWhich save mode and method should be used?",
         "options": [
             "A. saveAsTable with mode ErrorIfExists",
@@ -1264,6 +1394,19 @@ const quizData = [
             "A"
         ],
         "explanation": "The method saveAsTable() creates a new table and optionally fails if the table exists.\nFrom Spark documentation:\n\"The mode 'ErrorIfExists' (default) will throw an error if the table already exists.\" Thus:\nOption A is correct.\nOption B (Overwrite) would overwrite existing data - not acceptable here.\nOption C and D use save(), which doesn't create a managed table with metadata in the\nmetastore.\nFinal answer: A"
+    },
+    {
+        "question": "A Data Analyst needs to retrieve employees with 5 or more years of tenure.\nWhich code snippet filters and shows the list?",
+        "options": [
+            "A. employees_df.filter(employees_df.tenure >= 5).show()",
+            "B. employees_df.where(employees_df.tenure >= 5)",
+            "C. filter(employees_df.tenure >= 5)",
+            "D. employees_df.filter(employees_df.tenure >= 5).collect()"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "To filter rows based on a condition and display them in Spark, use filter(...).show():\nemployees_df.filter(employees_df.tenure >= 5).show()\nOption A is correct and shows the results.\nOption B filters but doesn't display them.\nOption C uses Python's built-in filter, not Spark.\nOption D collects the results to the driver, which is unnecessary if .show() is sufficient.\nFinal answer: A"
     },
     {
         "question": "A developer needs to write the output of a complex chain of Spark transformations to a\nParquet table called events.liveLatest.\nConsumers of this table query it frequently with filters on both year and month of the event_ts\ncolumn (a timestamp).\nThe current code:\nfrom pyspark.sql import functions as F\nfinal = df.withColumn(\"event_year\", F.year(\"event_ts\")) \\\n.withColumn(\"event_month\", F.month(\"event_ts\")) \\\n.bucketBy(42, [\"event_year\", \"event_month\"]) \\\n.saveAsTable(\"events.liveLatest\")\nHowever, consumers report poor query performance.\nWhich change will enable efficient querying by year and month?",
@@ -1290,6 +1433,19 @@ const quizData = [
             "B"
         ],
         "explanation": "In Structured Streaming, only transformation operations are allowed on streaming\nDataFrames. These include select(), filter(), where(), groupBy(), withColumn(), etc.\nExample of supported transformation:\nfiltered_df = streaming_df.filter(\"count < 30\")\nHowever, actions such as count(), show(), and collect() are not supported directly on\nstreaming DataFrames because streaming queries are unbounded and never finish until\nstopped.\nTo perform aggregations, the query must be executed through writeStream and an output\nsink.\nWhy the other options are incorrect:\nA: count() is an action, not allowed directly on streaming DataFrames.\nC: countDistinct() is a stateful aggregation, not supported outside of a proper streaming\nquery.\nD: show() is also an action, unsupported on streaming queries.\nReference:\nPySpark Structured Streaming Programming Guide - supported transformations and actions.\nDatabricks Exam Guide (June 2025): Section \"Structured Streaming\" - performing operations\n\n\non streaming DataFrames and understanding supported transformations."
+    },
+    {
+        "question": "A data engineer is building an Apache Spark™ Structured Streaming application to process a\nstream of JSON events in real time. The engineer wants the application to be fault-tolerant\nand resume processing from the last successfully processed record in case of a failure. To\nachieve this, the data engineer decides to implement checkpoints.\nWhich code snippet should the data engineer use?",
+        "options": [
+            "A. query = streaming_df.writeStream \\\n.format(\"console\") \\\n.option(\"checkpoint\", \"/path/to/checkpoint\") \\\n.outputMode(\"append\") \\\n.start()",
+            "B. query = streaming_df.writeStream \\\n.format(\"console\") \\\n.outputMode(\"append\") \\\n.option(\"checkpointLocation\", \"/path/to/checkpoint\") \\\n.start()",
+            "C. query = streaming_df.writeStream \\\n.format(\"console\") \\\n.outputMode(\"complete\") \\\n.start()",
+            "D. query = streaming_df.writeStream \\\n.format(\"console\") \\\n.outputMode(\"append\") \\\n.start()"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "To enable fault tolerance and ensure that Spark can resume from the last committed offset\nafter failure, you must configure a checkpoint location using the correct option key:\n\"checkpointLocation\".\nFrom the official Spark Structured Streaming guide:\n\"To make a streaming query fault-tolerant and recoverable, a checkpoint directory must be\nspecified using .option(\"checkpointLocation\", \"/path/to/dir\").\" Explanation of options:\nOption A uses an invalid option name: \"checkpoint\" (should be \"checkpointLocation\") Option\nB is correct: it sets checkpointLocation properly Option C lacks checkpointing and won't\nresume after failure Option D also lacks checkpointing configuration"
     },
     {
         "question": "Which feature of Spark Connect should be considered when designing an application that\n\n\nplans to enable remote interaction with a Spark cluster?",
@@ -1422,6 +1578,19 @@ const quizData = [
         "explanation": "The correct way to aggregate information (e.g., max value) from distributed workers back to\nthe driver is using RDD actions such as reduce() or aggregate().\nFrom the documentation:\n\"To perform global aggregations on distributed data, actions like reduce() are commonly used\nto collect summaries such as min/max/avg.\" Accumulators (Option B) do not support max\noperations directly and are not intended for such analytics.\nBroadcast (Option C) is used to send data to workers, not collect from them.\nSpark UI (Option D) is a monitoring tool - not an analytics collection interface.\nFinal answer: A"
     },
     {
+        "question": "A data engineer is working on a real-time analytics pipeline using Apache Spark Structured Streaming. The engineer wants to process incoming data and ensure that triggers control when the query is executed. The system needs to process data in micro-batches with a fixed interval of 5 seconds.\n\nWhich code snippet the data engineer could use to fulfil this requirement?\n\nA)\nquery = df.writeStream \\\n    .outputMode(\"append\") \\\n    .trigger(continuous='5 seconds') \\\n    .start()\n\nB)\nquery = df.writeStream \\\n    .outputMode(\"append\") \\\n    .trigger() \\\n    .start()\n\nC)\nquery = df.writeStream \\\n    .outputMode(\"append\") \\\n    .trigger(processingTime='5 seconds') \\\n    .start()\n\nD)\nquery = df.writeStream \\\n    .outputMode(\"append\") \\\n    .trigger(processingTime=5000) \\\n    .start()",
+        "options": [
+            "A. Uses trigger(continuous='5 seconds') - continuous processing mode.",
+            "B. Uses trigger() - default micro-batch trigger without interval.",
+            "C. Uses trigger(processingTime='5 seconds') - correct micro-batch trigger with interval.",
+            "D. Uses trigger(processingTime=5000) - invalid, as processingTime expects a string."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "To define a micro-batch interval, the correct syntax is:\nquery = df.writeStream \\\n.outputMode(\"append\") \\\n.trigger(processingTime='5 seconds') \\\n.start()\nThis schedules the query to execute every 5 seconds.\nContinuous mode (used in Option A) is experimental and has limited sink support.\nOption D is incorrect because processingTime must be a string (not an integer).\nOption B triggers as fast as possible without interval control."
+    },
+    {
         "question": "A data scientist is working on a project that requires processing large amounts of structured\ndata, performing SQL queries, and applying machine learning algorithms. The data scientist\nis considering using Apache Spark for this task.\nWhich combination of Apache Spark modules should the data scientist use in this scenario?\nOptions:",
         "options": [
             "A. Spark DataFrames, Structured Streaming, and GraphX",
@@ -1433,6 +1602,19 @@ const quizData = [
             "D"
         ],
         "explanation": "Comprehensive\nTo cover structured data processing, SQL querying, and machine learning in Apache Spark,\nthe correct combination of components is:\nSpark DataFrames: for structured data processing\nSpark SQL: to execute SQL queries over structured data\nMLlib: Spark's scalable machine learning library\nThis trio is designed for exactly this type of use case.\nWhy other options are incorrect:\n\n\nA: GraphX is for graph processing - not needed here.\nB: Pandas API on Spark is useful, but MLlib is essential for ML, which this option omits.\nC: Spark Streaming is legacy; GraphX is irrelevant here."
+    },
+    {
+        "question": "A data engineer is working on a real-time analytics pipeline using Spark Structured\nStreaming.\nThey want the system to process incoming data in micro-batches at a fixed interval of 5\nseconds.\nWhich code snippet fulfills this requirement?",
+        "options": [
+            "A. query = df.writeStream \\\n.outputMode(\"append\") \\\n.trigger(processingTime=\"5 seconds\") \\\n.start()",
+            "B. query = df.writeStream \\\n.outputMode(\"append\") \\\n.trigger(continuous=\"5 seconds\") \\\n.start()",
+            "C. query = df.writeStream \\\n.outputMode(\"append\") \\\n.trigger(once=True) \\\n.start()",
+            "D. query = df.writeStream \\\n.outputMode(\"append\") \\\n.start()"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "To process data in fixed micro-batch intervals, use the .trigger(processingTime=\"interval\")\noption in Structured Streaming.\nCorrect usage:\nquery = df.writeStream \\\n.outputMode(\"append\") \\\n.trigger(processingTime=\"5 seconds\") \\\n.start()\nThis instructs Spark to process available data every 5 seconds.\nWhy the other options are incorrect:\nB: continuous triggers are for continuous processing mode (different execution model).\nC: once=True runs the stream a single time (batch mode).\nD: Default trigger runs as fast as possible, not fixed intervals.\nReference:\n\n\nPySpark Structured Streaming Guide - Trigger types: processingTime, once, continuous.\nDatabricks Exam Guide (June 2025): Section \"Structured Streaming\" - controlling streaming\ntriggers and batch intervals."
     },
     {
         "question": "A data engineer is working with a large JSON dataset containing order information. The\ndataset is stored in a distributed file system and needs to be loaded into a Spark DataFrame\nfor analysis. The data engineer wants to ensure that the schema is correctly defined and that\nthe data is read efficiently.\nWhich approach should the data scientist use to efficiently load the JSON data into a Spark\nDataFrame with a predefined schema?",
@@ -1669,6 +1851,20 @@ const quizData = [
         "explanation": "Correct code block:\ntransactionsDf.withColumn('associateId', lit(5)).drop('productId', 'value') For solving this question it is\nimportant that you know the lit() function (link to documentation below). This function enables you\nto add a column of a constant value to a DataFrame.\nMore info: pyspark.sql.functions.lit - PySpark 3.1.1 documentation\nStatic notebook | Dynamic notebook: See test 1"
     },
     {
+        "question": "The code block shown below should return an exact copy of DataFrame transactionsDf that\ndoes not include rows in which values in column storeId have the value 25. Choose the answer that\ncorrectly fills the blanks in the code block to accomplish this.",
+        "options": [
+            "A. transactionsDf.remove(transactionsDf.storeId==25)",
+            "B. transactionsDf.where(transactionsDf.storeId!=25)",
+            "C. transactionsDf.filter(transactionsDf.storeId==25)",
+            "D. transactionsDf.drop(transactionsDf.storeId==25)",
+            "E. transactionsDf.select(transactionsDf.storeId!=25)"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "transactionsDf.where(transactionsDf.storeId!=25)\nCorrect. DataFrame.where() is an alias for the DataFrame.filter() method. Using this method, it is\nstraightforward to filter out rows that do not have value 25 in column storeId.\ntransactionsDf.select(transactionsDf.storeId!=25)\nWrong. The select operator allows you to build DataFrames column-wise, but when using it as shown,\nit does not filter out rows.\ntransactionsDf.filter(transactionsDf.storeId==25)\nIncorrect. Although the filter expression works for filtering rows, the == in the filtering condition is\ninappropriate. It should be != instead.\ntransactionsDf.drop(transactionsDf.storeId==25)\nNo. DataFrame.drop() is used to remove specific columns, but not rows, from the DataFrame.\ntransactionsDf.remove(transactionsDf.storeId==25)\nFalse. There is no DataFrame.remove() operator in PySpark.\nMore info: pyspark.sql.DataFrame.where - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 3"
+    },
+    {
         "question": "Which of the following statements about stages is correct?",
         "options": [
             "A. Different stages in a job may be executed in parallel.",
@@ -1779,6 +1975,20 @@ const quizData = [
             "A"
         ],
         "explanation": "In Spark's execution hierarchy, a job may reach over multiple stage boundaries.\nCorrect. A job is a sequence of stages, and thus may reach over multiple stage boundaries.\nIn Spark's execution hierarchy, tasks are one layer above slots.\nIncorrect. Slots are not a part of the execution hierarchy. Tasks are the lowest layer.\nIn Spark's execution hierarchy, a stage comprises multiple jobs.\nNo. It is the other way around - a job consists of one or multiple stages.\nIn Spark's execution hierarchy, executors are the smallest unit.\n\n\nFalse. Executors are not a part of the execution hierarchy. Tasks are the smallest unit!\nIn Spark's execution hierarchy, manifests are one layer above jobs.\nWrong. Manifests are not a part of the Spark ecosystem."
+    },
+    {
+        "question": "The code block displayed below contains multiple errors. The code block should remove\ncolumn transactionDate from DataFrame transactionsDf and add a column transactionTimestamp in\nwhich dates that are expressed as strings in column transactionDate of DataFrame transactionsDf are\nconverted into unix timestamps. Find the errors.\nSample of DataFrame transactionsDf:\n1.+-------------+---------+-----+-------+---------+----+----------------+\n2.|transactionId|predError|value|storeId|productId| f| transactionDate|\n3.+-------------+---------+-----+-------+---------+----+----------------+\n4.| 1| 3| 4| 25| 1|null|2020-04-26 15:35|\n5.| 2| 6| 7| 2| 2|null|2020-04-13 22:01|\n6.| 3| 3| null| 25| 3|null|2020-04-02 10:53|\n7.+-------------+---------+-----+-------+---------+----+----------------+ Code block:\n1.transactionsDf = transactionsDf.drop(\"transactionDate\")\n2.transactionsDf[\"transactionTimestamp\"] = unix_timestamp(\"transactionDate\", \"yyyy-MM-dd\")",
+        "options": [
+            "A. Column transactionDate should be dropped after transactionTimestamp has been written. The\nstring indicating the date format should be adjusted. The withColumn operator should be used\ninstead of the existing column assignment. Operator to_unixtime() should be used instead of\nunix_timestamp().",
+            "B. Column transactionDate should be dropped after transactionTimestamp has been written. The\nwithColumn operator should be used instead of the existing column assignment. Column\ntransactionDate should be wrapped in a col() operator.",
+            "C. Column transactionDate should be wrapped in a col() operator.",
+            "D. The string indicating the date format should be adjusted. The withColumnReplaced operator\nshould be used instead of the drop and assign pattern in the code block to replace column\ntransactionDate with the new column transactionTimestamp.",
+            "E. Column transactionDate should be dropped after transactionTimestamp has been written. The\nstring indicating the date format should be adjusted. The withColumn operator should be used\ninstead of the existing column assignment."
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "This question requires a lot of thinking to get right. For solving it, you may take advantage of the\ndigital notepad that is provided to you during the test. You have probably seen that the code block\nincludes multiple errors. In the test, you are usually confronted with a code block that only contains a\nsingle error. However, since you are practicing here, this challenging multi-error question will make it\neasier for you to deal with single-error questions in the real exam.\nYou can clearly see that column transactionDate should be dropped only after transactionTimestamp\nhas been written. This is because to generate column transactionTimestamp, Spark needs to read the\nvalues from column transactionDate.\nValues in column transactionDate in the original transactionsDf DataFrame look like 2020-04-26\n15:35. So, to convert those correctly, you would have to pass yyyy-MM-dd HH:mm. In other words:\nThe string indicating the date format should be adjusted.\n\n\nWhile you might be tempted to change unix_timestamp() to to_unixtime() (in line with the\nfrom_unixtime() operator), this function does not exist in Spark. unix_timestamp() is the correct\noperator to use here.\nAlso, there is no DataFrame.withColumnReplaced() operator. A similar operator that exists is\nDataFrame.withColumnRenamed().\nWhether you use col() or not is irrelevant with unix_timestamp() - the command is fine with both.\nFinally, you cannot assign a column like transactionsDf[\"columnName\"] = ... in Spark. This is Pandas\nsyntax (Pandas is a popular Python package for data analysis), but it is not supported in Spark.\nSo, you need to use Spark's DataFrame.withColumn() syntax instead.\nMore info: pyspark.sql.functions.unix_timestamp - PySpark 3.1.2 documentation Static notebook |\nDynamic notebook: See test 3"
     },
     {
         "question": "Which of the following code blocks returns a DataFrame showing the mean value of column\n\"value\" of DataFrame transactionsDf, grouped by its column storeId?",
@@ -2340,6 +2550,20 @@ const quizData = [
         "explanation": "In this question it is important to realize that you are asked to sort transactionDf by two columns.\nThis means that the sorting of the second column depends on the sorting of the first column.\nSo, any option that sorts the entire DataFrame (through chaining sort statements) will not work. The\ntwo columns need to be channeled through the same call to sort().\nAlso, order_by is not a valid DataFrame API method.\nMore info: pyspark.sql.DataFrame.sort - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 2"
     },
     {
+        "question": "The code block displayed below contains an error. The code block should merge the rows of\nDataFrames transactionsDfMonday and transactionsDfTuesday into a new DataFrame, matching\ncolumn names and inserting null values where column names do not appear in both DataFrames.\nFind the error.\nSample of DataFrame transactionsDfMonday:\n1.+-------------+---------+-----+-------+---------+----+\n2.|transactionId|predError|value|storeId|productId| f|\n3.+-------------+---------+-----+-------+---------+----+\n4.| 5| null| null| null| 2|null|\n5.| 6| 3| 2| 25| 2|null|\n6.+-------------+---------+-----+-------+---------+----+\nSample of DataFrame transactionsDfTuesday:\n1.+-------+-------------+---------+-----+\n2.|storeId|transactionId|productId|value|\n3.+-------+-------------+---------+-----+\n4.| 25| 1| 1| 4|\n5.| 2| 2| 2| 7|\n6.| 3| 4| 2| null|\n7.| null| 5| 2| null|\n8.+-------+-------------+---------+-----+\nCode block:\nsc.union([transactionsDfMonday, transactionsDfTuesday])",
+        "options": [
+            "A. The DataFrames' RDDs need to be passed into the sc.union method instead of the DataFrame\nvariable names.",
+            "B. Instead of union, the concat method should be used, making sure to not use its default arguments.",
+            "C. Instead of the Spark context, transactionDfMonday should be called with the join method instead\nof the union method, making sure to use its default arguments.",
+            "D. Instead of the Spark context, transactionDfMonday should be called with the union method.",
+            "E. Instead of the Spark context, transactionDfMonday should be called with the unionByName\nmethod instead of the union method, making sure to not use its default arguments."
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "Correct code block:\ntransactionsDfMonday.unionByName(transactionsDfTuesday, True)\nOutput of correct code block:\n\n\n+-------------+---------+-----+-------+---------+----+\n|transactionId|predError|value|storeId|productId| f|\n+-------------+---------+-----+-------+---------+----+\n| 5| null| null| null| 2|null|\n| 6| 3| 2| 25| 2|null|\n| 1| null| 4| 25| 1|null|\n| 2| null| 7| 2| 2|null|\n| 4| null| null| 3| 2|null|\n| 5| null| null| null| 2|null|\n+-------------+---------+-----+-------+---------+----+\nFor solving this question, you should be aware of the difference between the DataFrame.union() and\nDataFrame.unionByName() methods. The first one matches columns independent of their names,\njust by their order. The second one matches columns by their name (which is asked for in the\nquestion). It also has a useful optional argument, allowMissingColumns. This allows you to merge\nDataFrames that have different columns - just like in this example.\nsc stands for SparkContext and is automatically provided when executing code on Databricks. While\nsc.union() allows you to join RDDs, it is not the right choice for joining DataFrames. A hint away from\nsc.union() is given where the question talks about joining \"into a new DataFrame\".\nconcat is a method in pyspark.sql.functions. It is great for consolidating values from different\ncolumns, but has no place when trying to join rows of multiple DataFrames.\nFinally, the join method is a contender here. However, the default join defined for that method is an\ninner join which does not get us closer to the goal to match the two DataFrames as instructed,\nespecially given that with the default arguments we cannot define a join condition.\nMore info:\n- pyspark.sql.DataFrame.unionByName - PySpark 3.1.2 documentation\n- pyspark.SparkContext.union - PySpark 3.1.2 documentation\n- pyspark.sql.functions.concat - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 3"
+    },
+    {
         "question": "In which order should the code blocks shown below be run in order to read a JSON file from\nlocation jsonPath into a DataFrame and return only the rows that do not have value 3 in column\nproductId?\n1. importedDf.createOrReplaceTempView(\"importedDf\")\n2. spark.sql(\"SELECT * FROM importedDf WHERE productId != 3\")\n3. spark.sql(\"FILTER * FROM importedDf WHERE productId != 3\")\n4. importedDf = spark.read.option(\"format\", \"json\").path(jsonPath)\n5. importedDf = spark.read.json(jsonPath)",
         "options": [
             "A. 4, 1, 2",
@@ -2774,6 +2998,20 @@ const quizData = [
         "explanation": "More info: pyspark.sql.DataFrame.join - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 2"
     },
     {
+        "question": "The code block displayed below contains an error. The code block should save DataFrame transactionsDf at path path as a parquet file, appending to any existing parquet file. Find the error.\n\nCode block:\ntransactionsDf.format(\"parquet\").option(\"mode\", \"append\").save(path)",
+        "options": [
+            "A. The code block is missing a reference to the DataFrameWriter.",
+            "B. save() is evaluated lazily and needs to be followed by an action.",
+            "C. The mode option should be omitted so that the command uses the default mode.",
+            "D. The code block is missing a bucketBy command that takes care of partitions.",
+            "E. Given that the DataFrame should be saved as parquet file, path is being passed to the wrong method."
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.write.format(\"parquet\").option(\"mode\", \"append\").save(path)"
+    },
+    {
         "question": "In which order should the code blocks shown below be run in order to create a table of all\nvalues in column attributes next to the respective values in column supplier in DataFrame itemsDf?\n1. itemsDf.createOrReplaceView(\"itemsDf\")\n2. spark.sql(\"FROM itemsDf SELECT 'supplier', explode('Attributes')\")\n3. spark.sql(\"FROM itemsDf SELECT supplier, explode(attributes)\")\n4. itemsDf.createOrReplaceTempView(\"itemsDf\")",
         "options": [
             "A. 4, 3",
@@ -2800,6 +3038,20 @@ const quizData = [
             "D"
         ],
         "explanation": "Correct code block:\ntransactionsDf.filter(transactionsDf.storeId.isNotNull()).groupBy(\"storeId\").pivot(\"productId\", [2,\n3]).mean(\"predError\").orderBy(\"storeId\")\nOutput of correct code block:\n+-------+----+----+\n|storeId| 2| 3|\n+-------+----+----+\n| 2| 6.0|null|\n| 3|null|null|\n| 25| 3.0| 3.0|\n+-------+----+----+\nThis question is quite convoluted and requires you to think hard about the correct order of\noperations.\nThe pivot method also makes an appearance - a method that you may not know all that much about\n(yet).\nAt the first position in all answers is code block 4, so the question is essentially just about the\nordering of the remaining 4 code blocks.\nThe question states that the returned DataFrame should be sorted by column storeId. So, it should\nmake sense to have code block 3 which includes the orderBy operator at the very end of the code\nblock. This leaves you with only two answer options.\nNow, it is useful to know more about the context of pivot in PySpark. A common pattern is groupBy,\npivot, and then another aggregating function, like mean. In the documentation linked below you can\nsee that pivot is a method of pyspark.sql.GroupedData - meaning that before pivoting, you have to\nuse groupBy. The only answer option matching this requirement is the one in which code block 2\n(which includes groupBy) is stated before code block 5 (which includes pivot).\nMore info: pyspark.sql.GroupedData.pivot - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 3"
+    },
+    {
+        "question": "The code block displayed below contains an error. The code block should arrange the rows of\nDataFrame transactionsDf using information from two columns in an ordered fashion, arranging first\nby column value, showing smaller numbers at the top and greater numbers at the bottom, and then\nby column predError, for which all values should be arranged in the inverse way of the order of items\nin column value. Find the error.\nCode block:\ntransactionsDf.orderBy('value', asc_nulls_first(col('predError')))",
+        "options": [
+            "A. Two orderBy statements with calls to the individual columns should be chained, instead of having\nboth columns in one orderBy statement.",
+            "B. Column value should be wrapped by the col() operator.",
+            "C. Column predError should be sorted in a descending way, putting nulls last.",
+            "D. Column predError should be sorted by desc_nulls_first() instead.",
+            "E. Instead of orderBy, sort should be used."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.orderBy('value', desc_nulls_last('predError'))\nColumn predError should be sorted in a descending way, putting nulls last.\nCorrect! By default, Spark sorts ascending, putting nulls first. So, the inverse sort of the default sort is\nindeed desc_nulls_last.\nInstead of orderBy, sort should be used.\nNo. DataFrame.sort() orders data per partition, it does not guarantee a global order. This is why\norderBy is the more appropriate operator here.\nColumn value should be wrapped by the col() operator.\nIncorrect. DataFrame.sort() accepts both string and Column objects.\nColumn predError should be sorted by desc_nulls_first() instead.\nWrong. Since Spark's default sort order matches asc_nulls_first(), nulls would have to come last when\ninverted.\nTwo orderBy statements with calls to the individual columns should be chained, instead of having\nboth columns in one orderBy statement.\nNo, this would just sort the DataFrame by the very last column, but would not take information from\nboth columns into account, as noted in the question.\nMore info: pyspark.sql.DataFrame.orderBy - PySpark 3.1.2 documentation,\npyspark.sql.functions.desc_nulls_last - PySpark 3.1.2 documentation, sort() vs orderBy() in Spark |\nTowards Data Science Static notebook | Dynamic notebook: See test 3"
     },
     {
         "question": "Which of the following code blocks creates a new 6-column DataFrame by appending the\nrows of the\n6-column DataFrame yesterdayTransactionsDf to the rows of the 6-column DataFrame\ntodayTransactionsDf, ignoring that both DataFrames have different column names?",
@@ -2983,6 +3235,34 @@ const quizData = [
         "explanation": "Correct code block:\ntransactionsDf.repartition(1).write.option(\"sep\", \"\\t\").option(\"nullValue\", \"n/a\").csv(csvPath) It is\nimportant here to understand that the question specifically asks for writing the DataFrame as a single\nCSV file. This should trigger you to think about partitions. By default, every partition is written as a\nseparate file, so you need to include repatition(1) into your call. coalesce(1) works here, too!\nSecondly, the question is very much an invitation to search through the parameters in the Spark\ndocumentation that work with DataFrameWriter.csv (link below). You will also need to know that you\nneed an option() statement to apply these parameters.\nThe final concern is about the general call structure. Once you have called accessed write of your\nDataFrame, options follow and then you write the DataFrame with csv. Instead of csv(csvPath), you\ncould also use save(csvPath, format='csv') here.\nMore info: pyspark.sql.DataFrameWriter.csv - PySpark 3.1.1 documentation Static notebook |\nDynamic notebook: See test 1"
     },
     {
+        "question": "Which of the following code blocks reads the parquet file stored at filePath into DataFrame\nitemsDf, using a valid schema for the sample of itemsDf shown below?\nSample of itemsDf:\n1.+------+-----------------------------+-------------------+\n2.|itemId|attributes |supplier |\n3.+------+-----------------------------+-------------------+\n4.|1 |[blue, winter, cozy] |Sports Company Inc.|\n5.|2 |[red, summer, fresh, cooling]|YetiX |\n6.|3 |[green, summer, travel] |Sports Company Inc.|\n7.+------+-----------------------------+-------------------+",
+        "options": [
+            "A. 1.itemsDfSchema = StructType([\n2. StructField(\"itemId\", IntegerType()),\n3. StructField(\"attributes\", StringType()),\n4. StructField(\"supplier\", StringType())])\n5.\n6.itemsDf = spark.read.schema(itemsDfSchema).parquet(filePath)",
+            "B. 1.itemsDfSchema = StructType([\n2. StructField(\"itemId\", IntegerType),\n3. StructField(\"attributes\", ArrayType(StringType)),\n4. StructField(\"supplier\", StringType)])\n5.\n6.itemsDf = spark.read.schema(itemsDfSchema).parquet(filePath)",
+            "C. 1.itemsDf = spark.read.schema('itemId integer, attributes <string>, supplier\nstring').parquet(filePath)",
+            "D. 1.itemsDfSchema = StructType([\n2. StructField(\"itemId\", IntegerType()),\n3. StructField(\"attributes\", ArrayType(StringType())),\n4. StructField(\"supplier\", StringType())])\n5.\n6.itemsDf = spark.read.schema(itemsDfSchema).parquet(filePath)",
+            "E. 1.itemsDfSchema = StructType([\n2. StructField(\"itemId\", IntegerType()),\n3. StructField(\"attributes\", ArrayType([StringType()])),\n4. StructField(\"supplier\", StringType())])\n5.\n6.itemsDf = spark.read(schema=itemsDfSchema).parquet(filePath)"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "The challenge in this question comes from there being an array variable in the schema. In addition,\nyou should know how to pass a schema to the DataFrameReader that is invoked by spark.read.\nThe correct way to define an array of strings in a schema is through ArrayType(StringType()). A\nschema can be passed to the DataFrameReader by simply appending schema(structType) to the\nread() operator. Alternatively, you can also define a schema as a string. For example, for the schema\nof itemsDf, the following string would make sense: itemId integer, attributes array<string>, supplier\nstring.\n\n\nA thing to keep in mind is that in schema definitions, you always need to instantiate the types, like so:\nStringType(). Just using StringType does not work in pySpark and will fail.\nAnother concern with schemas is whether columns should be nullable, so allowed to have null values.\nIn the case at hand, this is not a concern however, since the question just asks for a\n\"valid\"\nschema. Both non-nullable and nullable column schemas would be valid here, since no null value\nappears in the DataFrame sample.\nMore info: Learning Spark, 2nd Edition, Chapter 3\nStatic notebook | Dynamic notebook: See test 3"
+    },
+    {
+        "question": "Which of the elements in the labeled panels represent the operation performed for broadcast variables?\n\nThe diagram shows 5 labeled panels illustrating different communication patterns between a driver node (top) and executor nodes (bottom):\nPanel 1: Bi-directional arrows between driver and each executor (two-way communication)\nPanel 2: Driver sends to executors, executors also share with each other (torrent-like distribution)\nPanel 3: Driver sends to all executors in a star pattern (driver is the single source/bottleneck)\nPanel 4: All executors send data up to the driver (reverse direction, like accumulators)\nPanel 5: Bi-directional arrows between driver and executors, with inter-executor communication",
+        "options": [
+            "A. 2, 5",
+            "B. 3",
+            "C. 2, 3",
+            "D. 1, 2",
+            "E. 1, 3, 4"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "2,3\nCorrect! Both panels 2 and 3 represent the operation performed for broadcast variables. While a\nbroadcast operation may look like panel 3, with the driver being the bottleneck, it most probably\nlooks like panel 2.\nThis is because the torrent protocol sits behind Spark's broadcast implementation. In the torrent\nprotocol, each executor will try to fetch missing broadcast variables from the driver or other nodes,\npreventing the driver from being the bottleneck.\n1,2\nWrong. While panel 2 may represent broadcasting, panel 1 shows bi-directional communication\nwhich does not occur in broadcast operations.\n3\nNo. While broadcasting may materialize like shown in panel 3, its use of the torrent protocol also\nenables communciation as shown in panel 2 (see first explanation).\n1,3,4\nNo. While panel 2 shows broadcasting, panel 1 shows bi-directional communication - not a\ncharacteristic of broadcasting. Panel 4 shows uni-directional communication, but in the wrong\ndirection.\nPanel 4 resembles more an accumulator variable than a broadcast variable.\n2,5\nIncorrect. While panel 2 shows broadcasting, panel 5 includes bi-directional communication - not a\ncharacteristic of broadcasting.\nMore info: Broadcast Join with Spark - henning.kropponline.de"
+    },
+    {
         "question": "The code block shown below should return a DataFrame with only columns from DataFrame\ntransactionsDf for which there is a corresponding transactionId in DataFrame itemsDf. DataFrame\nitemsDf is very small and much smaller than DataFrame transactionsDf. The query should be\n\n\nexecuted in an optimized way. Choose the answer that correctly fills the blanks in the code block to\naccomplish this.\n__1__.__2__(__3__, __4__, __5__)",
         "options": [
             "A. 1. transactionsDf\n2. join\n3. broadcast(itemsDf)\n4. transactionsDf.transactionId==itemsDf.transactionId\n5. \"outer\"",
@@ -2995,6 +3275,34 @@ const quizData = [
             "C"
         ],
         "explanation": "Correct code block:\ntransactionsDf.join(broadcast(itemsDf), \"transactionId\", \"left_semi\")\nThis question is extremely difficult and exceeds the difficulty of questions in the exam by far.\nA first indication of what is asked from you here is the remark that \"the query should be executed in\nan optimized way\". You also have qualitative information about the size of itemsDf and\ntransactionsDf. Given that itemsDf is \"very small\" and that the execution should be optimized, you\nshould consider instructing Spark to perform a broadcast join, broadcasting the \"very small\"\nDataFrame itemsDf to all executors. You can explicitly suggest this to Spark via wrapping itemsDf into\na broadcast() operator. One answer option does not include this operator, so you can disregard it.\nAnother answer option wraps the broadcast() operator around transactionsDf - the bigger of the two\nDataFrames. This answer option does not make sense in the optimization context and can likewise be\ndisregarded.\nWhen thinking about the broadcast() operator, you may also remember that it is a method of\npyspark.sql.functions. One answer option, however, resolves to itemsDf.broadcast([...]). The\nDataFrame class has no broadcast() method, so this answer option can be eliminated as well.\n\n\nAll two remaining answer options resolve to transactionsDf.join([...]) in the first 2 gaps, so you will\nhave to figure out the details of the join now. You can pick between an outer and a left semi join. An\nouter join would include columns from both DataFrames, where a left semi join only includes\ncolumns from the \"left\" table, here transactionsDf, just as asked for by the question. So, the correct\nanswer is the one that uses the left_semi join."
+    },
+    {
+        "question": "The code block displayed below contains an error. When the code block below has\nexecuted, it should have divided DataFrame transactionsDf into 14 parts, based on columns storeId\nand transactionDate (in this order). Find the error.\nCode block:\ntransactionsDf.coalesce(14, (\"storeId\", \"transactionDate\"))",
+        "options": [
+            "A. The parentheses around the column names need to be removed and .select() needs to be\nappended to the code block.",
+            "B. Operator coalesce needs to be replaced by repartition, the parentheses around the column names\nneed to be removed, and .count() needs to be appended to the code block.",
+            "C. Operator coalesce needs to be replaced by repartition, the parentheses around the column names\nneed to be removed, and .select() needs to be appended to the code block.",
+            "D. Operator coalesce needs to be replaced by repartition and the parentheses around the column\nnames need to be replaced by square brackets.",
+            "E. Operator coalesce needs to be replaced by repartition."
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.repartition(14, \"storeId\", \"transactionDate\").count()\nSince we do not know how many partitions DataFrame transactionsDf has, we cannot safely use\ncoalesce, since it would not make any change if the current number of partitions is smaller than 14.\nSo, we need to use repartition.\nIn the Spark documentation, the call structure for repartition is shown like this:\nDataFrame.repartition(numPartitions, *cols). The * operator means that any argument after\nnumPartitions will be interpreted as column. Therefore, the brackets need to be removed.\nFinally, the question specifies that after the execution the DataFrame should be divided. So, indirectly\nthis question is asking us to append an action to the code block. Since .select() is a transformation.\nthe only possible choice here is .count().\nMore info: pyspark.sql.DataFrame.repartition - PySpark 3.1.1 documentation Static notebook |\nDynamic notebook: See test 1"
+    },
+    {
+        "question": "The code block displayed below contains an error. The code block should trigger Spark to\ncache DataFrame transactionsDf in executor memory where available, writing to disk where\ninsufficient executor memory is available, in a fault-tolerant way. Find the error.\nCode block:\ntransactionsDf.persist(StorageLevel.MEMORY_AND_DISK)",
+        "options": [
+            "A. Caching is not supported in Spark, data are always recomputed.",
+            "B. Data caching capabilities can be accessed through the spark object, but not through the\nDataFrame API.",
+            "C. The storage level is inappropriate for fault-tolerant storage.",
+            "D. The code block uses the wrong operator for caching.",
+            "E. The DataFrameWriter needs to be invoked."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "The storage level is inappropriate for fault-tolerant storage.\nCorrect. Typically, when thinking about fault tolerance and storage levels, you would want to store\nredundant copies of the dataset. This can be achieved by using a storage level such as\nStorageLevel.MEMORY_AND_DISK_2.\nThe code block uses the wrong command for caching.\nWrong. In this case, DataFrame.persist() needs to be used, since this operator supports passing a\nstorage level.\nDataFrame.cache() does not support passing a storage level.\nCaching is not supported in Spark, data are always recomputed.\nIncorrect. Caching is an important component of Spark, since it can help to accelerate Spark\nprograms to great extent. Caching is often a good idea for datasets that need to be accessed\nrepeatedly.\nData caching capabilities can be accessed through the spark object, but not through the DataFrame\nAPI.\nNo. Caching is either accessed through DataFrame.cache() or DataFrame.persist().\nThe DataFrameWriter needs to be invoked.\nWrong. The DataFrameWriter can be accessed via DataFrame.write and is used to write data to\nexternal data stores, mostly on disk. Here, we find keywords such as \"cache\" and \"executor memory\"\nthat point us away from using external data stores. We aim to save data to memory to accelerate the\nreading process, since reading from disk is comparatively slower. The DataFrameWriter does not\nwrite to memory, so we cannot use it here.\nMore info: Best practices for caching in Spark SQL | by David Vrba | Towards Data Science"
     },
     {
         "question": "Which of the following code blocks reads in the parquet file stored at location filePath, given\nthat all columns in the parquet file contain only whole numbers and are stored in the most\nappropriate format for this kind of data?",
@@ -3065,6 +3373,20 @@ const quizData = [
             "B"
         ],
         "explanation": "1: Correct - This should just read \"API\" or \"DataFrame API\". The DataFrame is not part of the SQL API.\nTo make a DataFrame accessible via SQL, you first need to create a DataFrame view. That view can\nthen be accessed via SQL.\n4: Although \"K_38_INU\" looks odd, it is a completely valid name for a DataFrame column.\n6: No, StringType is a correct type.\n7: Although a StringType may not be the most efficient way to store a phone number, there is\nnothing fundamentally wrong with using this type here.\n8: Correct - TreeType is not a type that Spark supports.\n9: No, Spark DataFrames support ArrayType variables. In this case, the variable would represent a\nsequence of elements with type LongType, which is also a valid type for Spark DataFrames.\n\n\n10: There is nothing wrong with this row.\nMore info: Data Types - Spark 3.1.1 Documentation (https://bit.ly/3aAPKJT)"
+    },
+    {
+        "question": "The code block displayed below contains an error. The code block should display the\nschema of DataFrame transactionsDf. Find the error.\nCode block:\ntransactionsDf.rdd.printSchema",
+        "options": [
+            "A. There is no way to print a schema directly in Spark, since the schema can be printed easily through\nusing print(transactionsDf.columns), so that should be used instead.",
+            "B. The code block should be wrapped into a print() operation.",
+            "C. printSchema is only accessible through the spark session, so the code block should be rewritten as\nspark.printSchema(transactionsDf).",
+            "D. printSchema is a method and should be written as printSchema(). It is also not callable through\ntransactionsDf.rdd, but should be called directly from transactionsDf.",
+            "E. printSchema is a not a method of transactionsDf.rdd. Instead, the schema should be printed via\ntransactionsDf.print_schema()."
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.printSchema()\nThis is more of a knowledge question that you should just memorize or look up in the provided\ndocumentation during the exam. You can get more info about DataFrame.printSchema() in the\ndocumentation (link below). However - it is a plain simple method without any arguments.\nOne answer points to an alternative of printing the schema: You could also use\nprint(transactionsDf.schema).\nThis will give you readable, but not nicely formatted, description of the schema.\nMore info: pyspark.sql.DataFrame.printSchema - PySpark 3.1.1 documentation Static notebook |\nDynamic notebook: See test 1"
     },
     {
         "question": "Which of the following is a problem with using accumulators?",
@@ -3484,6 +3806,20 @@ const quizData = [
         "explanation": "Correct code block:\ntransactionsDf.drop(\"predError\", \"productId\", \"value\")\nStatic notebook | Dynamic notebook: See test 1"
     },
     {
+        "question": "The code block displayed below contains an error. The code block should return a new\nDataFrame that only contains rows from DataFrame transactionsDf in which the value in column\npredError is at least 5. Find the error.\nCode block:\ntransactionsDf.where(\"col(predError) >= 5\")",
+        "options": [
+            "A. The argument to the where method should be \"predError >= 5\".",
+            "B. Instead of where(), filter() should be used.",
+            "C. The expression returns the original DataFrame transactionsDf and not a new DataFrame. To avoid\nthis, the code block should be transactionsDf.toNewDataFrame().where(\"col(predError) >= 5\").",
+            "D. The argument to the where method cannot be a string.",
+            "E. Instead of >=, the SQL operator GEQ should be used."
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "The argument to the where method cannot be a string.\nIt can be a string, no problem here.\nInstead of where(), filter() should be used.\nNo, that does not matter. In PySpark, where() and filter() are equivalent.\nInstead of >=, the SQL operator GEQ should be used.\n\n\nIncorrect.\nThe expression returns the original DataFrame transactionsDf and not a new DataFrame. To avoid\nthis, the code block should be transactionsDf.toNewDataFrame().where(\"col(predError) >= 5\").\nNo, Spark returns a new DataFrame.\nStatic notebook | Dynamic notebook: See test 1\n(https://flrs.github.io/spark_practice_tests_code/#1/27.html ,\nhttps://bit.ly/sparkpracticeexams_import_instructions)"
+    },
+    {
         "question": "Which of the following statements about reducing out-of-memory errors is incorrect?",
         "options": [
             "A. Concatenating multiple string columns into a single column may guard against out-of-memory\nerrors.",
@@ -3649,6 +3985,20 @@ const quizData = [
         "answer": [
             "D"
         ]
+    },
+    {
+        "question": "The code block displayed below contains an error. The code block should configure Spark so that DataFrames up to a size of 20 MB will be broadcast to all worker nodes when performing a join. Find the error.\n\nCode block:\nspark.conf.set(\"spark.sql.autoBroadcastJoinThreshold\", 20)",
+        "options": [
+            "A. Spark will only broadcast DataFrames that are much smaller than the default value.",
+            "B. The correct option to write configurations is through spark.config and not spark.conf.",
+            "C. Spark will only apply the limit to threshold joins and not to other joins.",
+            "D. The passed limit has the wrong variable type.",
+            "E. The command is evaluated lazily and needs to be followed by an action."
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "This is question is hard. Let's assess the different answers one-by-one.\nSpark will only broadcast DataFrames that are much smaller than the default value.\nThis is correct. The default value is 10 MB (10485760 bytes). Since the configuration for\nspark.sql.autoBroadcastJoinThreshold expects a number in bytes (and not megabytes), the code\nblock sets the limits to merely 20 bytes, instead of the requested 20 * 1024 * 1024 (= 20971520)\nbytes.\nThe command is evaluated lazily and needs to be followed by an action.\nNo, this command is evaluated right away!\nSpark will only apply the limit to threshold joins and not to other joins.\nThere are no \"threshold joins\", so this option does not make any sense.\nThe correct option to write configurations is through spark.config and not spark.conf.\nNo, it is indeed spark.conf!\nThe passed limit has the wrong variable type.\nThe configuration expects the number of bytes, a number, as an input. So, the 20 provided in the\ncode block is fine."
     },
     {
         "question": "Which of the following code blocks returns a DataFrame with approximately 1,000 rows\nfrom the 10,000-row DataFrame itemsDf, without any duplicates, returning the same rows even if\nthe code block is run twice?",
