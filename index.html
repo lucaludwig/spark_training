@@ -337,7 +337,7 @@
         </div>
     </div>
 
-    <script src="questions.js?v=20260508"></script>
+    <script src="questions.js?v=20260508b"></script>
     <script>
         const questionEl = document.getElementById('question');
         const questionNumberEl = document.getElementById('question-number');
@@ -861,14 +861,13 @@
 
         function formatOptionText(text) {
             let escaped = escapeHtml(text);
-            // Check if entire option is code-like
             const lines = escaped.split('\n').map(l => l.trim()).filter(l => l);
             const codeLineCount = lines.filter(l => isCodeLine(l)).length;
 
+            // If option contains code, use monospace but keep it as normal text
             if (codeLineCount > 0 && codeLineCount >= lines.length * 0.5) {
-                // Render as code
-                const formatted = lines.map(l => l.replace(/^(\d+)\./, '<span class="line-num">$1</span>')).join('\n');
-                return '<div class="code-block" style="margin:0">' + formatted + '</div>';
+                return '<span style="font-family:\'SF Mono\',\'Fira Code\',Consolas,monospace;font-size:13px">' +
+                    lines.join(' ') + '</span>';
             }
 
             escaped = escaped.replace(/\n/g, ' ');
