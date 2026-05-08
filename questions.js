@@ -2106,7 +2106,7 @@ const quizData = [
         "options": [
             "A. 1.def count_to_target(target):\n2. if target is None:\n3. return\n4.\n5. result = [range(target)]\n6. return result\n7.\n8.count_to_target_udf = udf(count_to_target, ArrayType[IntegerType])\n9.\n10.transactionsDf.select(count_to_target_udf(col('predError')))",
             "B. 1.def count_to_target(target):\n2. if target is None:\n3. return\n4.\n5. result = list(range(target))\n6. return result\n7.\n8.transactionsDf.select(count_to_target(col('predError')))",
-            "C. 1.def count_to_target(target):\n2. if target is None:\n3. return\n4.\n5. result = list(range(target))\n6. return result\n7.\n8.count_to_target_udf = udf(count_to_target, ArrayType(IntegerType()))\n9.\n10.transactionsDf.select(count_to_target_udf('predError'))\n(Correct)",
+            "C. 1.def count_to_target(target):\n2. if target is None:\n3. return\n4.\n5. result = list(range(target))\n6. return result\n7.\n8.count_to_target_udf = udf(count_to_target, ArrayType(IntegerType()))\n9.\n10.transactionsDf.select(count_to_target_udf('predError'))",
             "D. 1.def count_to_target(target):\n2. result = list(range(target))\n3. return result\n4.\n5.count_to_target_udf = udf(count_to_target, ArrayType(IntegerType()))\n6.\n7.df = transactionsDf.select(count_to_target_udf('predError'))",
             "E. 1.def count_to_target(target):\n2. if target is None:\n3. return\n4.\n\n\n5. result = list(range(target))\n6. return result\n7.\n8.count_to_target_udf = udf(count_to_target)\n9.\n10.transactionsDf.select(count_to_target_udf('predError'))"
         ],
@@ -2274,7 +2274,7 @@ const quizData = [
         "options": [
             "A. 1. save\n2. mode\n3. \"ignore\"\n4. \"compression\"\n5. path",
             "B. 1. store\n2. with\n3. \"replacement\"\n4. \"compression\"\n5. path",
-            "C. 1. write\n2. mode\n3. \"overwrite\"\n4. \"compression\"\n5. save\n(Correct)",
+            "C. 1. write\n2. mode\n3. \"overwrite\"\n4. \"compression\"\n5. save",
             "D. 1. save\n2. mode\n3. \"replace\"\n4. \"compression\"\n5. path",
             "E. 1. write\n2. mode\n3. \"overwrite\"\n4. compression\n\n\n5. parquet"
         ],
@@ -2413,7 +2413,7 @@ const quizData = [
         "question": "Which of the following code blocks immediately removes the previously cached DataFrame\ntransactionsDf from memory and disk?",
         "options": [
             "A. array_remove(transactionsDf, \"*\")",
-            "B. transactionsDf.unpersist()\n(Correct)",
+            "B. transactionsDf.unpersist()",
             "C. del transactionsDf",
             "D. transactionsDf.clearCache()",
             "E. transactionsDf.persist()"
@@ -2765,7 +2765,7 @@ const quizData = [
             "A. 1. select\n2. count\n3. col(\"itemNameElements\")\n4. >3",
             "B. 1. filter\n2. count\n3. itemNameElements\n4. >=3",
             "C. 1. select\n2. count\n3. \"itemNameElements\"\n4. >3",
-            "D. 1. filter\n2. size\n3. \"itemNameElements\"\n4. >=3\n(Correct)",
+            "D. 1. filter\n2. size\n3. \"itemNameElements\"\n4. >=3",
             "E. 1. select\n2. size\n3. \"itemNameElements\"\n4. >3"
         ],
         "answer": [
@@ -2932,7 +2932,7 @@ const quizData = [
             "A. transactionsDf.filter(col(\"transactionId\").isin([3,4,6])).select([predError, value])",
             "B. transactionsDf.select(col(\"transactionId\").isin([3,4,6]), \"predError\", \"value\")",
             "C. transactionsDf.filter(\"transactionId\" % 2 == 0).select(\"predError\", \"value\")",
-            "D. transactionsDf.filter(col(\"transactionId\") % 2 == 0).select(\"predError\", \"value\") (Correct)",
+            "D. transactionsDf.filter(col(\"transactionId\") % 2 == 0).select(\"predError\", \"value\")",
             "E. 1.transactionsDf.createOrReplaceTempView(\"transactionsDf\")\n2.spark.sql(\"FROM transactionsDf SELECT predError, value WHERE transactionId % 2 = 2\")",
             "F. transactionsDf.filter(col(transactionId).isin([3,4,6]))"
         ],
@@ -3114,7 +3114,7 @@ const quizData = [
         "question": "Which of the following code blocks returns a DataFrame that matches the multi-column\nDataFrame itemsDf, except that integer column itemId has been converted into a string column?",
         "options": [
             "A. itemsDf.withColumn(\"itemId\", convert(\"itemId\", \"string\"))",
-            "B. itemsDf.withColumn(\"itemId\", col(\"itemId\").cast(\"string\"))\n(Correct)",
+            "B. itemsDf.withColumn(\"itemId\", col(\"itemId\").cast(\"string\"))",
             "C. itemsDf.select(cast(\"itemId\", \"string\"))",
             "D. itemsDf.withColumn(\"itemId\", col(\"itemId\").convert(\"string\"))",
             "E. spark.cast(itemsDf, \"itemId\", \"string\")"
@@ -3227,7 +3227,7 @@ const quizData = [
         "options": [
             "A. 1. coalesce(1)\n2. option\n3. \"sep\"\n4. option(\"header\", True)\n5. path",
             "B. 1. coalesce(1)\n2. option\n3. \"colsep\"\n4. option(\"nullValue\", \"n/a\")\n5. path",
-            "C. 1. repartition(1)\n2. option\n3. \"sep\"\n4. option(\"nullValue\", \"n/a\")\n5. csv\n(Correct)",
+            "C. 1. repartition(1)\n2. option\n3. \"sep\"\n4. option(\"nullValue\", \"n/a\")\n5. csv",
             "D. 1. csv\n2. option\n3. \"sep\"\n4. option(\"emptyValue\", \"n/a\")\n5. path\n* 1. repartition(1)\n2. mode\n3. \"sep\"\n4. mode(\"nullValue\", \"n/a\")\n5. csv"
         ],
         "answer": [
@@ -3281,7 +3281,7 @@ const quizData = [
         "question": "The code block displayed below contains an error. When the code block below has\nexecuted, it should have divided DataFrame transactionsDf into 14 parts, based on columns storeId\nand transactionDate (in this order). Find the error.\nCode block:\ntransactionsDf.coalesce(14, (\"storeId\", \"transactionDate\"))",
         "options": [
             "A. The parentheses around the column names need to be removed and .select() needs to be\nappended to the code block.",
-            "B. Operator coalesce needs to be replaced by repartition, the parentheses around the column names\nneed to be removed, and .count() needs to be appended to the code block.\n(Correct)",
+            "B. Operator coalesce needs to be replaced by repartition, the parentheses around the column names\nneed to be removed, and .count() needs to be appended to the code block.",
             "C. Operator coalesce needs to be replaced by repartition, the parentheses around the column names\nneed to be removed, and .select() needs to be appended to the code block.",
             "D. Operator coalesce needs to be replaced by repartition and the parentheses around the column\nnames need to be replaced by square brackets.",
             "E. Operator coalesce needs to be replaced by repartition."
@@ -3381,7 +3381,7 @@ const quizData = [
             "A. There is no way to print a schema directly in Spark, since the schema can be printed easily through\nusing print(transactionsDf.columns), so that should be used instead.",
             "B. The code block should be wrapped into a print() operation.",
             "C. printSchema is only accessible through the spark session, so the code block should be rewritten as\nspark.printSchema(transactionsDf).",
-            "D. printSchema is a method and should be written as printSchema(). It is also not callable through\ntransactionsDf.rdd, but should be called directly from transactionsDf.\n(Correct)",
+            "D. printSchema is a method and should be written as printSchema(). It is also not callable through\ntransactionsDf.rdd, but should be called directly from transactionsDf.",
             "E. printSchema is a not a method of transactionsDf.rdd. Instead, the schema should be printed via\ntransactionsDf.print_schema()."
         ],
         "answer": [
@@ -3562,7 +3562,7 @@ const quizData = [
             "A. transactionsDf.select(corr([\"predError\", \"value\"]).alias(\"corr\")).first()",
             "B. transactionsDf.select(corr(col(\"predError\"), col(\"value\")).alias(\"corr\")).first()",
             "C. transactionsDf.select(corr(predError, value).alias(\"corr\"))",
-            "D. transactionsDf.select(corr(col(\"predError\"), col(\"value\")).alias(\"corr\")) (Correct)",
+            "D. transactionsDf.select(corr(col(\"predError\"), col(\"value\")).alias(\"corr\"))",
             "E. transactionsDf.select(corr(\"predError\", \"value\"))"
         ],
         "answer": [
@@ -3669,7 +3669,7 @@ const quizData = [
     {
         "question": "Which of the following code blocks applies the Python function to_limit on column\npredError in table transactionsDf, returning a DataFrame with columns transactionId and result?",
         "options": [
-            "A. 1.spark.udf.register(\"LIMIT_FCN\", to_limit)\n2.spark.sql(\"SELECT transactionId, LIMIT_FCN(predError) AS result FROM transactionsDf\") (Correct)",
+            "A. 1.spark.udf.register(\"LIMIT_FCN\", to_limit)\n2.spark.sql(\"SELECT transactionId, LIMIT_FCN(predError) AS result FROM transactionsDf\")",
             "B. 1.spark.udf.register(\"LIMIT_FCN\", to_limit)\n2.spark.sql(\"SELECT transactionId, LIMIT_FCN(predError) FROM transactionsDf AS result\")",
             "C. 1.spark.udf.register(\"LIMIT_FCN\", to_limit)\n2.spark.sql(\"SELECT transactionId, to_limit(predError) AS result FROM transactionsDf\")\nspark.sql(\"SELECT transactionId, udf(to_limit(predError)) AS result FROM transactionsDf\")",
             "D. 1.spark.udf.register(to_limit, \"LIMIT_FCN\")\n\n\n2.spark.sql(\"SELECT transactionId, LIMIT_FCN(predError) AS result FROM transactionsDf\")"
@@ -3799,7 +3799,7 @@ const quizData = [
             "B. The select operator should be replaced with the deselect operator.",
             "C. The column names in the select operator should not be strings and wrapped in the col operator, so\nthey should be expressed like select(~col(predError), ~col(productId), ~col(value)).",
             "D. The select operator should be replaced by the drop operator.",
-            "E. The select operator should be replaced by the drop operator and the arguments to the drop\noperator should be column names predError, productId and value as strings.\n(Correct)"
+            "E. The select operator should be replaced by the drop operator and the arguments to the drop\noperator should be column names predError, productId and value as strings."
         ],
         "answer": [
             "E"
@@ -4117,7 +4117,7 @@ const quizData = [
     {
         "question": "The code block shown below should add a column itemNameBetweenSeparators to\nDataFrame itemsDf. The column should contain arrays of maximum 4 strings. The arrays should be\ncomposed of the values in column itemsDf which are separated at - or whitespace characters. Choose\nthe answer that correctly fills the blanks in the code block to accomplish this.\nSample of DataFrame itemsDf:\n1.+------+----------------------------------+-------------------+\n2.|itemId|itemName |supplier |\n3.+------+----------------------------------+-------------------+\n\n\n4.|1 |Thick Coat for Walking in the Snow|Sports Company Inc.|\n5.|2 |Elegant Outdoors Summer Dress |YetiX |\n6.|3 |Outdoors Backpack |Sports Company Inc.|\n7.+------+----------------------------------+-------------------+\nCode block:\nitemsDf.__1__(__2__, __3__(__4__, \"[\\s\\-]\", __5__))",
         "options": [
-            "A. 1. withColumn\n2. \"itemNameBetweenSeparators\"\n3. split\n4. \"itemName\"\n5. 4\n(Correct)",
+            "A. 1. withColumn\n2. \"itemNameBetweenSeparators\"\n3. split\n4. \"itemName\"\n5. 4",
             "B. 1. withColumnRenamed\n2. \"itemNameBetweenSeparators\"\n3. split\n4. \"itemName\"\n5. 4",
             "C. 1. withColumnRenamed\n2. \"itemName\"\n3. split\n4. \"itemNameBetweenSeparators\"\n5. 4",
             "D. 1. withColumn\n2. \"itemNameBetweenSeparators\"\n3. split\n4. \"itemName\"\n5. 5",
@@ -4160,7 +4160,7 @@ const quizData = [
         "question": "Which of the following code blocks returns all unique values of column storeId in DataFrame\ntransactionsDf?",
         "options": [
             "A. transactionsDf[\"storeId\"].distinct()",
-            "B. transactionsDf.select(\"storeId\").distinct()\n(Correct)",
+            "B. transactionsDf.select(\"storeId\").distinct()",
             "C. transactionsDf.filter(\"storeId\").distinct()",
             "D. transactionsDf.select(col(\"storeId\").distinct())",
             "E. transactionsDf.distinct(\"storeId\")"
