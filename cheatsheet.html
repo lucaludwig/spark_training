@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Spark Exam Cheat Sheet</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 11px; color: #1a1a1a; padding: 20px; max-width: 1100px; margin: 0 auto; }
+        h1 { font-size: 18px; text-align: center; margin-bottom: 12px; border-bottom: 2px solid #333; padding-bottom: 6px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .section { border: 1px solid #ccc; border-radius: 6px; padding: 10px; break-inside: avoid; }
+        .section h2 { font-size: 13px; color: #fff; background: #2563eb; padding: 4px 8px; border-radius: 4px; margin-bottom: 8px; }
+        .section h2.green { background: #16a34a; }
+        .section h2.orange { background: #ea580c; }
+        .section h2.purple { background: #7c3aed; }
+        .section h2.red { background: #dc2626; }
+        .section h2.teal { background: #0d9488; }
+        table { width: 100%; border-collapse: collapse; margin: 4px 0; }
+        th, td { border: 1px solid #ddd; padding: 3px 6px; text-align: left; font-size: 10.5px; }
+        th { background: #f1f5f9; font-weight: 600; }
+        code { background: #f1f5f9; padding: 1px 4px; border-radius: 3px; font-family: 'SF Mono', Consolas, monospace; font-size: 10px; }
+        .highlight { background: #fef3c7; padding: 4px 8px; border-radius: 4px; margin: 4px 0; font-weight: 500; }
+        .vs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .vs > div { padding: 4px; border-radius: 4px; }
+        .vs .yes { background: #dcfce7; }
+        .vs .no { background: #fee2e2; }
+        ul { padding-left: 16px; margin: 4px 0; }
+        li { margin: 2px 0; }
+        .code-block { background: #1e293b; color: #e2e8f0; padding: 6px 8px; border-radius: 4px; font-family: 'SF Mono', Consolas, monospace; font-size: 10px; margin: 4px 0; white-space: pre; }
+        @media print {
+            body { padding: 10px; font-size: 10px; }
+            .section { border: 1px solid #999; }
+            .grid { gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<h1>Databricks Certified Associate Developer for Apache Spark 3.5 - Cheat Sheet</h1>
+
+<div class="grid">
+
+<!-- LAZY EVALUATION -->
+<div class="section">
+    <h2>Lazy Evaluation & Actions vs Transformations</h2>
+    <div class="highlight">Spark rechnet NICHTS bis eine Action kommt!</div>
+    <table>
+        <tr><th>Transformationen (lazy)</th><th>Actions (triggern Berechnung)</th></tr>
+        <tr>
+            <td><code>select()</code>, <code>filter()</code>/<code>where()</code><br>
+                <code>groupBy()</code>, <code>orderBy()</code>/<code>sort()</code><br>
+                <code>join()</code>, <code>withColumn()</code><br>
+                <code>drop()</code>, <code>union()</code><br>
+                <code>repartition()</code>, <code>coalesce()</code></td>
+            <td><code>collect()</code>, <code>show()</code><br>
+                <code>count()</code>, <code>take()</code><br>
+                <code>write.save()</code>, <code>write.parquet()</code><br>
+                <code>first()</code>, <code>head()</code><br>
+                <code>foreach()</code>, <code>toPandas()</code></td>
+        </tr>
+    </table>
+    <div class="code-block">df2 = df.select("a").filter(df.age > 5)  # nichts passiert
+df2.show()  # JETZT wird alles berechnet</div>
+</div>
+
+<!-- SPARK ARCHITEKTUR -->
+<div class="section">
+    <h2 class="green">Spark Architektur</h2>
+    <table>
+        <tr><th>Komponente</th><th>Rolle</th></tr>
+        <tr><td><strong>Driver</strong></td><td>Orchestriert, plant, verteilt Tasks an Executors</td></tr>
+        <tr><td><strong>Executor</strong></td><td>Fuehrt Tasks aus, speichert Daten (JVM auf Worker)</td></tr>
+        <tr><td><strong>Slot</strong></td><td>Ein Thread/Core in einem Executor</td></tr>
+        <tr><td><strong>SparkSession</strong></td><td>Einstiegspunkt (<code>spark</code>), nur fuer read/sql/create</td></tr>
+    </table>
+    <div class="highlight">Hierarchie: Job > Stage > Task</div>
+    <ul>
+        <li><strong>Job</strong> = ausgeloest durch eine Action</li>
+        <li><strong>Stage</strong> = getrennt durch Wide Transformations (Shuffle)</li>
+        <li><strong>Task</strong> = eine Stage auf einer Partition (parallelisierbar)</li>
+    </ul>
+</div>
+
+<!-- REPARTITION vs COALESCE -->
+<div class="section">
+    <h2 class="orange">repartition() vs coalesce()</h2>
+    <table>
+        <tr><th></th><th>repartition()</th><th>coalesce()</th></tr>
+        <tr><td>Shuffle</td><td>Ja (Full Shuffle)</td><td>Nein (kein Shuffle)</td></tr>
+        <tr><td>Erhoehen</td><td>Ja</td><td>Nein! Kann nur reduzieren</td></tr>
+        <tr><td>Reduzieren</td><td>Ja</td><td>Ja (effizient)</td></tr>
+        <tr><td>Nach Spalte</td><td>Ja: <code>.repartition(14, "col")</code></td><td>Nein</td></tr>
+    </table>
+    <div class="code-block">df.repartition(20)          # 20 Partitionen, Full Shuffle
+df.coalesce(5)              # auf 5 reduzieren, kein Shuffle
+df.coalesce(20)             # GEHT NICHT - bleibt bei original
+df.repartition(14, "storeId", "date").count()  # nach Spalten</div>
+</div>
+
+<!-- DATAFRAME OPERATIONEN -->
+<div class="section">
+    <h2 class="purple">DataFrame Operationen</h2>
+    <table>
+        <tr><th>Operation</th><th>Syntax</th></tr>
+        <tr><td>Spalten waehlen</td><td><code>df.select("a", "b")</code></td></tr>
+        <tr><td>Spalte hinzufuegen</td><td><code>df.withColumn("new", lit(5))</code></td></tr>
+        <tr><td>Spalte umbenennen</td><td><code>df.withColumnRenamed("old", "new")</code></td></tr>
+        <tr><td>Spalten droppen</td><td><code>df.drop("a", "b")</code> (Strings, keine Liste!)</td></tr>
+        <tr><td>Filtern</td><td><code>df.filter(df.age > 5)</code> oder <code>df.where(...)</code></td></tr>
+        <tr><td>Sortieren</td><td><code>df.orderBy("a", "b", ascending=[True, False])</code></td></tr>
+        <tr><td>Duplikate</td><td><code>df.dropDuplicates(subset=["col"])</code></td></tr>
+        <tr><td>Nulls droppen</td><td><code>df.dropna(thresh=4)</code> (min 4 non-null)</td></tr>
+        <tr><td>Schema zeigen</td><td><code>df.printSchema()</code> (nicht <code>df.rdd.printSchema</code>!)</td></tr>
+        <tr><td>Statistik</td><td><code>df.summary("count","mean","stddev").show()</code></td></tr>
+    </table>
+</div>
+
+<!-- JOINS -->
+<div class="section">
+    <h2>Joins</h2>
+    <div class="code-block">itemsDf.join(transactionsDf,
+    itemsDf.itemId == transactionsDf.transactionId,
+    "inner")  # oder "outer", "left", "right", "left_semi"</div>
+    <div class="highlight">Reihenfolge: DataFrame.join(other, condition, how)</div>
+    <p><strong>Broadcast Join</strong> (kleiner DF an alle Executors):</p>
+    <div class="code-block">from pyspark.sql.functions import broadcast
+itemsDf.join(broadcast(smallDf), condition, "inner")</div>
+    <p><strong>Auto-Broadcast Threshold</strong> (Default: 10MB = 10485760 Bytes):</p>
+    <div class="code-block">spark.conf.set("spark.sql.autoBroadcastJoinThreshold", 20971520)
+# 20 MB in BYTES, nicht MB!</div>
+</div>
+
+<!-- UNION -->
+<div class="section">
+    <h2 class="green">union() vs unionByName()</h2>
+    <table>
+        <tr><th></th><th>union()</th><th>unionByName()</th></tr>
+        <tr><td>Matching</td><td>Nach Position</td><td>Nach Spaltenname</td></tr>
+        <tr><td>Fehlende Spalten</td><td>Error</td><td><code>allowMissingColumns=True</code></td></tr>
+    </table>
+    <div class="code-block"># Spalten in verschiedener Reihenfolge:
+dfA.unionByName(dfB, allowMissingColumns=True)
+# NICHT: sc.union([dfA, dfB])  -- SparkContext hat kein union!</div>
+</div>
+
+<!-- READ / WRITE -->
+<div class="section">
+    <h2 class="teal">Read & Write</h2>
+    <div class="code-block"># Read
+df = spark.read.parquet("/path/file.parquet")
+df = spark.read.json("/path/file.json")
+df = spark.read.format("csv").option("header","true").load(path)
+df = spark.read.schema(mySchema).parquet(path)
+df = spark.read.option("recursiveFileLookup","true").parquet(path)
+
+# Write  (IMMER ueber .write!)
+df.write.format("parquet").mode("overwrite").save(path)
+df.write.mode("append").parquet(path)
+# FALSCH: df.format("parquet").save(path)  -- fehlt .write!</div>
+    <p><strong>Modi:</strong> <code>"overwrite"</code>, <code>"append"</code>, <code>"ignore"</code>, <code>"error"</code> (default)</p>
+</div>
+
+<!-- CACHING -->
+<div class="section">
+    <h2 class="red">Caching & Persist</h2>
+    <table>
+        <tr><th>Methode</th><th>Verhalten</th></tr>
+        <tr><td><code>df.cache()</code></td><td>= <code>persist(MEMORY_AND_DISK)</code></td></tr>
+        <tr><td><code>df.persist(StorageLevel.X)</code></td><td>Waehle Storage Level</td></tr>
+        <tr><td><code>df.unpersist()</code></td><td>Entfernt aus Cache</td></tr>
+    </table>
+    <div class="highlight">cache() allein cached NICHT sofort! Braucht eine Action:</div>
+    <div class="code-block">df.cache().count()  # cached + zaehlt (Action)
+df.cache().filter()  # cached NICHT - filter ist keine Action</div>
+    <p><strong>Fault-tolerant:</strong> <code>MEMORY_AND_DISK_2</code> oder <code>DISK_ONLY_2</code> (das <code>_2</code> = repliziert)</p>
+</div>
+
+<!-- UDFs -->
+<div class="section">
+    <h2 class="orange">UDFs: Spark vs Pandas</h2>
+    <table>
+        <tr><th></th><th>Spark UDF</th><th>Pandas UDF</th></tr>
+        <tr><td>Verarbeitung</td><td>Zeile fuer Zeile</td><td>Ganze Spalte (Series)</td></tr>
+        <tr><td>Performance</td><td>Langsam (Serialisierung)</td><td>Schnell (Arrow)</td></tr>
+        <tr><td>Signatur</td><td><code>str -> str</code></td><td><code>pd.Series -> pd.Series</code></td></tr>
+    </table>
+    <div class="code-block"># Pandas UDF (schnell)
+@pandas_udf(StringType())
+def my_func(s: pd.Series) -> pd.Series:
+    return s.str.upper()
+
+# Iterator UDF (Modell einmal laden pro Executor)
+def predict(iter: Iterator[pd.Series]) -> Iterator[pd.Series]:
+    model = load_model()  # einmal!
+    for batch in iter:
+        yield model.predict(batch)</div>
+</div>
+
+<!-- AGGREGATION -->
+<div class="section">
+    <h2 class="purple">Aggregation & GroupBy</h2>
+    <div class="code-block">df.groupBy("storeId").agg(
+    avg("value").alias("avg_val"),
+    max("value").alias("max_val")
+)
+
+# count_if (NEU in Spark 3.5!)
+df.agg(F.count_if(F.col("price") >= F.lit(100)))</div>
+    <p><strong>Wichtig:</strong> <code>.avg(col("x"))</code> ist FALSCH! Richtig: <code>.agg(avg("x"))</code></p>
+</div>
+
+<!-- STRING FUNKTIONEN -->
+<div class="section">
+    <h2 class="teal">String & Column Funktionen</h2>
+    <div class="code-block"># Email splitten
+df.withColumn("user", split(col("email"), "@").getItem(0))
+df.withColumn("domain", split(col("email"), "@").getItem(1))
+
+# Datum
+from_unixtime(col("ts"), "MM/dd/yyyy")
+unix_timestamp(col("date"), "yyyy-MM-dd HH:mm")
+
+# Array explodieren
+df.select("supplier", explode("attributes"))</div>
+</div>
+
+<!-- STRUCTURED STREAMING -->
+<div class="section">
+    <h2 class="red">Structured Streaming</h2>
+    <div class="code-block">query = df.writeStream \
+    .format("console") \
+    .outputMode("append") \
+    .option("checkpointLocation", "/path/checkpoint") \
+    .trigger(processingTime="5 seconds") \
+    .start()</div>
+    <table>
+        <tr><th>Trigger</th><th>Bedeutung</th></tr>
+        <tr><td><code>processingTime="5 seconds"</code></td><td>Micro-batch alle 5s</td></tr>
+        <tr><td><code>continuous="5 seconds"</code></td><td>Experimental! Low-latency</td></tr>
+        <tr><td><code>once=True</code></td><td>Einmal ausfuehren, dann stopp</td></tr>
+        <tr><td>(kein Trigger)</td><td>So schnell wie moeglich</td></tr>
+    </table>
+    <p><strong>checkpointLocation</strong> (nicht "checkpoint"!) fuer Fault Tolerance</p>
+</div>
+
+<!-- HAEUFIGE FALLEN -->
+<div class="section" style="grid-column: 1 / -1;">
+    <h2 class="red">Haeufige Pruefungsfallen</h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+        <div>
+            <strong>drop() nimmt Strings, keine Liste:</strong>
+            <div class="code-block">df.drop("a", "b")       # Richtig
+df.drop(["a", "b"])     # FALSCH</div>
+        </div>
+        <div>
+            <strong>Broadcast Threshold in Bytes:</strong>
+            <div class="code-block"># 20 MB = 20 * 1024 * 1024
+spark.conf.set("...Threshold", 20971520)
+# NICHT: 20  (= nur 20 Bytes!)</div>
+        </div>
+        <div>
+            <strong>spark vs DataFrame Methoden:</strong>
+            <div class="code-block"># spark: read, sql, createDataFrame
+# DataFrame: select, filter, collect, show
+# FALSCH: spark.collect(df.select(...))</div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<p style="text-align: center; margin-top: 12px; color: #666; font-size: 9px;">Databricks Certified Associate Developer for Apache Spark 3.5 | Print: Cmd+P > Save as PDF</p>
+
+</body>
+</html>
