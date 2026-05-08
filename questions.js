@@ -2,10 +2,10 @@ const quizData = [
     {
         "question": "A Spark application developer wants to identify which operations cause shuffling, leading to a\nnew stage in the Spark execution plan.\nWhich operation results in a shuffle and a new stage?",
         "options": [
-            "A.. DataFrame.groupBy().agg()",
-            "B.. DataFrame.filter()",
-            "C.. DataFrame.withColumn()",
-            "D.. DataFrame.select()"
+            "A. DataFrame.groupBy().agg()",
+            "B. DataFrame.filter()",
+            "C. DataFrame.withColumn()",
+            "D. DataFrame.select()"
         ],
         "answer": [
             "A"
@@ -15,10 +15,10 @@ const quizData = [
     {
         "question": "A data scientist has been investigating user profile data to build features for their model. After\nsome exploratory data analysis, the data scientist identified that some records in the user\nprofiles contain NULL values in too many fields to be useful.\nThe schema of the user profile table looks like this:\nuser_id STRING,\nusername STRING,\ndate_of_birth DATE,\ncountry STRING,\ncreated_at TIMESTAMP\nThe data scientist decided that if any record contains a NULL value in any field, they want to\nremove that record from the output before further processing.\nWhich block of Spark code can be used to achieve these requirements?",
         "options": [
-            "A.. filtered_users = raw_users.na.drop(\"any\")",
-            "B.. filtered_users = raw_users.na.drop(\"all\")",
-            "C.. filtered_users = raw_users.dropna(how=\"any\")",
-            "D.. filtered_users = raw_users.dropna(how=\"all\")"
+            "A. filtered_users = raw_users.na.drop(\"any\")",
+            "B. filtered_users = raw_users.na.drop(\"all\")",
+            "C. filtered_users = raw_users.dropna(how=\"any\")",
+            "D. filtered_users = raw_users.dropna(how=\"all\")"
         ],
         "answer": [
             "C"
@@ -28,10 +28,10 @@ const quizData = [
     {
         "question": "An engineer has two DataFrames: df1 (small) and df2 (large). A broadcast join is used:\npython\nCopyEdit\nfrom pyspark.sql.functions import broadcast\nresult = df2.join(broadcast(df1), on='id', how='inner')\nWhat is the purpose of using broadcast() in this scenario?\nOptions:",
         "options": [
-            "A.. It filters the id values before performing the join.",
-            "B.. It increases the partition size for df1 and df2.",
-            "C.. It reduces the number of shuffle operations by replicating the smaller DataFrame to all\nnodes.",
-            "D.. It ensures that the join happens only when the id values are identical."
+            "A. It filters the id values before performing the join.",
+            "B. It increases the partition size for df1 and df2.",
+            "C. It reduces the number of shuffle operations by replicating the smaller DataFrame to all\nnodes.",
+            "D. It ensures that the join happens only when the id values are identical."
         ],
         "answer": [
             "C"
@@ -41,10 +41,10 @@ const quizData = [
     {
         "question": "A developer runs:\nWhat is the result?\nOptions:",
         "options": [
-            "A.. It stores all data in a single Parquet file.",
-            "B.. It throws an error if there are null values in either partition column.",
-            "C.. It appends new partitions to an existing Parquet file.",
-            "D.. It creates separate directories for each unique combination of color and fruit."
+            "A. It stores all data in a single Parquet file.",
+            "B. It throws an error if there are null values in either partition column.",
+            "C. It appends new partitions to an existing Parquet file.",
+            "D. It creates separate directories for each unique combination of color and fruit."
         ],
         "answer": [
             "D"
@@ -54,10 +54,10 @@ const quizData = [
     {
         "question": "A data scientist is analyzing a large dataset and has written a PySpark script that includes\nseveral transformations and actions on a DataFrame. The script ends with a collect() action\nto retrieve the results.\nHow does Apache Spark™'s execution hierarchy process the operations when the data\nscientist runs this script?",
         "options": [
-            "A.. The script is first divided into multiple applications, then each application is split into jobs,\nstages, and finally tasks.",
-            "B.. The entire script is treated as a single job, which is then divided into multiple stages, and\neach stage is further divided into tasks based on data partitions.",
-            "C.. The collect() action triggers a job, which is divided into stages at shuffle boundaries, and\neach stage is split into tasks that operate on individual data partitions.",
-            "D.. Spark creates a single task for each transformation and action in the script, and these\ntasks are grouped into stages and jobs based on their dependencies."
+            "A. The script is first divided into multiple applications, then each application is split into jobs,\nstages, and finally tasks.",
+            "B. The entire script is treated as a single job, which is then divided into multiple stages, and\neach stage is further divided into tasks based on data partitions.",
+            "C. The collect() action triggers a job, which is divided into stages at shuffle boundaries, and\neach stage is split into tasks that operate on individual data partitions.",
+            "D. Spark creates a single task for each transformation and action in the script, and these\ntasks are grouped into stages and jobs based on their dependencies."
         ],
         "answer": [
             "C"
@@ -67,10 +67,10 @@ const quizData = [
     {
         "question": "A data engineer has written the following code to join two DataFrames df1 and df2:\ndf1 = spark.read.csv(\"sales_data.csv\")\n\n\ndf2 = spark.read.csv(\"product_data.csv\")\ndf_joined = df1.join(df2, df1.product_id == df2.product_id)\nThe DataFrame df1 contains ~10 GB of sales data, and df2 contains ~8 MB of product data.\nWhich join strategy will Spark use?",
         "options": [
-            "A.. Shuffle join, as the size difference between df1 and df2 is too large for a broadcast join to\nwork efficiently.",
-            "B.. Shuffle join, because AQE is not enabled, and Spark uses a static query plan.",
-            "C.. Shuffle join because no broadcast hints were provided.",
-            "D.. Broadcast join, as df2 is smaller than the default broadcast threshold."
+            "A. Shuffle join, as the size difference between df1 and df2 is too large for a broadcast join to\nwork efficiently.",
+            "B. Shuffle join, because AQE is not enabled, and Spark uses a static query plan.",
+            "C. Shuffle join because no broadcast hints were provided.",
+            "D. Broadcast join, as df2 is smaller than the default broadcast threshold."
         ],
         "answer": [
             "D"
@@ -80,11 +80,11 @@ const quizData = [
     {
         "question": "A data engineer is reviewing a Spark application that applies several transformations to a\nDataFrame but notices that the job does not start executing immediately.\nWhich two characteristics of Apache Spark's execution model explain this behavior? (Choose\n2 answers)",
         "options": [
-            "A.. Transformations are executed immediately to build the lineage graph.",
-            "B.. The Spark engine optimizes the execution plan during the transformations, causing\ndelays.",
-            "C.. Transformations are evaluated lazily.",
-            "D.. The Spark engine requires manual intervention to start executing transformations.",
-            "E.. Only actions trigger the execution of the transformation pipeline."
+            "A. Transformations are executed immediately to build the lineage graph.",
+            "B. The Spark engine optimizes the execution plan during the transformations, causing\ndelays.",
+            "C. Transformations are evaluated lazily.",
+            "D. The Spark engine requires manual intervention to start executing transformations.",
+            "E. Only actions trigger the execution of the transformation pipeline."
         ],
         "answer": [
             "C",
@@ -95,10 +95,10 @@ const quizData = [
     {
         "question": "What is the behavior of the function date_sub(start, days) if a negative value is passed into\nthe days parameter?",
         "options": [
-            "A.. The number of days specified will be added to the start date.",
-            "B.. An error message of an invalid parameter will be returned.",
-            "C.. The same start date will be returned.",
-            "D.. The number of days specified will be removed from the start date."
+            "A. The number of days specified will be added to the start date.",
+            "B. An error message of an invalid parameter will be returned.",
+            "C. The same start date will be returned.",
+            "D. The number of days specified will be removed from the start date."
         ],
         "answer": [
             "A"
@@ -108,10 +108,10 @@ const quizData = [
     {
         "question": "A data scientist at a large e-commerce company needs to process and analyze 2 TB of daily\ncustomer transaction data. The company wants to implement real-time fraud detection and\npersonalized product recommendations.\nCurrently, the company uses a traditional relational database system, which struggles with\nthe increasing data volume and velocity.\nWhich feature of Apache Spark effectively addresses this challenge?",
         "options": [
-            "A.. Ability to process small datasets efficiently",
-            "B.. In-memory computation and parallel processing capabilities",
-            "C.. Support for SQL queries on structured data",
-            "D.. Built-in machine learning libraries"
+            "A. Ability to process small datasets efficiently",
+            "B. In-memory computation and parallel processing capabilities",
+            "C. Support for SQL queries on structured data",
+            "D. Built-in machine learning libraries"
         ],
         "answer": [
             "B"
@@ -121,10 +121,10 @@ const quizData = [
     {
         "question": "A Spark application is experiencing performance issues in client mode due to the driver being\nresource-constrained.\nHow should this issue be resolved?",
         "options": [
-            "A.. Switch the deployment mode to cluster mode.",
-            "B.. Add more executor instances to the cluster.",
-            "C.. Increase the driver memory on the client machine.",
-            "D.. Switch the deployment mode to local mode."
+            "A. Switch the deployment mode to cluster mode.",
+            "B. Add more executor instances to the cluster.",
+            "C. Increase the driver memory on the client machine.",
+            "D. Switch the deployment mode to local mode."
         ],
         "answer": [
             "A"
@@ -134,10 +134,10 @@ const quizData = [
     {
         "question": "A Spark application suffers from too many small tasks due to excessive partitioning. How can\nthis be fixed without a full shuffle?\nOptions:",
         "options": [
-            "A.. Use the distinct() transformation to combine similar partitions",
-            "B.. Use the coalesce() transformation with a lower number of partitions",
-            "C.. Use the sortBy() transformation to reorganize the data",
-            "D.. Use the repartition() transformation with a lower number of partitions"
+            "A. Use the distinct() transformation to combine similar partitions",
+            "B. Use the coalesce() transformation with a lower number of partitions",
+            "C. Use the sortBy() transformation to reorganize the data",
+            "D. Use the repartition() transformation with a lower number of partitions"
         ],
         "answer": [
             "B"
@@ -147,10 +147,10 @@ const quizData = [
     {
         "question": "A developer needs to produce a Python dictionary using data stored in a small Parquet table,\nwhich looks like this:\n\n\n \nThe resulting Python dictionary must contain a mapping of region -> region id containing the\nsmallest 3 region_id values.\nWhich code fragment meets the requirements?\nA)\n \nB)\n \nC)\n\n\n \nD)\n \nThe resulting Python dictionary must contain a mapping of region -> region_id for the\nsmallest 3 region_id values.\nWhich code fragment meets the requirements?",
         "options": [
-            "A.. regions = dict(\nregions_df\n.select('region', 'region_id')\n.sort('region_id')\n.take(3)\n)",
-            "B.. regions = dict(\nregions_df\n.select('region_id', 'region')\n.sort('region_id')\n.take(3)\n)",
-            "C.. regions = dict(\nregions_df\n.select('region_id', 'region')\n.limit(3)\n\n\n.collect()\n)",
-            "D.. regions = dict(\nregions_df\n.select('region', 'region_id')\n.sort(desc('region_id'))\n.take(3)\n)"
+            "A. regions = dict(\nregions_df\n.select('region', 'region_id')\n.sort('region_id')\n.take(3)\n)",
+            "B. regions = dict(\nregions_df\n.select('region_id', 'region')\n.sort('region_id')\n.take(3)\n)",
+            "C. regions = dict(\nregions_df\n.select('region_id', 'region')\n.limit(3)\n\n\n.collect()\n)",
+            "D. regions = dict(\nregions_df\n.select('region', 'region_id')\n.sort(desc('region_id'))\n.take(3)\n)"
         ],
         "answer": [
             "A"
@@ -160,10 +160,10 @@ const quizData = [
     {
         "question": "A data engineer is streaming data from Kafka and requires:\nMinimal latency\nExactly-once processing guarantees\nWhich trigger mode should be used?",
         "options": [
-            "A.. .trigger(processingTime='1 second')",
-            "B.. .trigger(continuous=True)",
-            "C.. .trigger(continuous='1 second')",
-            "D.. .trigger(availableNow=True)"
+            "A. .trigger(processingTime='1 second')",
+            "B. .trigger(continuous=True)",
+            "C. .trigger(continuous='1 second')",
+            "D. .trigger(availableNow=True)"
         ],
         "answer": [
             "A"
@@ -173,10 +173,10 @@ const quizData = [
     {
         "question": "A developer notices that all the post-shuffle partitions in a dataset are smaller than the value\nset for spark.sql.adaptive.maxShuffledHashJoinLocalMapThreshold.\nWhich type of join will Adaptive Query Execution (AQE) choose in this case?",
         "options": [
-            "A.. A Cartesian join",
-            "B.. A shuffled hash join",
-            "C.. A broadcast nested loop join",
-            "D.. A sort-merge join"
+            "A. A Cartesian join",
+            "B. A shuffled hash join",
+            "C. A broadcast nested loop join",
+            "D. A sort-merge join"
         ],
         "answer": [
             "B"
@@ -186,10 +186,10 @@ const quizData = [
     {
         "question": "What is the behavior for function date_sub(start, days) if a negative value is passed into the\ndays parameter?",
         "options": [
-            "A.. The same start date will be returned",
-            "B.. An error message of an invalid parameter will be returned",
-            "C.. The number of days specified will be added to the start date",
-            "D.. The number of days specified will be removed from the start date"
+            "A. The same start date will be returned",
+            "B. An error message of an invalid parameter will be returned",
+            "C. The number of days specified will be added to the start date",
+            "D. The number of days specified will be removed from the start date"
         ],
         "answer": [
             "C"
@@ -199,10 +199,10 @@ const quizData = [
     {
         "question": "A developer created a DataFrame with columns color, fruit, and taste, and wrote the data to a\nParquet directory using:\ndf.write.partitionBy(\"color\", \"taste\").parquet(\"/path/to/output\")\nWhat is the result of this code?",
         "options": [
-            "A.. It appends new partitions to an existing Parquet file.",
-            "B.. It throws an error if there are null values in either partition column.",
-            "C.. It creates separate directories for each unique combination of color and taste.",
-            "D.. It stores all data in a single Parquet file."
+            "A. It appends new partitions to an existing Parquet file.",
+            "B. It throws an error if there are null values in either partition column.",
+            "C. It creates separate directories for each unique combination of color and taste.",
+            "D. It stores all data in a single Parquet file."
         ],
         "answer": [
             "C"
@@ -212,10 +212,10 @@ const quizData = [
     {
         "question": "A developer initializes a SparkSession:\n \nspark = SparkSession.builder \\\n.appName(\"Analytics Application\") \\\n.getOrCreate()\nWhich statement describes the spark SparkSession?",
         "options": [
-            "A.. The getOrCreate() method explicitly destroys any existing SparkSession and creates a\nnew one.",
-            "B.. A SparkSession is unique for each appName, and calling getOrCreate() with the same\nname will return an existing SparkSession once it has been created.",
-            "C.. If a SparkSession already exists, this code will return the existing session instead of\ncreating a new one.",
-            "D.. A new SparkSession is created every time the getOrCreate() method is invoked."
+            "A. The getOrCreate() method explicitly destroys any existing SparkSession and creates a\nnew one.",
+            "B. A SparkSession is unique for each appName, and calling getOrCreate() with the same\nname will return an existing SparkSession once it has been created.",
+            "C. If a SparkSession already exists, this code will return the existing session instead of\ncreating a new one.",
+            "D. A new SparkSession is created every time the getOrCreate() method is invoked."
         ],
         "answer": [
             "C"
@@ -225,10 +225,10 @@ const quizData = [
     {
         "question": "In the code block below, aggDF contains aggregations on a streaming DataFrame:\n \nWhich output mode at line 3 ensures that the entire result table is written to the console\nduring each trigger execution?",
         "options": [
-            "A.. complete",
-            "B.. append",
-            "C.. replace",
-            "D.. aggregate"
+            "A. complete",
+            "B. append",
+            "C. replace",
+            "D. aggregate"
         ],
         "answer": [
             "A"
@@ -238,10 +238,10 @@ const quizData = [
     {
         "question": "A data scientist at an e-commerce company is working with user data obtained from its\n\n\nsubscriber database and has stored the data in a DataFrame df_user.\nBefore further processing, the data scientist wants to create another DataFrame\ndf_user_non_pii and store only the non-PII columns.\nThe PII columns in df_user are name, email, and birthdate.\nWhich code snippet can be used to meet this requirement?",
         "options": [
-            "A.. df_user_non_pii = df_user.drop(\"name\", \"email\", \"birthdate\")",
-            "B.. df_user_non_pii = df_user.dropFields(\"name\", \"email\", \"birthdate\")",
-            "C.. df_user_non_pii = df_user.select(\"name\", \"email\", \"birthdate\")",
-            "D.. df_user_non_pii = df_user.remove(\"name\", \"email\", \"birthdate\")"
+            "A. df_user_non_pii = df_user.drop(\"name\", \"email\", \"birthdate\")",
+            "B. df_user_non_pii = df_user.dropFields(\"name\", \"email\", \"birthdate\")",
+            "C. df_user_non_pii = df_user.select(\"name\", \"email\", \"birthdate\")",
+            "D. df_user_non_pii = df_user.remove(\"name\", \"email\", \"birthdate\")"
         ],
         "answer": [
             "A"
@@ -251,10 +251,10 @@ const quizData = [
     {
         "question": "What is the risk associated with this operation when converting a large Pandas API on Spark\nDataFrame back to a Pandas DataFrame?",
         "options": [
-            "A.. The conversion will automatically distribute the data across worker nodes",
-            "B.. The operation will fail if the Pandas DataFrame exceeds 1000 rows",
-            "C.. Data will be lost during conversion",
-            "D.. The operation will load all data into the driver's memory, potentially causing memory\noverflow"
+            "A. The conversion will automatically distribute the data across worker nodes",
+            "B. The operation will fail if the Pandas DataFrame exceeds 1000 rows",
+            "C. Data will be lost during conversion",
+            "D. The operation will load all data into the driver's memory, potentially causing memory\noverflow"
         ],
         "answer": [
             "D"
@@ -264,10 +264,10 @@ const quizData = [
     {
         "question": "A data engineer is running a batch processing job on a Spark cluster with the following\nconfiguration:\n10 worker nodes\n16 CPU cores per worker node\n64 GB RAM per node\nThe data engineer wants to allocate four executors per node, each executor using four cores.\nWhat is the total number of CPU cores used by the application?",
         "options": [
-            "A.. 160",
-            "B.. 64",
-            "C.. 80",
-            "D.. 40"
+            "A. 160",
+            "B. 64",
+            "C. 80",
+            "D. 40"
         ],
         "answer": [
             "C"
@@ -277,10 +277,10 @@ const quizData = [
     {
         "question": "A data engineer needs to join multiple DataFrames and has written the following code:\nfrom pyspark.sql.functions import broadcast\ndata1 = [(1, \"A\"), (2, \"B\")]\ndata2 = [(1, \"X\"), (2, \"Y\")]\ndata3 = [(1, \"M\"), (2, \"N\")]\ndf1 = spark.createDataFrame(data1, [\"id\", \"val1\"])\ndf2 = spark.createDataFrame(data2, [\"id\", \"val2\"])\ndf3 = spark.createDataFrame(data3, [\"id\", \"val3\"])\ndf_joined = df1.join(broadcast(df2), \"id\", \"inner\") \\\n.join(broadcast(df3), \"id\", \"inner\")\nWhat will be the output of this code?",
         "options": [
-            "A.. The code will work correctly and perform two broadcast joins simultaneously to join df1\n\n\nwith df2, and then the result with df3.",
-            "B.. The code will fail because only one broadcast join can be performed at a time.",
-            "C.. The code will fail because the second join condition (df2.id == df3.id) is incorrect.",
-            "D.. The code will result in an error because broadcast() must be called before the joins, not\ninline."
+            "A. The code will work correctly and perform two broadcast joins simultaneously to join df1\n\n\nwith df2, and then the result with df3.",
+            "B. The code will fail because only one broadcast join can be performed at a time.",
+            "C. The code will fail because the second join condition (df2.id == df3.id) is incorrect.",
+            "D. The code will result in an error because broadcast() must be called before the joins, not\ninline."
         ],
         "answer": [
             "A"
@@ -290,10 +290,10 @@ const quizData = [
     {
         "question": "What is the benefit of Adaptive Query Execution (AQE)?",
         "options": [
-            "A.. It allows Spark to optimize the query plan before execution but does not adapt during\nruntime.",
-            "B.. It enables the adjustment of the query plan during runtime, handling skewed data,\noptimizing join strategies, and improving overall query performance.",
-            "C.. It optimizes query execution by parallelizing tasks and does not adjust strategies based on\nruntime metrics like data skew.",
-            "D.. It automatically distributes tasks across nodes in the clusters and does not perform\nruntime adjustments to the query plan."
+            "A. It allows Spark to optimize the query plan before execution but does not adapt during\nruntime.",
+            "B. It enables the adjustment of the query plan during runtime, handling skewed data,\noptimizing join strategies, and improving overall query performance.",
+            "C. It optimizes query execution by parallelizing tasks and does not adjust strategies based on\nruntime metrics like data skew.",
+            "D. It automatically distributes tasks across nodes in the clusters and does not perform\nruntime adjustments to the query plan."
         ],
         "answer": [
             "B"
@@ -303,10 +303,10 @@ const quizData = [
     {
         "question": "A data engineer writes the following code to join two DataFrames df1 and df2:\ndf1 = spark.read.csv(\"sales_data.csv\") # ~10 GB\ndf2 = spark.read.csv(\"product_data.csv\") # ~8 MB\nresult = df1.join(df2, df1.product_id == df2.product_id)\nWhich join strategy will Spark use?",
         "options": [
-            "A.. Shuffle join, because AQE is not enabled, and Spark uses a static query plan",
-            "B.. Broadcast join, as df2 is smaller than the default broadcast threshold",
-            "C.. Shuffle join, as the size difference between df1 and df2 is too large for a broadcast join to\nwork efficiently",
-            "D.. Shuffle join because no broadcast hints were provided"
+            "A. Shuffle join, because AQE is not enabled, and Spark uses a static query plan",
+            "B. Broadcast join, as df2 is smaller than the default broadcast threshold",
+            "C. Shuffle join, as the size difference between df1 and df2 is too large for a broadcast join to\nwork efficiently",
+            "D. Shuffle join because no broadcast hints were provided"
         ],
         "answer": [
             "B"
@@ -316,10 +316,10 @@ const quizData = [
     {
         "question": "A data engineer has noticed that upgrading the Spark version in their applications from Spark\n3.0 to Spark 3.5 has improved the runtime of some scheduled Spark applications.\nLooking further, the data engineer realizes that Adaptive Query Execution (AQE) is now\nenabled.\nWhich operation should AQE be implementing to automatically improve the Spark application\nperformance?",
         "options": [
-            "A.. Dynamically switching join strategies",
-            "B.. Collecting persistent table statistics and storing them in the metastore for future use",
-            "C.. Improving the performance of single-stage Spark jobs",
-            "D.. Optimizing the layout of Delta files on disk"
+            "A. Dynamically switching join strategies",
+            "B. Collecting persistent table statistics and storing them in the metastore for future use",
+            "C. Improving the performance of single-stage Spark jobs",
+            "D. Optimizing the layout of Delta files on disk"
         ],
         "answer": [
             "A"
@@ -329,10 +329,10 @@ const quizData = [
     {
         "question": "A data engineer wants to create a Streaming DataFrame that reads from a Kafka topic called\nfeed.\nWhich code fragment should be inserted in line 5 to meet the requirement?\nCode context:\nspark \\\n.readStream \\\n.format(\"kafka\") \\\n.option(\"kafka.bootstrap.servers\", \"host1:port1,host2:port2\") \\\n.[LINE 5] \\\n.load()\nOptions:",
         "options": [
-            "A.. .option(\"subscribe\", \"feed\")",
-            "B.. .option(\"subscribe.topic\", \"feed\")",
-            "C.. .option(\"kafka.topic\", \"feed\")",
-            "D.. .option(\"topic\", \"feed\")"
+            "A. .option(\"subscribe\", \"feed\")",
+            "B. .option(\"subscribe.topic\", \"feed\")",
+            "C. .option(\"kafka.topic\", \"feed\")",
+            "D. .option(\"topic\", \"feed\")"
         ],
         "answer": [
             "A"
@@ -342,10 +342,10 @@ const quizData = [
     {
         "question": "A developer is trying to join two tables, sales.purchases_fct and sales.customer_dim, using\nthe following code:\nfact_df = purch_df.join(cust_df, F.col('customer_id') == F.col('custid')) The developer has\ndiscovered that customers in the purchases_fct table that do not exist in the customer_dim\ntable are being dropped from the joined table.\nWhich change should be made to the code to stop these customer records from being\ndropped?",
         "options": [
-            "A.. fact_df = purch_df.join(cust_df, F.col('customer_id') == F.col('custid'), 'left')",
-            "B.. fact_df = cust_df.join(purch_df, F.col('customer_id') == F.col('custid'))",
-            "C.. fact_df = purch_df.join(cust_df, F.col('cust_id') == F.col('customer_id'))",
-            "D.. fact_df = purch_df.join(cust_df, F.col('customer_id') == F.col('custid'), 'right_outer')"
+            "A. fact_df = purch_df.join(cust_df, F.col('customer_id') == F.col('custid'), 'left')",
+            "B. fact_df = cust_df.join(purch_df, F.col('customer_id') == F.col('custid'))",
+            "C. fact_df = purch_df.join(cust_df, F.col('cust_id') == F.col('customer_id'))",
+            "D. fact_df = purch_df.join(cust_df, F.col('customer_id') == F.col('custid'), 'right_outer')"
         ],
         "answer": [
             "A"
@@ -355,10 +355,10 @@ const quizData = [
     {
         "question": "A data analyst wants to add a column date derived from a timestamp column.\nOptions:",
         "options": [
-            "A.. dates_df.withColumn(\"date\", f.unix_timestamp(\"timestamp\")).show()",
-            "B.. dates_df.withColumn(\"date\", f.to_date(\"timestamp\")).show()",
-            "C.. dates_df.withColumn(\"date\", f.date_format(\"timestamp\", \"yyyy-MM-dd\")).show()",
-            "D.. dates_df.withColumn(\"date\", f.from_unixtime(\"timestamp\")).show()"
+            "A. dates_df.withColumn(\"date\", f.unix_timestamp(\"timestamp\")).show()",
+            "B. dates_df.withColumn(\"date\", f.to_date(\"timestamp\")).show()",
+            "C. dates_df.withColumn(\"date\", f.date_format(\"timestamp\", \"yyyy-MM-dd\")).show()",
+            "D. dates_df.withColumn(\"date\", f.from_unixtime(\"timestamp\")).show()"
         ],
         "answer": [
             "B"
@@ -368,10 +368,10 @@ const quizData = [
     {
         "question": "An engineer wants to join two DataFrames df1 and df2 on the respective employee_id and\nemp_id columns:\ndf1: employee_id INT, name STRING\ndf2: emp_id INT, department STRING\nThe engineer uses:\nresult = df1.join(df2, df1.employee_id == df2.emp_id, how='inner')\nWhat is the behaviour of the code snippet?",
         "options": [
-            "A.. The code fails to execute because the column names employee_id and emp_id do not\nmatch automatically",
-            "B.. The code fails to execute because it must use on='employee_id' to specify the join column\nexplicitly",
-            "C.. The code fails to execute because PySpark does not support joining DataFrames with a\ndifferent structure",
-            "D.. The code works as expected because the join condition explicitly matches employee_id\nfrom df1 with emp_id from df2"
+            "A. The code fails to execute because the column names employee_id and emp_id do not\nmatch automatically",
+            "B. The code fails to execute because it must use on='employee_id' to specify the join column\nexplicitly",
+            "C. The code fails to execute because PySpark does not support joining DataFrames with a\ndifferent structure",
+            "D. The code works as expected because the join condition explicitly matches employee_id\nfrom df1 with emp_id from df2"
         ],
         "answer": [
             "D"
@@ -381,10 +381,10 @@ const quizData = [
     {
         "question": "An engineer has a large ORC file located at /file/test_data.orc and wants to read only specific\ncolumns to reduce memory usage.\n\n\nWhich code fragment will select the columns, i.e., col1, col2, during the reading process?",
         "options": [
-            "A.. spark.read.orc(\"/file/test_data.orc\").filter(\"col1 = 'value' \").select(\"col2\")",
-            "B.. spark.read.format(\"orc\").select(\"col1\", \"col2\").load(\"/file/test_data.orc\")",
-            "C.. spark.read.orc(\"/file/test_data.orc\").selected(\"col1\", \"col2\")",
-            "D.. spark.read.format(\"orc\").load(\"/file/test_data.orc\").select(\"col1\", \"col2\")"
+            "A. spark.read.orc(\"/file/test_data.orc\").filter(\"col1 = 'value' \").select(\"col2\")",
+            "B. spark.read.format(\"orc\").select(\"col1\", \"col2\").load(\"/file/test_data.orc\")",
+            "C. spark.read.orc(\"/file/test_data.orc\").selected(\"col1\", \"col2\")",
+            "D. spark.read.format(\"orc\").load(\"/file/test_data.orc\").select(\"col1\", \"col2\")"
         ],
         "answer": [
             "D"
@@ -394,10 +394,10 @@ const quizData = [
     {
         "question": "A developer is creating a Spark application that performs multiple DataFrame transformations\nand actions. The developer wants to maintain optimal performance by properly managing the\nSparkSession.\nHow should the developer handle the SparkSession throughout the application?",
         "options": [
-            "A.. Use a single SparkSession instance for the entire application.",
-            "B.. Avoid using a SparkSession and rely on SparkContext only.",
-            "C.. Create a new SparkSession instance before each transformation.",
-            "D.. Stop and restart the SparkSession after each action."
+            "A. Use a single SparkSession instance for the entire application.",
+            "B. Avoid using a SparkSession and rely on SparkContext only.",
+            "C. Create a new SparkSession instance before each transformation.",
+            "D. Stop and restart the SparkSession after each action."
         ],
         "answer": [
             "A"
@@ -407,10 +407,10 @@ const quizData = [
     {
         "question": "The data engineering team created a pipeline that extracts data from a transaction system.\nThe transaction system stores timestamps in UTC, and the data engineers must now\ntransform the transaction_datetime field to the \"America/New_York\" timezone for reporting.\nWhich code should be used to convert the timestamp to the target timezone?",
         "options": [
-            "A.. raw.withColumn(\"transaction_datetime\", from_utc_timestamp(col(\"transaction_datetime\"),\n\"America/New_York\"))",
-            "B.. raw.withColumn(\"transaction_datetime\", to_utc_timestamp(col(\"transaction_datetime\"),\n\"America/New_York\"))",
-            "C.. raw.withColumn(\"transaction_datetime\", date_format(col(\"transaction_datetime\"),\n\"America/New_York\"))",
-            "D.. raw.withColumn(\"transaction_datetime\", convert_timezone(col(\"transaction_datetime\"),\n\"America/New_York\"))"
+            "A. raw.withColumn(\"transaction_datetime\", from_utc_timestamp(col(\"transaction_datetime\"),\n\"America/New_York\"))",
+            "B. raw.withColumn(\"transaction_datetime\", to_utc_timestamp(col(\"transaction_datetime\"),\n\"America/New_York\"))",
+            "C. raw.withColumn(\"transaction_datetime\", date_format(col(\"transaction_datetime\"),\n\"America/New_York\"))",
+            "D. raw.withColumn(\"transaction_datetime\", convert_timezone(col(\"transaction_datetime\"),\n\"America/New_York\"))"
         ],
         "answer": [
             "A"
@@ -420,10 +420,10 @@ const quizData = [
     {
         "question": "Given the code fragment:\nimport pyspark.pandas as ps\npsdf = ps.DataFrame({'col1': [1, 2], 'col2': [3, 4]})\nWhich method is used to convert a Pandas API on Spark DataFrame\n(pyspark.pandas.DataFrame) into a standard PySpark DataFrame (pyspark.sql.DataFrame)?",
         "options": [
-            "A.. psdf.to_spark()",
-            "B.. psdf.to_pyspark()",
-            "C.. psdf.to_pandas()",
-            "D.. psdf.to_dataframe()"
+            "A. psdf.to_spark()",
+            "B. psdf.to_pyspark()",
+            "C. psdf.to_pandas()",
+            "D. psdf.to_dataframe()"
         ],
         "answer": [
             "A"
@@ -433,10 +433,10 @@ const quizData = [
     {
         "question": "An engineer notices a significant increase in the job execution time during the execution of a\nSpark job. After some investigation, the engineer decides to check the logs produced by the\nExecutors.\nHow should the engineer retrieve the Executor logs to diagnose performance issues in the\nSpark application?",
         "options": [
-            "A.. Locate the executor logs on the Spark master node, typically under the /tmp directory.",
-            "B.. Use the command spark-submit with the -verbose flag to print the logs to the console.",
-            "C.. Use the Spark UI to select the stage and view the executor logs directly from the stages\ntab.",
-            "D.. Fetch the logs by running a Spark job with the spark-sql CLI tool."
+            "A. Locate the executor logs on the Spark master node, typically under the /tmp directory.",
+            "B. Use the command spark-submit with the -verbose flag to print the logs to the console.",
+            "C. Use the Spark UI to select the stage and view the executor logs directly from the stages\ntab.",
+            "D. Fetch the logs by running a Spark job with the spark-sql CLI tool."
         ],
         "answer": [
             "C"
@@ -446,10 +446,10 @@ const quizData = [
     {
         "question": "An application architect has been investigating Spark Connect as a way to modernize\nexisting Spark applications running in their organization.\nWhich requirement blocks the adoption of Spark Connect in this organization?",
         "options": [
-            "A.. Debuggability: the ability to perform interactive debugging directly from the application\ncode",
-            "B.. Upgradability: the ability to upgrade the Spark applications independently from the Spark\ndriver itself",
-            "C.. Complete Spark API support: the ability to migrate all existing code to Spark Connect\nwithout modification, including the RDD APIs",
-            "D.. Stability: isolation of application code and dependencies from each other and the Spark\ndriver"
+            "A. Debuggability: the ability to perform interactive debugging directly from the application\ncode",
+            "B. Upgradability: the ability to upgrade the Spark applications independently from the Spark\ndriver itself",
+            "C. Complete Spark API support: the ability to migrate all existing code to Spark Connect\nwithout modification, including the RDD APIs",
+            "D. Stability: isolation of application code and dependencies from each other and the Spark\ndriver"
         ],
         "answer": [
             "C"
@@ -459,10 +459,10 @@ const quizData = [
     {
         "question": "A Spark engineer is troubleshooting a Spark application that has been encountering out-of-\nmemory errors during execution. By reviewing the Spark driver logs, the engineer notices\nmultiple \"GC overhead limit exceeded\" messages.\nWhich action should the engineer take to resolve this issue?",
         "options": [
-            "A.. Optimize the data processing logic by repartitioning the DataFrame.",
-            "B.. Modify the Spark configuration to disable garbage collection",
-            "C.. Increase the memory allocated to the Spark Driver.",
-            "D.. Cache large DataFrames to persist them in memory."
+            "A. Optimize the data processing logic by repartitioning the DataFrame.",
+            "B. Modify the Spark configuration to disable garbage collection",
+            "C. Increase the memory allocated to the Spark Driver.",
+            "D. Cache large DataFrames to persist them in memory."
         ],
         "answer": [
             "C"
@@ -472,10 +472,10 @@ const quizData = [
     {
         "question": "In the code block below, aggDF contains aggregations on a streaming DataFrame:\naggDF.writeStream \\\n.format(\"console\") \\\n.outputMode(\"???\") \\\n.start()\nWhich output mode at line 3 ensures that the entire result table is written to the console\nduring each trigger execution?",
         "options": [
-            "A.. AGGREGATE",
-            "B.. COMPLETE",
-            "C.. REPLACE",
-            "D.. APPEND"
+            "A. AGGREGATE",
+            "B. COMPLETE",
+            "C. REPLACE",
+            "D. APPEND"
         ],
         "answer": [
             "B"
@@ -485,10 +485,10 @@ const quizData = [
     {
         "question": "Given a DataFrame df that has 10 partitions, after running the code:\ndf.repartition(20)\nHow many partitions will the result DataFrame have?",
         "options": [
-            "A.. 5",
-            "B.. 20",
-            "C.. Same number as the cluster executors",
-            "D.. 10"
+            "A. 5",
+            "B. 20",
+            "C. Same number as the cluster executors",
+            "D. 10"
         ],
         "answer": [
             "B"
@@ -498,10 +498,10 @@ const quizData = [
     {
         "question": "A data engineer is working on a Streaming DataFrame streaming_df with the given streaming\ndata:\n\n\nWhich operation is supported with streamingdf ?",
         "options": [
-            "A.. streaming_df. select (countDistinct (\"Name\") )",
-            "B.. streaming_df.groupby(\"Id\") .count ()",
-            "C.. streaming_df.orderBy(\"timestamp\").limit(4)",
-            "D.. streaming_df.filter (col(\"count\") < 30).show()\n\nIn Structured Streaming, only a limited subset of operations is supported due to the nature of\nunbounded data. Operations like sorting (orderBy) and global aggregation (countDistinct)\nrequire a full view of the dataset, which is not possible with streaming data unless specific\nwatermarks or windows are defined.\nReview of Each Option:\nA: select(countDistinct(\"Name\"))\nNot allowed - Global aggregation like countDistinct() requires the full dataset and is not\nsupported directly in streaming without watermark and windowing logic.\nReference: Databricks Structured Streaming Guide - Unsupported Operations.\nB: groupby(\"Id\").count()\nSupported - Streaming aggregations over a key (like groupBy(\"Id\")) are supported. Spark\nmaintains intermediate state for each key.\nReference: Databricks Docs → Aggregations in Structured Streaming\n(https://docs.databricks.com/structured-streaming/aggregation.html) C .\norderBy(\"timestamp\").limit(4)\nNot allowed - Sorting and limiting require a full view of the stream (which is infinite), so this is\nunsupported in streaming DataFrames.\nReference: Spark Structured Streaming - Unsupported Operations (ordering without\nwatermark/window not allowed).\nD: filter(col(\"count\") < 30).show()\nNot allowed - show() is a blocking operation used for debugging batch DataFrames; it's not\nallowed on streaming DataFrames.\n\n\nReference: Structured Streaming Programming Guide - Output operations like show() are not\nsupported.\nReference Extract from Official Guide:\n\"Operations like orderBy, limit, show, and countDistinct are not supported in Structured\nStreaming because they require the full dataset to compute a result. Use groupBy(...).agg(...)\ninstead for incremental aggregations.\"\n- Databricks Structured Streaming Programming Guide"
+            "A. streaming_df. select (countDistinct (\"Name\") )",
+            "B. streaming_df.groupby(\"Id\") .count ()",
+            "C. streaming_df.orderBy(\"timestamp\").limit(4)",
+            "D. streaming_df.filter (col(\"count\") < 30).show()\n\nIn Structured Streaming, only a limited subset of operations is supported due to the nature of\nunbounded data. Operations like sorting (orderBy) and global aggregation (countDistinct)\nrequire a full view of the dataset, which is not possible with streaming data unless specific\nwatermarks or windows are defined.\nReview of Each Option:\nA: select(countDistinct(\"Name\"))\nNot allowed - Global aggregation like countDistinct() requires the full dataset and is not\nsupported directly in streaming without watermark and windowing logic.\nReference: Databricks Structured Streaming Guide - Unsupported Operations.\nB: groupby(\"Id\").count()\nSupported - Streaming aggregations over a key (like groupBy(\"Id\")) are supported. Spark\nmaintains intermediate state for each key.\nReference: Databricks Docs → Aggregations in Structured Streaming\n(https://docs.databricks.com/structured-streaming/aggregation.html) C .\norderBy(\"timestamp\").limit(4)\nNot allowed - Sorting and limiting require a full view of the stream (which is infinite), so this is\nunsupported in streaming DataFrames.\nReference: Spark Structured Streaming - Unsupported Operations (ordering without\nwatermark/window not allowed).\nD: filter(col(\"count\") < 30).show()\nNot allowed - show() is a blocking operation used for debugging batch DataFrames; it's not\nallowed on streaming DataFrames.\n\n\nReference: Structured Streaming Programming Guide - Output operations like show() are not\nsupported.\nReference Extract from Official Guide:\n\"Operations like orderBy, limit, show, and countDistinct are not supported in Structured\nStreaming because they require the full dataset to compute a result. Use groupBy(...).agg(...)\ninstead for incremental aggregations.\"\n- Databricks Structured Streaming Programming Guide"
         ],
         "answer": [
             "B"
@@ -510,10 +510,10 @@ const quizData = [
     {
         "question": "Given the code:\ndf = spark.read.csv(\"large_dataset.csv\")\nfiltered_df = df.filter(col(\"error_column\").contains(\"error\"))\nmapped_df = filtered_df.select(split(col(\"timestamp\"), \" \").getItem(0).alias(\"date\"),\nlit(1).alias(\"count\")) reduced_df = mapped_df.groupBy(\"date\").sum(\"count\")\nreduced_df.count() reduced_df.show() At which point will Spark actually begin processing the\ndata?",
         "options": [
-            "A.. When the filter transformation is applied",
-            "B.. When the count action is applied",
-            "C.. When the groupBy transformation is applied",
-            "D.. When the show action is applied"
+            "A. When the filter transformation is applied",
+            "B. When the count action is applied",
+            "C. When the groupBy transformation is applied",
+            "D. When the show action is applied"
         ],
         "answer": [
             "B"
@@ -523,10 +523,10 @@ const quizData = [
     {
         "question": "A Spark DataFrame df is cached using the MEMORY_AND_DISK storage level, but the\nDataFrame is too large to fit entirely in memory.\nWhat is the likely behavior when Spark runs out of memory to store the DataFrame?",
         "options": [
-            "A.. Spark duplicates the DataFrame in both memory and disk. If it doesn't fit in memory, the\nDataFrame is stored and retrieved from the disk entirely.",
-            "B.. Spark splits the DataFrame evenly between memory and disk, ensuring balanced storage\nutilization.",
-            "C.. Spark will store as much data as possible in memory and spill the rest to disk when\nmemory is full, continuing processing with performance overhead.",
-            "D.. Spark stores the frequently accessed rows in memory and less frequently accessed rows\n\n\non disk, utilizing both resources to offer balanced performance."
+            "A. Spark duplicates the DataFrame in both memory and disk. If it doesn't fit in memory, the\nDataFrame is stored and retrieved from the disk entirely.",
+            "B. Spark splits the DataFrame evenly between memory and disk, ensuring balanced storage\nutilization.",
+            "C. Spark will store as much data as possible in memory and spill the rest to disk when\nmemory is full, continuing processing with performance overhead.",
+            "D. Spark stores the frequently accessed rows in memory and less frequently accessed rows\n\n\non disk, utilizing both resources to offer balanced performance."
         ],
         "answer": [
             "C"
@@ -536,10 +536,10 @@ const quizData = [
     {
         "question": "An MLOps engineer is building a Pandas UDF that applies a language model that translates\nEnglish strings into Spanish. The initial code is loading the model on every call to the UDF,\nwhich is hurting the performance of the data pipeline.\nThe initial code is:\ndef in_spanish_inner(df: pd.Series) -> pd.Series:\nmodel = get_translation_model(target_lang='es')\nreturn df.apply(model)\nin_spanish = sf.pandas_udf(in_spanish_inner, StringType())\nHow can the MLOps engineer change this code to reduce how many times the language\nmodel is loaded?",
         "options": [
-            "A.. Convert the Pandas UDF to a PySpark UDF",
-            "B.. Convert the Pandas UDF from a Series → Series UDF to a Series → Scalar UDF",
-            "C.. Run the in_spanish_inner() function in a mapInPandas() function call",
-            "D.. Convert the Pandas UDF from a Series → Series UDF to an Iterator[Series] →\nIterator[Series] UDF"
+            "A. Convert the Pandas UDF to a PySpark UDF",
+            "B. Convert the Pandas UDF from a Series → Series UDF to a Series → Scalar UDF",
+            "C. Run the in_spanish_inner() function in a mapInPandas() function call",
+            "D. Convert the Pandas UDF from a Series → Series UDF to an Iterator[Series] →\nIterator[Series] UDF"
         ],
         "answer": [
             "D"
@@ -549,10 +549,10 @@ const quizData = [
     {
         "question": "Given the following code snippet in my_spark_app.py:\nWhat is the role of the driver node?",
         "options": [
-            "A.. The driver node orchestrates the execution by transforming actions into tasks and\ndistributing them to worker nodes",
-            "B.. The driver node only provides the user interface for monitoring the application",
-            "C.. The driver node holds the DataFrame data and performs all computations locally",
-            "D.. The driver node stores the final result after computations are completed by worker nodes"
+            "A. The driver node orchestrates the execution by transforming actions into tasks and\ndistributing them to worker nodes",
+            "B. The driver node only provides the user interface for monitoring the application",
+            "C. The driver node holds the DataFrame data and performs all computations locally",
+            "D. The driver node stores the final result after computations are completed by worker nodes"
         ],
         "answer": [
             "A"
@@ -562,10 +562,10 @@ const quizData = [
     {
         "question": "What is the relationship between jobs, stages, and tasks during execution in Apache Spark?",
         "options": [
-            "A.. A job contains multiple tasks, and each task contains multiple stages.",
-            "B.. A stage contains multiple jobs, and each job contains multiple tasks.",
-            "C.. A stage contains multiple tasks, and each task contains multiple jobs.",
-            "D.. A job contains multiple stages, and each stage contains multiple tasks."
+            "A. A job contains multiple tasks, and each task contains multiple stages.",
+            "B. A stage contains multiple jobs, and each job contains multiple tasks.",
+            "C. A stage contains multiple tasks, and each task contains multiple jobs.",
+            "D. A job contains multiple stages, and each stage contains multiple tasks."
         ],
         "answer": [
             "D"
@@ -575,10 +575,10 @@ const quizData = [
     {
         "question": "A data engineer observes that an upstream streaming source sends duplicate records, where\nduplicates share the same key and have at most a 30-minute difference in event_timestamp.\nThe engineer adds:\ndropDuplicatesWithinWatermark(\"event_timestamp\", \"30 minutes\")\nWhat is the result?",
         "options": [
-            "A.. It is not able to handle deduplication in this scenario",
-            "B.. It removes duplicates that arrive within the 30-minute window specified by the watermark",
-            "C.. It removes all duplicates regardless of when they arrive",
-            "D.. It accepts watermarks in seconds and the code results in an error"
+            "A. It is not able to handle deduplication in this scenario",
+            "B. It removes duplicates that arrive within the 30-minute window specified by the watermark",
+            "C. It removes all duplicates regardless of when they arrive",
+            "D. It accepts watermarks in seconds and the code results in an error"
         ],
         "answer": [
             "B"
@@ -588,10 +588,10 @@ const quizData = [
     {
         "question": "A data engineer needs to add all the rows from one table to all the rows from another, but not\nall the columns in the first table exist in the second table.\nThe error message is:\nAnalysisException: UNION can only be performed on tables with the same number of\ncolumns.\nThe existing code is:\nau_df.union(nz_df)\nThe DataFrame au_df has one extra column that does not exist in the DataFrame nz_df, but\notherwise both DataFrames have the same column names and data types.\nWhat should the data engineer fix in the code to ensure the combined DataFrame can be\nproduced as expected?",
         "options": [
-            "A.. df = au_df.unionByName(nz_df, allowMissingColumns=True)",
-            "B.. df = au_df.unionAll(nz_df)",
-            "C.. df = au_df.unionByName(nz_df, allowMissingColumns=False)",
-            "D.. df = au_df.union(nz_df, allowMissingColumns=True)"
+            "A. df = au_df.unionByName(nz_df, allowMissingColumns=True)",
+            "B. df = au_df.unionAll(nz_df)",
+            "C. df = au_df.unionByName(nz_df, allowMissingColumns=False)",
+            "D. df = au_df.union(nz_df, allowMissingColumns=True)"
         ],
         "answer": [
             "A"
@@ -601,10 +601,10 @@ const quizData = [
     {
         "question": "A data engineer needs to write a Streaming DataFrame as Parquet files.\nGiven the code:\nWhich code fragment should be inserted to meet the requirement?\nA)\nB)\nC)\n \nD)\n \nWhich code fragment should be inserted to meet the requirement?",
         "options": [
-            "A.. .format(\"parquet\")\n.option(\"location\", \"path/to/destination/dir\")",
-            "B.. CopyEdit\n.option(\"format\", \"parquet\")\n.option(\"destination\", \"path/to/destination/dir\")",
-            "C.. .option(\"format\", \"parquet\")\n.option(\"location\", \"path/to/destination/dir\")",
-            "D.. .format(\"parquet\")\n.option(\"path\", \"path/to/destination/dir\")"
+            "A. .format(\"parquet\")\n.option(\"location\", \"path/to/destination/dir\")",
+            "B. CopyEdit\n.option(\"format\", \"parquet\")\n.option(\"destination\", \"path/to/destination/dir\")",
+            "C. .option(\"format\", \"parquet\")\n.option(\"location\", \"path/to/destination/dir\")",
+            "D. .format(\"parquet\")\n.option(\"path\", \"path/to/destination/dir\")"
         ],
         "answer": [
             "D"
@@ -614,10 +614,10 @@ const quizData = [
     {
         "question": "A data engineer is building a Structured Streaming pipeline and wants the pipeline to recover\nfrom failures or intentional shutdowns by continuing where the pipeline left off.\nHow can this be achieved?",
         "options": [
-            "A.. By configuring the option checkpointLocation during readStream",
-            "B.. By configuring the option recoveryLocation during the SparkSession initialization",
-            "C.. By configuring the option recoveryLocation during writeStream",
-            "D.. By configuring the option checkpointLocation during writeStream"
+            "A. By configuring the option checkpointLocation during readStream",
+            "B. By configuring the option recoveryLocation during the SparkSession initialization",
+            "C. By configuring the option recoveryLocation during writeStream",
+            "D. By configuring the option checkpointLocation during writeStream"
         ],
         "answer": [
             "D"
@@ -627,10 +627,10 @@ const quizData = [
     {
         "question": "A Spark engineer must select an appropriate deployment mode for the Spark jobs.\nWhat is the benefit of using cluster mode in Apache Spark™?",
         "options": [
-            "A.. In cluster mode, resources are allocated from a resource manager on the cluster, enabling\nbetter performance and scalability for large jobs",
-            "B.. In cluster mode, the driver is responsible for executing all tasks locally without distributing\nthem across the worker nodes.",
-            "C.. In cluster mode, the driver runs on the client machine, which can limit the application's\nability to handle large datasets efficiently.",
-            "D.. In cluster mode, the driver program runs on one of the worker nodes, allowing the\napplication to fully utilize the distributed resources of the cluster."
+            "A. In cluster mode, resources are allocated from a resource manager on the cluster, enabling\nbetter performance and scalability for large jobs",
+            "B. In cluster mode, the driver is responsible for executing all tasks locally without distributing\nthem across the worker nodes.",
+            "C. In cluster mode, the driver runs on the client machine, which can limit the application's\nability to handle large datasets efficiently.",
+            "D. In cluster mode, the driver program runs on one of the worker nodes, allowing the\napplication to fully utilize the distributed resources of the cluster."
         ],
         "answer": [
             "D"
@@ -640,10 +640,10 @@ const quizData = [
     {
         "question": "Given the schema:\n \nevent_ts TIMESTAMP,\nsensor_id STRING,\nmetric_value LONG,\ningest_ts TIMESTAMP,\n\n\nsource_file_path STRING\nThe goal is to deduplicate based on: event_ts, sensor_id, and metric_value.\nOptions:",
         "options": [
-            "A.. dropDuplicates on all columns (wrong criteria)",
-            "B.. dropDuplicates with no arguments (removes based on all columns)",
-            "C.. groupBy without aggregation (invalid use)",
-            "D.. dropDuplicates on the exact matching fields"
+            "A. dropDuplicates on all columns (wrong criteria)",
+            "B. dropDuplicates with no arguments (removes based on all columns)",
+            "C. groupBy without aggregation (invalid use)",
+            "D. dropDuplicates on the exact matching fields"
         ],
         "answer": [
             "D"
@@ -653,10 +653,10 @@ const quizData = [
     {
         "question": "A data scientist has identified that some records in the user profile table contain null values in\nany of the fields, and such records should be removed from the dataset before processing.\nThe schema includes fields like user_id, username, date_of_birth, created_ts, etc.\nThe schema of the user profile table looks like this:\n \nWhich block of Spark code can be used to achieve this requirement?\nOptions:",
         "options": [
-            "A.. filtered_df = users_raw_df.na.drop(thresh=0)",
-            "B.. filtered_df = users_raw_df.na.drop(how='all')",
-            "C.. filtered_df = users_raw_df.na.drop(how='any')",
-            "D.. filtered_df = users_raw_df.na.drop(how='all', thresh=None)"
+            "A. filtered_df = users_raw_df.na.drop(thresh=0)",
+            "B. filtered_df = users_raw_df.na.drop(how='all')",
+            "C. filtered_df = users_raw_df.na.drop(how='any')",
+            "D. filtered_df = users_raw_df.na.drop(how='all', thresh=None)"
         ],
         "answer": [
             "C"
@@ -666,10 +666,10 @@ const quizData = [
     {
         "question": "A data engineer needs to write a DataFrame df to a Parquet file, partitioned by the column\ncountry, and overwrite any existing data at the destination path.\nWhich code should the data engineer use to accomplish this task in Apache Spark?",
         "options": [
-            "A.. df.write.mode(\"overwrite\").partitionBy(\"country\").parquet(\"/data/output\")",
-            "B.. df.write.mode(\"append\").partitionBy(\"country\").parquet(\"/data/output\")",
-            "C.. df.write.mode(\"overwrite\").parquet(\"/data/output\")",
-            "D.. df.write.partitionBy(\"country\").parquet(\"/data/output\")"
+            "A. df.write.mode(\"overwrite\").partitionBy(\"country\").parquet(\"/data/output\")",
+            "B. df.write.mode(\"append\").partitionBy(\"country\").parquet(\"/data/output\")",
+            "C. df.write.mode(\"overwrite\").parquet(\"/data/output\")",
+            "D. df.write.partitionBy(\"country\").parquet(\"/data/output\")"
         ],
         "answer": [
             "A"
@@ -679,10 +679,10 @@ const quizData = [
     {
         "question": "A data engineer is working on the DataFrame df1 and wants the Name with the highest count\nto appear first (descending order by count), followed by the next highest, and so on.\nThe DataFrame has columns:\nid | Name | count | timestamp\n---------------------------------\n1 | USA | 10\n2 | India | 20\n3 | England | 50\n4 | India | 50\n5 | France | 20\n6 | India | 10\n7 | USA | 30\n8 | USA | 40\nWhich code fragment should the engineer use to sort the data in the Name and count\ncolumns?",
         "options": [
-            "A.. df1.orderBy(col(\"count\").desc(), col(\"Name\").asc())",
-            "B.. df1.sort(\"Name\", \"count\")",
-            "C.. df1.orderBy(\"Name\", \"count\")",
-            "D.. df1.orderBy(col(\"Name\").desc(), col(\"count\").asc())"
+            "A. df1.orderBy(col(\"count\").desc(), col(\"Name\").asc())",
+            "B. df1.sort(\"Name\", \"count\")",
+            "C. df1.orderBy(\"Name\", \"count\")",
+            "D. df1.orderBy(col(\"Name\").desc(), col(\"count\").asc())"
         ],
         "answer": [
             "A"
@@ -692,10 +692,10 @@ const quizData = [
     {
         "question": "A data scientist is working with a Spark DataFrame called customerDF that contains\ncustomer information.\nThe DataFrame has a column named email with customer email addresses.\nThe data scientist needs to split this column into username and domain parts.\nWhich code snippet splits the email column into username and domain columns?",
         "options": [
-            "A.. customerDF = customerDF \\\n.withColumn(\"username\", split(col(\"email\"), \"@\").getItem(0)) \\\n.withColumn(\"domain\", split(col(\"email\"), \"@\").getItem(1))",
-            "B.. customerDF = customerDF.withColumn(\"username\", regexp_replace(col(\"email\"), \"@\", \"\"))",
-            "C.. customerDF = customerDF.select(\"email\").alias(\"username\", \"domain\")",
-            "D.. customerDF = customerDF.withColumn(\"domain\", col(\"email\").split(\"@\")[1])"
+            "A. customerDF = customerDF \\\n.withColumn(\"username\", split(col(\"email\"), \"@\").getItem(0)) \\\n.withColumn(\"domain\", split(col(\"email\"), \"@\").getItem(1))",
+            "B. customerDF = customerDF.withColumn(\"username\", regexp_replace(col(\"email\"), \"@\", \"\"))",
+            "C. customerDF = customerDF.select(\"email\").alias(\"username\", \"domain\")",
+            "D. customerDF = customerDF.withColumn(\"domain\", col(\"email\").split(\"@\")[1])"
         ],
         "answer": [
             "A"
@@ -705,10 +705,10 @@ const quizData = [
     {
         "question": "Given the code fragment:\nimport pyspark.pandas as ps\npdf = ps.DataFrame(data)\nWhich method is used to convert a Pandas API on Spark DataFrame\n(pyspark.pandas.DataFrame) into a standard PySpark DataFrame (pyspark.sql.DataFrame)?",
         "options": [
-            "A.. pdf.to_pandas()",
-            "B.. pdf.to_spark()",
-            "C.. pdf.to_dataframe()",
-            "D.. pdf.spark()"
+            "A. pdf.to_pandas()",
+            "B. pdf.to_spark()",
+            "C. pdf.to_dataframe()",
+            "D. pdf.spark()"
         ],
         "answer": [
             "B"
@@ -718,10 +718,10 @@ const quizData = [
     {
         "question": "What is the difference between df.cache() and df.persist() in Spark DataFrame?",
         "options": [
-            "A.. Both cache() and persist() can be used to set the default storage level\n(MEMORY_AND_DISK_SER)",
-            "B.. Both functions perform the same operation. The persist() function provides improved\nperformance as its default storage level is DISK_ONLY.",
-            "C.. persist() - Persists the DataFrame with the default storage level\n(MEMORY_AND_DISK_SER) and cache() - Can be used to set different storage levels to\npersist the contents of the DataFrame.",
-            "D.. cache() - Persists the DataFrame with the default storage level (MEMORY_AND_DISK)\nand persist() - Can be used to set different storage levels to persist the contents of the\nDataFrame"
+            "A. Both cache() and persist() can be used to set the default storage level\n(MEMORY_AND_DISK_SER)",
+            "B. Both functions perform the same operation. The persist() function provides improved\nperformance as its default storage level is DISK_ONLY.",
+            "C. persist() - Persists the DataFrame with the default storage level\n(MEMORY_AND_DISK_SER) and cache() - Can be used to set different storage levels to\npersist the contents of the DataFrame.",
+            "D. cache() - Persists the DataFrame with the default storage level (MEMORY_AND_DISK)\nand persist() - Can be used to set different storage levels to persist the contents of the\nDataFrame"
         ],
         "answer": [
             "D"
@@ -731,10 +731,10 @@ const quizData = [
     {
         "question": "A developer is running Spark SQL queries and notices underutilization of resources.\nExecutors are idle, and the number of tasks per stage is low.\nWhat should the developer do to improve cluster utilization?",
         "options": [
-            "A.. Increase the value of spark.sql.shuffle.partitions",
-            "B.. Reduce the value of spark.sql.shuffle.partitions",
-            "C.. Increase the size of the dataset to create more partitions",
-            "D.. Enable dynamic resource allocation to scale resources as needed"
+            "A. Increase the value of spark.sql.shuffle.partitions",
+            "B. Reduce the value of spark.sql.shuffle.partitions",
+            "C. Increase the size of the dataset to create more partitions",
+            "D. Enable dynamic resource allocation to scale resources as needed"
         ],
         "answer": [
             "A"
@@ -744,10 +744,10 @@ const quizData = [
     {
         "question": "A data analyst builds a Spark application to analyze finance data and performs the following\noperations: filter, select, groupBy, and coalesce.\nWhich operation results in a shuffle?",
         "options": [
-            "A.. groupBy",
-            "B.. filter",
-            "C.. select",
-            "D.. coalesce"
+            "A. groupBy",
+            "B. filter",
+            "C. select",
+            "D. coalesce"
         ],
         "answer": [
             "A"
@@ -757,10 +757,10 @@ const quizData = [
     {
         "question": "A data scientist of an e-commerce company is working with user data obtained from its\nsubscriber database and has stored the data in a DataFrame df_user. Before further\nprocessing the data, the data scientist wants to create another DataFrame df_user_non_pii\nand store only the non-PII columns in this DataFrame. The PII columns in df_user are\nfirst_name, last_name, email, and birthdate.\nWhich code snippet can be used to meet this requirement?",
         "options": [
-            "A.. df_user_non_pii = df_user.drop(\"first_name\", \"last_name\", \"email\", \"birthdate\")",
-            "B.. df_user_non_pii = df_user.drop(\"first_name\", \"last_name\", \"email\", \"birthdate\")",
-            "C.. df_user_non_pii = df_user.dropfields(\"first_name\", \"last_name\", \"email\", \"birthdate\")",
-            "D.. df_user_non_pii = df_user.dropfields(\"first_name, last_name, email, birthdate\")"
+            "A. df_user_non_pii = df_user.drop(\"first_name\", \"last_name\", \"email\", \"birthdate\")",
+            "B. df_user_non_pii = df_user.drop(\"first_name\", \"last_name\", \"email\", \"birthdate\")",
+            "C. df_user_non_pii = df_user.dropfields(\"first_name\", \"last_name\", \"email\", \"birthdate\")",
+            "D. df_user_non_pii = df_user.dropfields(\"first_name, last_name, email, birthdate\")"
         ],
         "answer": [
             "A"
@@ -770,11 +770,11 @@ const quizData = [
     {
         "question": "A data scientist is working with a massive dataset that exceeds the memory capacity of a\nsingle machine. The data scientist is considering using Apache Spark™ instead of traditional\nsingle-machine languages like standard Python scripts.\nWhich two advantages does Apache Spark™ offer over a normal single-machine language in\n\n\nthis scenario? (Choose 2 answers)",
         "options": [
-            "A.. It can distribute data processing tasks across a cluster of machines, enabling horizontal\nscalability.",
-            "B.. It requires specialized hardware to run, making it unsuitable for commodity hardware\nclusters.",
-            "C.. It processes data solely on disk storage, reducing the need for memory resources.",
-            "D.. It eliminates the need to write any code, automatically handling all data processing.",
-            "E.. It has built-in fault tolerance, allowing it to recover seamlessly from node failures during\ncomputation."
+            "A. It can distribute data processing tasks across a cluster of machines, enabling horizontal\nscalability.",
+            "B. It requires specialized hardware to run, making it unsuitable for commodity hardware\nclusters.",
+            "C. It processes data solely on disk storage, reducing the need for memory resources.",
+            "D. It eliminates the need to write any code, automatically handling all data processing.",
+            "E. It has built-in fault tolerance, allowing it to recover seamlessly from node failures during\ncomputation."
         ],
         "answer": [
             "A",
@@ -785,10 +785,10 @@ const quizData = [
     {
         "question": "Which code should be used to display the schema of the Parquet file stored in the location\nevents.parquet?",
         "options": [
-            "A.. spark.sql(\"SELECT * FROM events.parquet\").show()",
-            "B.. spark.read.format(\"parquet\").load(\"events.parquet\").show()",
-            "C.. spark.read.parquet(\"events.parquet\").printSchema()",
-            "D.. spark.sql(\"SELECT schema FROM events.parquet\").show()"
+            "A. spark.sql(\"SELECT * FROM events.parquet\").show()",
+            "B. spark.read.format(\"parquet\").load(\"events.parquet\").show()",
+            "C. spark.read.parquet(\"events.parquet\").printSchema()",
+            "D. spark.sql(\"SELECT schema FROM events.parquet\").show()"
         ],
         "answer": [
             "C"
@@ -798,10 +798,10 @@ const quizData = [
     {
         "question": "A data engineer is asked to build an ingestion pipeline for a set of Parquet files delivered by\nan upstream team on a nightly basis. The data is stored in a directory structure with a base\npath of \"/path/events/data\". The upstream team drops daily data into the underlying\nsubdirectories following the convention year/month/day.\nA few examples of the directory structure are:\n \nWhich of the following code snippets will read all the data within the directory structure?",
         "options": [
-            "A.. df = spark.read.option(\"inferSchema\", \"true\").parquet(\"/path/events/data/\")",
-            "B.. df = spark.read.option(\"recursiveFileLookup\", \"true\").parquet(\"/path/events/data/\")",
-            "C.. df = spark.read.parquet(\"/path/events/data/*\")",
-            "D.. df = spark.read.parquet(\"/path/events/data/\")"
+            "A. df = spark.read.option(\"inferSchema\", \"true\").parquet(\"/path/events/data/\")",
+            "B. df = spark.read.option(\"recursiveFileLookup\", \"true\").parquet(\"/path/events/data/\")",
+            "C. df = spark.read.parquet(\"/path/events/data/*\")",
+            "D. df = spark.read.parquet(\"/path/events/data/\")"
         ],
         "answer": [
             "B"
@@ -811,10 +811,10 @@ const quizData = [
     {
         "question": "Given this code:\n.withWatermark(\"event_time\", \"10 minutes\")\n.groupBy(window(\"event_time\", \"15 minutes\"))\n.count()\nWhat happens to data that arrives after the watermark threshold?\nOptions:",
         "options": [
-            "A.. Records that arrive later than the watermark threshold (10 minutes) will automatically be\nincluded in the aggregation if they fall within the 15-minute window.",
-            "B.. Any data arriving more than 10 minutes after the watermark threshold will be ignored and\nnot included in the aggregation.",
-            "C.. Data arriving more than 10 minutes after the latest watermark will still be included in the\naggregation but will be placed into the next window.",
-            "D.. The watermark ensures that late data arriving within 10 minutes of the latest event_time\nwill be processed and included in the windowed aggregation."
+            "A. Records that arrive later than the watermark threshold (10 minutes) will automatically be\nincluded in the aggregation if they fall within the 15-minute window.",
+            "B. Any data arriving more than 10 minutes after the watermark threshold will be ignored and\nnot included in the aggregation.",
+            "C. Data arriving more than 10 minutes after the latest watermark will still be included in the\naggregation but will be placed into the next window.",
+            "D. The watermark ensures that late data arriving within 10 minutes of the latest event_time\nwill be processed and included in the windowed aggregation."
         ],
         "answer": [
             "B"
@@ -824,10 +824,10 @@ const quizData = [
     {
         "question": "What is the benefit of using Pandas API on Spark for data transformations?",
         "options": [
-            "A.. It executes queries faster using all the available cores in the cluster as well as provides\nPandas's rich set of features.",
-            "B.. It is available only with Python, thereby reducing the learning curve.",
-            "C.. It runs on a single node only, utilizing memory efficiently.",
-            "D.. It computes results immediately using eager execution."
+            "A. It executes queries faster using all the available cores in the cluster as well as provides\nPandas's rich set of features.",
+            "B. It is available only with Python, thereby reducing the learning curve.",
+            "C. It runs on a single node only, utilizing memory efficiently.",
+            "D. It computes results immediately using eager execution."
         ],
         "answer": [
             "A"
@@ -837,10 +837,10 @@ const quizData = [
     {
         "question": "What is the main advantage of partitioning the data when persisting tables?",
         "options": [
-            "A.. It compresses the data to save disk space.",
-            "B.. It automatically cleans up unused partitions to optimize storage.",
-            "C.. It ensures that data is loaded into memory all at once for faster query execution.",
-            "D.. It optimizes by reading only the relevant subset of data from fewer partitions."
+            "A. It compresses the data to save disk space.",
+            "B. It automatically cleans up unused partitions to optimize storage.",
+            "C. It ensures that data is loaded into memory all at once for faster query execution.",
+            "D. It optimizes by reading only the relevant subset of data from fewer partitions."
         ],
         "answer": [
             "D"
@@ -850,10 +850,10 @@ const quizData = [
     {
         "question": "A data engineer is running a Spark job to process a dataset of 1 TB stored in distributed\nstorage. The cluster has 10 nodes, each with 16 CPUs. Spark UI shows:\nLow number of Active Tasks\nMany tasks complete in milliseconds\nFewer tasks than available CPUs\nWhich approach should be used to adjust the partitioning for optimal resource allocation?",
         "options": [
-            "A.. Set the number of partitions equal to the total number of CPUs in the cluster",
-            "B.. Set the number of partitions to a fixed value, such as 200",
-            "C.. Set the number of partitions equal to the number of nodes in the cluster",
-            "D.. Set the number of partitions by dividing the dataset size (1 TB) by a reasonable partition\nsize, such as 128 MB"
+            "A. Set the number of partitions equal to the total number of CPUs in the cluster",
+            "B. Set the number of partitions to a fixed value, such as 200",
+            "C. Set the number of partitions equal to the number of nodes in the cluster",
+            "D. Set the number of partitions by dividing the dataset size (1 TB) by a reasonable partition\nsize, such as 128 MB"
         ],
         "answer": [
             "D"
@@ -863,10 +863,10 @@ const quizData = [
     {
         "question": "A developer wants to refactor some older Spark code to leverage built-in functions introduced\nin Spark 3.5.0. The existing code performs array manipulations manually. Which of the\nfollowing code snippets utilizes new built-in functions in Spark 3.5.0 for array operations?",
         "options": [
-            "A.. result_df = prices_df \\\n.withColumn(\"valid_price\", F.when(F.col(\"spot_price\") > F.lit(min_price), 1).otherwise(0))",
-            "B.. \n\nresult_df = prices_df \\\n.agg(F.count_if(F.col(\"spot_price\") >= F.lit(min_price)))",
-            "C.. result_df = prices_df \\\n.agg(F.min(\"spot_price\"), F.max(\"spot_price\"))",
-            "D.. result_df = prices_df \\\n.agg(F.count(\"spot_price\").alias(\"spot_price\")) \\\n.filter(F.col(\"spot_price\") > F.lit(\"min_price\"))"
+            "A. result_df = prices_df \\\n.withColumn(\"valid_price\", F.when(F.col(\"spot_price\") > F.lit(min_price), 1).otherwise(0))",
+            "B. \n\nresult_df = prices_df \\\n.agg(F.count_if(F.col(\"spot_price\") >= F.lit(min_price)))",
+            "C. result_df = prices_df \\\n.agg(F.min(\"spot_price\"), F.max(\"spot_price\"))",
+            "D. result_df = prices_df \\\n.agg(F.count(\"spot_price\").alias(\"spot_price\")) \\\n.filter(F.col(\"spot_price\") > F.lit(\"min_price\"))"
         ],
         "answer": [
             "B"
@@ -876,10 +876,10 @@ const quizData = [
     {
         "question": "A data engineer is working on the DataFrame:\n\n\n(Referring to the table image: it has columns Id, Name, count, and timestamp.) Which code\nfragment should the engineer use to extract the unique values in the Name column into an\nalphabetically ordered list?",
         "options": [
-            "A.. df.select(\"Name\").orderBy(df[\"Name\"].asc())",
-            "B.. df.select(\"Name\").distinct().orderBy(df[\"Name\"])",
-            "C.. df.select(\"Name\").distinct()",
-            "D.. df.select(\"Name\").distinct().orderBy(df[\"Name\"].desc())"
+            "A. df.select(\"Name\").orderBy(df[\"Name\"].asc())",
+            "B. df.select(\"Name\").distinct().orderBy(df[\"Name\"])",
+            "C. df.select(\"Name\").distinct()",
+            "D. df.select(\"Name\").distinct().orderBy(df[\"Name\"].desc())"
         ],
         "answer": [
             "B"
@@ -889,10 +889,10 @@ const quizData = [
     {
         "question": "A DataFrame df has columns name, age, and salary. The developer needs to sort the\nDataFrame by age in ascending order and salary in descending order.\nWhich code snippet meets the requirement of the developer?",
         "options": [
-            "A.. df.orderBy(col(\"age\").asc(), col(\"salary\").asc()).show()",
-            "B.. df.sort(\"age\", \"salary\", ascending=[True, True]).show()",
-            "C.. df.sort(\"age\", \"salary\", ascending=[False, True]).show()",
-            "D.. df.orderBy(\"age\", \"salary\", ascending=[True, False]).show()"
+            "A. df.orderBy(col(\"age\").asc(), col(\"salary\").asc()).show()",
+            "B. df.sort(\"age\", \"salary\", ascending=[True, True]).show()",
+            "C. df.sort(\"age\", \"salary\", ascending=[False, True]).show()",
+            "D. df.orderBy(\"age\", \"salary\", ascending=[True, False]).show()"
         ],
         "answer": [
             "D"
@@ -902,10 +902,10 @@ const quizData = [
     {
         "question": "Which command overwrites an existing JSON file when writing a DataFrame?",
         "options": [
-            "A.. df.write.json(\"path/to/file\")",
-            "B.. df.write.mode(\"append\").json(\"path/to/file\")",
-            "C.. df.write.option(\"overwrite\").json(\"path/to/file\")",
-            "D.. df.write.mode(\"overwrite\").json(\"path/to/file\")"
+            "A. df.write.json(\"path/to/file\")",
+            "B. df.write.mode(\"append\").json(\"path/to/file\")",
+            "C. df.write.option(\"overwrite\").json(\"path/to/file\")",
+            "D. df.write.mode(\"overwrite\").json(\"path/to/file\")"
         ],
         "answer": [
             "D"
@@ -913,24 +913,12 @@ const quizData = [
         "explanation": "When writing DataFrames to files using the Spark DataFrameWriter API, Spark by default\nraises an error if the target path already exists. To explicitly overwrite existing data, you must\nspecify the write mode as \"overwrite\".\nCorrect Syntax:\ndf.write.mode(\"overwrite\").json(\"path/to/file\")\nThis command removes the existing file or directory at the specified path and writes the new\noutput in JSON format.\nOther supported save modes include:\n\"append\" - Adds new data to existing files.\n\"ignore\" - Skips writing if the path already exists.\n\"error\" or \"errorifexists\" - Fails the job if the output path exists (default).\nWhy other options are incorrect:\nA: Defaults to \"error\" mode, which fails if the path exists.\nB: \"append\" only adds data; it does not overwrite existing data.\nC: .option(\"overwrite\") is invalid - mode(\"overwrite\") must be used instead.\nReference (Databricks Apache Spark 3.5 - Python / Study Guide):\nPySpark API Reference: DataFrameWriter.mode() - describes valid write modes including\n\"overwrite\".\nPySpark API Reference: DataFrameWriter.json() - method to write DataFrames in JSON\nformat.\nDatabricks Certified Associate Developer for Apache Spark Exam Guide (June 2025):\nSection \"Using Spark DataFrame APIs\" - Reading and writing DataFrames using save modes,\nschema management, and partitioning."
     },
     {
-        "question": "A data engineer wants to process a streaming DataFrame that receives sensor readings\nevery second with columns sensor_id, temperature, and timestamp. The engineer needs to\ncalculate the average temperature for each sensor over the last 5 minutes while the data is\nstreaming.\nWhich code implementation achieves the requirement?\nOptions from the images provided:",
-        "options": [
-            "A.. A.",
-            "B.. B.",
-            "C.. D."
-        ],
-        "answer": [
-            "D"
-        ],
-        "explanation": "The correct answer is D because it uses proper time-based window aggregation along with\nwatermarking, which is the required pattern in Spark Structured Streaming for time-based\naggregations over event-time data.\nFrom the Spark 3.5 documentation on structured streaming:\n\"You can define sliding windows on event-time columns, and use groupBy along with\nwindow() to compute aggregates over those windows. To deal with late data, you use\nwithWatermark() to specify how late data is allowed to arrive.\" (Source: Structured Streaming\nProgramming Guide) In option D, the use of:\npython\nCopyEdit\n.groupBy(\"sensor_id\", window(\"timestamp\", \"5 minutes\"))\n.agg(avg(\"temperature\").alias(\"avg_temp\"))\nensures that for each sensor_id, the average temperature is calculated over 5-minute event-\ntime windows. To complete the logic, it is assumed that withWatermark(\"timestamp\", \"5\nminutes\") is used earlier in the pipeline to handle late events.\nExplanation of why other options are incorrect:\nOption A uses Window.partitionBy which applies to static DataFrames or batch queries and is\nnot suitable for streaming aggregations.\nOption B does not apply a time window, thus does not compute the rolling average over 5\nminutes.\nOption C incorrectly applies withWatermark() after an aggregation and does not include any\n\n\ntime window, thus missing the time-based grouping required.\nTherefore, Option D is the only one that meets all requirements for computing a time-\nwindowed streaming aggregation."
-    },
-    {
         "question": "A developer has been asked to debug an issue with a Spark application. The developer\nidentified that the data being loaded from a CSV file is being read incorrectly into a\nDataFrame.\nThe CSV file has been read using the following Spark SQL statement:\nCREATE TABLE locations\nUSING csv\nOPTIONS (path '/data/locations.csv')\nThe first lines of the command SELECT * FROM locations look like this:\n| city | lat | long |\n| ALTI Sydney | -33... | ... |\nWhich parameter can the developer add to the OPTIONS clause in the CREATE TABLE\nstatement to read the CSV data correctly again?",
         "options": [
-            "A.. 'header' 'true'",
-            "B.. 'header' 'false'",
-            "C.. 'sep' ','",
-            "D.. 'sep' '|'"
+            "A. 'header' 'true'",
+            "B. 'header' 'false'",
+            "C. 'sep' ','",
+            "D. 'sep' '|'"
         ],
         "answer": [
             "A"
@@ -940,10 +928,10 @@ const quizData = [
     {
         "question": "A developer is working on a Spark application that processes a large dataset using SQL\nqueries. Despite having a large cluster, the developer notices that the job is underutilizing the\navailable resources. Executors remain idle for most of the time, and logs reveal that the\nnumber of tasks per stage is very low. The developer suspects that this is causing suboptimal\ncluster performance.\nWhich action should the developer take to improve cluster utilization?",
         "options": [
-            "A.. Increase the value of spark.sql.shuffle.partitions",
-            "B.. Reduce the value of spark.sql.shuffle.partitions",
-            "C.. Enable dynamic resource allocation to scale resources as needed",
-            "D.. Increase the size of the dataset to create more partitions"
+            "A. Increase the value of spark.sql.shuffle.partitions",
+            "B. Reduce the value of spark.sql.shuffle.partitions",
+            "C. Enable dynamic resource allocation to scale resources as needed",
+            "D. Increase the size of the dataset to create more partitions"
         ],
         "answer": [
             "A"
@@ -953,10 +941,10 @@ const quizData = [
     {
         "question": "Which UDF implementation calculates the length of strings in a Spark DataFrame?",
         "options": [
-            "A.. df.withColumn(\"length\", spark.udf(\"len\", StringType()))",
-            "B.. df.select(length(col(\"stringColumn\")).alias(\"length\"))",
-            "C.. spark.udf.register(\"stringLength\", lambda s: len(s))",
-            "D.. df.withColumn(\"length\", udf(lambda s: len(s), StringType()))"
+            "A. df.withColumn(\"length\", spark.udf(\"len\", StringType()))",
+            "B. df.select(length(col(\"stringColumn\")).alias(\"length\"))",
+            "C. spark.udf.register(\"stringLength\", lambda s: len(s))",
+            "D. df.withColumn(\"length\", udf(lambda s: len(s), StringType()))"
         ],
         "answer": [
             "B"
@@ -966,10 +954,10 @@ const quizData = [
     {
         "question": "A data engineer uses a broadcast variable to share a DataFrame containing millions of rows\nacross executors for lookup purposes. What will be the outcome?",
         "options": [
-            "A.. The job may fail if the memory on each executor is not large enough to accommodate the\nDataFrame being broadcasted",
-            "B.. The job may fail if the executors do not have enough CPU cores to process the\nbroadcasted dataset",
-            "C.. The job will hang indefinitely as Spark will struggle to distribute and serialize such a large\nbroadcast variable to all executors",
-            "D.. The job may fail because the driver does not have enough CPU cores to serialize the\nlarge DataFrame"
+            "A. The job may fail if the memory on each executor is not large enough to accommodate the\nDataFrame being broadcasted",
+            "B. The job may fail if the executors do not have enough CPU cores to process the\nbroadcasted dataset",
+            "C. The job will hang indefinitely as Spark will struggle to distribute and serialize such a large\nbroadcast variable to all executors",
+            "D. The job may fail because the driver does not have enough CPU cores to serialize the\nlarge DataFrame"
         ],
         "answer": [
             "A"
@@ -979,10 +967,10 @@ const quizData = [
     {
         "question": "A data engineer noticed improved performance after upgrading from Spark 3.0 to Spark 3.5.\n\n\nThe engineer found that Adaptive Query Execution (AQE) was enabled.\nWhich operation is AQE implementing to improve performance?",
         "options": [
-            "A.. Dynamically switching join strategies",
-            "B.. Collecting persistent table statistics and storing them in the metastore for future use",
-            "C.. Improving the performance of single-stage Spark jobs",
-            "D.. Optimizing the layout of Delta files on disk"
+            "A. Dynamically switching join strategies",
+            "B. Collecting persistent table statistics and storing them in the metastore for future use",
+            "C. Improving the performance of single-stage Spark jobs",
+            "D. Optimizing the layout of Delta files on disk"
         ],
         "answer": [
             "A"
@@ -992,10 +980,10 @@ const quizData = [
     {
         "question": "A data engineer is working on a num_df DataFrame and has a Python UDF defined as:\ndef cube_func(val):\nreturn val * val * val\nWhich code fragment registers and uses this UDF as a Spark SQL function to work with the\nDataFrame num_df?",
         "options": [
-            "A.. spark.udf.register(\"cube_func\", cube_func)\nnum_df.selectExpr(\"cube_func(num)\").show()",
-            "B.. num_df.select(cube_func(\"num\")).show()",
-            "C.. spark.createDataFrame(cube_func(\"num\")).show()",
-            "D.. num_df.register(\"cube_func\").select(\"num\").show()"
+            "A. spark.udf.register(\"cube_func\", cube_func)\nnum_df.selectExpr(\"cube_func(num)\").show()",
+            "B. num_df.select(cube_func(\"num\")).show()",
+            "C. spark.createDataFrame(cube_func(\"num\")).show()",
+            "D. num_df.register(\"cube_func\").select(\"num\").show()"
         ],
         "answer": [
             "A"
@@ -1005,10 +993,10 @@ const quizData = [
     {
         "question": "What is the benefit of using Pandas on Spark for data transformations?\nOptions:",
         "options": [
-            "A.. It is available only with Python, thereby reducing the learning curve.",
-            "B.. It computes results immediately using eager execution, making it simple to use.",
-            "C.. It runs on a single node only, utilizing the memory with memory-bound DataFrames and\nhence cost-efficient.",
-            "D.. It executes queries faster using all the available cores in the cluster as well as provides\nPandas's rich set of features."
+            "A. It is available only with Python, thereby reducing the learning curve.",
+            "B. It computes results immediately using eager execution, making it simple to use.",
+            "C. It runs on a single node only, utilizing the memory with memory-bound DataFrames and\nhence cost-efficient.",
+            "D. It executes queries faster using all the available cores in the cluster as well as provides\nPandas's rich set of features."
         ],
         "answer": [
             "D"
@@ -1018,10 +1006,10 @@ const quizData = [
     {
         "question": "A data engineer observes that the upstream streaming source feeds the event table\nfrequently and sends duplicate records. Upon analyzing the current production table, the data\nengineer found that the time difference in the event_timestamp column of the duplicate\nrecords is, at most, 30 minutes.\nTo remove the duplicates, the engineer adds the code:\ndf = df.withWatermark(\"event_timestamp\", \"30 minutes\")\nWhat is the result?",
         "options": [
-            "A.. It removes all duplicates regardless of when they arrive.",
-            "B.. It accepts watermarks in seconds and the code results in an error.",
-            "C.. It removes duplicates that arrive within the 30-minute window specified by the watermark.",
-            "D.. It is not able to handle deduplication in this scenario."
+            "A. It removes all duplicates regardless of when they arrive.",
+            "B. It accepts watermarks in seconds and the code results in an error.",
+            "C. It removes duplicates that arrive within the 30-minute window specified by the watermark.",
+            "D. It is not able to handle deduplication in this scenario."
         ],
         "answer": [
             "C"
@@ -1031,10 +1019,10 @@ const quizData = [
     {
         "question": "An engineer has two DataFrames - df1 (small) and df2 (large). To optimize the join, the\nengineer uses a broadcast join:\nfrom pyspark.sql.functions import broadcast\ndf_result = df2.join(broadcast(df1), on=\"id\", how=\"inner\")\nWhat is the purpose of using broadcast() in this scenario?",
         "options": [
-            "A.. It increases the partition size for df1 and df2.",
-            "B.. It ensures that the join happens only when the id values are identical.",
-            "C.. It reduces the number of shuffle operations by replicating the smaller DataFrame to all\nnodes.",
-            "D.. It filters the id values before performing the join."
+            "A. It increases the partition size for df1 and df2.",
+            "B. It ensures that the join happens only when the id values are identical.",
+            "C. It reduces the number of shuffle operations by replicating the smaller DataFrame to all\nnodes.",
+            "D. It filters the id values before performing the join."
         ],
         "answer": [
             "C"
@@ -1044,10 +1032,10 @@ const quizData = [
     {
         "question": "A data engineer replaces the exact percentile() function with approx_percentile() to improve\nperformance, but the results are drifting too far from expected values.\nWhich change should be made to solve the issue?",
         "options": [
-            "A.. Decrease the first value of the percentage parameter to increase the accuracy of the\npercentile ranges",
-            "B.. Decrease the value of the accuracy parameter in order to decrease the memory usage but\nalso improve the accuracy",
-            "C.. Increase the last value of the percentage parameter to increase the accuracy of the\npercentile ranges",
-            "D.. Increase the value of the accuracy parameter in order to increase the memory usage but\nalso improve the accuracy"
+            "A. Decrease the first value of the percentage parameter to increase the accuracy of the\npercentile ranges",
+            "B. Decrease the value of the accuracy parameter in order to decrease the memory usage but\nalso improve the accuracy",
+            "C. Increase the last value of the percentage parameter to increase the accuracy of the\npercentile ranges",
+            "D. Increase the value of the accuracy parameter in order to increase the memory usage but\nalso improve the accuracy"
         ],
         "answer": [
             "D"
@@ -1057,10 +1045,10 @@ const quizData = [
     {
         "question": "Which Spark configuration controls the number of tasks that can run in parallel on an\nexecutor?",
         "options": [
-            "A.. spark.executor.cores",
-            "B.. spark.task.maxFailures",
-            "C.. spark.executor.memory",
-            "D.. spark.sql.shuffle.partitions"
+            "A. spark.executor.cores",
+            "B. spark.task.maxFailures",
+            "C. spark.executor.memory",
+            "D. spark.sql.shuffle.partitions"
         ],
         "answer": [
             "A"
@@ -1070,10 +1058,10 @@ const quizData = [
     {
         "question": "A Spark developer wants to improve the performance of an existing PySpark UDF that runs a\nhash function that is not available in the standard Spark functions library. The existing UDF\ncode is:\nimport hashlib\nimport pyspark.sql.functions as sf\nfrom pyspark.sql.types import StringType\ndef shake_256(raw):\nreturn hashlib.shake_256(raw.encode()).hexdigest(20)\nshake_256_udf = sf.udf(shake_256, StringType())\nThe developer wants to replace this existing UDF with a Pandas UDF to improve\nperformance. The developer changes the definition of shake_256_udf to this:CopyEdit\nshake_256_udf = sf.pandas_udf(shake_256, StringType()) However, the developer receives\nthe error:\nWhat should the signature of the shake_256() function be changed to in order to fix this\nerror?",
         "options": [
-            "A.. def shake_256(df: pd.Series) -> str:",
-            "B.. def shake_256(df: Iterator[pd.Series]) -> Iterator[pd.Series]:",
-            "C.. def shake_256(raw: str) -> str:",
-            "D.. def shake_256(df: pd.Series) -> pd.Series:"
+            "A. def shake_256(df: pd.Series) -> str:",
+            "B. def shake_256(df: Iterator[pd.Series]) -> Iterator[pd.Series]:",
+            "C. def shake_256(raw: str) -> str:",
+            "D. def shake_256(df: pd.Series) -> pd.Series:"
         ],
         "answer": [
             "D"
@@ -1083,10 +1071,10 @@ const quizData = [
     {
         "question": "A Spark application is experiencing performance issues in client mode because the driver is\nresource-constrained.\nHow should this issue be resolved?",
         "options": [
-            "A.. Add more executor instances to the cluster",
-            "B.. Increase the driver memory on the client machine",
-            "C.. Switch the deployment mode to cluster mode",
-            "D.. Switch the deployment mode to local mode"
+            "A. Add more executor instances to the cluster",
+            "B. Increase the driver memory on the client machine",
+            "C. Switch the deployment mode to cluster mode",
+            "D. Switch the deployment mode to local mode"
         ],
         "answer": [
             "C"
@@ -1096,10 +1084,10 @@ const quizData = [
     {
         "question": "A developer needs to produce a Python dictionary using data stored in a small Parquet table,\nwhich looks like this:\nregion_id\nregion_name\n10\nNorth\n12\nEast\n14\nWest\nThe resulting Python dictionary must contain a mapping of region_id to region_name,\ncontaining the smallest 3 region_id values.\nWhich code fragment meets the requirements?",
         "options": [
-            "A.. regions_dict = dict(regions.take(3))",
-            "B.. regions_dict = regions.select(\"region_id\", \"region_name\").take(3)",
-            "C.. regions_dict = dict(regions.select(\"region_id\", \"region_name\").rdd.collect())",
-            "D.. regions_dict = dict(regions.orderBy(\"region_id\").limit(3).rdd.map(lambda x: (x.region_id,\nx.region_name)).collect())"
+            "A. regions_dict = dict(regions.take(3))",
+            "B. regions_dict = regions.select(\"region_id\", \"region_name\").take(3)",
+            "C. regions_dict = dict(regions.select(\"region_id\", \"region_name\").rdd.collect())",
+            "D. regions_dict = dict(regions.orderBy(\"region_id\").limit(3).rdd.map(lambda x: (x.region_id,\nx.region_name)).collect())"
         ],
         "answer": [
             "D"
@@ -1109,10 +1097,10 @@ const quizData = [
     {
         "question": "A developer is working with a pandas DataFrame containing user behavior data from a web\napplication.\nWhich approach should be used for executing a groupBy operation in parallel across all\nworkers in Apache Spark 3.5?\nA)\nUse the applylnPandas API\nB)\nC)",
         "options": [
-            "A.. Use the applyInPandas API:\ndf.groupby(\"user_id\").applyInPandas(mean_func, schema=\"user_id long, value\ndouble\").show()",
-            "B.. Use the mapInPandas API:\ndf.mapInPandas(mean_func, schema=\"user_id long, value double\").show()",
-            "C.. Use a regular Spark UDF:\nfrom pyspark.sql.functions import mean\ndf.groupBy(\"user_id\").agg(mean(\"value\")).show()",
-            "D.. Use a Pandas UDF:\n@pandas_udf(\"double\")\ndef mean_func(value: pd.Series) -> float:\nreturn value.mean()\ndf.groupby(\"user_id\").agg(mean_func(df[\"value\"])).show()"
+            "A. Use the applyInPandas API:\ndf.groupby(\"user_id\").applyInPandas(mean_func, schema=\"user_id long, value\ndouble\").show()",
+            "B. Use the mapInPandas API:\ndf.mapInPandas(mean_func, schema=\"user_id long, value double\").show()",
+            "C. Use a regular Spark UDF:\nfrom pyspark.sql.functions import mean\ndf.groupBy(\"user_id\").agg(mean(\"value\")).show()",
+            "D. Use a Pandas UDF:\n@pandas_udf(\"double\")\ndef mean_func(value: pd.Series) -> float:\nreturn value.mean()\ndf.groupby(\"user_id\").agg(mean_func(df[\"value\"])).show()"
         ],
         "answer": [
             "A"
@@ -1122,11 +1110,11 @@ const quizData = [
     {
         "question": "A developer wants to test Spark Connect with an existing Spark application.\nWhat are the two alternative ways the developer can start a local Spark Connect server\nwithout changing their existing application code? (Choose 2 answers)",
         "options": [
-            "A.. Execute their pyspark shell with the option --remote \"https://localhost\"",
-            "B.. Execute their pyspark shell with the option --remote \"sc://localhost\"",
-            "C.. Set the environment variable SPARK_REMOTE=\"sc://localhost\" before starting the\npyspark shell",
-            "D.. Add .remote(\"sc://localhost\") to their SparkSession.builder calls in their Spark code",
-            "E.. Ensure the Spark property spark.connect.grpc.binding.port is set to 15002 in the\napplication code"
+            "A. Execute their pyspark shell with the option --remote \"https://localhost\"",
+            "B. Execute their pyspark shell with the option --remote \"sc://localhost\"",
+            "C. Set the environment variable SPARK_REMOTE=\"sc://localhost\" before starting the\npyspark shell",
+            "D. Add .remote(\"sc://localhost\") to their SparkSession.builder calls in their Spark code",
+            "E. Ensure the Spark property spark.connect.grpc.binding.port is set to 15002 in the\napplication code"
         ],
         "answer": [
             "B",
@@ -1137,10 +1125,10 @@ const quizData = [
     {
         "question": "Which components of Apache Spark's Architecture are responsible for carrying out tasks\nwhen assigned to them?",
         "options": [
-            "A.. Driver Nodes",
-            "B.. Executors",
-            "C.. CPU Cores",
-            "D.. Worker Nodes"
+            "A. Driver Nodes",
+            "B. Executors",
+            "C. CPU Cores",
+            "D. Worker Nodes"
         ],
         "answer": [
             "B"
@@ -1150,10 +1138,10 @@ const quizData = [
     {
         "question": "How can a Spark developer ensure optimal resource utilization when running Spark jobs in\nLocal Mode for testing?\nOptions:",
         "options": [
-            "A.. Configure the application to run in cluster mode instead of local mode.",
-            "B.. Increase the number of local threads based on the number of CPU cores.",
-            "C.. Use the spark.dynamicAllocation.enabled property to scale resources dynamically.",
-            "D.. Set the spark.executor.memory property to a large value."
+            "A. Configure the application to run in cluster mode instead of local mode.",
+            "B. Increase the number of local threads based on the number of CPU cores.",
+            "C. Use the spark.dynamicAllocation.enabled property to scale resources dynamically.",
+            "D. Set the spark.executor.memory property to a large value."
         ],
         "answer": [
             "B"
@@ -1163,10 +1151,10 @@ const quizData = [
     {
         "question": "A data scientist wants to ingest a directory full of plain text files so that each record in\nthe output DataFrame contains the entire contents of a single file and the full path of the file\nthe text was read from.\nThe first attempt does read the text files, but each record contains a single line. This code is\nshown below:\ntxt_path = \"/datasets/raw_txt/*\"\ndf = spark.read.text(txt_path) # one row per line by default\ndf = df.withColumn(\"file_path\", input_file_name()) # add full path\nWhich code change can be implemented in a DataFrame that meets the data scientist's\nrequirements?",
         "options": [
-            "A.. Add the option wholetext to the text() function.",
-            "B.. Add the option lineSep to the text() function.",
-            "C.. Add the option wholetext=False to the text() function.",
-            "D.. Add the option lineSep=\", \" to the text() function."
+            "A. Add the option wholetext to the text() function.",
+            "B. Add the option lineSep to the text() function.",
+            "C. Add the option wholetext=False to the text() function.",
+            "D. Add the option lineSep=\", \" to the text() function."
         ],
         "answer": [
             "A"
@@ -1176,10 +1164,10 @@ const quizData = [
     {
         "question": "Given a CSV file with the content:\nAnd the following code:\nfrom pyspark.sql.types import *\nschema = StructType([\nStructField(\"name\", StringType()),\nStructField(\"age\", IntegerType())\n])\nspark.read.schema(schema).csv(path).collect()\nWhat is the resulting output?",
         "options": [
-            "A.. [Row(name='bambi'), Row(name='alladin', age=20)]",
-            "B.. [Row(name='alladin', age=20)]",
-            "C.. [Row(name='bambi', age=None), Row(name='alladin', age=20)]",
-            "D.. The code throws an error due to a schema mismatch."
+            "A. [Row(name='bambi'), Row(name='alladin', age=20)]",
+            "B. [Row(name='alladin', age=20)]",
+            "C. [Row(name='bambi', age=None), Row(name='alladin', age=20)]",
+            "D. The code throws an error due to a schema mismatch."
         ],
         "answer": [
             "C"
@@ -1189,10 +1177,10 @@ const quizData = [
     {
         "question": "A data engineer wants to create an external table from a JSON file located at /data/input.json\nwith the following requirements:\nCreate an external table named users\nAutomatically infer schema\nMerge records with differing schemas\nWhich code snippet should the engineer use?\nOptions:",
         "options": [
-            "A.. CREATE TABLE users USING json OPTIONS (path '/data/input.json')",
-            "B.. CREATE EXTERNAL TABLE users USING json OPTIONS (path '/data/input.json')",
-            "C.. CREATE EXTERNAL TABLE users USING json OPTIONS (path '/data/input.json',\nmergeSchema 'true')",
-            "D.. CREATE EXTERNAL TABLE users USING json OPTIONS (path '/data/input.json',\nschemaMerge 'true')"
+            "A. CREATE TABLE users USING json OPTIONS (path '/data/input.json')",
+            "B. CREATE EXTERNAL TABLE users USING json OPTIONS (path '/data/input.json')",
+            "C. CREATE EXTERNAL TABLE users USING json OPTIONS (path '/data/input.json',\nmergeSchema 'true')",
+            "D. CREATE EXTERNAL TABLE users USING json OPTIONS (path '/data/input.json',\nschemaMerge 'true')"
         ],
         "answer": [
             "C"
@@ -1202,10 +1190,10 @@ const quizData = [
     {
         "question": "A data scientist wants each record in the DataFrame to contain:\nThe first attempt at the code does read the text files but each record contains a single line.\nThis code is shown below:\n\n\n \nThe entire contents of a file\nThe full file path\nThe issue: reading line-by-line rather than full text per file.\nCode:\ncorpus = spark.read.text(\"/datasets/raw_txt/*\") \\\n.select('*', '_metadata.file_path')\nWhich change will ensure one record per file?\nOptions:",
         "options": [
-            "A.. Add the option wholetext=True to the text() function",
-            "B.. Add the option lineSep='\\n' to the text() function",
-            "C.. Add the option wholetext=False to the text() function",
-            "D.. Add the option lineSep=\", \" to the text() function"
+            "A. Add the option wholetext=True to the text() function",
+            "B. Add the option lineSep='\\n' to the text() function",
+            "C. Add the option wholetext=False to the text() function",
+            "D. Add the option lineSep=\", \" to the text() function"
         ],
         "answer": [
             "A"
@@ -1215,10 +1203,10 @@ const quizData = [
     {
         "question": "A data scientist is working on a large dataset in Apache Spark using PySpark. The data\nscientist has a DataFrame df with columns user_id, product_id, and purchase_amount and\nneeds to perform some operations on this data efficiently.\nWhich sequence of operations results in transformations that require a shuffle followed by\ntransformations that do not?",
         "options": [
-            "A.. df.filter(df.purchase_amount > 100).groupBy(\"user_id\").sum(\"purchase_amount\")",
-            "B.. df.withColumn(\"discount\", df.purchase_amount * 0.1).select(\"discount\")",
-            "C.. df.withColumn(\"purchase_date\", current_date()).where(\"total_purchase > 50\")",
-            "D.. df.groupBy(\"user_id\").agg(sum(\"purchase_amount\").alias(\"total_purchase\")).repartition(10\n)"
+            "A. df.filter(df.purchase_amount > 100).groupBy(\"user_id\").sum(\"purchase_amount\")",
+            "B. df.withColumn(\"discount\", df.purchase_amount * 0.1).select(\"discount\")",
+            "C. df.withColumn(\"purchase_date\", current_date()).where(\"total_purchase > 50\")",
+            "D. df.groupBy(\"user_id\").agg(sum(\"purchase_amount\").alias(\"total_purchase\")).repartition(10\n)"
         ],
         "answer": [
             "D"
@@ -1228,10 +1216,10 @@ const quizData = [
     {
         "question": "A Data Analyst is working on employees_df and needs to add a new column where a 10%\ntax is calculated on the salary.\nAdditionally, the DataFrame contains the column age, which is not needed.\nWhich code fragment adds the tax column and removes the age column?",
         "options": [
-            "A.. employees_df = employees_df.withColumn(\"tax\", col(\"salary\") * 0.1).drop(\"age\")",
-            "B.. employees_df = employees_df.withColumn(\"tax\", lit(0.1)).drop(\"age\")",
-            "C.. employees_df = employees_df.dropField(\"age\").withColumn(\"tax\", col(\"salary\") * 0.1)",
-            "D.. employees_df = employees_df.withColumn(\"tax\", col(\"salary\") + 0.1).drop(\"age\")"
+            "A. employees_df = employees_df.withColumn(\"tax\", col(\"salary\") * 0.1).drop(\"age\")",
+            "B. employees_df = employees_df.withColumn(\"tax\", lit(0.1)).drop(\"age\")",
+            "C. employees_df = employees_df.dropField(\"age\").withColumn(\"tax\", col(\"salary\") * 0.1)",
+            "D. employees_df = employees_df.withColumn(\"tax\", col(\"salary\") + 0.1).drop(\"age\")"
         ],
         "answer": [
             "A"
@@ -1241,10 +1229,10 @@ const quizData = [
     {
         "question": "You have:\nDataFrame A: 128 GB of transactions\nDataFrame B: 1 GB user lookup table\nWhich strategy is correct for broadcasting?",
         "options": [
-            "A.. DataFrame B should be broadcasted because it is smaller and will eliminate the need for\nshuffling itself",
-            "B.. DataFrame B should be broadcasted because it is smaller and will eliminate the need for\n\n\nshuffling DataFrame A",
-            "C.. DataFrame A should be broadcasted because it is larger and will eliminate the need for\nshuffling DataFrame B",
-            "D.. DataFrame A should be broadcasted because it is smaller and will eliminate the need for\nshuffling itself"
+            "A. DataFrame B should be broadcasted because it is smaller and will eliminate the need for\nshuffling itself",
+            "B. DataFrame B should be broadcasted because it is smaller and will eliminate the need for\n\n\nshuffling DataFrame A",
+            "C. DataFrame A should be broadcasted because it is larger and will eliminate the need for\nshuffling DataFrame B",
+            "D. DataFrame A should be broadcasted because it is smaller and will eliminate the need for\nshuffling itself"
         ],
         "answer": [
             "B"
@@ -1254,10 +1242,10 @@ const quizData = [
     {
         "question": "A data engineer is implementing a streaming pipeline with watermarking to handle late-\narriving records.\nThe engineer has written the following code:\ninputStream \\\n.withWatermark(\"event_time\", \"10 minutes\") \\\n.groupBy(window(\"event_time\", \"15 minutes\"))\nWhat happens to data that arrives after the watermark threshold?",
         "options": [
-            "A.. Any data arriving more than 10 minutes after the watermark threshold will be ignored and\nnot included in the aggregation.",
-            "B.. Records that arrive later than the watermark threshold (10 minutes) will automatically be\nincluded in the aggregation if they fall within the 15-minute window.",
-            "C.. Data arriving more than 10 minutes after the latest watermark will still be included in the\naggregation but will be placed into the next window.",
-            "D.. The watermark ensures that late data arriving within 10 minutes of the latest event time\nwill be processed and included in the windowed aggregation."
+            "A. Any data arriving more than 10 minutes after the watermark threshold will be ignored and\nnot included in the aggregation.",
+            "B. Records that arrive later than the watermark threshold (10 minutes) will automatically be\nincluded in the aggregation if they fall within the 15-minute window.",
+            "C. Data arriving more than 10 minutes after the latest watermark will still be included in the\naggregation but will be placed into the next window.",
+            "D. The watermark ensures that late data arriving within 10 minutes of the latest event time\nwill be processed and included in the windowed aggregation."
         ],
         "answer": [
             "A"
@@ -1267,10 +1255,10 @@ const quizData = [
     {
         "question": "An organization has been running a Spark application in production and is considering\ndisabling the Spark History Server to reduce resource usage.\nWhat will be the impact of disabling the Spark History Server in production?",
         "options": [
-            "A.. Prevention of driver log accumulation during long-running jobs",
-            "B.. Improved job execution speed due to reduced logging overhead",
-            "C.. Loss of access to past job logs and reduced debugging capability for completed jobs",
-            "D.. Enhanced executor performance due to reduced log size"
+            "A. Prevention of driver log accumulation during long-running jobs",
+            "B. Improved job execution speed due to reduced logging overhead",
+            "C. Loss of access to past job logs and reduced debugging capability for completed jobs",
+            "D. Enhanced executor performance due to reduced log size"
         ],
         "answer": [
             "C"
@@ -1280,10 +1268,10 @@ const quizData = [
     {
         "question": "A data engineer is building a Structured Streaming pipeline and wants it to recover from\nfailures or intentional shutdowns by continuing where it left off.\nHow can this be achieved?",
         "options": [
-            "A.. By configuring the option recoveryLocation during SparkSession initialization.",
-            "B.. By configuring the option checkpointLocation during readStream.",
-            "C.. By configuring the option checkpointLocation during writeStream.",
-            "D.. By configuring the option recoveryLocation during writeStream."
+            "A. By configuring the option recoveryLocation during SparkSession initialization.",
+            "B. By configuring the option checkpointLocation during readStream.",
+            "C. By configuring the option checkpointLocation during writeStream.",
+            "D. By configuring the option recoveryLocation during writeStream."
         ],
         "answer": [
             "C"
@@ -1293,10 +1281,10 @@ const quizData = [
     {
         "question": "A data scientist at a financial services company is working with a Spark DataFrame\ncontaining transaction records. The DataFrame has millions of rows and includes columns for\ntransaction_id, account_number, transaction_amount, and timestamp. Due to an issue with\nthe source system, some transactions were accidentally recorded multiple times with\nidentical information across all fields. The data scientist needs to remove rows with\nduplicates across all fields to ensure accurate financial reporting.\nWhich approach should the data scientist use to deduplicate the orders using PySpark?",
         "options": [
-            "A.. df = df.dropDuplicates()",
-            "B.. df = df.groupBy(\"transaction_id\").agg(F.first(\"account_number\"),\nF.first(\"transaction_amount\"), F.first(\"timestamp\"))",
-            "C.. df = df.filter(F.col(\"transaction_id\").isNotNull())",
-            "D.. df = df.dropDuplicates([\"transaction_amount\"])"
+            "A. df = df.dropDuplicates()",
+            "B. df = df.groupBy(\"transaction_id\").agg(F.first(\"account_number\"),\nF.first(\"transaction_amount\"), F.first(\"timestamp\"))",
+            "C. df = df.filter(F.col(\"transaction_id\").isNotNull())",
+            "D. df = df.dropDuplicates([\"transaction_amount\"])"
         ],
         "answer": [
             "A"
@@ -1306,10 +1294,10 @@ const quizData = [
     {
         "question": "Which Spark configuration controls the number of tasks that can run in parallel on the\nexecutor?\nOptions:",
         "options": [
-            "A.. spark.executor.cores",
-            "B.. spark.task.maxFailures",
-            "C.. spark.driver.cores",
-            "D.. spark.executor.memory"
+            "A. spark.executor.cores",
+            "B. spark.task.maxFailures",
+            "C. spark.driver.cores",
+            "D. spark.executor.memory"
         ],
         "answer": [
             "A"
@@ -1319,10 +1307,10 @@ const quizData = [
     {
         "question": "Given a DataFrame df that has 10 partitions, after running the code:\nresult = df.coalesce(20)\nHow many partitions will the result DataFrame have?",
         "options": [
-            "A.. 10",
-            "B.. Same number as the cluster executors",
-            "C.. 1",
-            "D.. 20"
+            "A. 10",
+            "B. Same number as the cluster executors",
+            "C. 1",
+            "D. 20"
         ],
         "answer": [
             "A"
@@ -1332,10 +1320,10 @@ const quizData = [
     {
         "question": "What is the relationship between jobs, stages, and tasks during execution in Apache Spark?\nOptions:",
         "options": [
-            "A.. A job contains multiple stages, and each stage contains multiple tasks.",
-            "B.. A job contains multiple tasks, and each task contains multiple stages.",
-            "C.. A stage contains multiple jobs, and each job contains multiple tasks.",
-            "D.. A stage contains multiple tasks, and each task contains multiple jobs."
+            "A. A job contains multiple stages, and each stage contains multiple tasks.",
+            "B. A job contains multiple tasks, and each task contains multiple stages.",
+            "C. A stage contains multiple jobs, and each job contains multiple tasks.",
+            "D. A stage contains multiple tasks, and each task contains multiple jobs."
         ],
         "answer": [
             "A"
@@ -1345,10 +1333,10 @@ const quizData = [
     {
         "question": "Which feature of Spark Connect is considered when designing an application to enable\nremote interaction with the Spark cluster?",
         "options": [
-            "A.. It provides a way to run Spark applications remotely in any programming language",
-            "B.. It can be used to interact with any remote cluster using the REST API",
-            "C.. It allows for remote execution of Spark jobs",
-            "D.. It is primarily used for data ingestion into Spark from external sources"
+            "A. It provides a way to run Spark applications remotely in any programming language",
+            "B. It can be used to interact with any remote cluster using the REST API",
+            "C. It allows for remote execution of Spark jobs",
+            "D. It is primarily used for data ingestion into Spark from external sources"
         ],
         "answer": [
             "C"
@@ -1358,10 +1346,10 @@ const quizData = [
     {
         "question": "A data engineer needs to persist a file-based data source to a specific location. However, by\ndefault, Spark writes to the warehouse directory (e.g., /user/hive/warehouse). To override\nthis, the engineer must explicitly define the file path.\nWhich line of code ensures the data is saved to a specific location?\nOptions:",
         "options": [
-            "A.. users.write(path=\"/some/path\").saveAsTable(\"default_table\")",
-            "B.. users.write.saveAsTable(\"default_table\").option(\"path\", \"/some/path\")",
-            "C.. users.write.option(\"path\", \"/some/path\").saveAsTable(\"default_table\")",
-            "D.. users.write.saveAsTable(\"default_table\", path=\"/some/path\")"
+            "A. users.write(path=\"/some/path\").saveAsTable(\"default_table\")",
+            "B. users.write.saveAsTable(\"default_table\").option(\"path\", \"/some/path\")",
+            "C. users.write.option(\"path\", \"/some/path\").saveAsTable(\"default_table\")",
+            "D. users.write.saveAsTable(\"default_table\", path=\"/some/path\")"
         ],
         "answer": [
             "C"
@@ -1371,10 +1359,10 @@ const quizData = [
     {
         "question": "A Spark application needs to read multiple Parquet files from a directory where the files have\ndiffering but compatible schemas.\nThe data engineer wants to create a DataFrame that includes all columns from all files.\nWhich code should the data engineer use to read the Parquet files and include all columns\nusing Apache Spark?",
         "options": [
-            "A.. spark.read.parquet(\"/data/parquet/\")",
-            "B.. spark.read.option(\"mergeSchema\", True).parquet(\"/data/parquet/\")",
-            "C.. spark.read.format(\"parquet\").option(\"inferSchema\", \"true\").load(\"/data/parquet/\")",
-            "D.. spark.read.parquet(\"/data/parquet/\").option(\"mergeAllCols\", True)"
+            "A. spark.read.parquet(\"/data/parquet/\")",
+            "B. spark.read.option(\"mergeSchema\", True).parquet(\"/data/parquet/\")",
+            "C. spark.read.format(\"parquet\").option(\"inferSchema\", \"true\").load(\"/data/parquet/\")",
+            "D. spark.read.parquet(\"/data/parquet/\").option(\"mergeAllCols\", True)"
         ],
         "answer": [
             "B"
@@ -1384,10 +1372,10 @@ const quizData = [
     {
         "question": "A data engineer is working with Spark SQL and has a large JSON file stored at\n/data/input.json.\nThe file contains records with varying schemas, and the engineer wants to create an external\ntable in Spark SQL that:\nReads directly from /data/input.json.\nInfers the schema automatically.\nMerges differing schemas.\nWhich code snippet should the engineer use?",
         "options": [
-            "A.. CREATE EXTERNAL TABLE users\nUSING json\nOPTIONS (path '/data/input.json', mergeSchema 'true');",
-            "B.. CREATE TABLE users\nUSING json\nOPTIONS (path '/data/input.json');",
-            "C.. CREATE EXTERNAL TABLE users\nUSING json\nOPTIONS (path '/data/input.json', inferSchema 'true');",
-            "D.. CREATE EXTERNAL TABLE users\nUSING json\nOPTIONS (path '/data/input.json', mergeAll 'true');"
+            "A. CREATE EXTERNAL TABLE users\nUSING json\nOPTIONS (path '/data/input.json', mergeSchema 'true');",
+            "B. CREATE TABLE users\nUSING json\nOPTIONS (path '/data/input.json');",
+            "C. CREATE EXTERNAL TABLE users\nUSING json\nOPTIONS (path '/data/input.json', inferSchema 'true');",
+            "D. CREATE EXTERNAL TABLE users\nUSING json\nOPTIONS (path '/data/input.json', mergeAll 'true');"
         ],
         "answer": [
             "A"
@@ -1397,10 +1385,10 @@ const quizData = [
     {
         "question": "A data engineer wants to write a Spark job that creates a new managed table. If the table\nalready exists, the job should fail and not modify anything.\nWhich save mode and method should be used?",
         "options": [
-            "A.. saveAsTable with mode ErrorIfExists",
-            "B.. saveAsTable with mode Overwrite",
-            "C.. save with mode Ignore",
-            "D.. save with mode ErrorIfExists"
+            "A. saveAsTable with mode ErrorIfExists",
+            "B. saveAsTable with mode Overwrite",
+            "C. save with mode Ignore",
+            "D. save with mode ErrorIfExists"
         ],
         "answer": [
             "A"
@@ -1410,10 +1398,10 @@ const quizData = [
     {
         "question": "A Data Analyst needs to retrieve employees with 5 or more years of tenure.\nWhich code snippet filters and shows the list?",
         "options": [
-            "A.. employees_df.filter(employees_df.tenure >= 5).show()",
-            "B.. employees_df.where(employees_df.tenure >= 5)",
-            "C.. filter(employees_df.tenure >= 5)",
-            "D.. employees_df.filter(employees_df.tenure >= 5).collect()"
+            "A. employees_df.filter(employees_df.tenure >= 5).show()",
+            "B. employees_df.where(employees_df.tenure >= 5)",
+            "C. filter(employees_df.tenure >= 5)",
+            "D. employees_df.filter(employees_df.tenure >= 5).collect()"
         ],
         "answer": [
             "A"
@@ -1423,10 +1411,10 @@ const quizData = [
     {
         "question": "A developer needs to write the output of a complex chain of Spark transformations to a\nParquet table called events.liveLatest.\nConsumers of this table query it frequently with filters on both year and month of the event_ts\ncolumn (a timestamp).\nThe current code:\nfrom pyspark.sql import functions as F\nfinal = df.withColumn(\"event_year\", F.year(\"event_ts\")) \\\n.withColumn(\"event_month\", F.month(\"event_ts\")) \\\n.bucketBy(42, [\"event_year\", \"event_month\"]) \\\n.saveAsTable(\"events.liveLatest\")\nHowever, consumers report poor query performance.\nWhich change will enable efficient querying by year and month?",
         "options": [
-            "A.. Replace .bucketBy() with .partitionBy(\"event_year\", \"event_month\")",
-            "B.. Change the bucket count (42) to a lower number",
-            "C.. Add .sortBy() after .bucketBy()",
-            "D.. Replace .bucketBy() with .partitionBy(\"event_year\") only"
+            "A. Replace .bucketBy() with .partitionBy(\"event_year\", \"event_month\")",
+            "B. Change the bucket count (42) to a lower number",
+            "C. Add .sortBy() after .bucketBy()",
+            "D. Replace .bucketBy() with .partitionBy(\"event_year\") only"
         ],
         "answer": [
             "A"
@@ -1436,10 +1424,10 @@ const quizData = [
     {
         "question": "A data engineer is working on a Streaming DataFrame (streaming_df) with the following\nstreaming data:\nid\nname\ncount\ntimestamp\n1\nDelhi\n20\n\n\n2024-09-19T10:11\n1\nDelhi\n50\n2024-09-19T10:12\n2\nLondon\n50\n2024-09-19T10:15\n3\nParis\n30\n2024-09-19T10:18\n3\nParis\n20\n2024-09-19T10:20\n4\nWashington\n10\n2024-09-19T10:22\nWhich operation is supported with streaming_df?",
         "options": [
-            "A.. streaming_df.count()",
-            "B.. streaming_df.filter(\"count < 30\")",
-            "C.. streaming_df.select(countDistinct(\"name\"))",
-            "D.. streaming_df.show()"
+            "A. streaming_df.count()",
+            "B. streaming_df.filter(\"count < 30\")",
+            "C. streaming_df.select(countDistinct(\"name\"))",
+            "D. streaming_df.show()"
         ],
         "answer": [
             "B"
@@ -1449,10 +1437,10 @@ const quizData = [
     {
         "question": "A data engineer is building an Apache Spark™ Structured Streaming application to process a\nstream of JSON events in real time. The engineer wants the application to be fault-tolerant\nand resume processing from the last successfully processed record in case of a failure. To\nachieve this, the data engineer decides to implement checkpoints.\nWhich code snippet should the data engineer use?",
         "options": [
-            "A.. query = streaming_df.writeStream \\\n.format(\"console\") \\\n.option(\"checkpoint\", \"/path/to/checkpoint\") \\\n.outputMode(\"append\") \\\n.start()",
-            "B.. query = streaming_df.writeStream \\\n.format(\"console\") \\\n.outputMode(\"append\") \\\n.option(\"checkpointLocation\", \"/path/to/checkpoint\") \\\n.start()",
-            "C.. query = streaming_df.writeStream \\\n.format(\"console\") \\\n.outputMode(\"complete\") \\\n.start()",
-            "D.. query = streaming_df.writeStream \\\n.format(\"console\") \\\n.outputMode(\"append\") \\\n.start()"
+            "A. query = streaming_df.writeStream \\\n.format(\"console\") \\\n.option(\"checkpoint\", \"/path/to/checkpoint\") \\\n.outputMode(\"append\") \\\n.start()",
+            "B. query = streaming_df.writeStream \\\n.format(\"console\") \\\n.outputMode(\"append\") \\\n.option(\"checkpointLocation\", \"/path/to/checkpoint\") \\\n.start()",
+            "C. query = streaming_df.writeStream \\\n.format(\"console\") \\\n.outputMode(\"complete\") \\\n.start()",
+            "D. query = streaming_df.writeStream \\\n.format(\"console\") \\\n.outputMode(\"append\") \\\n.start()"
         ],
         "answer": [
             "B"
@@ -1462,10 +1450,10 @@ const quizData = [
     {
         "question": "Which feature of Spark Connect should be considered when designing an application that\n\n\nplans to enable remote interaction with a Spark cluster?",
         "options": [
-            "A.. It is primarily used for data ingestion into Spark from external sources.",
-            "B.. It provides a way to run Spark applications remotely in any programming language.",
-            "C.. It can be used to interact with any remote cluster using the REST API.",
-            "D.. It allows for remote execution of Spark jobs."
+            "A. It is primarily used for data ingestion into Spark from external sources.",
+            "B. It provides a way to run Spark applications remotely in any programming language.",
+            "C. It can be used to interact with any remote cluster using the REST API.",
+            "D. It allows for remote execution of Spark jobs."
         ],
         "answer": [
             "D"
@@ -1475,10 +1463,10 @@ const quizData = [
     {
         "question": "Given this view definition:\ndf.createOrReplaceTempView(\"users_vw\")\nWhich approach can be used to query the users_vw view after the session is terminated?\nOptions:",
         "options": [
-            "A.. Query the users_vw using Spark",
-            "B.. Persist the users_vw data as a table",
-            "C.. Recreate the users_vw and query the data using Spark",
-            "D.. Save the users_vw definition and query using Spark"
+            "A. Query the users_vw using Spark",
+            "B. Persist the users_vw data as a table",
+            "C. Recreate the users_vw and query the data using Spark",
+            "D. Save the users_vw definition and query using Spark"
         ],
         "answer": [
             "B"
@@ -1488,10 +1476,10 @@ const quizData = [
     {
         "question": "A Spark developer is developing a Spark application to monitor task performance across a\n\n\ncluster.\nOne requirement is to track the maximum processing time for tasks on each worker node and\nconsolidate this information on the driver for further analysis.\nWhich technique should the developer use?",
         "options": [
-            "A.. Broadcast a variable to share the maximum time among workers.",
-            "B.. Configure the Spark UI to automatically collect maximum times.",
-            "C.. Use an RDD action like reduce() to compute the maximum time.",
-            "D.. Use an accumulator to record the maximum time on the driver."
+            "A. Broadcast a variable to share the maximum time among workers.",
+            "B. Configure the Spark UI to automatically collect maximum times.",
+            "C. Use an RDD action like reduce() to compute the maximum time.",
+            "D. Use an accumulator to record the maximum time on the driver."
         ],
         "answer": [
             "C"
@@ -1501,10 +1489,10 @@ const quizData = [
     {
         "question": "A developer wants to refactor older Spark code to take advantage of built-in functions\nintroduced in Spark 3.5.\nThe original code:\nfrom pyspark.sql import functions as F\nmin_price = 110.50\nresult_df = prices_df.filter(F.col(\"price\") > min_price).agg(F.count(\"*\")) Which code block\nshould the developer use to refactor the code?",
         "options": [
-            "A.. result_df = prices_df.filter(F.col(\"price\") > F.lit(min_price)).agg(F.count(\"*\"))",
-            "B.. result_df = prices_df.where(F.lit(\"price\") > min_price).groupBy().count()",
-            "C.. result_df = prices_df.withColumn(\"valid_price\", when(col(\"price\") > F.lit(min_price), True))",
-            "D.. result_df = prices_df.filter(F.lit(min_price) > F.col(\"price\")).count()"
+            "A. result_df = prices_df.filter(F.col(\"price\") > F.lit(min_price)).agg(F.count(\"*\"))",
+            "B. result_df = prices_df.where(F.lit(\"price\") > min_price).groupBy().count()",
+            "C. result_df = prices_df.withColumn(\"valid_price\", when(col(\"price\") > F.lit(min_price), True))",
+            "D. result_df = prices_df.filter(F.lit(min_price) > F.col(\"price\")).count()"
         ],
         "answer": [
             "A"
@@ -1514,10 +1502,10 @@ const quizData = [
     {
         "question": "A Data Analyst is working on the DataFrame sensor_df, which contains two columns:\nWhich code fragment returns a DataFrame that splits the record column into separate\ncolumns and has one array item per row?\nA)\nB)\nC)\nD)",
         "options": [
-            "A.. exploded_df = sensor_df.withColumn(\"record_exploded\", explode(\"record\")) exploded_df =\nexploded_df.select(\"record_datetime\", \"sensor_id\", \"status\", \"health\")",
-            "B.. exploded_df = exploded_df.select(\n\"record_datetime\",\n\"record_exploded.sensor_id\",\n\"record_exploded.status\",\n\"record_exploded.health\"\n)\nexploded_df = sensor_df.withColumn(\"record_exploded\", explode(\"record\"))",
-            "C.. exploded_df = exploded_df.select(\n\n\n\"record_datetime\",\n\"record_exploded.sensor_id\",\n\"record_exploded.status\",\n\"record_exploded.health\"\n)\nexploded_df = sensor_df.withColumn(\"record_exploded\", explode(\"record\"))",
-            "D.. exploded_df = exploded_df.select(\"record_datetime\", \"record_exploded\")"
+            "A. exploded_df = sensor_df.withColumn(\"record_exploded\", explode(\"record\")) exploded_df =\nexploded_df.select(\"record_datetime\", \"sensor_id\", \"status\", \"health\")",
+            "B. exploded_df = exploded_df.select(\n\"record_datetime\",\n\"record_exploded.sensor_id\",\n\"record_exploded.status\",\n\"record_exploded.health\"\n)\nexploded_df = sensor_df.withColumn(\"record_exploded\", explode(\"record\"))",
+            "C. exploded_df = exploded_df.select(\n\n\n\"record_datetime\",\n\"record_exploded.sensor_id\",\n\"record_exploded.status\",\n\"record_exploded.health\"\n)\nexploded_df = sensor_df.withColumn(\"record_exploded\", explode(\"record\"))",
+            "D. exploded_df = exploded_df.select(\"record_datetime\", \"record_exploded\")"
         ],
         "answer": [
             "C"
@@ -1527,10 +1515,10 @@ const quizData = [
     {
         "question": "Given:\npython\nCopyEdit\nspark.sparkContext.setLogLevel(\"<LOG_LEVEL>\")\nWhich set contains the suitable configuration settings for Spark driver LOG_LEVELs?",
         "options": [
-            "A.. ALL, DEBUG, FAIL, INFO",
-            "B.. ERROR, WARN, TRACE, OFF",
-            "C.. WARN, NONE, ERROR, FATAL",
-            "D.. FATAL, NONE, INFO, DEBUG"
+            "A. ALL, DEBUG, FAIL, INFO",
+            "B. ERROR, WARN, TRACE, OFF",
+            "C. WARN, NONE, ERROR, FATAL",
+            "D. FATAL, NONE, INFO, DEBUG"
         ],
         "answer": [
             "B"
@@ -1540,10 +1528,10 @@ const quizData = [
     {
         "question": "The following code fragment results in an error:\n@F.udf(T.IntegerType())\ndef simple_udf(t: str) -> str:\nreturn answer * 3.14159\nWhich code fragment should be used instead?",
         "options": [
-            "A.. @F.udf(T.IntegerType())\ndef simple_udf(t: int) -> int:\nreturn t * 3.14159",
-            "B.. @F.udf(T.DoubleType())\ndef simple_udf(t: float) -> float:\nreturn t * 3.14159",
-            "C.. @F.udf(T.DoubleType())\ndef simple_udf(t: int) -> int:\nreturn t * 3.14159",
-            "D.. @F.udf(T.IntegerType())\ndef simple_udf(t: float) -> float:\nreturn t * 3.14159"
+            "A. @F.udf(T.IntegerType())\ndef simple_udf(t: int) -> int:\nreturn t * 3.14159",
+            "B. @F.udf(T.DoubleType())\ndef simple_udf(t: float) -> float:\nreturn t * 3.14159",
+            "C. @F.udf(T.DoubleType())\ndef simple_udf(t: int) -> int:\nreturn t * 3.14159",
+            "D. @F.udf(T.IntegerType())\ndef simple_udf(t: float) -> float:\nreturn t * 3.14159"
         ],
         "answer": [
             "B"
@@ -1553,10 +1541,10 @@ const quizData = [
     {
         "question": "A data engineer is investigating a Spark cluster that is experiencing underutilization during\nscheduled batch jobs.\nAfter checking the Spark logs, they noticed that tasks are often getting killed due to timeout\nerrors, and there are several warnings about insufficient resources in the logs.\nWhich action should the engineer take to resolve the underutilization issue?",
         "options": [
-            "A.. Set the spark.network.timeout property to allow tasks more time to complete without being\nkilled.",
-            "B.. Increase the executor memory allocation in the Spark configuration.",
-            "C.. Reduce the size of the data partitions to improve task scheduling.",
-            "D.. Increase the number of executor instances to handle more concurrent tasks."
+            "A. Set the spark.network.timeout property to allow tasks more time to complete without being\nkilled.",
+            "B. Increase the executor memory allocation in the Spark configuration.",
+            "C. Reduce the size of the data partitions to improve task scheduling.",
+            "D. Increase the number of executor instances to handle more concurrent tasks."
         ],
         "answer": [
             "D"
@@ -1566,10 +1554,10 @@ const quizData = [
     {
         "question": "A Spark developer wants to improve the performance of an existing PySpark UDF that runs a\nhash function not available in the standard Spark functions library.\nThe existing UDF code is:\nimport hashlib\nfrom pyspark.sql.types import StringType\ndef shake_256(raw):\nreturn hashlib.shake_256(raw.encode()).hexdigest(20)\nshake_256_udf = udf(shake_256, StringType())\n\n\nThe developer replaces this UDF with a Pandas UDF for better performance:\n@pandas_udf(StringType())\ndef shake_256(raw: str) -> str:\nreturn hashlib.shake_256(raw.encode()).hexdigest(20)\nHowever, the developer receives this error:\nTypeError: Unsupported signature: (raw: str) -> str\nWhat should the signature of the shake_256() function be changed to in order to fix this\nerror?",
         "options": [
-            "A.. def shake_256(raw: str) -> str:",
-            "B.. def shake_256(raw: [pd.Series]) -> pd.Series:",
-            "C.. def shake_256(raw: pd.Series) -> pd.Series:",
-            "D.. def shake_256(raw: [str]) -> [str]:"
+            "A. def shake_256(raw: str) -> str:",
+            "B. def shake_256(raw: [pd.Series]) -> pd.Series:",
+            "C. def shake_256(raw: pd.Series) -> pd.Series:",
+            "D. def shake_256(raw: [str]) -> [str]:"
         ],
         "answer": [
             "C"
@@ -1579,10 +1567,10 @@ const quizData = [
     {
         "question": "A Spark developer is building an app to monitor task performance. They need to track the\nmaximum task processing time per worker node and consolidate it on the driver for analysis.\nWhich technique should be used?",
         "options": [
-            "A.. Use an RDD action like reduce() to compute the maximum time",
-            "B.. Use an accumulator to record the maximum time on the driver",
-            "C.. Broadcast a variable to share the maximum time among workers",
-            "D.. Configure the Spark UI to automatically collect maximum times"
+            "A. Use an RDD action like reduce() to compute the maximum time",
+            "B. Use an accumulator to record the maximum time on the driver",
+            "C. Broadcast a variable to share the maximum time among workers",
+            "D. Configure the Spark UI to automatically collect maximum times"
         ],
         "answer": [
             "A"
@@ -1592,10 +1580,10 @@ const quizData = [
     {
         "question": "A data engineer is working on a real-time analytics pipeline using Apache Spark Structured\nStreaming. The engineer wants to process incoming data and ensure that triggers control\nwhen the query is executed. The system needs to process data in micro-batches with a fixed\ninterval of 5 seconds.\nWhich code snippet the data engineer could use to fulfil this requirement?\nA)\n \nB)\n \nC)\nD)\n\n\n \nOptions:",
         "options": [
-            "A.. Uses trigger(continuous='5 seconds') - continuous processing mode.",
-            "B.. Uses trigger() - default micro-batch trigger without interval.",
-            "C.. Uses trigger(processingTime='5 seconds') - correct micro-batch trigger with interval.",
-            "D.. Uses trigger(processingTime=5000) - invalid, as processingTime expects a string."
+            "A. Uses trigger(continuous='5 seconds') - continuous processing mode.",
+            "B. Uses trigger() - default micro-batch trigger without interval.",
+            "C. Uses trigger(processingTime='5 seconds') - correct micro-batch trigger with interval.",
+            "D. Uses trigger(processingTime=5000) - invalid, as processingTime expects a string."
         ],
         "answer": [
             "C"
@@ -1605,10 +1593,10 @@ const quizData = [
     {
         "question": "A data scientist is working on a project that requires processing large amounts of structured\ndata, performing SQL queries, and applying machine learning algorithms. The data scientist\nis considering using Apache Spark for this task.\nWhich combination of Apache Spark modules should the data scientist use in this scenario?\nOptions:",
         "options": [
-            "A.. Spark DataFrames, Structured Streaming, and GraphX",
-            "B.. Spark SQL, Pandas API on Spark, and Structured Streaming",
-            "C.. Spark Streaming, GraphX, and Pandas API on Spark",
-            "D.. Spark DataFrames, Spark SQL, and MLlib"
+            "A. Spark DataFrames, Structured Streaming, and GraphX",
+            "B. Spark SQL, Pandas API on Spark, and Structured Streaming",
+            "C. Spark Streaming, GraphX, and Pandas API on Spark",
+            "D. Spark DataFrames, Spark SQL, and MLlib"
         ],
         "answer": [
             "D"
@@ -1618,10 +1606,10 @@ const quizData = [
     {
         "question": "A data engineer is working on a real-time analytics pipeline using Spark Structured\nStreaming.\nThey want the system to process incoming data in micro-batches at a fixed interval of 5\nseconds.\nWhich code snippet fulfills this requirement?",
         "options": [
-            "A.. query = df.writeStream \\\n.outputMode(\"append\") \\\n.trigger(processingTime=\"5 seconds\") \\\n.start()",
-            "B.. query = df.writeStream \\\n.outputMode(\"append\") \\\n.trigger(continuous=\"5 seconds\") \\\n.start()",
-            "C.. query = df.writeStream \\\n.outputMode(\"append\") \\\n.trigger(once=True) \\\n.start()",
-            "D.. query = df.writeStream \\\n.outputMode(\"append\") \\\n.start()"
+            "A. query = df.writeStream \\\n.outputMode(\"append\") \\\n.trigger(processingTime=\"5 seconds\") \\\n.start()",
+            "B. query = df.writeStream \\\n.outputMode(\"append\") \\\n.trigger(continuous=\"5 seconds\") \\\n.start()",
+            "C. query = df.writeStream \\\n.outputMode(\"append\") \\\n.trigger(once=True) \\\n.start()",
+            "D. query = df.writeStream \\\n.outputMode(\"append\") \\\n.start()"
         ],
         "answer": [
             "A"
@@ -1631,10 +1619,10 @@ const quizData = [
     {
         "question": "A data engineer is working with a large JSON dataset containing order information. The\ndataset is stored in a distributed file system and needs to be loaded into a Spark DataFrame\nfor analysis. The data engineer wants to ensure that the schema is correctly defined and that\nthe data is read efficiently.\nWhich approach should the data scientist use to efficiently load the JSON data into a Spark\nDataFrame with a predefined schema?",
         "options": [
-            "A.. Use spark.read.json() to load the data, then use DataFrame.printSchema() to view the\ninferred schema, and finally use DataFrame.cast() to modify column types.",
-            "B.. Use spark.read.json() with the inferSchema option set to true",
-            "C.. Use spark.read.format(\"json\").load() and then use DataFrame.withColumn() to cast each\ncolumn to the desired data type.",
-            "D.. Define a StructType schema and use spark.read.schema(predefinedSchema).json() to\nload the data."
+            "A. Use spark.read.json() to load the data, then use DataFrame.printSchema() to view the\ninferred schema, and finally use DataFrame.cast() to modify column types.",
+            "B. Use spark.read.json() with the inferSchema option set to true",
+            "C. Use spark.read.format(\"json\").load() and then use DataFrame.withColumn() to cast each\ncolumn to the desired data type.",
+            "D. Define a StructType schema and use spark.read.schema(predefinedSchema).json() to\nload the data."
         ],
         "answer": [
             "D"
@@ -1644,10 +1632,10 @@ const quizData = [
     {
         "question": "What is a feature of Spark Connect?",
         "options": [
-            "A.. It supports DataStreamReader, DataStreamWriter, StreamingQuery, and Streaming APIs",
-            "B.. Supports DataFrame, Functions, Column, SparkContext PySpark APIs",
-            "C.. It supports only PySpark applications",
-            "D.. It has built-in authentication"
+            "A. It supports DataStreamReader, DataStreamWriter, StreamingQuery, and Streaming APIs",
+            "B. Supports DataFrame, Functions, Column, SparkContext PySpark APIs",
+            "C. It supports only PySpark applications",
+            "D. It has built-in authentication"
         ],
         "answer": [
             "A"
@@ -1657,10 +1645,10 @@ const quizData = [
     {
         "question": "Which configuration can be enabled to optimize the conversion between Pandas and\nPySpark DataFrames using Apache Arrow?",
         "options": [
-            "A.. spark.conf.set(\"spark.pandas.arrow.enabled\", \"true\")",
-            "B.. spark.conf.set(\"spark.sql.execution.arrow.pyspark.enabled\", \"true\")",
-            "C.. spark.conf.set(\"spark.sql.execution.arrow.enabled\", \"true\")",
-            "D.. spark.conf.set(\"spark.sql.arrow.pandas.enabled\", \"true\")"
+            "A. spark.conf.set(\"spark.pandas.arrow.enabled\", \"true\")",
+            "B. spark.conf.set(\"spark.sql.execution.arrow.pyspark.enabled\", \"true\")",
+            "C. spark.conf.set(\"spark.sql.execution.arrow.enabled\", \"true\")",
+            "D. spark.conf.set(\"spark.sql.arrow.pandas.enabled\", \"true\")"
         ],
         "answer": [
             "B"
@@ -1670,10 +1658,10 @@ const quizData = [
     {
         "question": "A data engineer has been asked to produce a Parquet table which is overwritten every day\nwith the latest data. The downstream consumer of this Parquet table has a hard requirement\nthat the data in this table is produced with all records sorted by the market_time field.\nWhich line of Spark code will produce a Parquet table that meets these requirements?",
         "options": [
-            "A.. final_df \\\n.sort(\"market_time\") \\\n.write \\\n.format(\"parquet\") \\\n.mode(\"overwrite\") \\\n.saveAsTable(\"output.market_events\")",
-            "B.. final_df \\\n.orderBy(\"market_time\") \\\n.write \\\n.format(\"parquet\") \\\n.mode(\"overwrite\") \\\n.saveAsTable(\"output.market_events\")",
-            "C.. final_df \\\n.sort(\"market_time\") \\\n.coalesce(1) \\\n.write \\\n.format(\"parquet\") \\\n.mode(\"overwrite\") \\\n.saveAsTable(\"output.market_events\")",
-            "D.. final_df \\\n.sortWithinPartitions(\"market_time\") \\\n.write \\\n.format(\"parquet\") \\\n.mode(\"overwrite\") \\\n.saveAsTable(\"output.market_events\")"
+            "A. final_df \\\n.sort(\"market_time\") \\\n.write \\\n.format(\"parquet\") \\\n.mode(\"overwrite\") \\\n.saveAsTable(\"output.market_events\")",
+            "B. final_df \\\n.orderBy(\"market_time\") \\\n.write \\\n.format(\"parquet\") \\\n.mode(\"overwrite\") \\\n.saveAsTable(\"output.market_events\")",
+            "C. final_df \\\n.sort(\"market_time\") \\\n.coalesce(1) \\\n.write \\\n.format(\"parquet\") \\\n.mode(\"overwrite\") \\\n.saveAsTable(\"output.market_events\")",
+            "D. final_df \\\n.sortWithinPartitions(\"market_time\") \\\n.write \\\n.format(\"parquet\") \\\n.mode(\"overwrite\") \\\n.saveAsTable(\"output.market_events\")"
         ],
         "answer": [
             "D"
@@ -1683,11 +1671,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks stores a part of the data in DataFrame itemsDf on\nexecutors?",
         "options": [
-            "A.. itemsDf.cache().count()",
-            "B.. itemsDf.cache(eager=True)",
-            "C.. cache(itemsDf)",
-            "D.. itemsDf.cache().filter()",
-            "E.. itemsDf.rdd.storeCopy()"
+            "A. itemsDf.cache().count()",
+            "B. itemsDf.cache(eager=True)",
+            "C. cache(itemsDf)",
+            "D. itemsDf.cache().filter()",
+            "E. itemsDf.rdd.storeCopy()"
         ],
         "answer": [
             "A"
@@ -1697,11 +1685,11 @@ const quizData = [
     {
         "question": "The code block shown below should return only the average prediction error (column\npredError) of a random subset, without replacement, of approximately 15% of rows in DataFrame\ntransactionsDf. Choose the answer that correctly fills the blanks in the code block to accomplish this.\ntransactionsDf.__1__(__2__, __3__).__4__(avg('predError'))",
         "options": [
-            "A.. 1. sample\n2. True\n3. 0.15\n4. filter",
-            "B.. 1. sample\n2. False\n3. 0.15\n4. select",
-            "C.. 1. sample\n2. 0.85\n3. False\n4. select",
-            "D.. 1. fraction\n2. 0.15\n3. True\n4. where",
-            "E.. 1. fraction\n2. False\n3. 0.85\n4. select"
+            "A. 1. sample\n2. True\n3. 0.15\n4. filter",
+            "B. 1. sample\n2. False\n3. 0.15\n4. select",
+            "C. 1. sample\n2. 0.85\n3. False\n4. select",
+            "D. 1. fraction\n2. 0.15\n3. True\n4. where",
+            "E. 1. fraction\n2. False\n3. 0.85\n4. select"
         ],
         "answer": [
             "B"
@@ -1711,11 +1699,11 @@ const quizData = [
     {
         "question": "In which order should the code blocks shown below be run in order to return the number of\nrecords that are not empty in column value in the DataFrame resulting from an inner join of\nDataFrame transactionsDf and itemsDf on columns productId and itemId, respectively?\n1. .filter(~isnull(col('value')))\n2. .count()\n3. transactionsDf.join(itemsDf, col(\"transactionsDf.productId\")==col(\"itemsDf.itemId\"))\n4. transactionsDf.join(itemsDf, transactionsDf.productId==itemsDf.itemId, how='inner')\n5. .filter(col('value').isnotnull())\n6. .sum(col('value'))",
         "options": [
-            "A.. 4, 1, 2",
-            "B.. 3, 1, 6",
-            "C.. 3, 1, 2",
-            "D.. 3, 5, 2",
-            "E.. 4, 6"
+            "A. 4, 1, 2",
+            "B. 3, 1, 6",
+            "C. 3, 1, 2",
+            "D. 3, 5, 2",
+            "E. 4, 6"
         ],
         "answer": [
             "A"
@@ -1725,11 +1713,11 @@ const quizData = [
     {
         "question": "Which of the following statements about lazy evaluation is incorrect?",
         "options": [
-            "A.. Predicate pushdown is a feature resulting from lazy evaluation.",
-            "B.. Execution is triggered by transformations.",
-            "C.. Spark will fail a job only during execution, but not during definition.",
-            "D.. Accumulators do not change the lazy evaluation model of Spark.",
-            "E.. Lineages allow Spark to coalesce transformations into stages"
+            "A. Predicate pushdown is a feature resulting from lazy evaluation.",
+            "B. Execution is triggered by transformations.",
+            "C. Spark will fail a job only during execution, but not during definition.",
+            "D. Accumulators do not change the lazy evaluation model of Spark.",
+            "E. Lineages allow Spark to coalesce transformations into stages"
         ],
         "answer": [
             "B"
@@ -1739,11 +1727,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns about 150 randomly selected rows from the 1000-\nrow DataFrame transactionsDf, assuming that any row can appear more than once in the returned\nDataFrame?",
         "options": [
-            "A.. transactionsDf.resample(0.15, False, 3142)",
-            "B.. transactionsDf.sample(0.15, False, 3142)",
-            "C.. transactionsDf.sample(0.15)",
-            "D.. transactionsDf.sample(0.85, 8429)",
-            "E.. transactionsDf.sample(True, 0.15, 8261)"
+            "A. transactionsDf.resample(0.15, False, 3142)",
+            "B. transactionsDf.sample(0.15, False, 3142)",
+            "C. transactionsDf.sample(0.15)",
+            "D. transactionsDf.sample(0.85, 8429)",
+            "E. transactionsDf.sample(True, 0.15, 8261)"
         ],
         "answer": [
             "E"
@@ -1753,11 +1741,11 @@ const quizData = [
     {
         "question": "The code block shown below should return a DataFrame with two columns, itemId and col. In\nthis DataFrame, for each element in column attributes of DataFrame itemDf there should be a\nseparate row in which the column itemId contains the associated itemId from DataFrame itemsDf.\nThe new DataFrame should only contain rows for rows in DataFrame itemsDf in which the column\nattributes contains the element cozy.\nA sample of DataFrame itemsDf is below.\nCode block:\nitemsDf.__1__(__2__).__3__(__4__, __5__(__6__))",
         "options": [
-            "A.. 1. filter\n2. array_contains(\"cozy\")\n3. select\n4. \"itemId\"\n5. explode\n6. \"attributes\"",
-            "B.. 1. where\n2. \"array_contains(attributes, 'cozy')\"\n3. select\n4. itemId\n5. explode\n6. attributes",
-            "C.. 1. filter\n2. \"array_contains(attributes, 'cozy')\"\n3. select\n4. \"itemId\"\n5. map\n6. \"attributes\"",
-            "D.. 1. filter\n2. \"array_contains(attributes, cozy)\"\n3. select\n4. \"itemId\"\n5. explode\n6. \"attributes\"",
-            "E.. 1. filter\n2. \"array_contains(attributes, 'cozy')\"\n3. select\n4. \"itemId\"\n5. explode\n6. \"attributes\""
+            "A. 1. filter\n2. array_contains(\"cozy\")\n3. select\n4. \"itemId\"\n5. explode\n6. \"attributes\"",
+            "B. 1. where\n2. \"array_contains(attributes, 'cozy')\"\n3. select\n4. itemId\n5. explode\n6. attributes",
+            "C. 1. filter\n2. \"array_contains(attributes, 'cozy')\"\n3. select\n4. \"itemId\"\n5. map\n6. \"attributes\"",
+            "D. 1. filter\n2. \"array_contains(attributes, cozy)\"\n3. select\n4. \"itemId\"\n5. explode\n6. \"attributes\"",
+            "E. 1. filter\n2. \"array_contains(attributes, 'cozy')\"\n3. select\n4. \"itemId\"\n5. explode\n6. \"attributes\""
         ],
         "answer": [
             "E"
@@ -1767,11 +1755,11 @@ const quizData = [
     {
         "question": "Which of the following describes the characteristics of accumulators?",
         "options": [
-            "A.. Accumulators are used to pass around lookup tables across the cluster.",
-            "B.. All accumulators used in a Spark application are listed in the Spark UI.",
-            "C.. Accumulators can be instantiated directly via the accumulator(n) method of the pyspark.RDD\nmodule.",
-            "D.. Accumulators are immutable.",
-            "E.. If an action including an accumulator fails during execution and Spark manages to restart the\naction and complete it successfully, only the successful attempt will be counted in the accumulator."
+            "A. Accumulators are used to pass around lookup tables across the cluster.",
+            "B. All accumulators used in a Spark application are listed in the Spark UI.",
+            "C. Accumulators can be instantiated directly via the accumulator(n) method of the pyspark.RDD\nmodule.",
+            "D. Accumulators are immutable.",
+            "E. If an action including an accumulator fails during execution and Spark manages to restart the\naction and complete it successfully, only the successful attempt will be counted in the accumulator."
         ],
         "answer": [
             "E"
@@ -1781,11 +1769,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks removes all rows in the 6-column DataFrame\ntransactionsDf that have missing data in at least 3 columns?",
         "options": [
-            "A.. transactionsDf.dropna(\"any\")",
-            "B.. transactionsDf.dropna(thresh=4)",
-            "C.. transactionsDf.drop.na(\"\",2)",
-            "D.. transactionsDf.dropna(thresh=2)",
-            "E.. transactionsDf.dropna(\"\",4)"
+            "A. transactionsDf.dropna(\"any\")",
+            "B. transactionsDf.dropna(thresh=4)",
+            "C. transactionsDf.drop.na(\"\",2)",
+            "D. transactionsDf.dropna(thresh=2)",
+            "E. transactionsDf.dropna(\"\",4)"
         ],
         "answer": [
             "B"
@@ -1795,11 +1783,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block should create DataFrame\nitemsAttributesDf which has columns itemId and attribute and lists every attribute from the\nattributes column in DataFrame itemsDf next to the itemId of the respective row in itemsDf. Find the\nerror.\nA sample of DataFrame itemsDf is below.\n \nCode block:\nitemsAttributesDf = itemsDf.explode(\"attributes\").alias(\"attribute\").select(\"attribute\", \"itemId\")",
         "options": [
-            "A.. Since itemId is the index, it does not need to be an argument to the select() method.",
-            "B.. The alias() method needs to be called after the select() method.",
-            "C.. The explode() method expects a Column object rather than a string.",
-            "D.. explode() is not a method of DataFrame. explode() should be used inside the select() method\ninstead.",
-            "E.. The split() method should be used inside the select() method instead of the explode() method."
+            "A. Since itemId is the index, it does not need to be an argument to the select() method.",
+            "B. The alias() method needs to be called after the select() method.",
+            "C. The explode() method expects a Column object rather than a string.",
+            "D. explode() is not a method of DataFrame. explode() should be used inside the select() method\ninstead.",
+            "E. The split() method should be used inside the select() method instead of the explode() method."
         ],
         "answer": [
             "D"
@@ -1809,11 +1797,11 @@ const quizData = [
     {
         "question": "The code block shown below should set the number of partitions that Spark uses when\nshuffling data for joins or aggregations to 100. Choose the answer that correctly fills the blanks in the\ncode block to accomplish this.\nspark.sql.shuffle.partitions\n__1__.__2__.__3__(__4__, 100)",
         "options": [
-            "A.. 1. spark\n2. conf\n3. set\n4. \"spark.sql.shuffle.partitions\"",
-            "B.. 1. pyspark\n2. config\n3. set\n4. spark.shuffle.partitions",
-            "C.. 1. spark\n2. conf\n3. get\n4. \"spark.sql.shuffle.partitions\"",
-            "D.. 1. pyspark\n2. config\n3. set\n4. \"spark.sql.shuffle.partitions\"",
-            "E.. 1. spark\n2. conf\n3. set\n4. \"spark.sql.aggregate.partitions\""
+            "A. 1. spark\n2. conf\n3. set\n4. \"spark.sql.shuffle.partitions\"",
+            "B. 1. pyspark\n2. config\n3. set\n4. spark.shuffle.partitions",
+            "C. 1. spark\n2. conf\n3. get\n4. \"spark.sql.shuffle.partitions\"",
+            "D. 1. pyspark\n2. config\n3. set\n4. \"spark.sql.shuffle.partitions\"",
+            "E. 1. spark\n2. conf\n3. set\n4. \"spark.sql.aggregate.partitions\""
         ],
         "answer": [
             "A"
@@ -1823,11 +1811,11 @@ const quizData = [
     {
         "question": "Which of the following statements about the differences between actions and\ntransformations is correct?",
         "options": [
-            "A.. Actions are evaluated lazily, while transformations are not evaluated lazily.",
-            "B.. Actions generate RDDs, while transformations do not.",
-            "C.. Actions do not send results to the driver, while transformations do.",
-            "D.. Actions can be queued for delayed execution, while transformations can only be processed\nimmediately.",
-            "E.. Actions can trigger Adaptive Query Execution, while transformation cannot."
+            "A. Actions are evaluated lazily, while transformations are not evaluated lazily.",
+            "B. Actions generate RDDs, while transformations do not.",
+            "C. Actions do not send results to the driver, while transformations do.",
+            "D. Actions can be queued for delayed execution, while transformations can only be processed\nimmediately.",
+            "E. Actions can trigger Adaptive Query Execution, while transformation cannot."
         ],
         "answer": [
             "E"
@@ -1837,11 +1825,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks reads in the two-partition parquet file stored at filePath,\nmaking sure all columns are included exactly once even though each partition has a different\nschema?\nSchema of first partition:\n1.root\n2. |-- transactionId: integer (nullable = true)\n3. |-- predError: integer (nullable = true)\n4. |-- value: integer (nullable = true)\n5. |-- storeId: integer (nullable = true)\n6. |-- productId: integer (nullable = true)\n7. |-- f: integer (nullable = true)\nSchema of second partition:\n1.root\n2. |-- transactionId: integer (nullable = true)\n3. |-- predError: integer (nullable = true)\n4. |-- value: integer (nullable = true)\n5. |-- storeId: integer (nullable = true)\n6. |-- rollId: integer (nullable = true)\n7. |-- f: integer (nullable = true)\n\n\n8. |-- tax_id: integer (nullable = false)",
         "options": [
-            "A.. spark.read.parquet(filePath, mergeSchema='y')",
-            "B.. spark.read.option(\"mergeSchema\", \"true\").parquet(filePath)",
-            "C.. spark.read.parquet(filePath)",
-            "D.. 1.nx = 0\n2.for file in dbutils.fs.ls(filePath):\n3. if not file.name.endswith(\".parquet\"):\n4. continue\n5. df_temp = spark.read.parquet(file.path)\n6. if nx == 0:\n7. df = df_temp\n8. else:\n9. df = df.union(df_temp)\n10. nx = nx+1\n11.df",
-            "E.. 1.nx = 0\n2.for file in dbutils.fs.ls(filePath):\n3. if not file.name.endswith(\".parquet\"):\n4. continue\n5. df_temp = spark.read.parquet(file.path)\n6. if nx == 0:\n7. df = df_temp\n8. else:\n9. df = df.join(df_temp, how=\"outer\")\n10. nx = nx+1\n11.df"
+            "A. spark.read.parquet(filePath, mergeSchema='y')",
+            "B. spark.read.option(\"mergeSchema\", \"true\").parquet(filePath)",
+            "C. spark.read.parquet(filePath)",
+            "D. 1.nx = 0\n2.for file in dbutils.fs.ls(filePath):\n3. if not file.name.endswith(\".parquet\"):\n4. continue\n5. df_temp = spark.read.parquet(file.path)\n6. if nx == 0:\n7. df = df_temp\n8. else:\n9. df = df.union(df_temp)\n10. nx = nx+1\n11.df",
+            "E. 1.nx = 0\n2.for file in dbutils.fs.ls(filePath):\n3. if not file.name.endswith(\".parquet\"):\n4. continue\n5. df_temp = spark.read.parquet(file.path)\n6. if nx == 0:\n7. df = df_temp\n8. else:\n9. df = df.join(df_temp, how=\"outer\")\n10. nx = nx+1\n11.df"
         ],
         "answer": [
             "B"
@@ -1851,11 +1839,11 @@ const quizData = [
     {
         "question": "The code block shown below should return a copy of DataFrame transactionsDf without\ncolumns value and productId and with an additional column associateId that has the value 5. Choose\nthe answer that correctly fills the blanks in the code block to accomplish this.\ntransactionsDf.__1__(__2__, __3__).__4__(__5__, 'value')",
         "options": [
-            "A.. 1. withColumn\n2. 'associateId'\n3. 5\n4. remove\n5. 'productId'",
-            "B.. 1. withNewColumn\n2. associateId\n3. lit(5)\n4. drop\n5. productId",
-            "C.. 1. withColumn\n2. 'associateId'\n3. lit(5)\n4. drop\n5. 'productId'",
-            "D.. 1. withColumnRenamed\n2. 'associateId'\n3. 5\n4. drop\n5. 'productId'",
-            "E.. 1. withColumn\n2. col(associateId)\n3. lit(5)\n4. drop\n5. col(productId)"
+            "A. 1. withColumn\n2. 'associateId'\n3. 5\n4. remove\n5. 'productId'",
+            "B. 1. withNewColumn\n2. associateId\n3. lit(5)\n4. drop\n5. productId",
+            "C. 1. withColumn\n2. 'associateId'\n3. lit(5)\n4. drop\n5. 'productId'",
+            "D. 1. withColumnRenamed\n2. 'associateId'\n3. 5\n4. drop\n5. 'productId'",
+            "E. 1. withColumn\n2. col(associateId)\n3. lit(5)\n4. drop\n5. col(productId)"
         ],
         "answer": [
             "C"
@@ -1865,11 +1853,11 @@ const quizData = [
     {
         "question": "The code block shown below should return an exact copy of DataFrame transactionsDf that\ndoes not include rows in which values in column storeId have the value 25. Choose the answer that\ncorrectly fills the blanks in the code block to accomplish this.",
         "options": [
-            "A.. transactionsDf.remove(transactionsDf.storeId==25)",
-            "B.. transactionsDf.where(transactionsDf.storeId!=25)",
-            "C.. transactionsDf.filter(transactionsDf.storeId==25)",
-            "D.. transactionsDf.drop(transactionsDf.storeId==25)",
-            "E.. transactionsDf.select(transactionsDf.storeId!=25)"
+            "A. transactionsDf.remove(transactionsDf.storeId==25)",
+            "B. transactionsDf.where(transactionsDf.storeId!=25)",
+            "C. transactionsDf.filter(transactionsDf.storeId==25)",
+            "D. transactionsDf.drop(transactionsDf.storeId==25)",
+            "E. transactionsDf.select(transactionsDf.storeId!=25)"
         ],
         "answer": [
             "B"
@@ -1879,11 +1867,11 @@ const quizData = [
     {
         "question": "Which of the following statements about stages is correct?",
         "options": [
-            "A.. Different stages in a job may be executed in parallel.",
-            "B.. Stages consist of one or more jobs.",
-            "C.. Stages ephemerally store transactions, before they are committed through actions.",
-            "D.. Tasks in a stage may be executed by multiple machines at the same time.",
-            "E.. Stages may contain multiple actions, narrow, and wide transformations."
+            "A. Different stages in a job may be executed in parallel.",
+            "B. Stages consist of one or more jobs.",
+            "C. Stages ephemerally store transactions, before they are committed through actions.",
+            "D. Tasks in a stage may be executed by multiple machines at the same time.",
+            "E. Stages may contain multiple actions, narrow, and wide transformations."
         ],
         "answer": [
             "D"
@@ -1893,11 +1881,11 @@ const quizData = [
     {
         "question": "Which of the following statements about broadcast variables is correct?",
         "options": [
-            "A.. Broadcast variables are serialized with every single task.",
-            "B.. Broadcast variables are commonly used for tables that do not fit into memory.",
-            "C.. Broadcast variables are immutable.",
-            "D.. Broadcast variables are occasionally dynamically updated on a per-task basis.",
-            "E.. Broadcast variables are local to the worker node and not shared across the cluster."
+            "A. Broadcast variables are serialized with every single task.",
+            "B. Broadcast variables are commonly used for tables that do not fit into memory.",
+            "C. Broadcast variables are immutable.",
+            "D. Broadcast variables are occasionally dynamically updated on a per-task basis.",
+            "E. Broadcast variables are local to the worker node and not shared across the cluster."
         ],
         "answer": [
             "C"
@@ -1907,11 +1895,11 @@ const quizData = [
     {
         "question": "Which of the following describes Spark's Adaptive Query Execution?",
         "options": [
-            "A.. Adaptive Query Execution features include dynamically coalescing shuffle partitions, dynamically\ninjecting scan filters, and dynamically optimizing skew joins.",
-            "B.. Adaptive Query Execution is enabled in Spark by default.",
-            "C.. Adaptive Query Execution reoptimizes queries at execution points.",
-            "D.. Adaptive Query Execution features are dynamically switching join strategies and dynamically\noptimizing skew joins.",
-            "E.. Adaptive Query Execution applies to all kinds of queries."
+            "A. Adaptive Query Execution features include dynamically coalescing shuffle partitions, dynamically\ninjecting scan filters, and dynamically optimizing skew joins.",
+            "B. Adaptive Query Execution is enabled in Spark by default.",
+            "C. Adaptive Query Execution reoptimizes queries at execution points.",
+            "D. Adaptive Query Execution features are dynamically switching join strategies and dynamically\noptimizing skew joins.",
+            "E. Adaptive Query Execution applies to all kinds of queries."
         ],
         "answer": [
             "D"
@@ -1921,11 +1909,11 @@ const quizData = [
     {
         "question": "The code block shown below should store DataFrame transactionsDf on two different\nexecutors, utilizing the executors' memory as much as possible, but not writing anything to disk.\nChoose the answer that correctly fills the blanks in the code block to accomplish this.\n1.from pyspark import StorageLevel\n2.transactionsDf.__1__(StorageLevel.__2__).__3__",
         "options": [
-            "A.. 1. cache\n2. MEMORY_ONLY_2\n3. count()",
-            "B.. 1. persist\n2. DISK_ONLY_2\n\n\n3. count()",
-            "C.. 1. persist\n2. MEMORY_ONLY_2\n3. select()",
-            "D.. 1. cache\n2. DISK_ONLY_2\n3. count()",
-            "E.. 1. persist\n2. MEMORY_ONLY_2\n3. count()"
+            "A. 1. cache\n2. MEMORY_ONLY_2\n3. count()",
+            "B. 1. persist\n2. DISK_ONLY_2\n\n\n3. count()",
+            "C. 1. persist\n2. MEMORY_ONLY_2\n3. select()",
+            "D. 1. cache\n2. DISK_ONLY_2\n3. count()",
+            "E. 1. persist\n2. MEMORY_ONLY_2\n3. count()"
         ],
         "answer": [
             "E"
@@ -1935,11 +1923,11 @@ const quizData = [
     {
         "question": "Which of the following statements about storage levels is incorrect?",
         "options": [
-            "A.. The cache operator on DataFrames is evaluated like a transformation.",
-            "B.. In client mode, DataFrames cached with the MEMORY_ONLY_2 level will not be stored in the edge\nnode's memory.",
-            "C.. Caching can be undone using the DataFrame.unpersist() operator.",
-            "D.. MEMORY_AND_DISK replicates cached DataFrames both on memory and disk.",
-            "E.. DISK_ONLY will not use the worker node's memory."
+            "A. The cache operator on DataFrames is evaluated like a transformation.",
+            "B. In client mode, DataFrames cached with the MEMORY_ONLY_2 level will not be stored in the edge\nnode's memory.",
+            "C. Caching can be undone using the DataFrame.unpersist() operator.",
+            "D. MEMORY_AND_DISK replicates cached DataFrames both on memory and disk.",
+            "E. DISK_ONLY will not use the worker node's memory."
         ],
         "answer": [
             "D"
@@ -1949,11 +1937,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks produces the following output, given DataFrame\ntransactionsDf?\nOutput:\n1.root\n2. |-- transactionId: integer (nullable = true)\n3. |-- predError: integer (nullable = true)\n4. |-- value: integer (nullable = true)\n5. |-- storeId: integer (nullable = true)\n6. |-- productId: integer (nullable = true)\n7. |-- f: integer (nullable = true)\nDataFrame transactionsDf:\n1.+-------------+---------+-----+-------+---------+----+\n2.|transactionId|predError|value|storeId|productId| f|\n3.+-------------+---------+-----+-------+---------+----+\n4.| 1| 3| 4| 25| 1|null|\n5.| 2| 6| 7| 2| 2|null|\n6.| 3| 3| null| 25| 3|null|\n7.+-------------+---------+-----+-------+---------+----+",
         "options": [
-            "A.. transactionsDf.schema.print()",
-            "B.. transactionsDf.rdd.printSchema()",
-            "C.. transactionsDf.rdd.formatSchema()",
-            "D.. transactionsDf.printSchema()",
-            "E.. print(transactionsDf.schema)"
+            "A. transactionsDf.schema.print()",
+            "B. transactionsDf.rdd.printSchema()",
+            "C. transactionsDf.rdd.formatSchema()",
+            "D. transactionsDf.printSchema()",
+            "E. print(transactionsDf.schema)"
         ],
         "answer": [
             "D"
@@ -1963,11 +1951,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains one or more errors. The code block should load\nparquet files at location filePath into a DataFrame, only loading those files that have been modified\nbefore\n2029-03-20 05:44:46. Spark should enforce a schema according to the schema shown below. Find the\nerror.\nSchema:\n1.root\n2. |-- itemId: integer (nullable = true)\n3. |-- attributes: array (nullable = true)\n4. | |-- element: string (containsNull = true)\n5. |-- supplier: string (nullable = true)\nCode block:\n1.schema = StructType([\n2. StructType(\"itemId\", IntegerType(), True),\n3. StructType(\"attributes\", ArrayType(StringType(), True), True),\n4. StructType(\"supplier\", StringType(), True)\n5.])\n6.\n7.spark.read.options(\"modifiedBefore\", \"2029-03-20T05:44:46\").schema(schema).load(filePath)",
         "options": [
-            "A.. The attributes array is specified incorrectly, Spark cannot identify the file format, and the syntax of\nthe call to Spark's DataFrameReader is incorrect.",
-            "B.. Columns in the schema definition use the wrong object type and the syntax of the call to Spark's\nDataFrameReader is incorrect.",
-            "C.. The data type of the schema is incompatible with the schema() operator and the modification date\nthreshold is specified incorrectly.",
-            "D.. Columns in the schema definition use the wrong object type, the modification date threshold is\nspecified incorrectly, and Spark cannot identify the file format.",
-            "E.. Columns in the schema are unable to handle empty values and the modification date threshold is\nspecified incorrectly."
+            "A. The attributes array is specified incorrectly, Spark cannot identify the file format, and the syntax of\nthe call to Spark's DataFrameReader is incorrect.",
+            "B. Columns in the schema definition use the wrong object type and the syntax of the call to Spark's\nDataFrameReader is incorrect.",
+            "C. The data type of the schema is incompatible with the schema() operator and the modification date\nthreshold is specified incorrectly.",
+            "D. Columns in the schema definition use the wrong object type, the modification date threshold is\nspecified incorrectly, and Spark cannot identify the file format.",
+            "E. Columns in the schema are unable to handle empty values and the modification date threshold is\nspecified incorrectly."
         ],
         "answer": [
             "D"
@@ -1977,11 +1965,11 @@ const quizData = [
     {
         "question": "Which of the following statements about Spark's execution hierarchy is correct?",
         "options": [
-            "A.. In Spark's execution hierarchy, a job may reach over multiple stage boundaries.",
-            "B.. In Spark's execution hierarchy, manifests are one layer above jobs.",
-            "C.. In Spark's execution hierarchy, a stage comprises multiple jobs.",
-            "D.. In Spark's execution hierarchy, executors are the smallest unit.",
-            "E.. In Spark's execution hierarchy, tasks are one layer above slots."
+            "A. In Spark's execution hierarchy, a job may reach over multiple stage boundaries.",
+            "B. In Spark's execution hierarchy, manifests are one layer above jobs.",
+            "C. In Spark's execution hierarchy, a stage comprises multiple jobs.",
+            "D. In Spark's execution hierarchy, executors are the smallest unit.",
+            "E. In Spark's execution hierarchy, tasks are one layer above slots."
         ],
         "answer": [
             "A"
@@ -1991,11 +1979,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains multiple errors. The code block should remove\ncolumn transactionDate from DataFrame transactionsDf and add a column transactionTimestamp in\nwhich dates that are expressed as strings in column transactionDate of DataFrame transactionsDf are\nconverted into unix timestamps. Find the errors.\nSample of DataFrame transactionsDf:\n1.+-------------+---------+-----+-------+---------+----+----------------+\n2.|transactionId|predError|value|storeId|productId| f| transactionDate|\n3.+-------------+---------+-----+-------+---------+----+----------------+\n4.| 1| 3| 4| 25| 1|null|2020-04-26 15:35|\n5.| 2| 6| 7| 2| 2|null|2020-04-13 22:01|\n6.| 3| 3| null| 25| 3|null|2020-04-02 10:53|\n7.+-------------+---------+-----+-------+---------+----+----------------+ Code block:\n1.transactionsDf = transactionsDf.drop(\"transactionDate\")\n2.transactionsDf[\"transactionTimestamp\"] = unix_timestamp(\"transactionDate\", \"yyyy-MM-dd\")",
         "options": [
-            "A.. Column transactionDate should be dropped after transactionTimestamp has been written. The\nstring indicating the date format should be adjusted. The withColumn operator should be used\ninstead of the existing column assignment. Operator to_unixtime() should be used instead of\nunix_timestamp().",
-            "B.. Column transactionDate should be dropped after transactionTimestamp has been written. The\nwithColumn operator should be used instead of the existing column assignment. Column\ntransactionDate should be wrapped in a col() operator.",
-            "C.. Column transactionDate should be wrapped in a col() operator.",
-            "D.. The string indicating the date format should be adjusted. The withColumnReplaced operator\nshould be used instead of the drop and assign pattern in the code block to replace column\ntransactionDate with the new column transactionTimestamp.",
-            "E.. Column transactionDate should be dropped after transactionTimestamp has been written. The\nstring indicating the date format should be adjusted. The withColumn operator should be used\ninstead of the existing column assignment."
+            "A. Column transactionDate should be dropped after transactionTimestamp has been written. The\nstring indicating the date format should be adjusted. The withColumn operator should be used\ninstead of the existing column assignment. Operator to_unixtime() should be used instead of\nunix_timestamp().",
+            "B. Column transactionDate should be dropped after transactionTimestamp has been written. The\nwithColumn operator should be used instead of the existing column assignment. Column\ntransactionDate should be wrapped in a col() operator.",
+            "C. Column transactionDate should be wrapped in a col() operator.",
+            "D. The string indicating the date format should be adjusted. The withColumnReplaced operator\nshould be used instead of the drop and assign pattern in the code block to replace column\ntransactionDate with the new column transactionTimestamp.",
+            "E. Column transactionDate should be dropped after transactionTimestamp has been written. The\nstring indicating the date format should be adjusted. The withColumn operator should be used\ninstead of the existing column assignment."
         ],
         "answer": [
             "E"
@@ -2005,11 +1993,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a DataFrame showing the mean value of column\n\"value\" of DataFrame transactionsDf, grouped by its column storeId?",
         "options": [
-            "A.. transactionsDf.groupBy(col(storeId).avg())",
-            "B.. transactionsDf.groupBy(\"storeId\").avg(col(\"value\"))",
-            "C.. transactionsDf.groupBy(\"storeId\").agg(avg(\"value\"))",
-            "D.. transactionsDf.groupBy(\"storeId\").agg(average(\"value\"))",
-            "E.. transactionsDf.groupBy(\"value\").average()"
+            "A. transactionsDf.groupBy(col(storeId).avg())",
+            "B. transactionsDf.groupBy(\"storeId\").avg(col(\"value\"))",
+            "C. transactionsDf.groupBy(\"storeId\").agg(avg(\"value\"))",
+            "D. transactionsDf.groupBy(\"storeId\").agg(average(\"value\"))",
+            "E. transactionsDf.groupBy(\"value\").average()"
         ],
         "answer": [
             "C"
@@ -2019,11 +2007,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a copy of DataFrame itemsDf where the column\nsupplier has been renamed to manufacturer?",
         "options": [
-            "A.. itemsDf.withColumn([\"supplier\", \"manufacturer\"])",
-            "B.. itemsDf.withColumn(\"supplier\").alias(\"manufacturer\")",
-            "C.. itemsDf.withColumnRenamed(\"supplier\", \"manufacturer\")",
-            "D.. itemsDf.withColumnRenamed(col(\"manufacturer\"), col(\"supplier\"))",
-            "E.. itemsDf.withColumnsRenamed(\"supplier\", \"manufacturer\")"
+            "A. itemsDf.withColumn([\"supplier\", \"manufacturer\"])",
+            "B. itemsDf.withColumn(\"supplier\").alias(\"manufacturer\")",
+            "C. itemsDf.withColumnRenamed(\"supplier\", \"manufacturer\")",
+            "D. itemsDf.withColumnRenamed(col(\"manufacturer\"), col(\"supplier\"))",
+            "E. itemsDf.withColumnsRenamed(\"supplier\", \"manufacturer\")"
         ],
         "answer": [
             "C"
@@ -2033,11 +2021,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks stores DataFrame itemsDf in executor memory and, if\ninsufficient memory is available, serializes it and saves it to disk?",
         "options": [
-            "A.. itemsDf.persist(StorageLevel.MEMORY_ONLY)",
-            "B.. itemsDf.cache(StorageLevel.MEMORY_AND_DISK)",
-            "C.. itemsDf.store()",
-            "D.. itemsDf.cache()",
-            "E.. itemsDf.write.option('destination', 'memory').save()"
+            "A. itemsDf.persist(StorageLevel.MEMORY_ONLY)",
+            "B. itemsDf.cache(StorageLevel.MEMORY_AND_DISK)",
+            "C. itemsDf.store()",
+            "D. itemsDf.cache()",
+            "E. itemsDf.write.option('destination', 'memory').save()"
         ],
         "answer": [
             "D"
@@ -2047,11 +2035,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks applies the boolean-returning Python function\nevaluateTestSuccess to column storeId of DataFrame transactionsDf as a user-defined function?",
         "options": [
-            "A.. 1.from pyspark.sql import types as T\n2.evaluateTestSuccessUDF = udf(evaluateTestSuccess, T.BooleanType())\n3.transactionsDf.withColumn(\"result\", evaluateTestSuccessUDF(col(\"storeId\")))",
-            "B.. 1.evaluateTestSuccessUDF = udf(evaluateTestSuccess)\n2.transactionsDf.withColumn(\"result\", evaluateTestSuccessUDF(storeId))",
-            "C.. 1.from pyspark.sql import types as T\n\n\n2.evaluateTestSuccessUDF = udf(evaluateTestSuccess, T.IntegerType())\n3.transactionsDf.withColumn(\"result\", evaluateTestSuccess(col(\"storeId\")))",
-            "D.. 1.evaluateTestSuccessUDF = udf(evaluateTestSuccess)\n2.transactionsDf.withColumn(\"result\", evaluateTestSuccessUDF(col(\"storeId\")))",
-            "E.. 1.from pyspark.sql import types as T\n2.evaluateTestSuccessUDF = udf(evaluateTestSuccess, T.BooleanType())\n3.transactionsDf.withColumn(\"result\", evaluateTestSuccess(col(\"storeId\")))"
+            "A. 1.from pyspark.sql import types as T\n2.evaluateTestSuccessUDF = udf(evaluateTestSuccess, T.BooleanType())\n3.transactionsDf.withColumn(\"result\", evaluateTestSuccessUDF(col(\"storeId\")))",
+            "B. 1.evaluateTestSuccessUDF = udf(evaluateTestSuccess)\n2.transactionsDf.withColumn(\"result\", evaluateTestSuccessUDF(storeId))",
+            "C. 1.from pyspark.sql import types as T\n\n\n2.evaluateTestSuccessUDF = udf(evaluateTestSuccess, T.IntegerType())\n3.transactionsDf.withColumn(\"result\", evaluateTestSuccess(col(\"storeId\")))",
+            "D. 1.evaluateTestSuccessUDF = udf(evaluateTestSuccess)\n2.transactionsDf.withColumn(\"result\", evaluateTestSuccessUDF(col(\"storeId\")))",
+            "E. 1.from pyspark.sql import types as T\n2.evaluateTestSuccessUDF = udf(evaluateTestSuccess, T.BooleanType())\n3.transactionsDf.withColumn(\"result\", evaluateTestSuccess(col(\"storeId\")))"
         ],
         "answer": [
             "A"
@@ -2061,10 +2049,10 @@ const quizData = [
     {
         "question": "Which of the following code blocks reads in the JSON file stored at filePath, enforcing the\nschema expressed in JSON format in variable json_schema, shown in the code block below?\nCode block:\n1.json_schema = \"\"\"\n2.{\"type\": \"struct\",\n3. \"fields\": [\n4. {\n5. \"name\": \"itemId\",\n6. \"type\": \"integer\",\n7. \"nullable\": true,\n8. \"metadata\": {}\n9. },\n10. {\n11. \"name\": \"supplier\",\n12. \"type\": \"string\",\n13. \"nullable\": true,\n14. \"metadata\": {}\n15. }\n16. ]\n17.}\n18.\"\"\"",
         "options": [
-            "A.. spark.read.json(filePath, schema=json_schema)",
-            "B.. spark.read.schema(json_schema).json(filePath)\n1.schema = StructType.fromJson(json.loads(json_schema))\n2.spark.read.json(filePath, schema=schema)",
-            "C.. spark.read.json(filePath, schema=schema_of_json(json_schema))",
-            "D.. spark.read.json(filePath, schema=spark.read.json(json_schema))"
+            "A. spark.read.json(filePath, schema=json_schema)",
+            "B. spark.read.schema(json_schema).json(filePath)\n1.schema = StructType.fromJson(json.loads(json_schema))\n2.spark.read.json(filePath, schema=schema)",
+            "C. spark.read.json(filePath, schema=schema_of_json(json_schema))",
+            "D. spark.read.json(filePath, schema=spark.read.json(json_schema))"
         ],
         "answer": [
             "B"
@@ -2074,11 +2062,11 @@ const quizData = [
     {
         "question": "Which of the following statements about garbage collection in Spark is incorrect?",
         "options": [
-            "A.. Garbage collection information can be accessed in the Spark UI's stage detail view.",
-            "B.. Optimizing garbage collection performance in Spark may limit caching ability.",
-            "C.. Manually persisting RDDs in Spark prevents them from being garbage collected.",
-            "D.. In Spark, using the G1 garbage collector is an alternative to using the default Parallel garbage\ncollector.",
-            "E.. Serialized caching is a strategy to increase the performance of garbage collection."
+            "A. Garbage collection information can be accessed in the Spark UI's stage detail view.",
+            "B. Optimizing garbage collection performance in Spark may limit caching ability.",
+            "C. Manually persisting RDDs in Spark prevents them from being garbage collected.",
+            "D. In Spark, using the G1 garbage collector is an alternative to using the default Parallel garbage\ncollector.",
+            "E. Serialized caching is a strategy to increase the performance of garbage collection."
         ],
         "answer": [
             "C"
@@ -2088,11 +2076,11 @@ const quizData = [
     {
         "question": "Which of the following options describes the responsibility of the executors in Spark?",
         "options": [
-            "A.. The executors accept jobs from the driver, analyze those jobs, and return results to the driver.",
-            "B.. The executors accept tasks from the driver, execute those tasks, and return results to the cluster\nmanager.",
-            "C.. The executors accept tasks from the driver, execute those tasks, and return results to the driver.",
-            "D.. The executors accept tasks from the cluster manager, execute those tasks, and return results to\nthe driver.",
-            "E.. The executors accept jobs from the driver, plan those jobs, and return results to the cluster\n\n\nmanager."
+            "A. The executors accept jobs from the driver, analyze those jobs, and return results to the driver.",
+            "B. The executors accept tasks from the driver, execute those tasks, and return results to the cluster\nmanager.",
+            "C. The executors accept tasks from the driver, execute those tasks, and return results to the driver.",
+            "D. The executors accept tasks from the cluster manager, execute those tasks, and return results to\nthe driver.",
+            "E. The executors accept jobs from the driver, plan those jobs, and return results to the cluster\n\n\nmanager."
         ],
         "answer": [
             "C"
@@ -2102,11 +2090,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a single-column DataFrame of all entries in Python\nlist throughputRates which contains only float-type values ?",
         "options": [
-            "A.. spark.createDataFrame((throughputRates), FloatType)",
-            "B.. spark.createDataFrame(throughputRates, FloatType)",
-            "C.. spark.DataFrame(throughputRates, FloatType)",
-            "D.. spark.createDataFrame(throughputRates)",
-            "E.. spark.createDataFrame(throughputRates, FloatType())"
+            "A. spark.createDataFrame((throughputRates), FloatType)",
+            "B. spark.createDataFrame(throughputRates, FloatType)",
+            "C. spark.DataFrame(throughputRates, FloatType)",
+            "D. spark.createDataFrame(throughputRates)",
+            "E. spark.createDataFrame(throughputRates, FloatType())"
         ],
         "answer": [
             "E"
@@ -2116,11 +2104,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a one-column DataFrame for which every row\ncontains an array of all integer numbers from 0 up to and including the number given in column\npredError of DataFrame transactionsDf, and null if predError is null?\nSample of DataFrame transactionsDf:\n1.+-------------+---------+-----+-------+---------+----+\n2.|transactionId|predError|value|storeId|productId| f|\n3.+-------------+---------+-----+-------+---------+----+\n4.| 1| 3| 4| 25| 1|null|\n\n\n5.| 2| 6| 7| 2| 2|null|\n6.| 3| 3| null| 25| 3|null|\n7.| 4| null| null| 3| 2|null|\n8.| 5| null| null| null| 2|null|\n9.| 6| 3| 2| 25| 2|null|\n10.+-------------+---------+-----+-------+---------+----+",
         "options": [
-            "A.. 1.def count_to_target(target):\n2. if target is None:\n3. return\n4.\n5. result = [range(target)]\n6. return result\n7.\n8.count_to_target_udf = udf(count_to_target, ArrayType[IntegerType])\n9.\n10.transactionsDf.select(count_to_target_udf(col('predError')))",
-            "B.. 1.def count_to_target(target):\n2. if target is None:\n3. return\n4.\n5. result = list(range(target))\n6. return result\n7.\n8.transactionsDf.select(count_to_target(col('predError')))",
-            "C.. 1.def count_to_target(target):\n2. if target is None:\n3. return\n4.\n5. result = list(range(target))\n6. return result\n7.\n8.count_to_target_udf = udf(count_to_target, ArrayType(IntegerType()))\n9.\n10.transactionsDf.select(count_to_target_udf('predError'))\n(Correct)",
-            "D.. 1.def count_to_target(target):\n2. result = list(range(target))\n3. return result\n4.\n5.count_to_target_udf = udf(count_to_target, ArrayType(IntegerType()))\n6.\n7.df = transactionsDf.select(count_to_target_udf('predError'))",
-            "E.. 1.def count_to_target(target):\n2. if target is None:\n3. return\n4.\n\n\n5. result = list(range(target))\n6. return result\n7.\n8.count_to_target_udf = udf(count_to_target)\n9.\n10.transactionsDf.select(count_to_target_udf('predError'))"
+            "A. 1.def count_to_target(target):\n2. if target is None:\n3. return\n4.\n5. result = [range(target)]\n6. return result\n7.\n8.count_to_target_udf = udf(count_to_target, ArrayType[IntegerType])\n9.\n10.transactionsDf.select(count_to_target_udf(col('predError')))",
+            "B. 1.def count_to_target(target):\n2. if target is None:\n3. return\n4.\n5. result = list(range(target))\n6. return result\n7.\n8.transactionsDf.select(count_to_target(col('predError')))",
+            "C. 1.def count_to_target(target):\n2. if target is None:\n3. return\n4.\n5. result = list(range(target))\n6. return result\n7.\n8.count_to_target_udf = udf(count_to_target, ArrayType(IntegerType()))\n9.\n10.transactionsDf.select(count_to_target_udf('predError'))\n(Correct)",
+            "D. 1.def count_to_target(target):\n2. result = list(range(target))\n3. return result\n4.\n5.count_to_target_udf = udf(count_to_target, ArrayType(IntegerType()))\n6.\n7.df = transactionsDf.select(count_to_target_udf('predError'))",
+            "E. 1.def count_to_target(target):\n2. if target is None:\n3. return\n4.\n\n\n5. result = list(range(target))\n6. return result\n7.\n8.count_to_target_udf = udf(count_to_target)\n9.\n10.transactionsDf.select(count_to_target_udf('predError'))"
         ],
         "answer": [
             "C"
@@ -2130,11 +2118,11 @@ const quizData = [
     {
         "question": "Which of the following is not a feature of Adaptive Query Execution?",
         "options": [
-            "A.. Replace a sort merge join with a broadcast join, where appropriate.",
-            "B.. Coalesce partitions to accelerate data processing.",
-            "C.. Split skewed partitions into smaller partitions to avoid differences in partition processing time.",
-            "D.. Reroute a query in case of an executor failure.",
-            "E.. Collect runtime statistics during query execution."
+            "A. Replace a sort merge join with a broadcast join, where appropriate.",
+            "B. Coalesce partitions to accelerate data processing.",
+            "C. Split skewed partitions into smaller partitions to avoid differences in partition processing time.",
+            "D. Reroute a query in case of an executor failure.",
+            "E. Collect runtime statistics during query execution."
         ],
         "answer": [
             "D"
@@ -2144,11 +2132,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block is intended to join\nDataFrame itemsDf with the larger DataFrame transactionsDf on column itemId. Find the error.\nCode block:\ntransactionsDf.join(itemsDf, \"itemId\", how=\"broadcast\")",
         "options": [
-            "A.. The syntax is wrong, how= should be removed from the code block.",
-            "B.. The join method should be replaced by the broadcast method.",
-            "C.. Spark will only perform the broadcast operation if this behavior has been enabled on the Spark\ncluster.",
-            "D.. The larger DataFrame transactionsDf is being broadcasted, rather than the smaller DataFrame\nitemsDf.",
-            "E.. broadcast is not a valid join type."
+            "A. The syntax is wrong, how= should be removed from the code block.",
+            "B. The join method should be replaced by the broadcast method.",
+            "C. Spark will only perform the broadcast operation if this behavior has been enabled on the Spark\ncluster.",
+            "D. The larger DataFrame transactionsDf is being broadcasted, rather than the smaller DataFrame\nitemsDf.",
+            "E. broadcast is not a valid join type."
         ],
         "answer": [
             "E"
@@ -2158,11 +2146,11 @@ const quizData = [
     {
         "question": "The code block shown below should return a one-column DataFrame where the column\nstoreId is converted to string type. Choose the answer that correctly fills the blanks in the code block\nto accomplish this.\ntransactionsDf.__1__(__2__.__3__(__4__))",
         "options": [
-            "A.. 1. select\n2. col(\"storeId\")\n3. cast\n4. StringType",
-            "B.. 1. select\n2. col(\"storeId\")\n3. as\n4. StringType",
-            "C.. 1. cast\n2. \"storeId\"\n3. as\n4. StringType()",
-            "D.. 1. select\n2. col(\"storeId\")\n3. cast\n4. StringType()",
-            "E.. 1. select\n2. storeId\n3. cast\n4. StringType()"
+            "A. 1. select\n2. col(\"storeId\")\n3. cast\n4. StringType",
+            "B. 1. select\n2. col(\"storeId\")\n3. as\n4. StringType",
+            "C. 1. cast\n2. \"storeId\"\n3. as\n4. StringType()",
+            "D. 1. select\n2. col(\"storeId\")\n3. cast\n4. StringType()",
+            "E. 1. select\n2. storeId\n3. cast\n4. StringType()"
         ],
         "answer": [
             "D"
@@ -2172,11 +2160,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns the number of unique values in column storeId of\nDataFrame transactionsDf?",
         "options": [
-            "A.. transactionsDf.select(\"storeId\").dropDuplicates().count()",
-            "B.. transactionsDf.select(count(\"storeId\")).dropDuplicates()",
-            "C.. transactionsDf.select(distinct(\"storeId\")).count()",
-            "D.. transactionsDf.dropDuplicates().agg(count(\"storeId\"))",
-            "E.. transactionsDf.distinct().select(\"storeId\").count()"
+            "A. transactionsDf.select(\"storeId\").dropDuplicates().count()",
+            "B. transactionsDf.select(count(\"storeId\")).dropDuplicates()",
+            "C. transactionsDf.select(distinct(\"storeId\")).count()",
+            "D. transactionsDf.dropDuplicates().agg(count(\"storeId\"))",
+            "E. transactionsDf.distinct().select(\"storeId\").count()"
         ],
         "answer": [
             "A"
@@ -2186,11 +2174,11 @@ const quizData = [
     {
         "question": "Which of the following statements about data skew is incorrect?",
         "options": [
-            "A.. Spark will not automatically optimize skew joins by default.",
-            "B.. Broadcast joins are a viable way to increase join performance for skewed data over sort-merge\njoins.",
-            "C.. In skewed DataFrames, the largest and the smallest partition consume very different amounts of\nmemory.",
-            "D.. To mitigate skew, Spark automatically disregards null values in keys when joining.",
-            "E.. Salting can resolve data skew."
+            "A. Spark will not automatically optimize skew joins by default.",
+            "B. Broadcast joins are a viable way to increase join performance for skewed data over sort-merge\njoins.",
+            "C. In skewed DataFrames, the largest and the smallest partition consume very different amounts of\nmemory.",
+            "D. To mitigate skew, Spark automatically disregards null values in keys when joining.",
+            "E. Salting can resolve data skew."
         ],
         "answer": [
             "D"
@@ -2200,11 +2188,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block should return a copy of\nDataFrame transactionsDf where the name of column transactionId has been changed to\ntransactionNumber. Find the error.\nCode block:\ntransactionsDf.withColumn(\"transactionNumber\", \"transactionId\")",
         "options": [
-            "A.. The arguments to the withColumn method need to be reordered.",
-            "B.. The arguments to the withColumn method need to be reordered and the copy() operator should\n\n\nbe appended to the code block to ensure a copy is returned.",
-            "C.. The copy() operator should be appended to the code block to ensure a copy is returned.",
-            "D.. Each column name needs to be wrapped in the col() method and method withColumn should be\nreplaced by method withColumnRenamed.",
-            "E.. The method withColumn should be replaced by method withColumnRenamed and the arguments\nto the method need to be reordered."
+            "A. The arguments to the withColumn method need to be reordered.",
+            "B. The arguments to the withColumn method need to be reordered and the copy() operator should\n\n\nbe appended to the code block to ensure a copy is returned.",
+            "C. The copy() operator should be appended to the code block to ensure a copy is returned.",
+            "D. Each column name needs to be wrapped in the col() method and method withColumn should be\nreplaced by method withColumnRenamed.",
+            "E. The method withColumn should be replaced by method withColumnRenamed and the arguments\nto the method need to be reordered."
         ],
         "answer": [
             "E"
@@ -2214,11 +2202,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a DataFrame with a single column in which all\nitems in column attributes of DataFrame itemsDf are listed that contain the letter i?\nSample of DataFrame itemsDf:\n1.+------+----------------------------------+-----------------------------+-------------------+\n2.|itemId|itemName |attributes |supplier |\n3.+------+----------------------------------+-----------------------------+-------------------+\n4.|1 |Thick Coat for Walking in the Snow|[blue, winter, cozy] |Sports Company Inc.|\n5.|2 |Elegant Outdoors Summer Dress |[red, summer, fresh, cooling]|YetiX |\n6.|3 |Outdoors Backpack |[green, summer, travel] |Sports Company Inc.|\n7.+------+----------------------------------+-----------------------------+-------------------+",
         "options": [
-            "A.. itemsDf.select(explode(\"attributes\").alias(\"attributes_exploded\")).filter(attributes_exploded.contains\n(\"i\"))",
-            "B.. itemsDf.explode(attributes).alias(\"attributes_exploded\").filter(col(\"attributes_exploded\").contains(\"i\n\"))",
-            "C.. itemsDf.select(explode(\"attributes\")).filter(\"attributes_exploded\".contains(\"i\"))",
-            "D.. itemsDf.select(explode(\"attributes\").alias(\"attributes_exploded\")).filter(col(\"attributes_exploded\").c\nontain",
-            "E.. itemsDf.select(col(\"attributes\").explode().alias(\"attributes_exploded\")).filter(col(\"attributes_explode\nd\").co"
+            "A. itemsDf.select(explode(\"attributes\").alias(\"attributes_exploded\")).filter(attributes_exploded.contains\n(\"i\"))",
+            "B. itemsDf.explode(attributes).alias(\"attributes_exploded\").filter(col(\"attributes_exploded\").contains(\"i\n\"))",
+            "C. itemsDf.select(explode(\"attributes\")).filter(\"attributes_exploded\".contains(\"i\"))",
+            "D. itemsDf.select(explode(\"attributes\").alias(\"attributes_exploded\")).filter(col(\"attributes_exploded\").c\nontain",
+            "E. itemsDf.select(col(\"attributes\").explode().alias(\"attributes_exploded\")).filter(col(\"attributes_explode\nd\").co"
         ],
         "answer": [
             "D"
@@ -2228,11 +2216,11 @@ const quizData = [
     {
         "question": "The code block shown below should return the number of columns in the CSV file stored at\nlocation filePath.\nFrom the CSV file, only lines should be read that do not start with a # character. Choose the answer\nthat correctly fills the blanks in the code block to accomplish this.\nCode block:\n__1__(__2__.__3__.csv(filePath, __4__).__5__)",
         "options": [
-            "A.. 1. size\n2. spark\n3. read()\n4. escape='#'\n5. columns",
-            "B.. 1. DataFrame\n2. spark\n3. read()\n4. escape='#'\n5. shape[0]",
-            "C.. 1. len\n2. pyspark\n3. DataFrameReader\n4. comment='#'\n5. columns",
-            "D.. 1. size\n2. pyspark\n3. DataFrameReader\n4. comment='#'\n5. columns",
-            "E.. 1. len\n2. spark\n3. read\n4. comment='#'\n5. columns"
+            "A. 1. size\n2. spark\n3. read()\n4. escape='#'\n5. columns",
+            "B. 1. DataFrame\n2. spark\n3. read()\n4. escape='#'\n5. shape[0]",
+            "C. 1. len\n2. pyspark\n3. DataFrameReader\n4. comment='#'\n5. columns",
+            "D. 1. size\n2. pyspark\n3. DataFrameReader\n4. comment='#'\n5. columns",
+            "E. 1. len\n2. spark\n3. read\n4. comment='#'\n5. columns"
         ],
         "answer": [
             "E"
@@ -2242,11 +2230,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks prints out in how many rows the expression Inc. appears\nin the string-type column supplier of DataFrame itemsDf?",
         "options": [
-            "A.. 1.counter = 0\n2.\n3.for index, row in itemsDf.iterrows():\n4. if 'Inc.' in row['supplier']:\n5. counter = counter + 1\n6.\n7.print(counter)",
-            "B.. 1.counter = 0\n2.\n3.def count(x):\n4. if 'Inc.' in x['supplier']:\n5. counter = counter + 1\n6.\n7.itemsDf.foreach(count)\n8.print(counter)",
-            "C.. print(itemsDf.foreach(lambda x: 'Inc.' in x))",
-            "D.. print(itemsDf.foreach(lambda x: 'Inc.' in x).sum())",
-            "E.. 1.accum=sc.accumulator(0)\n2.\n\n\n3.def check_if_inc_in_supplier(row):\n4. if 'Inc.' in row['supplier']:\n5. accum.add(1)\n6.\n7.itemsDf.foreach(check_if_inc_in_supplier)\n8.print(accum.value)"
+            "A. 1.counter = 0\n2.\n3.for index, row in itemsDf.iterrows():\n4. if 'Inc.' in row['supplier']:\n5. counter = counter + 1\n6.\n7.print(counter)",
+            "B. 1.counter = 0\n2.\n3.def count(x):\n4. if 'Inc.' in x['supplier']:\n5. counter = counter + 1\n6.\n7.itemsDf.foreach(count)\n8.print(counter)",
+            "C. print(itemsDf.foreach(lambda x: 'Inc.' in x))",
+            "D. print(itemsDf.foreach(lambda x: 'Inc.' in x).sum())",
+            "E. 1.accum=sc.accumulator(0)\n2.\n\n\n3.def check_if_inc_in_supplier(row):\n4. if 'Inc.' in row['supplier']:\n5. accum.add(1)\n6.\n7.itemsDf.foreach(check_if_inc_in_supplier)\n8.print(accum.value)"
         ],
         "answer": [
             "E"
@@ -2256,11 +2244,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a copy of DataFrame transactionsDf where the\ncolumn storeId has been converted to string type?",
         "options": [
-            "A.. transactionsDf.withColumn(\"storeId\", convert(\"storeId\", \"string\"))",
-            "B.. transactionsDf.withColumn(\"storeId\", col(\"storeId\", \"string\"))",
-            "C.. transactionsDf.withColumn(\"storeId\", col(\"storeId\").convert(\"string\"))",
-            "D.. transactionsDf.withColumn(\"storeId\", col(\"storeId\").cast(\"string\"))",
-            "E.. transactionsDf.withColumn(\"storeId\", convert(\"storeId\").as(\"string\"))"
+            "A. transactionsDf.withColumn(\"storeId\", convert(\"storeId\", \"string\"))",
+            "B. transactionsDf.withColumn(\"storeId\", col(\"storeId\", \"string\"))",
+            "C. transactionsDf.withColumn(\"storeId\", col(\"storeId\").convert(\"string\"))",
+            "D. transactionsDf.withColumn(\"storeId\", col(\"storeId\").cast(\"string\"))",
+            "E. transactionsDf.withColumn(\"storeId\", convert(\"storeId\").as(\"string\"))"
         ],
         "answer": [
             "D"
@@ -2270,11 +2258,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a single row from DataFrame transactionsDf?\n\n\nFull DataFrame transactionsDf:\n1.+-------------+---------+-----+-------+---------+----+\n2.|transactionId|predError|value|storeId|productId| f|\n3.+-------------+---------+-----+-------+---------+----+\n4.| 1| 3| 4| 25| 1|null|\n5.| 2| 6| 7| 2| 2|null|\n6.| 3| 3| null| 25| 3|null|\n7.| 4| null| null| 3| 2|null|\n8.| 5| null| null| null| 2|null|\n9.| 6| 3| 2| 25| 2|null|\n10.+-------------+---------+-----+-------+---------+----+",
         "options": [
-            "A.. transactionsDf.where(col(\"storeId\").between(3,25))",
-            "B.. transactionsDf.filter((col(\"storeId\")!=25) | (col(\"productId\")==2))",
-            "C.. transactionsDf.filter(col(\"storeId\")==25).select(\"predError\",\"storeId\").distinct()",
-            "D.. transactionsDf.select(\"productId\", \"storeId\").where(\"storeId == 2 OR storeId != 25\")",
-            "E.. transactionsDf.where(col(\"value\").isNull()).select(\"productId\", \"storeId\").distinct()"
+            "A. transactionsDf.where(col(\"storeId\").between(3,25))",
+            "B. transactionsDf.filter((col(\"storeId\")!=25) | (col(\"productId\")==2))",
+            "C. transactionsDf.filter(col(\"storeId\")==25).select(\"predError\",\"storeId\").distinct()",
+            "D. transactionsDf.select(\"productId\", \"storeId\").where(\"storeId == 2 OR storeId != 25\")",
+            "E. transactionsDf.where(col(\"value\").isNull()).select(\"productId\", \"storeId\").distinct()"
         ],
         "answer": [
             "C"
@@ -2284,11 +2272,11 @@ const quizData = [
     {
         "question": "The code block shown below should write DataFrame transactionsDf as a parquet file to path\nstoreDir, using brotli compression and replacing any previously existing file. Choose the answer that\ncorrectly fills the blanks in the code block to accomplish this.\ntransactionsDf.__1__.format(\"parquet\").__2__(__3__).option(__4__, \"brotli\").__5__(storeDir)",
         "options": [
-            "A.. 1. save\n2. mode\n3. \"ignore\"\n4. \"compression\"\n5. path",
-            "B.. 1. store\n2. with\n3. \"replacement\"\n4. \"compression\"\n5. path",
-            "C.. 1. write\n2. mode\n3. \"overwrite\"\n4. \"compression\"\n5. save\n(Correct)",
-            "D.. 1. save\n2. mode\n3. \"replace\"\n4. \"compression\"\n5. path",
-            "E.. 1. write\n2. mode\n3. \"overwrite\"\n4. compression\n\n\n5. parquet"
+            "A. 1. save\n2. mode\n3. \"ignore\"\n4. \"compression\"\n5. path",
+            "B. 1. store\n2. with\n3. \"replacement\"\n4. \"compression\"\n5. path",
+            "C. 1. write\n2. mode\n3. \"overwrite\"\n4. \"compression\"\n5. save\n(Correct)",
+            "D. 1. save\n2. mode\n3. \"replace\"\n4. \"compression\"\n5. path",
+            "E. 1. write\n2. mode\n3. \"overwrite\"\n4. compression\n\n\n5. parquet"
         ],
         "answer": [
             "D"
@@ -2298,11 +2286,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks displays various aggregated statistics of all columns in\nDataFrame transactionsDf, including the standard deviation and minimum of values in each column?",
         "options": [
-            "A.. transactionsDf.summary()",
-            "B.. transactionsDf.agg(\"count\", \"mean\", \"stddev\", \"25%\", \"50%\", \"75%\", \"min\")",
-            "C.. transactionsDf.summary(\"count\", \"mean\", \"stddev\", \"25%\", \"50%\", \"75%\", \"max\").show()",
-            "D.. transactionsDf.agg(\"count\", \"mean\", \"stddev\", \"25%\", \"50%\", \"75%\", \"min\").show()",
-            "E.. transactionsDf.summary().show()"
+            "A. transactionsDf.summary()",
+            "B. transactionsDf.agg(\"count\", \"mean\", \"stddev\", \"25%\", \"50%\", \"75%\", \"min\")",
+            "C. transactionsDf.summary(\"count\", \"mean\", \"stddev\", \"25%\", \"50%\", \"75%\", \"max\").show()",
+            "D. transactionsDf.agg(\"count\", \"mean\", \"stddev\", \"25%\", \"50%\", \"75%\", \"min\").show()",
+            "E. transactionsDf.summary().show()"
         ],
         "answer": [
             "E"
@@ -2312,11 +2300,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a single-column DataFrame showing the number\nof words in column supplier of DataFrame itemsDf?\nSample of DataFrame itemsDf:\n1.+------+-----------------------------+-------------------+\n2.|itemId|attributes |supplier |\n3.+------+-----------------------------+-------------------+\n4.|1 |[blue, winter, cozy] |Sports Company Inc.|\n5.|2 |[red, summer, fresh, cooling]|YetiX |\n\n\n6.|3 |[green, summer, travel] |Sports Company Inc.|\n7.+------+-----------------------------+-------------------+",
         "options": [
-            "A.. itemsDf.split(\"supplier\", \" \").count()",
-            "B.. itemsDf.split(\"supplier\", \" \").size()",
-            "C.. itemsDf.select(word_count(\"supplier\"))",
-            "D.. spark.select(size(split(col(supplier), \" \")))",
-            "E.. itemsDf.select(size(split(\"supplier\", \" \")))"
+            "A. itemsDf.split(\"supplier\", \" \").count()",
+            "B. itemsDf.split(\"supplier\", \" \").size()",
+            "C. itemsDf.select(word_count(\"supplier\"))",
+            "D. spark.select(size(split(col(supplier), \" \")))",
+            "E. itemsDf.select(size(split(\"supplier\", \" \")))"
         ],
         "answer": [
             "E"
@@ -2326,11 +2314,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns only rows from DataFrame transactionsDf in\nwhich values in column productId are unique?",
         "options": [
-            "A.. transactionsDf.distinct(\"productId\")",
-            "B.. transactionsDf.dropDuplicates(subset=[\"productId\"])",
-            "C.. transactionsDf.drop_duplicates(subset=\"productId\")",
-            "D.. transactionsDf.unique(\"productId\")",
-            "E.. transactionsDf.dropDuplicates(subset=\"productId\")"
+            "A. transactionsDf.distinct(\"productId\")",
+            "B. transactionsDf.dropDuplicates(subset=[\"productId\"])",
+            "C. transactionsDf.drop_duplicates(subset=\"productId\")",
+            "D. transactionsDf.unique(\"productId\")",
+            "E. transactionsDf.dropDuplicates(subset=\"productId\")"
         ],
         "answer": [
             "B"
@@ -2340,11 +2328,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a 2-column DataFrame that shows the distinct\nvalues in column productId and the number of rows with that productId in DataFrame\ntransactionsDf?",
         "options": [
-            "A.. transactionsDf.count(\"productId\").distinct()",
-            "B.. transactionsDf.groupBy(\"productId\").agg(col(\"value\").count())",
-            "C.. transactionsDf.count(\"productId\")",
-            "D.. transactionsDf.groupBy(\"productId\").count()",
-            "E.. transactionsDf.groupBy(\"productId\").select(count(\"value\"))"
+            "A. transactionsDf.count(\"productId\").distinct()",
+            "B. transactionsDf.groupBy(\"productId\").agg(col(\"value\").count())",
+            "C. transactionsDf.count(\"productId\")",
+            "D. transactionsDf.groupBy(\"productId\").count()",
+            "E. transactionsDf.groupBy(\"productId\").select(count(\"value\"))"
         ],
         "answer": [
             "D"
@@ -2354,11 +2342,11 @@ const quizData = [
     {
         "question": "Which of the following is the idea behind dynamic partition pruning in Spark?",
         "options": [
-            "A.. Dynamic partition pruning is intended to skip over the data you do not need in the results of a\nquery.",
-            "B.. Dynamic partition pruning concatenates columns of similar data types to optimize join\nperformance.",
-            "C.. Dynamic partition pruning performs wide transformations on disk instead of in memory.",
-            "D.. Dynamic partition pruning reoptimizes physical plans based on data types and broadcast variables.",
-            "E.. Dynamic partition pruning reoptimizes query plans based on runtime statistics collected during\nquery execution."
+            "A. Dynamic partition pruning is intended to skip over the data you do not need in the results of a\nquery.",
+            "B. Dynamic partition pruning concatenates columns of similar data types to optimize join\nperformance.",
+            "C. Dynamic partition pruning performs wide transformations on disk instead of in memory.",
+            "D. Dynamic partition pruning reoptimizes physical plans based on data types and broadcast variables.",
+            "E. Dynamic partition pruning reoptimizes query plans based on runtime statistics collected during\nquery execution."
         ],
         "answer": [
             "A"
@@ -2368,11 +2356,11 @@ const quizData = [
     {
         "question": "The code block shown below should show information about the data type that column\nstoreId of DataFrame transactionsDf contains. Choose the answer that correctly fills the blanks in the\ncode block to accomplish this.\nCode block:\ntransactionsDf.__1__(__2__).__3__",
         "options": [
-            "A.. 1. select\n2. \"storeId\"\n3. print_schema()",
-            "B.. 1. limit\n2. 1\n3. columns",
-            "C.. 1. select\n2. \"storeId\"\n3. printSchema()",
-            "D.. 1. limit\n2. \"storeId\"\n3. printSchema()",
-            "E.. 1. select\n2. storeId\n3. dtypes"
+            "A. 1. select\n2. \"storeId\"\n3. print_schema()",
+            "B. 1. limit\n2. 1\n3. columns",
+            "C. 1. select\n2. \"storeId\"\n3. printSchema()",
+            "D. 1. limit\n2. \"storeId\"\n3. printSchema()",
+            "E. 1. select\n2. storeId\n3. dtypes"
         ],
         "answer": [
             "B"
@@ -2382,11 +2370,11 @@ const quizData = [
     {
         "question": "The code block shown below should return a DataFrame with all columns of DataFrame\ntransactionsDf, but only maximum 2 rows in which column productId has at least the value 2. Choose\nthe answer that correctly fills the blanks in the code block to accomplish this.\ntransactionsDf.__1__(__2__).__3__",
         "options": [
-            "A.. 1. where\n2. \"productId\" > 2\n3. max(2)",
-            "B.. 1. where\n2. transactionsDf[productId] >= 2\n3. limit(2)",
-            "C.. 1. filter\n2. productId > 2\n3. max(2)",
-            "D.. 1. filter\n2. col(\"productId\") >= 2\n3. limit(2)",
-            "E.. 1. where\n2. productId >= 2\n3. limit(2)"
+            "A. 1. where\n2. \"productId\" > 2\n3. max(2)",
+            "B. 1. where\n2. transactionsDf[productId] >= 2\n3. limit(2)",
+            "C. 1. filter\n2. productId > 2\n3. max(2)",
+            "D. 1. filter\n2. col(\"productId\") >= 2\n3. limit(2)",
+            "E. 1. where\n2. productId >= 2\n3. limit(2)"
         ],
         "answer": [
             "D"
@@ -2396,11 +2384,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns DataFrame transactionsDf sorted in descending\norder by column predError, showing missing values last?",
         "options": [
-            "A.. transactionsDf.sort(asc_nulls_last(\"predError\"))",
-            "B.. transactionsDf.orderBy(\"predError\").desc_nulls_last()",
-            "C.. transactionsDf.sort(\"predError\", ascending=False)",
-            "D.. transactionsDf.desc_nulls_last(\"predError\")",
-            "E.. transactionsDf.orderBy(\"predError\").asc_nulls_last()"
+            "A. transactionsDf.sort(asc_nulls_last(\"predError\"))",
+            "B. transactionsDf.orderBy(\"predError\").desc_nulls_last()",
+            "C. transactionsDf.sort(\"predError\", ascending=False)",
+            "D. transactionsDf.desc_nulls_last(\"predError\")",
+            "E. transactionsDf.orderBy(\"predError\").asc_nulls_last()"
         ],
         "answer": [
             "C"
@@ -2410,11 +2398,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block is intended to perform an\nouter join of DataFrames transactionsDf and itemsDf on columns productId and itemId, respectively.\nFind the error.\nCode block:\ntransactionsDf.join(itemsDf, [itemsDf.itemId, transactionsDf.productId], \"outer\")",
         "options": [
-            "A.. The \"outer\" argument should be eliminated, since \"outer\" is the default join type.",
-            "B.. The join type needs to be appended to the join() operator, like join().outer() instead of listing it as\nthe last argument inside the join() call.",
-            "C.. The term [itemsDf.itemId, transactionsDf.productId] should be replaced by itemsDf.itemId ==\ntransactionsDf.productId.",
-            "D.. The term [itemsDf.itemId, transactionsDf.productId] should be replaced by itemsDf.col(\"itemId\")\n== transactionsDf.col(\"productId\").",
-            "E.. The \"outer\" argument should be eliminated from the call and join should be replaced by joinOuter."
+            "A. The \"outer\" argument should be eliminated, since \"outer\" is the default join type.",
+            "B. The join type needs to be appended to the join() operator, like join().outer() instead of listing it as\nthe last argument inside the join() call.",
+            "C. The term [itemsDf.itemId, transactionsDf.productId] should be replaced by itemsDf.itemId ==\ntransactionsDf.productId.",
+            "D. The term [itemsDf.itemId, transactionsDf.productId] should be replaced by itemsDf.col(\"itemId\")\n== transactionsDf.col(\"productId\").",
+            "E. The \"outer\" argument should be eliminated from the call and join should be replaced by joinOuter."
         ],
         "answer": [
             "C"
@@ -2424,11 +2412,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks immediately removes the previously cached DataFrame\ntransactionsDf from memory and disk?",
         "options": [
-            "A.. array_remove(transactionsDf, \"*\")",
-            "B.. transactionsDf.unpersist()\n(Correct)",
-            "C.. del transactionsDf",
-            "D.. transactionsDf.clearCache()",
-            "E.. transactionsDf.persist()"
+            "A. array_remove(transactionsDf, \"*\")",
+            "B. transactionsDf.unpersist()\n(Correct)",
+            "C. del transactionsDf",
+            "D. transactionsDf.clearCache()",
+            "E. transactionsDf.persist()"
         ],
         "answer": [
             "B"
@@ -2438,11 +2426,11 @@ const quizData = [
     {
         "question": "The code block shown below should return a single-column DataFrame with a column named\nconsonant_ct that, for each row, shows the number of consonants in column itemName of\n\n\nDataFrame itemsDf. Choose the answer that correctly fills the blanks in the code block to accomplish\nthis.\nDataFrame itemsDf:\n1.+------+----------------------------------+-----------------------------+-------------------+\n2.|itemId|itemName |attributes |supplier |\n3.+------+----------------------------------+-----------------------------+-------------------+\n4.|1 |Thick Coat for Walking in the Snow|[blue, winter, cozy] |Sports Company Inc.|\n5.|2 |Elegant Outdoors Summer Dress |[red, summer, fresh, cooling]|YetiX |\n6.|3 |Outdoors Backpack |[green, summer, travel] |Sports Company Inc.|\n7.+------+----------------------------------+-----------------------------+-------------------+ Code block:\nitemsDf.select(__1__(__2__(__3__(__4__), \"a|e|i|o|u|\\s\", \"\")).__5__(\"consonant_ct\"))",
         "options": [
-            "A.. 1. length\n2. regexp_extract\n3. upper\n4. col(\"itemName\")\n5. as",
-            "B.. 1. size\n2. regexp_replace\n3. lower\n4. \"itemName\"\n5. alias",
-            "C.. 1. lower\n2. regexp_replace\n3. length\n4. \"itemName\"\n5. alias",
-            "D.. 1. length\n2. regexp_replace\n3. lower\n4. col(\"itemName\")\n5. alias",
-            "E.. 1. size\n2. regexp_extract\n3. lower\n4. col(\"itemName\")\n5. alias"
+            "A. 1. length\n2. regexp_extract\n3. upper\n4. col(\"itemName\")\n5. as",
+            "B. 1. size\n2. regexp_replace\n3. lower\n4. \"itemName\"\n5. alias",
+            "C. 1. lower\n2. regexp_replace\n3. length\n4. \"itemName\"\n5. alias",
+            "D. 1. length\n2. regexp_replace\n3. lower\n4. col(\"itemName\")\n5. alias",
+            "E. 1. size\n2. regexp_extract\n3. lower\n4. col(\"itemName\")\n5. alias"
         ],
         "answer": [
             "D"
@@ -2452,11 +2440,11 @@ const quizData = [
     {
         "question": "Which of the following is a characteristic of the cluster manager?",
         "options": [
-            "A.. Each cluster manager works on a single partition of data.",
-            "B.. The cluster manager receives input from the driver through the SparkContext.",
-            "C.. The cluster manager does not exist in standalone mode.",
-            "D.. The cluster manager transforms jobs into DAGs.",
-            "E.. In client mode, the cluster manager runs on the edge node."
+            "A. Each cluster manager works on a single partition of data.",
+            "B. The cluster manager receives input from the driver through the SparkContext.",
+            "C. The cluster manager does not exist in standalone mode.",
+            "D. The cluster manager transforms jobs into DAGs.",
+            "E. In client mode, the cluster manager runs on the edge node."
         ],
         "answer": [
             "B"
@@ -2466,11 +2454,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block should return DataFrame\ntransactionsDf, but with the column storeId renamed to storeNumber. Find the error.\nCode block:\ntransactionsDf.withColumn(\"storeNumber\", \"storeId\")",
         "options": [
-            "A.. Instead of withColumn, the withColumnRenamed method should be used.",
-            "B.. Arguments \"storeNumber\" and \"storeId\" each need to be wrapped in a col() operator.",
-            "C.. Argument \"storeId\" should be the first and argument \"storeNumber\" should be the second\nargument to the withColumn method.",
-            "D.. The withColumn operator should be replaced with the copyDataFrame operator.",
-            "E.. Instead of withColumn, the withColumnRenamed method should be used and argument \"storeId\"\nshould be the first and argument \"storeNumber\" should be the second argument to that method."
+            "A. Instead of withColumn, the withColumnRenamed method should be used.",
+            "B. Arguments \"storeNumber\" and \"storeId\" each need to be wrapped in a col() operator.",
+            "C. Argument \"storeId\" should be the first and argument \"storeNumber\" should be the second\nargument to the withColumn method.",
+            "D. The withColumn operator should be replaced with the copyDataFrame operator.",
+            "E. Instead of withColumn, the withColumnRenamed method should be used and argument \"storeId\"\nshould be the first and argument \"storeNumber\" should be the second argument to that method."
         ],
         "answer": [
             "E"
@@ -2480,11 +2468,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks performs an inner join of DataFrames transactionsDf and\nitemsDf on columns productId and itemId, respectively, excluding columns value and storeId from\nDataFrame transactionsDf and column attributes from DataFrame itemsDf?",
         "options": [
-            "A.. transactionsDf.drop('value', 'storeId').join(itemsDf.select('attributes'),\ntransactionsDf.productId==itemsDf.itemId)",
-            "B.. 1.transactionsDf.createOrReplaceTempView('transactionsDf')\n2.itemsDf.createOrReplaceTempView('itemsDf')\n3.\n4.spark.sql(\"SELECT -value, -storeId FROM transactionsDf INNER JOIN itemsDf ON\nproductId==itemId\").drop(\"attributes\")",
-            "C.. transactionsDf.drop(\"value\", \"storeId\").join(itemsDf.drop(\"attributes\"),\n\"transactionsDf.productId==itemsDf.itemId\")",
-            "D.. 1.transactionsDf \\\n2. .drop(col('value'), col('storeId')) \\\n3. .join(itemsDf.drop(col('attributes')), col('productId')==col('itemId'))",
-            "E.. 1.transactionsDf.createOrReplaceTempView('transactionsDf')\n2.itemsDf.createOrReplaceTempView('itemsDf')\n3.\n4.statement = \"\"\"\n5.SELECT * FROM transactionsDf\n6.INNER JOIN itemsDf\n7.ON transactionsDf.productId==itemsDf.itemId\n8.\"\"\"\n9.spark.sql(statement).drop(\"value\", \"storeId\", \"attributes\")"
+            "A. transactionsDf.drop('value', 'storeId').join(itemsDf.select('attributes'),\ntransactionsDf.productId==itemsDf.itemId)",
+            "B. 1.transactionsDf.createOrReplaceTempView('transactionsDf')\n2.itemsDf.createOrReplaceTempView('itemsDf')\n3.\n4.spark.sql(\"SELECT -value, -storeId FROM transactionsDf INNER JOIN itemsDf ON\nproductId==itemId\").drop(\"attributes\")",
+            "C. transactionsDf.drop(\"value\", \"storeId\").join(itemsDf.drop(\"attributes\"),\n\"transactionsDf.productId==itemsDf.itemId\")",
+            "D. 1.transactionsDf \\\n2. .drop(col('value'), col('storeId')) \\\n3. .join(itemsDf.drop(col('attributes')), col('productId')==col('itemId'))",
+            "E. 1.transactionsDf.createOrReplaceTempView('transactionsDf')\n2.itemsDf.createOrReplaceTempView('itemsDf')\n3.\n4.statement = \"\"\"\n5.SELECT * FROM transactionsDf\n6.INNER JOIN itemsDf\n7.ON transactionsDf.productId==itemsDf.itemId\n8.\"\"\"\n9.spark.sql(statement).drop(\"value\", \"storeId\", \"attributes\")"
         ],
         "answer": [
             "E"
@@ -2494,11 +2482,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks reorders the values inside the arrays in column attributes\nof DataFrame itemsDf from last to first one in the alphabet?\n1.+------+-----------------------------+-------------------+\n2.|itemId|attributes |supplier |\n3.+------+-----------------------------+-------------------+\n4.|1 |[blue, winter, cozy] |Sports Company Inc.|\n5.|2 |[red, summer, fresh, cooling]|YetiX |\n6.|3 |[green, summer, travel] |Sports Company Inc.|\n7.+------+-----------------------------+-------------------+",
         "options": [
-            "A.. itemsDf.withColumn('attributes', sort_array(col('attributes').desc()))",
-            "B.. itemsDf.withColumn('attributes', sort_array(desc('attributes')))",
-            "C.. itemsDf.withColumn('attributes', sort(col('attributes'), asc=False))",
-            "D.. itemsDf.withColumn(\"attributes\", sort_array(\"attributes\", asc=False))",
-            "E.. itemsDf.select(sort_array(\"attributes\"))"
+            "A. itemsDf.withColumn('attributes', sort_array(col('attributes').desc()))",
+            "B. itemsDf.withColumn('attributes', sort_array(desc('attributes')))",
+            "C. itemsDf.withColumn('attributes', sort(col('attributes'), asc=False))",
+            "D. itemsDf.withColumn(\"attributes\", sort_array(\"attributes\", asc=False))",
+            "E. itemsDf.select(sort_array(\"attributes\"))"
         ],
         "answer": [
             "D"
@@ -2508,11 +2496,11 @@ const quizData = [
     {
         "question": "Which of the following describes characteristics of the Dataset API?",
         "options": [
-            "A.. The Dataset API does not support unstructured data.",
-            "B.. In Python, the Dataset API mainly resembles Pandas' DataFrame API.",
-            "C.. In Python, the Dataset API's schema is constructed via type hints.",
-            "D.. The Dataset API is available in Scala, but it is not available in Python.",
-            "E.. The Dataset API does not provide compile-time type safety."
+            "A. The Dataset API does not support unstructured data.",
+            "B. In Python, the Dataset API mainly resembles Pandas' DataFrame API.",
+            "C. In Python, the Dataset API's schema is constructed via type hints.",
+            "D. The Dataset API is available in Scala, but it is not available in Python.",
+            "E. The Dataset API does not provide compile-time type safety."
         ],
         "answer": [
             "D"
@@ -2522,11 +2510,11 @@ const quizData = [
     {
         "question": "Which of the following describes a valid concern about partitioning?",
         "options": [
-            "A.. A shuffle operation returns 200 partitions if not explicitly set.",
-            "B.. Decreasing the number of partitions reduces the overall runtime of narrow transformations if\nthere are more executors available than partitions.",
-            "C.. No data is exchanged between executors when coalesce() is run.",
-            "D.. Short partition processing times are indicative of low skew.",
-            "E.. The coalesce() method should be used to increase the number of partitions."
+            "A. A shuffle operation returns 200 partitions if not explicitly set.",
+            "B. Decreasing the number of partitions reduces the overall runtime of narrow transformations if\nthere are more executors available than partitions.",
+            "C. No data is exchanged between executors when coalesce() is run.",
+            "D. Short partition processing times are indicative of low skew.",
+            "E. The coalesce() method should be used to increase the number of partitions."
         ],
         "answer": [
             "A"
@@ -2536,11 +2524,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks adds a column predErrorSqrt to DataFrame transactionsDf\nthat is the square root of column predError?",
         "options": [
-            "A.. transactionsDf.withColumn(\"predErrorSqrt\", sqrt(predError))",
-            "B.. transactionsDf.select(sqrt(predError))",
-            "C.. transactionsDf.withColumn(\"predErrorSqrt\", col(\"predError\").sqrt())",
-            "D.. transactionsDf.withColumn(\"predErrorSqrt\", sqrt(col(\"predError\")))",
-            "E.. transactionsDf.select(sqrt(\"predError\"))"
+            "A. transactionsDf.withColumn(\"predErrorSqrt\", sqrt(predError))",
+            "B. transactionsDf.select(sqrt(predError))",
+            "C. transactionsDf.withColumn(\"predErrorSqrt\", col(\"predError\").sqrt())",
+            "D. transactionsDf.withColumn(\"predErrorSqrt\", sqrt(col(\"predError\")))",
+            "E. transactionsDf.select(sqrt(\"predError\"))"
         ],
         "answer": [
             "D"
@@ -2550,11 +2538,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks sorts DataFrame transactionsDf both by column storeId in\nascending and by column productId in descending order, in this priority?",
         "options": [
-            "A.. transactionsDf.sort(\"storeId\", asc(\"productId\"))",
-            "B.. transactionsDf.sort(col(storeId)).desc(col(productId))",
-            "C.. transactionsDf.order_by(col(storeId), desc(col(productId)))",
-            "D.. transactionsDf.sort(\"storeId\", desc(\"productId\"))",
-            "E.. transactionsDf.sort(\"storeId\").sort(desc(\"productId\"))"
+            "A. transactionsDf.sort(\"storeId\", asc(\"productId\"))",
+            "B. transactionsDf.sort(col(storeId)).desc(col(productId))",
+            "C. transactionsDf.order_by(col(storeId), desc(col(productId)))",
+            "D. transactionsDf.sort(\"storeId\", desc(\"productId\"))",
+            "E. transactionsDf.sort(\"storeId\").sort(desc(\"productId\"))"
         ],
         "answer": [
             "D"
@@ -2564,11 +2552,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block should merge the rows of\nDataFrames transactionsDfMonday and transactionsDfTuesday into a new DataFrame, matching\ncolumn names and inserting null values where column names do not appear in both DataFrames.\nFind the error.\nSample of DataFrame transactionsDfMonday:\n1.+-------------+---------+-----+-------+---------+----+\n2.|transactionId|predError|value|storeId|productId| f|\n3.+-------------+---------+-----+-------+---------+----+\n4.| 5| null| null| null| 2|null|\n5.| 6| 3| 2| 25| 2|null|\n6.+-------------+---------+-----+-------+---------+----+\nSample of DataFrame transactionsDfTuesday:\n1.+-------+-------------+---------+-----+\n2.|storeId|transactionId|productId|value|\n3.+-------+-------------+---------+-----+\n4.| 25| 1| 1| 4|\n5.| 2| 2| 2| 7|\n6.| 3| 4| 2| null|\n7.| null| 5| 2| null|\n8.+-------+-------------+---------+-----+\nCode block:\nsc.union([transactionsDfMonday, transactionsDfTuesday])",
         "options": [
-            "A.. The DataFrames' RDDs need to be passed into the sc.union method instead of the DataFrame\nvariable names.",
-            "B.. Instead of union, the concat method should be used, making sure to not use its default arguments.",
-            "C.. Instead of the Spark context, transactionDfMonday should be called with the join method instead\nof the union method, making sure to use its default arguments.",
-            "D.. Instead of the Spark context, transactionDfMonday should be called with the union method.",
-            "E.. Instead of the Spark context, transactionDfMonday should be called with the unionByName\nmethod instead of the union method, making sure to not use its default arguments."
+            "A. The DataFrames' RDDs need to be passed into the sc.union method instead of the DataFrame\nvariable names.",
+            "B. Instead of union, the concat method should be used, making sure to not use its default arguments.",
+            "C. Instead of the Spark context, transactionDfMonday should be called with the join method instead\nof the union method, making sure to use its default arguments.",
+            "D. Instead of the Spark context, transactionDfMonday should be called with the union method.",
+            "E. Instead of the Spark context, transactionDfMonday should be called with the unionByName\nmethod instead of the union method, making sure to not use its default arguments."
         ],
         "answer": [
             "E"
@@ -2578,11 +2566,11 @@ const quizData = [
     {
         "question": "In which order should the code blocks shown below be run in order to read a JSON file from\nlocation jsonPath into a DataFrame and return only the rows that do not have value 3 in column\nproductId?\n1. importedDf.createOrReplaceTempView(\"importedDf\")\n2. spark.sql(\"SELECT * FROM importedDf WHERE productId != 3\")\n3. spark.sql(\"FILTER * FROM importedDf WHERE productId != 3\")\n4. importedDf = spark.read.option(\"format\", \"json\").path(jsonPath)\n5. importedDf = spark.read.json(jsonPath)",
         "options": [
-            "A.. 4, 1, 2",
-            "B.. 5, 1, 3",
-            "C.. 5, 2",
-            "D.. 4, 1, 3",
-            "E.. 5, 1, 2"
+            "A. 4, 1, 2",
+            "B. 5, 1, 3",
+            "C. 5, 2",
+            "D. 4, 1, 3",
+            "E. 5, 1, 2"
         ],
         "answer": [
             "E"
@@ -2592,11 +2580,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks reduces a DataFrame from 12 to 6 partitions and\nperforms a full shuffle?",
         "options": [
-            "A.. DataFrame.repartition(12)",
-            "B.. DataFrame.coalesce(6).shuffle()",
-            "C.. DataFrame.coalesce(6)",
-            "D.. DataFrame.coalesce(6, shuffle=True)",
-            "E.. DataFrame.repartition(6)"
+            "A. DataFrame.repartition(12)",
+            "B. DataFrame.coalesce(6).shuffle()",
+            "C. DataFrame.coalesce(6)",
+            "D. DataFrame.coalesce(6, shuffle=True)",
+            "E. DataFrame.repartition(6)"
         ],
         "answer": [
             "E"
@@ -2606,11 +2594,11 @@ const quizData = [
     {
         "question": "Which of the following describes a difference between Spark's cluster and client execution\nmodes?",
         "options": [
-            "A.. In cluster mode, the cluster manager resides on a worker node, while it resides on an edge node in\nclient mode.",
-            "B.. In cluster mode, executor processes run on worker nodes, while they run on gateway nodes in\nclient mode.",
-            "C.. In cluster mode, the driver resides on a worker node, while it resides on an edge node in client\nmode.",
-            "D.. In cluster mode, a gateway machine hosts the driver, while it is co-located with the executor in\n\n\nclient mode.",
-            "E.. In cluster mode, the Spark driver is not co-located with the cluster manager, while it is co-located\nin client mode."
+            "A. In cluster mode, the cluster manager resides on a worker node, while it resides on an edge node in\nclient mode.",
+            "B. In cluster mode, executor processes run on worker nodes, while they run on gateway nodes in\nclient mode.",
+            "C. In cluster mode, the driver resides on a worker node, while it resides on an edge node in client\nmode.",
+            "D. In cluster mode, a gateway machine hosts the driver, while it is co-located with the executor in\n\n\nclient mode.",
+            "E. In cluster mode, the Spark driver is not co-located with the cluster manager, while it is co-located\nin client mode."
         ],
         "answer": [
             "C"
@@ -2620,11 +2608,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks creates a new one-column, two-row DataFrame dfDates\nwith column date of type timestamp?",
         "options": [
-            "A.. 1.dfDates = spark.createDataFrame([\"23/01/2022 11:28:12\",\"24/01/2022 10:58:34\"], [\"date\"])\n2.dfDates = dfDates.withColumn(\"date\", to_timestamp(\"dd/MM/yyyy HH:mm:ss\", \"date\"))",
-            "B.. 1.dfDates = spark.createDataFrame([(\"23/01/2022 11:28:12\",),(\"24/01/2022 10:58:34\",)], [\"date\"]\n)\n2.dfDates = dfDates.withColumnRenamed(\"date\", to_timestamp(\"date\", \"yyyy-MM-dd HH:mm:ss\"))",
-            "C.. 1.dfDates = spark.createDataFrame([(\"23/01/2022 11:28:12\",),(\"24/01/2022 10:58:34\",)], [\"date\"])\n2.dfDates = dfDates.withColumn(\"date\", to_timestamp(\"date\", \"dd/MM/yyyy HH:mm:ss\"))",
-            "D.. 1.dfDates = spark.createDataFrame([\"23/01/2022 11:28:12\",\"24/01/2022 10:58:34\"], [\"date\"])\n2.dfDates = dfDates.withColumnRenamed(\"date\", to_datetime(\"date\", \"yyyy-MM-dd HH:mm:ss\"))",
-            "E.. 1.dfDates = spark.createDataFrame([(\"23/01/2022 11:28:12\",),(\"24/01/2022 10:58:34\",)], [\"date\"])"
+            "A. 1.dfDates = spark.createDataFrame([\"23/01/2022 11:28:12\",\"24/01/2022 10:58:34\"], [\"date\"])\n2.dfDates = dfDates.withColumn(\"date\", to_timestamp(\"dd/MM/yyyy HH:mm:ss\", \"date\"))",
+            "B. 1.dfDates = spark.createDataFrame([(\"23/01/2022 11:28:12\",),(\"24/01/2022 10:58:34\",)], [\"date\"]\n)\n2.dfDates = dfDates.withColumnRenamed(\"date\", to_timestamp(\"date\", \"yyyy-MM-dd HH:mm:ss\"))",
+            "C. 1.dfDates = spark.createDataFrame([(\"23/01/2022 11:28:12\",),(\"24/01/2022 10:58:34\",)], [\"date\"])\n2.dfDates = dfDates.withColumn(\"date\", to_timestamp(\"date\", \"dd/MM/yyyy HH:mm:ss\"))",
+            "D. 1.dfDates = spark.createDataFrame([\"23/01/2022 11:28:12\",\"24/01/2022 10:58:34\"], [\"date\"])\n2.dfDates = dfDates.withColumnRenamed(\"date\", to_datetime(\"date\", \"yyyy-MM-dd HH:mm:ss\"))",
+            "E. 1.dfDates = spark.createDataFrame([(\"23/01/2022 11:28:12\",),(\"24/01/2022 10:58:34\",)], [\"date\"])"
         ],
         "answer": [
             "C"
@@ -2634,11 +2622,11 @@ const quizData = [
     {
         "question": "Which of the following statements about executors is correct, assuming that one can consider\neach of the JVMs working as executors as a pool of task execution slots?",
         "options": [
-            "A.. Slot is another name for executor.",
-            "B.. There must be less executors than tasks.",
-            "C.. An executor runs on a single core.",
-            "D.. There must be more slots than tasks.",
-            "E.. Tasks run in parallel via slots."
+            "A. Slot is another name for executor.",
+            "B. There must be less executors than tasks.",
+            "C. An executor runs on a single core.",
+            "D. There must be more slots than tasks.",
+            "E. Tasks run in parallel via slots."
         ],
         "answer": [
             "E"
@@ -2648,11 +2636,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks efficiently converts DataFrame transactionsDf from 12\ninto 24 partitions?",
         "options": [
-            "A.. transactionsDf.repartition(24, boost=True)",
-            "B.. transactionsDf.repartition()",
-            "C.. transactionsDf.repartition(\"itemId\", 24)",
-            "D.. transactionsDf.coalesce(24)",
-            "E.. transactionsDf.repartition(24)"
+            "A. transactionsDf.repartition(24, boost=True)",
+            "B. transactionsDf.repartition()",
+            "C. transactionsDf.repartition(\"itemId\", 24)",
+            "D. transactionsDf.coalesce(24)",
+            "E. transactionsDf.repartition(24)"
         ],
         "answer": [
             "E"
@@ -2662,11 +2650,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a DataFrame that is an inner join of DataFrame\nitemsDf and DataFrame transactionsDf, on columns itemId and productId, respectively and in which\nevery itemId just appears once?",
         "options": [
-            "A.. itemsDf.join(transactionsDf, \"itemsDf.itemId==transactionsDf.productId\").distinct(\"itemId\")",
-            "B.. itemsDf.join(transactionsDf,\nitemsDf.itemId==transactionsDf.productId).dropDuplicates([\"itemId\"])",
-            "C.. itemsDf.join(transactionsDf, itemsDf.itemId==transactionsDf.productId).dropDuplicates(\"itemId\")",
-            "D.. itemsDf.join(transactionsDf, itemsDf.itemId==transactionsDf.productId,\nhow=\"inner\").distinct([\"itemId\"])",
-            "E.. itemsDf.join(transactionsDf, \"itemsDf.itemId==transactionsDf.productId\",\nhow=\"inner\").dropDuplicates([\"itemId\"])"
+            "A. itemsDf.join(transactionsDf, \"itemsDf.itemId==transactionsDf.productId\").distinct(\"itemId\")",
+            "B. itemsDf.join(transactionsDf,\nitemsDf.itemId==transactionsDf.productId).dropDuplicates([\"itemId\"])",
+            "C. itemsDf.join(transactionsDf, itemsDf.itemId==transactionsDf.productId).dropDuplicates(\"itemId\")",
+            "D. itemsDf.join(transactionsDf, itemsDf.itemId==transactionsDf.productId,\nhow=\"inner\").distinct([\"itemId\"])",
+            "E. itemsDf.join(transactionsDf, \"itemsDf.itemId==transactionsDf.productId\",\nhow=\"inner\").dropDuplicates([\"itemId\"])"
         ],
         "answer": [
             "B"
@@ -2676,11 +2664,11 @@ const quizData = [
     {
         "question": "Which of the following describes Spark's way of managing memory?",
         "options": [
-            "A.. Spark uses a subset of the reserved system memory.",
-            "B.. Storage memory is used for caching partitions derived from DataFrames.",
-            "C.. As a general rule for garbage collection, Spark performs better on many small objects than few big\nobjects.",
-            "D.. Disabling serialization potentially greatly reduces the memory footprint of a Spark application.",
-            "E.. Spark's memory usage can be divided into three categories: Execution, transaction, and storage."
+            "A. Spark uses a subset of the reserved system memory.",
+            "B. Storage memory is used for caching partitions derived from DataFrames.",
+            "C. As a general rule for garbage collection, Spark performs better on many small objects than few big\nobjects.",
+            "D. Disabling serialization potentially greatly reduces the memory footprint of a Spark application.",
+            "E. Spark's memory usage can be divided into three categories: Execution, transaction, and storage."
         ],
         "answer": [
             "B"
@@ -2690,11 +2678,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains multiple errors. The code block should return a\nDataFrame that contains only columns transactionId, predError, value and storeId of DataFrame\ntransactionsDf. Find the errors.\nCode block:\ntransactionsDf.select([col(productId), col(f)])\nSample of transactionsDf:\n1.+-------------+---------+-----+-------+---------+----+\n2.|transactionId|predError|value|storeId|productId| f|\n3.+-------------+---------+-----+-------+---------+----+\n4.| 1| 3| 4| 25| 1|null|\n5.| 2| 6| 7| 2| 2|null|\n6.| 3| 3| null| 25| 3|null|\n7.+-------------+---------+-----+-------+---------+----+",
         "options": [
-            "A.. The column names should be listed directly as arguments to the operator and not as a list.",
-            "B.. The select operator should be replaced by a drop operator, the column names should be listed\ndirectly as arguments to the operator and not as a list, and all column names should be expressed as\nstrings without being wrapped in a col() operator.",
-            "C.. The select operator should be replaced by a drop operator.",
-            "D.. The column names should be listed directly as arguments to the operator and not as a list and\nfollowing the pattern of how column names are expressed in the code block, columns productId and f\nshould be replaced by transactionId, predError, value and storeId.",
-            "E.. The select operator should be replaced by a drop operator, the column names should be listed\ndirectly as arguments to the operator and not as a list, and all col() operators should be removed."
+            "A. The column names should be listed directly as arguments to the operator and not as a list.",
+            "B. The select operator should be replaced by a drop operator, the column names should be listed\ndirectly as arguments to the operator and not as a list, and all column names should be expressed as\nstrings without being wrapped in a col() operator.",
+            "C. The select operator should be replaced by a drop operator.",
+            "D. The column names should be listed directly as arguments to the operator and not as a list and\nfollowing the pattern of how column names are expressed in the code block, columns productId and f\nshould be replaced by transactionId, predError, value and storeId.",
+            "E. The select operator should be replaced by a drop operator, the column names should be listed\ndirectly as arguments to the operator and not as a list, and all col() operators should be removed."
         ],
         "answer": [
             "B"
@@ -2704,11 +2692,11 @@ const quizData = [
     {
         "question": "Which of the following describes a narrow transformation?",
         "options": [
-            "A.. narrow transformation is an operation in which data is exchanged across partitions.",
-            "B.. A narrow transformation is a process in which data from multiple RDDs is used.",
-            "C.. A narrow transformation is a process in which 32-bit float variables are cast to smaller float\nvariables, like 16-bit or 8-bit float variables.",
-            "D.. A narrow transformation is an operation in which data is exchanged across the cluster.",
-            "E.. A narrow transformation is an operation in which no data is exchanged across the cluster."
+            "A. narrow transformation is an operation in which data is exchanged across partitions.",
+            "B. A narrow transformation is a process in which data from multiple RDDs is used.",
+            "C. A narrow transformation is a process in which 32-bit float variables are cast to smaller float\nvariables, like 16-bit or 8-bit float variables.",
+            "D. A narrow transformation is an operation in which data is exchanged across the cluster.",
+            "E. A narrow transformation is an operation in which no data is exchanged across the cluster."
         ],
         "answer": [
             "E"
@@ -2718,11 +2706,11 @@ const quizData = [
     {
         "question": "Which of the following describes tasks?",
         "options": [
-            "A.. A task is a command sent from the driver to the executors in response to a transformation.",
-            "B.. Tasks transform jobs into DAGs.",
-            "C.. A task is a collection of slots.",
-            "D.. A task is a collection of rows.",
-            "E.. Tasks get assigned to the executors by the driver."
+            "A. A task is a command sent from the driver to the executors in response to a transformation.",
+            "B. Tasks transform jobs into DAGs.",
+            "C. A task is a collection of slots.",
+            "D. A task is a collection of rows.",
+            "E. Tasks get assigned to the executors by the driver."
         ],
         "answer": [
             "E"
@@ -2732,11 +2720,11 @@ const quizData = [
     {
         "question": "Which of the following describes Spark actions?",
         "options": [
-            "A.. Writing data to disk is the primary purpose of actions.",
-            "B.. Actions are Spark's way of exchanging data between executors.",
-            "C.. The driver receives data upon request by actions.",
-            "D.. Stage boundaries are commonly established by actions.",
-            "E.. Actions are Spark's way of modifying RDDs."
+            "A. Writing data to disk is the primary purpose of actions.",
+            "B. Actions are Spark's way of exchanging data between executors.",
+            "C. The driver receives data upon request by actions.",
+            "D. Stage boundaries are commonly established by actions.",
+            "E. Actions are Spark's way of modifying RDDs."
         ],
         "answer": [
             "C"
@@ -2746,11 +2734,11 @@ const quizData = [
     {
         "question": "Which of the following statements about Spark's configuration properties is incorrect?",
         "options": [
-            "A.. The maximum number of tasks that an executor can process at the same time is controlled by the\nspark.task.cpus property.",
-            "B.. The maximum number of tasks that an executor can process at the same time is controlled by the\nspark.executor.cores property.",
-            "C.. The default value for spark.sql.autoBroadcastJoinThreshold is 10MB.",
-            "D.. The default number of partitions to use when shuffling data for joins or aggregations is 300.",
-            "E.. The default number of partitions returned from certain transformations can be controlled by the\nspark.default.parallelism property."
+            "A. The maximum number of tasks that an executor can process at the same time is controlled by the\nspark.task.cpus property.",
+            "B. The maximum number of tasks that an executor can process at the same time is controlled by the\nspark.executor.cores property.",
+            "C. The default value for spark.sql.autoBroadcastJoinThreshold is 10MB.",
+            "D. The default number of partitions to use when shuffling data for joins or aggregations is 300.",
+            "E. The default number of partitions returned from certain transformations can be controlled by the\nspark.default.parallelism property."
         ],
         "answer": [
             "D"
@@ -2760,11 +2748,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block should combine data from\nDataFrames itemsDf and transactionsDf, showing all rows of DataFrame itemsDf that have a\nmatching value in column itemId with a value in column transactionsId of DataFrame transactionsDf.\nFind the error.\nCode block:\nitemsDf.join(itemsDf.itemId==transactionsDf.transactionId)",
         "options": [
-            "A.. The join statement is incomplete.",
-            "B.. The union method should be used instead of join.",
-            "C.. The join method is inappropriate.",
-            "D.. The merge method should be used instead of join.",
-            "E.. The join expression is malformed."
+            "A. The join statement is incomplete.",
+            "B. The union method should be used instead of join.",
+            "C. The join method is inappropriate.",
+            "D. The merge method should be used instead of join.",
+            "E. The join expression is malformed."
         ],
         "answer": [
             "A"
@@ -2774,11 +2762,11 @@ const quizData = [
     {
         "question": "The code block shown below should return all rows of DataFrame itemsDf that have at least 3\n\n\nitems in column itemNameElements. Choose the answer that correctly fills the blanks in the code\nblock to accomplish this.\nExample of DataFrame itemsDf:\n1.+------+----------------------------------+-------------------+------------------------------------------+\n2.|itemId|itemName |supplier |itemNameElements |\n3.+------+----------------------------------+-------------------+------------------------------------------+\n4.|1 |Thick Coat for Walking in the Snow|Sports Company Inc.|[Thick, Coat, for, Walking, in, the,\nSnow]|\n5.|2 |Elegant Outdoors Summer Dress |YetiX |[Elegant, Outdoors, Summer, Dress] |\n6.|3 |Outdoors Backpack |Sports Company Inc.|[Outdoors, Backpack] |\n7.+------+----------------------------------+-------------------+------------------------------------------+ Code block:\nitemsDf.__1__(__2__(__3__)__4__)",
         "options": [
-            "A.. 1. select\n2. count\n3. col(\"itemNameElements\")\n4. >3",
-            "B.. 1. filter\n2. count\n3. itemNameElements\n4. >=3",
-            "C.. 1. select\n2. count\n3. \"itemNameElements\"\n4. >3",
-            "D.. 1. filter\n2. size\n3. \"itemNameElements\"\n4. >=3\n(Correct)",
-            "E.. 1. select\n2. size\n3. \"itemNameElements\"\n4. >3"
+            "A. 1. select\n2. count\n3. col(\"itemNameElements\")\n4. >3",
+            "B. 1. filter\n2. count\n3. itemNameElements\n4. >=3",
+            "C. 1. select\n2. count\n3. \"itemNameElements\"\n4. >3",
+            "D. 1. filter\n2. size\n3. \"itemNameElements\"\n4. >=3\n(Correct)",
+            "E. 1. select\n2. size\n3. \"itemNameElements\"\n4. >3"
         ],
         "answer": [
             "D"
@@ -2788,11 +2776,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a DataFrame with an added column to DataFrame\ntransactionsDf that shows the unix epoch timestamps in column transactionDate as strings in the\nformat month/day/year in column transactionDateFormatted?\nExcerpt of DataFrame transactionsDf:",
         "options": [
-            "A.. transactionsDf.withColumn(\"transactionDateFormatted\", from_unixtime(\"transactionDate\",\nformat=\"dd/MM/yyyy\"))",
-            "B.. transactionsDf.withColumnRenamed(\"transactionDate\", \"transactionDateFormatted\",\nfrom_unixtime(\"transactionDateFormatted\", format=\"MM/dd/yyyy\"))",
-            "C.. transactionsDf.apply(from_unixtime(format=\"MM/dd/yyyy\")).asColumn(\"transactionDateFormatted\"\n)",
-            "D.. transactionsDf.withColumn(\"transactionDateFormatted\", from_unixtime(\"transactionDate\",\nformat=\"MM/dd/yyyy\"))",
-            "E.. transactionsDf.withColumn(\"transactionDateFormatted\", from_unixtime(\"transactionDate\"))"
+            "A. transactionsDf.withColumn(\"transactionDateFormatted\", from_unixtime(\"transactionDate\",\nformat=\"dd/MM/yyyy\"))",
+            "B. transactionsDf.withColumnRenamed(\"transactionDate\", \"transactionDateFormatted\",\nfrom_unixtime(\"transactionDateFormatted\", format=\"MM/dd/yyyy\"))",
+            "C. transactionsDf.apply(from_unixtime(format=\"MM/dd/yyyy\")).asColumn(\"transactionDateFormatted\"\n)",
+            "D. transactionsDf.withColumn(\"transactionDateFormatted\", from_unixtime(\"transactionDate\",\nformat=\"MM/dd/yyyy\"))",
+            "E. transactionsDf.withColumn(\"transactionDateFormatted\", from_unixtime(\"transactionDate\"))"
         ],
         "answer": [
             "D"
@@ -2802,10 +2790,10 @@ const quizData = [
     {
         "question": "Which of the following describes a way for resizing a DataFrame from 16 to 8 partitions in the\nmost efficient way?",
         "options": [
-            "A.. Use operation DataFrame.repartition(8) to shuffle the DataFrame and reduce the number of\npartitions.",
-            "B.. Use operation DataFrame.coalesce(8) to fully shuffle the DataFrame and reduce the number of\npartitions.",
-            "C.. Use a narrow transformation to reduce the number of partitions.",
-            "D.. Use a wide transformation to reduce the number of partitions.\nUse operation DataFrame.coalesce(0.5) to halve the number of partitions in the DataFrame."
+            "A. Use operation DataFrame.repartition(8) to shuffle the DataFrame and reduce the number of\npartitions.",
+            "B. Use operation DataFrame.coalesce(8) to fully shuffle the DataFrame and reduce the number of\npartitions.",
+            "C. Use a narrow transformation to reduce the number of partitions.",
+            "D. Use a wide transformation to reduce the number of partitions.\nUse operation DataFrame.coalesce(0.5) to halve the number of partitions in the DataFrame."
         ],
         "answer": [
             "C"
@@ -2815,11 +2803,11 @@ const quizData = [
     {
         "question": "Which of the following describes characteristics of the Spark UI?",
         "options": [
-            "A.. Via the Spark UI, workloads can be manually distributed across executors.",
-            "B.. Via the Spark UI, stage execution speed can be modified.",
-            "C.. The Scheduler tab shows how jobs that are run in parallel by multiple users are distributed across\nthe cluster.",
-            "D.. There is a place in the Spark UI that shows the property spark.executor.memory.",
-            "E.. Some of the tabs in the Spark UI are named Jobs, Stages, Storage, DAGs, Executors, and SQL."
+            "A. Via the Spark UI, workloads can be manually distributed across executors.",
+            "B. Via the Spark UI, stage execution speed can be modified.",
+            "C. The Scheduler tab shows how jobs that are run in parallel by multiple users are distributed across\nthe cluster.",
+            "D. There is a place in the Spark UI that shows the property spark.executor.memory.",
+            "E. Some of the tabs in the Spark UI are named Jobs, Stages, Storage, DAGs, Executors, and SQL."
         ],
         "answer": [
             "D"
@@ -2829,11 +2817,11 @@ const quizData = [
     {
         "question": "Which of the following DataFrame operators is never classified as a wide transformation?",
         "options": [
-            "A.. DataFrame.sort()",
-            "B.. DataFrame.aggregate()",
-            "C.. DataFrame.repartition()",
-            "D.. DataFrame.select()",
-            "E.. DataFrame.join()"
+            "A. DataFrame.sort()",
+            "B. DataFrame.aggregate()",
+            "C. DataFrame.repartition()",
+            "D. DataFrame.select()",
+            "E. DataFrame.join()"
         ],
         "answer": [
             "D"
@@ -2843,10 +2831,10 @@ const quizData = [
     {
         "question": "Which of the following describes slots?",
         "options": [
-            "A.. Slots are dynamically created and destroyed in accordance with an executor's workload.",
-            "B.. To optimize I/O performance, Spark stores data on disk in multiple slots.",
-            "C.. A Java Virtual Machine (JVM) working as an executor can be considered as a pool of slots for task\nexecution.",
-            "D.. A slot is always limited to a single core.\nSlots are the communication interface for executors and are used for receiving commands and\nsending results to the driver."
+            "A. Slots are dynamically created and destroyed in accordance with an executor's workload.",
+            "B. To optimize I/O performance, Spark stores data on disk in multiple slots.",
+            "C. A Java Virtual Machine (JVM) working as an executor can be considered as a pool of slots for task\nexecution.",
+            "D. A slot is always limited to a single core.\nSlots are the communication interface for executors and are used for receiving commands and\nsending results to the driver."
         ],
         "answer": [
             "C"
@@ -2856,11 +2844,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a copy of DataFrame transactionsDf in which\ncolumn productId has been renamed to productNumber?",
         "options": [
-            "A.. transactionsDf.withColumnRenamed(\"productId\", \"productNumber\")",
-            "B.. transactionsDf.withColumn(\"productId\", \"productNumber\")",
-            "C.. transactionsDf.withColumnRenamed(\"productNumber\", \"productId\")",
-            "D.. transactionsDf.withColumnRenamed(col(productId), col(productNumber))",
-            "E.. transactionsDf.withColumnRenamed(productId, productNumber)"
+            "A. transactionsDf.withColumnRenamed(\"productId\", \"productNumber\")",
+            "B. transactionsDf.withColumn(\"productId\", \"productNumber\")",
+            "C. transactionsDf.withColumnRenamed(\"productNumber\", \"productId\")",
+            "D. transactionsDf.withColumnRenamed(col(productId), col(productNumber))",
+            "E. transactionsDf.withColumnRenamed(productId, productNumber)"
         ],
         "answer": [
             "A"
@@ -2870,12 +2858,12 @@ const quizData = [
     {
         "question": "In which order should the code blocks shown below be run in order to assign articlesDf a\nDataFrame that lists all items in column attributes ordered by the number of times these items occur,\nfrom most to least often?\nSample of DataFrame articlesDf:\n1.+------+-----------------------------+-------------------+\n2.|itemId|attributes |supplier |\n3.+------+-----------------------------+-------------------+\n4.|1 |[blue, winter, cozy] |Sports Company Inc.|\n5.|2 |[red, summer, fresh, cooling]|YetiX |\n6.|3 |[green, summer, travel] |Sports Company Inc.|\n7.+------+-----------------------------+-------------------+",
         "options": [
-            "A.. 1. articlesDf = articlesDf.groupby(\"col\")\n2. articlesDf = articlesDf.select(explode(col(\"attributes\")))\n3. articlesDf = articlesDf.orderBy(\"count\").select(\"col\")\n4. articlesDf = articlesDf.sort(\"count\",ascending=False).select(\"col\")\n5. articlesDf = articlesDf.groupby(\"col\").count()",
-            "B.. 4, 5",
-            "C.. 2, 5, 3",
-            "D.. 5, 2",
-            "E.. 2, 3, 4",
-            "F.. 2, 5, 4"
+            "A. 1. articlesDf = articlesDf.groupby(\"col\")\n2. articlesDf = articlesDf.select(explode(col(\"attributes\")))\n3. articlesDf = articlesDf.orderBy(\"count\").select(\"col\")\n4. articlesDf = articlesDf.sort(\"count\",ascending=False).select(\"col\")\n5. articlesDf = articlesDf.groupby(\"col\").count()",
+            "B. 4, 5",
+            "C. 2, 5, 3",
+            "D. 5, 2",
+            "E. 2, 3, 4",
+            "F. 2, 5, 4"
         ],
         "answer": [
             "E"
@@ -2885,11 +2873,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks concatenates rows of DataFrames transactionsDf and\ntransactionsNewDf, omitting any duplicates?",
         "options": [
-            "A.. transactionsDf.concat(transactionsNewDf).unique()",
-            "B.. transactionsDf.union(transactionsNewDf).distinct()",
-            "C.. spark.union(transactionsDf, transactionsNewDf).distinct()",
-            "D.. transactionsDf.join(transactionsNewDf, how=\"union\").distinct()",
-            "E.. transactionsDf.union(transactionsNewDf).unique()"
+            "A. transactionsDf.concat(transactionsNewDf).unique()",
+            "B. transactionsDf.union(transactionsNewDf).distinct()",
+            "C. spark.union(transactionsDf, transactionsNewDf).distinct()",
+            "D. transactionsDf.join(transactionsNewDf, how=\"union\").distinct()",
+            "E. transactionsDf.union(transactionsNewDf).unique()"
         ],
         "answer": [
             "B"
@@ -2899,11 +2887,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block is intended to write\nDataFrame transactionsDf to disk as a parquet file in location /FileStore/transactions_split, using\ncolumn storeId as key for partitioning. Find the error.\nCode block:\ntransactionsDf.write.format(\"parquet\").partitionOn(\"storeId\").save(\"/FileStore/transactions_split\")A.",
         "options": [
-            "A.. The format(\"parquet\") expression is inappropriate to use here, \"parquet\" should be passed as first\nargument to the save() operator and \"/FileStore/transactions_split\" as the second argument.",
-            "B.. Partitioning data by storeId is possible with the partitionBy expression, so partitionOn should be\nreplaced by partitionBy.",
-            "C.. Partitioning data by storeId is possible with the bucketBy expression, so partitionOn should be\nreplaced by bucketBy.",
-            "D.. partitionOn(\"storeId\") should be called before the write operation.",
-            "E.. The format(\"parquet\") expression should be removed and instead, the information should be\nadded to the write expression like so: write(\"parquet\")."
+            "A. The format(\"parquet\") expression is inappropriate to use here, \"parquet\" should be passed as first\nargument to the save() operator and \"/FileStore/transactions_split\" as the second argument.",
+            "B. Partitioning data by storeId is possible with the partitionBy expression, so partitionOn should be\nreplaced by partitionBy.",
+            "C. Partitioning data by storeId is possible with the bucketBy expression, so partitionOn should be\nreplaced by bucketBy.",
+            "D. partitionOn(\"storeId\") should be called before the write operation.",
+            "E. The format(\"parquet\") expression should be removed and instead, the information should be\nadded to the write expression like so: write(\"parquet\")."
         ],
         "answer": [
             "B"
@@ -2913,11 +2901,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block should return a DataFrame\nin which column predErrorAdded contains the results of Python function add_2_if_geq_3 as applied\nto numeric and nullable column predError in DataFrame transactionsDf. Find the error.\nCode block:\n1.def add_2_if_geq_3(x):\n2. if x is None:\n3. return x\n4. elif x >= 3:\n5. return x+2\n6. return x\n7.\n8.add_2_if_geq_3_udf = udf(add_2_if_geq_3)\n9.\n10.transactionsDf.withColumnRenamed(\"predErrorAdded\", add_2_if_geq_3_udf(col(\"predError\")))",
         "options": [
-            "A.. The operator used to adding the column does not add column predErrorAdded to the DataFrame.",
-            "B.. Instead of col(\"predError\"), the actual DataFrame with the column needs to be passed, like so\ntransactionsDf.predError.",
-            "C.. The udf() method does not declare a return type.",
-            "D.. UDFs are only available through the SQL API, but not in the Python API as shown in the code block.",
-            "E.. The Python function is unable to handle null values, resulting in the code block crashing on\nexecution."
+            "A. The operator used to adding the column does not add column predErrorAdded to the DataFrame.",
+            "B. Instead of col(\"predError\"), the actual DataFrame with the column needs to be passed, like so\ntransactionsDf.predError.",
+            "C. The udf() method does not declare a return type.",
+            "D. UDFs are only available through the SQL API, but not in the Python API as shown in the code block.",
+            "E. The Python function is unable to handle null values, resulting in the code block crashing on\nexecution."
         ],
         "answer": [
             "A"
@@ -2927,11 +2915,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a copy of DataFrame transactionsDf that only\nincludes columns transactionId, storeId, productId and f?\nSample of DataFrame transactionsDf:\n1.+-------------+---------+-----+-------+---------+----+\n2.|transactionId|predError|value|storeId|productId| f|\n3.+-------------+---------+-----+-------+---------+----+\n4.| 1| 3| 4| 25| 1|null|\n5.| 2| 6| 7| 2| 2|null|\n6.| 3| 3| null| 25| 3|null|\n7.+-------------+---------+-----+-------+---------+----+",
         "options": [
-            "A.. transactionsDf.drop(col(\"value\"), col(\"predError\"))",
-            "B.. transactionsDf.drop(\"predError\", \"value\")",
-            "C.. transactionsDf.drop(value, predError)",
-            "D.. transactionsDf.drop([\"predError\", \"value\"])",
-            "E.. transactionsDf.drop([col(\"predError\"), col(\"value\")])"
+            "A. transactionsDf.drop(col(\"value\"), col(\"predError\"))",
+            "B. transactionsDf.drop(\"predError\", \"value\")",
+            "C. transactionsDf.drop(value, predError)",
+            "D. transactionsDf.drop([\"predError\", \"value\"])",
+            "E. transactionsDf.drop([col(\"predError\"), col(\"value\")])"
         ],
         "answer": [
             "B"
@@ -2941,12 +2929,12 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a new DataFrame with only columns predError\nand values of every second row of DataFrame transactionsDf?\nEntire DataFrame transactionsDf:\n1.+-------------+---------+-----+-------+---------+----+\n2.|transactionId|predError|value|storeId|productId| f|\n3.+-------------+---------+-----+-------+---------+----+\n4.| 1| 3| 4| 25| 1|null|\n5.| 2| 6| 7| 2| 2|null|\n6.| 3| 3| null| 25| 3|null|\n7.| 4| null| null| 3| 2|null|\n\n\n8.| 5| null| null| null| 2|null|\n9.| 6| 3| 2| 25| 2|null|\n10.+-------------+---------+-----+-------+---------+----+",
         "options": [
-            "A.. transactionsDf.filter(col(\"transactionId\").isin([3,4,6])).select([predError, value])",
-            "B.. transactionsDf.select(col(\"transactionId\").isin([3,4,6]), \"predError\", \"value\")",
-            "C.. transactionsDf.filter(\"transactionId\" % 2 == 0).select(\"predError\", \"value\")",
-            "D.. transactionsDf.filter(col(\"transactionId\") % 2 == 0).select(\"predError\", \"value\") (Correct)",
-            "E.. 1.transactionsDf.createOrReplaceTempView(\"transactionsDf\")\n2.spark.sql(\"FROM transactionsDf SELECT predError, value WHERE transactionId % 2 = 2\")",
-            "F.. transactionsDf.filter(col(transactionId).isin([3,4,6]))"
+            "A. transactionsDf.filter(col(\"transactionId\").isin([3,4,6])).select([predError, value])",
+            "B. transactionsDf.select(col(\"transactionId\").isin([3,4,6]), \"predError\", \"value\")",
+            "C. transactionsDf.filter(\"transactionId\" % 2 == 0).select(\"predError\", \"value\")",
+            "D. transactionsDf.filter(col(\"transactionId\") % 2 == 0).select(\"predError\", \"value\") (Correct)",
+            "E. 1.transactionsDf.createOrReplaceTempView(\"transactionsDf\")\n2.spark.sql(\"FROM transactionsDf SELECT predError, value WHERE transactionId % 2 = 2\")",
+            "F. transactionsDf.filter(col(transactionId).isin([3,4,6]))"
         ],
         "answer": [
             "D"
@@ -2956,11 +2944,11 @@ const quizData = [
     {
         "question": "Which of the following describes the difference between client and cluster execution modes?",
         "options": [
-            "A.. In cluster mode, the driver runs on the worker nodes, while the client mode runs the driver on the\nclient machine.",
-            "B.. In cluster mode, the driver runs on the edge node, while the client mode runs the driver in a\nworker node.",
-            "C.. In cluster mode, each node will launch its own executor, while in client mode, executors will\nexclusively run on the client machine.",
-            "D.. In client mode, the cluster manager runs on the same host as the driver, while in cluster mode, the\ncluster manager runs on a separate node.",
-            "E.. In cluster mode, the driver runs on the master node, while in client mode, the driver runs on a\nvirtual machine in the cloud."
+            "A. In cluster mode, the driver runs on the worker nodes, while the client mode runs the driver on the\nclient machine.",
+            "B. In cluster mode, the driver runs on the edge node, while the client mode runs the driver in a\nworker node.",
+            "C. In cluster mode, each node will launch its own executor, while in client mode, executors will\nexclusively run on the client machine.",
+            "D. In client mode, the cluster manager runs on the same host as the driver, while in cluster mode, the\ncluster manager runs on a separate node.",
+            "E. In cluster mode, the driver runs on the master node, while in client mode, the driver runs on a\nvirtual machine in the cloud."
         ],
         "answer": [
             "A"
@@ -2970,11 +2958,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns all unique values across all values in columns\nvalue and productId in DataFrame transactionsDf in a one-column DataFrame?",
         "options": [
-            "A.. tranactionsDf.select('value').join(transactionsDf.select('productId'), col('value')==col('productId'),\n'outer')",
-            "B.. transactionsDf.select(col('value'), col('productId')).agg({'*': 'count'})",
-            "C.. transactionsDf.select('value', 'productId').distinct()",
-            "D.. transactionsDf.select('value').union(transactionsDf.select('productId')).distinct()",
-            "E.. transactionsDf.agg({'value': 'collect_set', 'productId': 'collect_set'})"
+            "A. tranactionsDf.select('value').join(transactionsDf.select('productId'), col('value')==col('productId'),\n'outer')",
+            "B. transactionsDf.select(col('value'), col('productId')).agg({'*': 'count'})",
+            "C. transactionsDf.select('value', 'productId').distinct()",
+            "D. transactionsDf.select('value').union(transactionsDf.select('productId')).distinct()",
+            "E. transactionsDf.agg({'value': 'collect_set', 'productId': 'collect_set'})"
         ],
         "answer": [
             "D"
@@ -2984,11 +2972,11 @@ const quizData = [
     {
         "question": "Which of the following is a viable way to improve Spark's performance when dealing with\nlarge amounts of data, given that there is only a single application running on the cluster?",
         "options": [
-            "A.. Increase values for the properties spark.default.parallelism and spark.sql.shuffle.partitions",
-            "B.. Decrease values for the properties spark.default.parallelism and spark.sql.partitions",
-            "C.. Increase values for the properties spark.sql.parallelism and spark.sql.partitions",
-            "D.. Increase values for the properties spark.sql.parallelism and spark.sql.shuffle.partitions",
-            "E.. Increase values for the properties spark.dynamicAllocation.maxExecutors,\nspark.default.parallelism, and spark.sql.shuffle.partitions"
+            "A. Increase values for the properties spark.default.parallelism and spark.sql.shuffle.partitions",
+            "B. Decrease values for the properties spark.default.parallelism and spark.sql.partitions",
+            "C. Increase values for the properties spark.sql.parallelism and spark.sql.partitions",
+            "D. Increase values for the properties spark.sql.parallelism and spark.sql.shuffle.partitions",
+            "E. Increase values for the properties spark.dynamicAllocation.maxExecutors,\nspark.default.parallelism, and spark.sql.shuffle.partitions"
         ],
         "answer": [
             "A"
@@ -2998,11 +2986,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks performs an inner join between DataFrame itemsDf and\nDataFrame transactionsDf, using columns itemId and transactionId as join keys, respectively?",
         "options": [
-            "A.. itemsDf.join(transactionsDf, \"inner\", itemsDf.itemId == transactionsDf.transactionId)",
-            "B.. itemsDf.join(transactionsDf, itemId == transactionId)",
-            "C.. itemsDf.join(transactionsDf, itemsDf.itemId == transactionsDf.transactionId, \"inner\")",
-            "D.. itemsDf.join(transactionsDf, \"itemsDf.itemId == transactionsDf.transactionId\", \"inner\")",
-            "E.. itemsDf.join(transactionsDf, col(itemsDf.itemId) == col(transactionsDf.transactionId))"
+            "A. itemsDf.join(transactionsDf, \"inner\", itemsDf.itemId == transactionsDf.transactionId)",
+            "B. itemsDf.join(transactionsDf, itemId == transactionId)",
+            "C. itemsDf.join(transactionsDf, itemsDf.itemId == transactionsDf.transactionId, \"inner\")",
+            "D. itemsDf.join(transactionsDf, \"itemsDf.itemId == transactionsDf.transactionId\", \"inner\")",
+            "E. itemsDf.join(transactionsDf, col(itemsDf.itemId) == col(transactionsDf.transactionId))"
         ],
         "answer": [
             "C"
@@ -3012,12 +3000,12 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block should save DataFrame\ntransactionsDf at path path as a parquet file, appending to any existing parquet file. Find the error.\nCode block:",
         "options": [
-            "A.. transactionsDf.format(\"parquet\").option(\"mode\", \"append\").save(path)",
-            "B.. The code block is missing a reference to the DataFrameWriter.",
-            "C.. save() is evaluated lazily and needs to be followed by an action.",
-            "D.. The mode option should be omitted so that the command uses the default mode.",
-            "E.. The code block is missing a bucketBy command that takes care of partitions.",
-            "F.. Given that the DataFrame should be saved as parquet file, path is being passed to the wrong\nmethod."
+            "A. transactionsDf.format(\"parquet\").option(\"mode\", \"append\").save(path)",
+            "B. The code block is missing a reference to the DataFrameWriter.",
+            "C. save() is evaluated lazily and needs to be followed by an action.",
+            "D. The mode option should be omitted so that the command uses the default mode.",
+            "E. The code block is missing a bucketBy command that takes care of partitions.",
+            "F. Given that the DataFrame should be saved as parquet file, path is being passed to the wrong\nmethod."
         ],
         "answer": [
             "B"
@@ -3027,11 +3015,11 @@ const quizData = [
     {
         "question": "In which order should the code blocks shown below be run in order to create a table of all\nvalues in column attributes next to the respective values in column supplier in DataFrame itemsDf?\n1. itemsDf.createOrReplaceView(\"itemsDf\")\n2. spark.sql(\"FROM itemsDf SELECT 'supplier', explode('Attributes')\")\n3. spark.sql(\"FROM itemsDf SELECT supplier, explode(attributes)\")\n4. itemsDf.createOrReplaceTempView(\"itemsDf\")",
         "options": [
-            "A.. 4, 3",
-            "B.. 1, 3",
-            "C.. 2",
-            "D.. 4, 2",
-            "E.. 1, 2"
+            "A. 4, 3",
+            "B. 1, 3",
+            "C. 2",
+            "D. 4, 2",
+            "E. 1, 2"
         ],
         "answer": [
             "A"
@@ -3041,11 +3029,11 @@ const quizData = [
     {
         "question": "In which order should the code blocks shown below be run in order to create a DataFrame\nthat shows the mean of column predError of DataFrame transactionsDf per column storeId and\nproductId, where productId should be either 2 or 3 and the returned DataFrame should be sorted in\nascending order by column storeId, leaving out any nulls in that column?\nDataFrame transactionsDf:\n1.+-------------+---------+-----+-------+---------+----+\n2.|transactionId|predError|value|storeId|productId| f|\n3.+-------------+---------+-----+-------+---------+----+\n4.| 1| 3| 4| 25| 1|null|\n5.| 2| 6| 7| 2| 2|null|\n6.| 3| 3| null| 25| 3|null|\n7.| 4| null| null| 3| 2|null|\n8.| 5| null| null| null| 2|null|\n9.| 6| 3| 2| 25| 2|null|\n10.+-------------+---------+-----+-------+---------+----+\n1. .mean(\"predError\")\n2. .groupBy(\"storeId\")\n3. .orderBy(\"storeId\")\n4. transactionsDf.filter(transactionsDf.storeId.isNotNull())\n5. .pivot(\"productId\", [2, 3])",
         "options": [
-            "A.. 4, 5, 2, 3, 1",
-            "B.. 4, 2, 1",
-            "C.. 4, 1, 5, 2, 3",
-            "D.. 4, 2, 5, 1, 3",
-            "E.. 4, 3, 2, 5, 1"
+            "A. 4, 5, 2, 3, 1",
+            "B. 4, 2, 1",
+            "C. 4, 1, 5, 2, 3",
+            "D. 4, 2, 5, 1, 3",
+            "E. 4, 3, 2, 5, 1"
         ],
         "answer": [
             "D"
@@ -3055,11 +3043,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block should arrange the rows of\nDataFrame transactionsDf using information from two columns in an ordered fashion, arranging first\nby column value, showing smaller numbers at the top and greater numbers at the bottom, and then\nby column predError, for which all values should be arranged in the inverse way of the order of items\nin column value. Find the error.\nCode block:\ntransactionsDf.orderBy('value', asc_nulls_first(col('predError')))",
         "options": [
-            "A.. Two orderBy statements with calls to the individual columns should be chained, instead of having\nboth columns in one orderBy statement.",
-            "B.. Column value should be wrapped by the col() operator.",
-            "C.. Column predError should be sorted in a descending way, putting nulls last.",
-            "D.. Column predError should be sorted by desc_nulls_first() instead.",
-            "E.. Instead of orderBy, sort should be used."
+            "A. Two orderBy statements with calls to the individual columns should be chained, instead of having\nboth columns in one orderBy statement.",
+            "B. Column value should be wrapped by the col() operator.",
+            "C. Column predError should be sorted in a descending way, putting nulls last.",
+            "D. Column predError should be sorted by desc_nulls_first() instead.",
+            "E. Instead of orderBy, sort should be used."
         ],
         "answer": [
             "C"
@@ -3069,11 +3057,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks creates a new 6-column DataFrame by appending the\nrows of the\n6-column DataFrame yesterdayTransactionsDf to the rows of the 6-column DataFrame\ntodayTransactionsDf, ignoring that both DataFrames have different column names?",
         "options": [
-            "A.. union(todayTransactionsDf, yesterdayTransactionsDf)",
-            "B.. todayTransactionsDf.unionByName(yesterdayTransactionsDf, allowMissingColumns=True)",
-            "C.. todayTransactionsDf.unionByName(yesterdayTransactionsDf)",
-            "D.. todayTransactionsDf.concat(yesterdayTransactionsDf)",
-            "E.. todayTransactionsDf.union(yesterdayTransactionsDf)"
+            "A. union(todayTransactionsDf, yesterdayTransactionsDf)",
+            "B. todayTransactionsDf.unionByName(yesterdayTransactionsDf, allowMissingColumns=True)",
+            "C. todayTransactionsDf.unionByName(yesterdayTransactionsDf)",
+            "D. todayTransactionsDf.concat(yesterdayTransactionsDf)",
+            "E. todayTransactionsDf.union(yesterdayTransactionsDf)"
         ],
         "answer": [
             "E"
@@ -3083,11 +3071,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block should use Python\nmethod find_most_freq_letter to find the letter present most in column itemName of DataFrame\nitemsDf and return it in a new column most_frequent_letter. Find the error.\nCode block:\n1. find_most_freq_letter_udf = udf(find_most_freq_letter)\n2. itemsDf.withColumn(\"most_frequent_letter\", find_most_freq_letter(\"itemName\"))",
         "options": [
-            "A.. Spark is not using the UDF method correctly.",
-            "B.. The UDF method is not registered correctly, since the return type is missing.",
-            "C.. The \"itemName\" expression should be wrapped in col().",
-            "D.. UDFs do not exist in PySpark.",
-            "E.. Spark is not adding a column."
+            "A. Spark is not using the UDF method correctly.",
+            "B. The UDF method is not registered correctly, since the return type is missing.",
+            "C. The \"itemName\" expression should be wrapped in col().",
+            "D. UDFs do not exist in PySpark.",
+            "E. Spark is not adding a column."
         ],
         "answer": [
             "A"
@@ -3097,11 +3085,11 @@ const quizData = [
     {
         "question": "The code block shown below should return a column that indicates through boolean\nvariables whether rows in DataFrame transactionsDf have values greater or equal to 20 and smaller\nor equal to\n30 in column storeId and have the value 2 in column productId. Choose the answer that correctly fills\nthe blanks in the code block to accomplish this.\ntransactionsDf.__1__((__2__.__3__) __4__ (__5__))",
         "options": [
-            "A.. 1. select\n2. col(\"storeId\")\n3. between(20, 30)\n4. and\n5. col(\"productId\")==2",
-            "B.. 1. where\n2. col(\"storeId\")\n3. geq(20).leq(30)\n4. &\n5. col(\"productId\")==2",
-            "C.. 1. select\n2. \"storeId\"\n3. between(20, 30)\n4. &&\n5. col(\"productId\")==2",
-            "D.. 1. select\n2. col(\"storeId\")\n3. between(20, 30)\n4. &&\n5. col(\"productId\")=2",
-            "E.. 1. select\n2. col(\"storeId\")\n3. between(20, 30)\n4. &\n5. col(\"productId\")==2"
+            "A. 1. select\n2. col(\"storeId\")\n3. between(20, 30)\n4. and\n5. col(\"productId\")==2",
+            "B. 1. where\n2. col(\"storeId\")\n3. geq(20).leq(30)\n4. &\n5. col(\"productId\")==2",
+            "C. 1. select\n2. \"storeId\"\n3. between(20, 30)\n4. &&\n5. col(\"productId\")==2",
+            "D. 1. select\n2. col(\"storeId\")\n3. between(20, 30)\n4. &&\n5. col(\"productId\")=2",
+            "E. 1. select\n2. col(\"storeId\")\n3. between(20, 30)\n4. &\n5. col(\"productId\")==2"
         ],
         "answer": [
             "D"
@@ -3111,11 +3099,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block should return all rows of\nDataFrame transactionsDf, but including only columns storeId and predError. Find the error.\nCode block:\nspark.collect(transactionsDf.select(\"storeId\", \"predError\"))",
         "options": [
-            "A.. Instead of select, DataFrame transactionsDf needs to be filtered using the filter operator.",
-            "B.. Columns storeId and predError need to be represented as a Python list, so they need to be\nwrapped in brackets ([]).",
-            "C.. The take method should be used instead of the collect method.",
-            "D.. Instead of collect, collectAsRows needs to be called.",
-            "E.. The collect method is not a method of the SparkSession object."
+            "A. Instead of select, DataFrame transactionsDf needs to be filtered using the filter operator.",
+            "B. Columns storeId and predError need to be represented as a Python list, so they need to be\nwrapped in brackets ([]).",
+            "C. The take method should be used instead of the collect method.",
+            "D. Instead of collect, collectAsRows needs to be called.",
+            "E. The collect method is not a method of the SparkSession object."
         ],
         "answer": [
             "E"
@@ -3125,11 +3113,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a DataFrame that matches the multi-column\nDataFrame itemsDf, except that integer column itemId has been converted into a string column?",
         "options": [
-            "A.. itemsDf.withColumn(\"itemId\", convert(\"itemId\", \"string\"))",
-            "B.. itemsDf.withColumn(\"itemId\", col(\"itemId\").cast(\"string\"))\n(Correct)",
-            "C.. itemsDf.select(cast(\"itemId\", \"string\"))",
-            "D.. itemsDf.withColumn(\"itemId\", col(\"itemId\").convert(\"string\"))",
-            "E.. spark.cast(itemsDf, \"itemId\", \"string\")"
+            "A. itemsDf.withColumn(\"itemId\", convert(\"itemId\", \"string\"))",
+            "B. itemsDf.withColumn(\"itemId\", col(\"itemId\").cast(\"string\"))\n(Correct)",
+            "C. itemsDf.select(cast(\"itemId\", \"string\"))",
+            "D. itemsDf.withColumn(\"itemId\", col(\"itemId\").convert(\"string\"))",
+            "E. spark.cast(itemsDf, \"itemId\", \"string\")"
         ],
         "answer": [
             "B"
@@ -3139,11 +3127,11 @@ const quizData = [
     {
         "question": "Which of the following statements about executors is correct?",
         "options": [
-            "A.. Executors are launched by the driver.",
-            "B.. Executors stop upon application completion by default.",
-            "C.. Each node hosts a single executor.",
-            "D.. Executors store data in memory only.",
-            "E.. An executor can serve multiple applications."
+            "A. Executors are launched by the driver.",
+            "B. Executors stop upon application completion by default.",
+            "C. Each node hosts a single executor.",
+            "D. Executors store data in memory only.",
+            "E. An executor can serve multiple applications."
         ],
         "answer": [
             "B"
@@ -3154,10 +3142,10 @@ const quizData = [
         "question": "The code block displayed below contains an error. The code block should produce a\nDataFrame with color as the only column and three rows with color values of red, blue, and green,\nrespectively.\nFind the error.\nCode block:\n1.spark.createDataFrame([(\"red\",), (\"blue\",), (\"green\",)], \"color\")",
         "options": [
             "A. Instead of calling spark.createDataFrame, just DataFrame should be called.",
-            "B.. The commas in the tuples with the colors should be eliminated.",
-            "C.. The colors red, blue, and green should be expressed as a simple Python list, and not a list of tuples\n.",
-            "D.. Instead of color, a data type should be specified.",
-            "E.. The \"color\" expression needs to be wrapped in brackets, so it reads [\"color\"]."
+            "B. The commas in the tuples with the colors should be eliminated.",
+            "C. The colors red, blue, and green should be expressed as a simple Python list, and not a list of tuples\n.",
+            "D. Instead of color, a data type should be specified.",
+            "E. The \"color\" expression needs to be wrapped in brackets, so it reads [\"color\"]."
         ],
         "answer": [
             "E"
@@ -3167,11 +3155,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a DataFrame where columns predError and\nproductId are removed from DataFrame transactionsDf?\n\n\nSample of DataFrame transactionsDf:\n1.+-------------+---------+-----+-------+---------+----+\n2.|transactionId|predError|value|storeId|productId|f |\n3.+-------------+---------+-----+-------+---------+----+\n4.|1 |3 |4 |25 |1 |null|\n5.|2 |6 |7 |2 |2 |null|\n6.|3 |3 |null |25 |3 |null|\n7.+-------------+---------+-----+-------+---------+----+",
         "options": [
-            "A.. transactionsDf.withColumnRemoved(\"predError\", \"productId\")",
-            "B.. transactionsDf.drop([\"predError\", \"productId\", \"associateId\"])",
-            "C.. transactionsDf.drop(\"predError\", \"productId\", \"associateId\")",
-            "D.. transactionsDf.dropColumns(\"predError\", \"productId\", \"associateId\")",
-            "E.. transactionsDf.drop(col(\"predError\", \"productId\"))"
+            "A. transactionsDf.withColumnRemoved(\"predError\", \"productId\")",
+            "B. transactionsDf.drop([\"predError\", \"productId\", \"associateId\"])",
+            "C. transactionsDf.drop(\"predError\", \"productId\", \"associateId\")",
+            "D. transactionsDf.dropColumns(\"predError\", \"productId\", \"associateId\")",
+            "E. transactionsDf.drop(col(\"predError\", \"productId\"))"
         ],
         "answer": [
             "D"
@@ -3181,11 +3169,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks performs a join in which the small DataFrame\ntransactionsDf is sent to all executors where it is joined with DataFrame itemsDf on columns storeId\nand itemId, respectively?",
         "options": [
-            "A.. itemsDf.join(transactionsDf, itemsDf.itemId == transactionsDf.storeId, \"right_outer\")",
-            "B.. itemsDf.join(transactionsDf, itemsDf.itemId == transactionsDf.storeId, \"broadcast\")",
-            "C.. itemsDf.merge(transactionsDf, \"itemsDf.itemId == transactionsDf.storeId\", \"broadcast\")",
-            "D.. itemsDf.join(broadcast(transactionsDf), itemsDf.itemId == transactionsDf.storeId)",
-            "E.. itemsDf.join(transactionsDf, broadcast(itemsDf.itemId == transactionsDf.storeId))"
+            "A. itemsDf.join(transactionsDf, itemsDf.itemId == transactionsDf.storeId, \"right_outer\")",
+            "B. itemsDf.join(transactionsDf, itemsDf.itemId == transactionsDf.storeId, \"broadcast\")",
+            "C. itemsDf.merge(transactionsDf, \"itemsDf.itemId == transactionsDf.storeId\", \"broadcast\")",
+            "D. itemsDf.join(broadcast(transactionsDf), itemsDf.itemId == transactionsDf.storeId)",
+            "E. itemsDf.join(transactionsDf, broadcast(itemsDf.itemId == transactionsDf.storeId))"
         ],
         "answer": [
             "D"
@@ -3195,11 +3183,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a new DataFrame with the same columns as\nDataFrame transactionsDf, except for columns predError and value which should be removed?",
         "options": [
-            "A.. transactionsDf.drop([\"predError\", \"value\"])",
-            "B.. transactionsDf.drop(\"predError\", \"value\")",
-            "C.. transactionsDf.drop(col(\"predError\"), col(\"value\"))",
-            "D.. transactionsDf.drop(predError, value)",
-            "E.. transactionsDf.drop(\"predError & value\")"
+            "A. transactionsDf.drop([\"predError\", \"value\"])",
+            "B. transactionsDf.drop(\"predError\", \"value\")",
+            "C. transactionsDf.drop(col(\"predError\"), col(\"value\"))",
+            "D. transactionsDf.drop(predError, value)",
+            "E. transactionsDf.drop(\"predError & value\")"
         ],
         "answer": [
             "B"
@@ -3209,11 +3197,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks uses a schema fileSchema to read a parquet file at\nlocation filePath into a DataFrame?",
         "options": [
-            "A.. spark.read.schema(fileSchema).format(\"parquet\").load(filePath)",
-            "B.. spark.read.schema(\"fileSchema\").format(\"parquet\").load(filePath)",
-            "C.. spark.read().schema(fileSchema).parquet(filePath)",
-            "D.. spark.read().schema(fileSchema).format(parquet).load(filePath)",
-            "E.. spark.read.schema(fileSchema).open(filePath)"
+            "A. spark.read.schema(fileSchema).format(\"parquet\").load(filePath)",
+            "B. spark.read.schema(\"fileSchema\").format(\"parquet\").load(filePath)",
+            "C. spark.read().schema(fileSchema).parquet(filePath)",
+            "D. spark.read().schema(fileSchema).format(parquet).load(filePath)",
+            "E. spark.read.schema(fileSchema).open(filePath)"
         ],
         "answer": [
             "A"
@@ -3223,11 +3211,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block should return the average\nof rows in column value grouped by unique storeId. Find the error.\nCode block:\ntransactionsDf.agg(\"storeId\").avg(\"value\")",
         "options": [
-            "A.. Instead of avg(\"value\"), avg(col(\"value\")) should be used.",
-            "B.. The avg(\"value\") should be specified as a second argument to agg() instead of being appended to\nit.",
-            "C.. All column names should be wrapped in col() operators.",
-            "D.. agg should be replaced by groupBy.",
-            "E.. \"storeId\" and \"value\" should be swapped."
+            "A. Instead of avg(\"value\"), avg(col(\"value\")) should be used.",
+            "B. The avg(\"value\") should be specified as a second argument to agg() instead of being appended to\nit.",
+            "C. All column names should be wrapped in col() operators.",
+            "D. agg should be replaced by groupBy.",
+            "E. \"storeId\" and \"value\" should be swapped."
         ],
         "answer": [
             "D"
@@ -3237,10 +3225,10 @@ const quizData = [
     {
         "question": "The code block shown below should write DataFrame transactionsDf to disk at path csvPath\n\n\nas a single CSV file, using tabs (\\t characters) as separators between columns, expressing missing\nvalues as string n/a, and omitting a header row with column names. Choose the answer that correctly\nfills the blanks in the code block to accomplish this.\ntransactionsDf.__1__.write.__2__(__3__, \" \").__4__.__5__(csvPath)",
         "options": [
-            "A.. 1. coalesce(1)\n2. option\n3. \"sep\"\n4. option(\"header\", True)\n5. path",
-            "B.. 1. coalesce(1)\n2. option\n3. \"colsep\"\n4. option(\"nullValue\", \"n/a\")\n5. path",
-            "C.. 1. repartition(1)\n2. option\n3. \"sep\"\n4. option(\"nullValue\", \"n/a\")\n5. csv\n(Correct)",
-            "D.. 1. csv\n2. option\n3. \"sep\"\n4. option(\"emptyValue\", \"n/a\")\n5. path\n* 1. repartition(1)\n2. mode\n3. \"sep\"\n4. mode(\"nullValue\", \"n/a\")\n5. csv"
+            "A. 1. coalesce(1)\n2. option\n3. \"sep\"\n4. option(\"header\", True)\n5. path",
+            "B. 1. coalesce(1)\n2. option\n3. \"colsep\"\n4. option(\"nullValue\", \"n/a\")\n5. path",
+            "C. 1. repartition(1)\n2. option\n3. \"sep\"\n4. option(\"nullValue\", \"n/a\")\n5. csv\n(Correct)",
+            "D. 1. csv\n2. option\n3. \"sep\"\n4. option(\"emptyValue\", \"n/a\")\n5. path\n* 1. repartition(1)\n2. mode\n3. \"sep\"\n4. mode(\"nullValue\", \"n/a\")\n5. csv"
         ],
         "answer": [
             "C"
@@ -3250,11 +3238,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks reads the parquet file stored at filePath into DataFrame\nitemsDf, using a valid schema for the sample of itemsDf shown below?\nSample of itemsDf:\n1.+------+-----------------------------+-------------------+\n2.|itemId|attributes |supplier |\n3.+------+-----------------------------+-------------------+\n4.|1 |[blue, winter, cozy] |Sports Company Inc.|\n5.|2 |[red, summer, fresh, cooling]|YetiX |\n6.|3 |[green, summer, travel] |Sports Company Inc.|\n7.+------+-----------------------------+-------------------+",
         "options": [
-            "A.. 1.itemsDfSchema = StructType([\n2. StructField(\"itemId\", IntegerType()),\n3. StructField(\"attributes\", StringType()),\n4. StructField(\"supplier\", StringType())])\n5.\n6.itemsDf = spark.read.schema(itemsDfSchema).parquet(filePath)",
-            "B.. 1.itemsDfSchema = StructType([\n2. StructField(\"itemId\", IntegerType),\n3. StructField(\"attributes\", ArrayType(StringType)),\n4. StructField(\"supplier\", StringType)])\n5.\n6.itemsDf = spark.read.schema(itemsDfSchema).parquet(filePath)",
-            "C.. 1.itemsDf = spark.read.schema('itemId integer, attributes <string>, supplier\nstring').parquet(filePath)",
-            "D.. 1.itemsDfSchema = StructType([\n2. StructField(\"itemId\", IntegerType()),\n3. StructField(\"attributes\", ArrayType(StringType())),\n4. StructField(\"supplier\", StringType())])\n5.\n6.itemsDf = spark.read.schema(itemsDfSchema).parquet(filePath)",
-            "E.. 1.itemsDfSchema = StructType([\n2. StructField(\"itemId\", IntegerType()),\n3. StructField(\"attributes\", ArrayType([StringType()])),\n4. StructField(\"supplier\", StringType())])\n5.\n6.itemsDf = spark.read(schema=itemsDfSchema).parquet(filePath)"
+            "A. 1.itemsDfSchema = StructType([\n2. StructField(\"itemId\", IntegerType()),\n3. StructField(\"attributes\", StringType()),\n4. StructField(\"supplier\", StringType())])\n5.\n6.itemsDf = spark.read.schema(itemsDfSchema).parquet(filePath)",
+            "B. 1.itemsDfSchema = StructType([\n2. StructField(\"itemId\", IntegerType),\n3. StructField(\"attributes\", ArrayType(StringType)),\n4. StructField(\"supplier\", StringType)])\n5.\n6.itemsDf = spark.read.schema(itemsDfSchema).parquet(filePath)",
+            "C. 1.itemsDf = spark.read.schema('itemId integer, attributes <string>, supplier\nstring').parquet(filePath)",
+            "D. 1.itemsDfSchema = StructType([\n2. StructField(\"itemId\", IntegerType()),\n3. StructField(\"attributes\", ArrayType(StringType())),\n4. StructField(\"supplier\", StringType())])\n5.\n6.itemsDf = spark.read.schema(itemsDfSchema).parquet(filePath)",
+            "E. 1.itemsDfSchema = StructType([\n2. StructField(\"itemId\", IntegerType()),\n3. StructField(\"attributes\", ArrayType([StringType()])),\n4. StructField(\"supplier\", StringType())])\n5.\n6.itemsDf = spark.read(schema=itemsDfSchema).parquet(filePath)"
         ],
         "answer": [
             "D"
@@ -3264,11 +3252,11 @@ const quizData = [
     {
         "question": "Which of the elements in the labeled panels represent the operation performed for\nbroadcast variables?\nLarger image",
         "options": [
-            "A.. 2, 5",
-            "B.. 3",
-            "C.. 2, 3",
-            "D.. 1, 2",
-            "E.. 1, 3, 4"
+            "A. 2, 5",
+            "B. 3",
+            "C. 2, 3",
+            "D. 1, 2",
+            "E. 1, 3, 4"
         ],
         "answer": [
             "C"
@@ -3278,11 +3266,11 @@ const quizData = [
     {
         "question": "The code block shown below should return a DataFrame with only columns from DataFrame\ntransactionsDf for which there is a corresponding transactionId in DataFrame itemsDf. DataFrame\nitemsDf is very small and much smaller than DataFrame transactionsDf. The query should be\n\n\nexecuted in an optimized way. Choose the answer that correctly fills the blanks in the code block to\naccomplish this.\n__1__.__2__(__3__, __4__, __5__)",
         "options": [
-            "A.. 1. transactionsDf\n2. join\n3. broadcast(itemsDf)\n4. transactionsDf.transactionId==itemsDf.transactionId\n5. \"outer\"",
-            "B.. 1. transactionsDf\n2. join\n3. itemsDf\n4. transactionsDf.transactionId==itemsDf.transactionId\n5. \"anti\"",
-            "C.. 1. transactionsDf\n2. join\n3. broadcast(itemsDf)\n4. \"transactionId\"\n5. \"left_semi\"",
-            "D.. 1. itemsDf\n2. broadcast\n3. transactionsDf\n4. \"transactionId\"\n5. \"left_semi\"",
-            "E.. 1. itemsDf\n2. join\n3. broadcast(transactionsDf)\n4. \"transactionId\"\n5. \"left_semi\""
+            "A. 1. transactionsDf\n2. join\n3. broadcast(itemsDf)\n4. transactionsDf.transactionId==itemsDf.transactionId\n5. \"outer\"",
+            "B. 1. transactionsDf\n2. join\n3. itemsDf\n4. transactionsDf.transactionId==itemsDf.transactionId\n5. \"anti\"",
+            "C. 1. transactionsDf\n2. join\n3. broadcast(itemsDf)\n4. \"transactionId\"\n5. \"left_semi\"",
+            "D. 1. itemsDf\n2. broadcast\n3. transactionsDf\n4. \"transactionId\"\n5. \"left_semi\"",
+            "E. 1. itemsDf\n2. join\n3. broadcast(transactionsDf)\n4. \"transactionId\"\n5. \"left_semi\""
         ],
         "answer": [
             "C"
@@ -3292,11 +3280,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. When the code block below has\nexecuted, it should have divided DataFrame transactionsDf into 14 parts, based on columns storeId\nand transactionDate (in this order). Find the error.\nCode block:\ntransactionsDf.coalesce(14, (\"storeId\", \"transactionDate\"))",
         "options": [
-            "A.. The parentheses around the column names need to be removed and .select() needs to be\nappended to the code block.",
-            "B.. Operator coalesce needs to be replaced by repartition, the parentheses around the column names\nneed to be removed, and .count() needs to be appended to the code block.\n(Correct)",
-            "C.. Operator coalesce needs to be replaced by repartition, the parentheses around the column names\nneed to be removed, and .select() needs to be appended to the code block.",
-            "D.. Operator coalesce needs to be replaced by repartition and the parentheses around the column\nnames need to be replaced by square brackets.",
-            "E.. Operator coalesce needs to be replaced by repartition."
+            "A. The parentheses around the column names need to be removed and .select() needs to be\nappended to the code block.",
+            "B. Operator coalesce needs to be replaced by repartition, the parentheses around the column names\nneed to be removed, and .count() needs to be appended to the code block.\n(Correct)",
+            "C. Operator coalesce needs to be replaced by repartition, the parentheses around the column names\nneed to be removed, and .select() needs to be appended to the code block.",
+            "D. Operator coalesce needs to be replaced by repartition and the parentheses around the column\nnames need to be replaced by square brackets.",
+            "E. Operator coalesce needs to be replaced by repartition."
         ],
         "answer": [
             "B"
@@ -3306,11 +3294,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block should trigger Spark to\ncache DataFrame transactionsDf in executor memory where available, writing to disk where\ninsufficient executor memory is available, in a fault-tolerant way. Find the error.\nCode block:\ntransactionsDf.persist(StorageLevel.MEMORY_AND_DISK)",
         "options": [
-            "A.. Caching is not supported in Spark, data are always recomputed.",
-            "B.. Data caching capabilities can be accessed through the spark object, but not through the\nDataFrame API.",
-            "C.. The storage level is inappropriate for fault-tolerant storage.",
-            "D.. The code block uses the wrong operator for caching.",
-            "E.. The DataFrameWriter needs to be invoked."
+            "A. Caching is not supported in Spark, data are always recomputed.",
+            "B. Data caching capabilities can be accessed through the spark object, but not through the\nDataFrame API.",
+            "C. The storage level is inappropriate for fault-tolerant storage.",
+            "D. The code block uses the wrong operator for caching.",
+            "E. The DataFrameWriter needs to be invoked."
         ],
         "answer": [
             "C"
@@ -3320,11 +3308,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks reads in the parquet file stored at location filePath, given\nthat all columns in the parquet file contain only whole numbers and are stored in the most\nappropriate format for this kind of data?",
         "options": [
-            "A.. 1.spark.read.schema(\n2. StructType(\n3. StructField(\"transactionId\", IntegerType(), True),\n4. StructField(\"predError\", IntegerType(), True)\n5. )).load(filePath)",
-            "B.. 1.spark.read.schema([\n2. StructField(\"transactionId\", NumberType(), True),\n3. StructField(\"predError\", IntegerType(), True)\n4. ]).load(filePath)",
-            "C.. 1.spark.read.schema(\n2. StructType([\n3. StructField(\"transactionId\", StringType(), True),\n4. StructField(\"predError\", IntegerType(), True)]\n5. )).parquet(filePath)",
-            "D.. 1.spark.read.schema(\n2. StructType([\n3. StructField(\"transactionId\", IntegerType(), True),\n4. StructField(\"predError\", IntegerType(), True)]\n5. )).format(\"parquet\").load(filePath)",
-            "E.. 1.spark.read.schema([\n2. StructField(\"transactionId\", IntegerType(), True),\n3. StructField(\"predError\", IntegerType(), True)\n4. ]).load(filePath, format=\"parquet\")"
+            "A. 1.spark.read.schema(\n2. StructType(\n3. StructField(\"transactionId\", IntegerType(), True),\n4. StructField(\"predError\", IntegerType(), True)\n5. )).load(filePath)",
+            "B. 1.spark.read.schema([\n2. StructField(\"transactionId\", NumberType(), True),\n3. StructField(\"predError\", IntegerType(), True)\n4. ]).load(filePath)",
+            "C. 1.spark.read.schema(\n2. StructType([\n3. StructField(\"transactionId\", StringType(), True),\n4. StructField(\"predError\", IntegerType(), True)]\n5. )).parquet(filePath)",
+            "D. 1.spark.read.schema(\n2. StructType([\n3. StructField(\"transactionId\", IntegerType(), True),\n4. StructField(\"predError\", IntegerType(), True)]\n5. )).format(\"parquet\").load(filePath)",
+            "E. 1.spark.read.schema([\n2. StructField(\"transactionId\", IntegerType(), True),\n3. StructField(\"predError\", IntegerType(), True)\n4. ]).load(filePath, format=\"parquet\")"
         ],
         "answer": [
             "D"
@@ -3334,11 +3322,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks generally causes a great amount of network traffic?",
         "options": [
-            "A.. DataFrame.select()",
-            "B.. DataFrame.coalesce()",
-            "C.. DataFrame.collect()",
-            "D.. DataFrame.rdd.map()",
-            "E.. DataFrame.count()"
+            "A. DataFrame.select()",
+            "B. DataFrame.coalesce()",
+            "C. DataFrame.collect()",
+            "D. DataFrame.rdd.map()",
+            "E. DataFrame.count()"
         ],
         "answer": [
             "C"
@@ -3348,11 +3336,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks creates a new DataFrame with 3 columns, productId,\nhighest, and lowest, that shows the biggest and smallest values of column value per value in column\nproductId from DataFrame transactionsDf?\nSample of DataFrame transactionsDf:\n1.+-------------+---------+-----+-------+---------+----+\n2.|transactionId|predError|value|storeId|productId| f|\n3.+-------------+---------+-----+-------+---------+----+\n4.| 1| 3| 4| 25| 1|null|\n5.| 2| 6| 7| 2| 2|null|\n6.| 3| 3| null| 25| 3|null|\n7.| 4| null| null| 3| 2|null|\n8.| 5| null| null| null| 2|null|\n9.| 6| 3| 2| 25| 2|null|\n10.+-------------+---------+-----+-------+---------+----+",
         "options": [
-            "A.. transactionsDf.max('value').min('value')",
-            "B.. transactionsDf.agg(max('value').alias('highest'), min('value').alias('lowest'))",
-            "C.. transactionsDf.groupby(col(productId)).agg(max(col(value)).alias(\"highest\"),\nmin(col(value)).alias(\"lowest\"))",
-            "D.. transactionsDf.groupby('productId').agg(max('value').alias('highest'), min('value').alias('lowest'))",
-            "E.. transactionsDf.groupby(\"productId\").agg({\"highest\": max(\"value\"), \"lowest\": min(\"value\")})"
+            "A. transactionsDf.max('value').min('value')",
+            "B. transactionsDf.agg(max('value').alias('highest'), min('value').alias('lowest'))",
+            "C. transactionsDf.groupby(col(productId)).agg(max(col(value)).alias(\"highest\"),\nmin(col(value)).alias(\"lowest\"))",
+            "D. transactionsDf.groupby('productId').agg(max('value').alias('highest'), min('value').alias('lowest'))",
+            "E. transactionsDf.groupby(\"productId\").agg({\"highest\": max(\"value\"), \"lowest\": min(\"value\")})"
         ],
         "answer": [
             "D"
@@ -3362,11 +3350,11 @@ const quizData = [
     {
         "question": "Which of the following describes the conversion of a computational query into an execution\nplan in Spark?",
         "options": [
-            "A.. Spark uses the catalog to resolve the optimized logical plan.",
-            "B.. The catalog assigns specific resources to the optimized memory plan.",
-            "C.. The executed physical plan depends on a cost optimization from a previous stage.",
-            "D.. Depending on whether DataFrame API or SQL API are used, the physical plan may differ.",
-            "E.. The catalog assigns specific resources to the physical plan."
+            "A. Spark uses the catalog to resolve the optimized logical plan.",
+            "B. The catalog assigns specific resources to the optimized memory plan.",
+            "C. The executed physical plan depends on a cost optimization from a previous stage.",
+            "D. Depending on whether DataFrame API or SQL API are used, the physical plan may differ.",
+            "E. The catalog assigns specific resources to the physical plan."
         ],
         "answer": [
             "C"
@@ -3376,11 +3364,11 @@ const quizData = [
     {
         "question": "Which of the elements that are labeled with a circle and a number contain an error or are\nmisrepresented?",
         "options": [
-            "A.. 1, 10",
-            "B.. 1, 8",
-            "C.. 10",
-            "D.. 7, 9, 10",
-            "E.. 1, 4, 6, 9"
+            "A. 1, 10",
+            "B. 1, 8",
+            "C. 10",
+            "D. 7, 9, 10",
+            "E. 1, 4, 6, 9"
         ],
         "answer": [
             "B"
@@ -3390,11 +3378,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block should display the\nschema of DataFrame transactionsDf. Find the error.\nCode block:\ntransactionsDf.rdd.printSchema",
         "options": [
-            "A.. There is no way to print a schema directly in Spark, since the schema can be printed easily through\nusing print(transactionsDf.columns), so that should be used instead.",
-            "B.. The code block should be wrapped into a print() operation.",
-            "C.. printSchema is only accessible through the spark session, so the code block should be rewritten as\nspark.printSchema(transactionsDf).",
-            "D.. printSchema is a method and should be written as printSchema(). It is also not callable through\ntransactionsDf.rdd, but should be called directly from transactionsDf.\n(Correct)",
-            "E.. printSchema is a not a method of transactionsDf.rdd. Instead, the schema should be printed via\ntransactionsDf.print_schema()."
+            "A. There is no way to print a schema directly in Spark, since the schema can be printed easily through\nusing print(transactionsDf.columns), so that should be used instead.",
+            "B. The code block should be wrapped into a print() operation.",
+            "C. printSchema is only accessible through the spark session, so the code block should be rewritten as\nspark.printSchema(transactionsDf).",
+            "D. printSchema is a method and should be written as printSchema(). It is also not callable through\ntransactionsDf.rdd, but should be called directly from transactionsDf.\n(Correct)",
+            "E. printSchema is a not a method of transactionsDf.rdd. Instead, the schema should be printed via\ntransactionsDf.print_schema()."
         ],
         "answer": [
             "D"
@@ -3404,11 +3392,11 @@ const quizData = [
     {
         "question": "Which of the following is a problem with using accumulators?",
         "options": [
-            "A.. Only unnamed accumulators can be inspected in the Spark UI.",
-            "B.. Only numeric values can be used in accumulators.",
-            "C.. Accumulator values can only be read by the driver, but not by executors.",
-            "D.. Accumulators do not obey lazy evaluation.",
-            "E.. Accumulators are difficult to use for debugging because they will only be updated once,\nindependent if a task has to be re-run due to hardware failure."
+            "A. Only unnamed accumulators can be inspected in the Spark UI.",
+            "B. Only numeric values can be used in accumulators.",
+            "C. Accumulator values can only be read by the driver, but not by executors.",
+            "D. Accumulators do not obey lazy evaluation.",
+            "E. Accumulators are difficult to use for debugging because they will only be updated once,\nindependent if a task has to be re-run due to hardware failure."
         ],
         "answer": [
             "C"
@@ -3418,11 +3406,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a new DataFrame in which column attributes of\nDataFrame itemsDf is renamed to feature0 and column supplier to feature1?",
         "options": [
-            "A.. itemsDf.withColumnRenamed(attributes, feature0).withColumnRenamed(supplier, feature1)",
-            "B.. 1.itemsDf.withColumnRenamed(\"attributes\", \"feature0\")\n2.itemsDf.withColumnRenamed(\"supplier\", \"feature1\")",
-            "C.. itemsDf.withColumnRenamed(col(\"attributes\"), col(\"feature0\"), col(\"supplier\"), col(\"feature1\"))",
-            "D.. itemsDf.withColumnRenamed(\"attributes\", \"feature0\").withColumnRenamed(\"supplier\",\n\"feature1\")",
-            "E.. itemsDf.withColumn(\"attributes\", \"feature0\").withColumn(\"supplier\", \"feature1\")"
+            "A. itemsDf.withColumnRenamed(attributes, feature0).withColumnRenamed(supplier, feature1)",
+            "B. 1.itemsDf.withColumnRenamed(\"attributes\", \"feature0\")\n2.itemsDf.withColumnRenamed(\"supplier\", \"feature1\")",
+            "C. itemsDf.withColumnRenamed(col(\"attributes\"), col(\"feature0\"), col(\"supplier\"), col(\"feature1\"))",
+            "D. itemsDf.withColumnRenamed(\"attributes\", \"feature0\").withColumnRenamed(\"supplier\",\n\"feature1\")",
+            "E. itemsDf.withColumn(\"attributes\", \"feature0\").withColumn(\"supplier\", \"feature1\")"
         ],
         "answer": [
             "D"
@@ -3432,11 +3420,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains at least one error. The code block should return a\nDataFrame with only one column, result. That column should include all values in column value from\nDataFrame transactionsDf raised to the power of 5, and a null value for rows in which there is no\nvalue in column value. Find the error(s).\nCode block:\n1.from pyspark.sql.functions import udf\n2.from pyspark.sql import types as T\n3.\n4.transactionsDf.createOrReplaceTempView('transactions')\n5.\n6.def pow_5(x):\n7. return x**5\n8.\n9.spark.udf.register(pow_5, 'power_5_udf', T.LongType())\n10.spark.sql('SELECT power_5_udf(value) FROM transactions')",
         "options": [
-            "A.. The pow_5 method is unable to handle empty values in column value and the name of the column\nin the returned DataFrame is not result.",
-            "B.. The returned DataFrame includes multiple columns instead of just one column.",
-            "C.. The pow_5 method is unable to handle empty values in column value, the name of the column in\nthe returned DataFrame is not result, and the SparkSession cannot access the transactionsDf\nDataFrame.",
-            "D.. The pow_5 method is unable to handle empty values in column value, the name of the column in\nthe returned DataFrame is not result, and Spark driver does not call the UDF function appropriately.",
-            "E.. The pow_5 method is unable to handle empty values in column value, the UDF function is not\nregistered properly with the Spark driver, and the name of the column in the returned DataFrame is\nnot result."
+            "A. The pow_5 method is unable to handle empty values in column value and the name of the column\nin the returned DataFrame is not result.",
+            "B. The returned DataFrame includes multiple columns instead of just one column.",
+            "C. The pow_5 method is unable to handle empty values in column value, the name of the column in\nthe returned DataFrame is not result, and the SparkSession cannot access the transactionsDf\nDataFrame.",
+            "D. The pow_5 method is unable to handle empty values in column value, the name of the column in\nthe returned DataFrame is not result, and Spark driver does not call the UDF function appropriately.",
+            "E. The pow_5 method is unable to handle empty values in column value, the UDF function is not\nregistered properly with the Spark driver, and the name of the column in the returned DataFrame is\nnot result."
         ],
         "answer": [
             "D"
@@ -3446,11 +3434,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks reads in the JSON file stored at filePath as a DataFrame?",
         "options": [
-            "A.. spark.read.json(filePath)",
-            "B.. spark.read.path(filePath, source=\"json\")",
-            "C.. spark.read().path(filePath)",
-            "D.. spark.read().json(filePath)",
-            "E.. spark.read.path(filePath)"
+            "A. spark.read.json(filePath)",
+            "B. spark.read.path(filePath, source=\"json\")",
+            "C. spark.read().path(filePath)",
+            "D. spark.read().json(filePath)",
+            "E. spark.read.path(filePath)"
         ],
         "answer": [
             "A"
@@ -3460,11 +3448,11 @@ const quizData = [
     {
         "question": "Which of the following describes characteristics of the Spark driver?",
         "options": [
-            "A.. The Spark driver requests the transformation of operations into DAG computations from the\nworker nodes.",
-            "B.. If set in the Spark configuration, Spark scales the Spark driver horizontally to improve parallel\nprocessing performance.",
-            "C.. The Spark driver processes partitions in an optimized, distributed fashion.",
-            "D.. In a non-interactive Spark application, the Spark driver automatically creates the SparkSession\nobject.",
-            "E.. The Spark driver's responsibility includes scheduling queries for execution on worker nodes."
+            "A. The Spark driver requests the transformation of operations into DAG computations from the\nworker nodes.",
+            "B. If set in the Spark configuration, Spark scales the Spark driver horizontally to improve parallel\nprocessing performance.",
+            "C. The Spark driver processes partitions in an optimized, distributed fashion.",
+            "D. In a non-interactive Spark application, the Spark driver automatically creates the SparkSession\nobject.",
+            "E. The Spark driver's responsibility includes scheduling queries for execution on worker nodes."
         ],
         "answer": [
             "D"
@@ -3474,11 +3462,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks saves DataFrame transactionsDf in location\n/FileStore/transactions.csv as a CSV file and throws an error if a file already exists in the location?",
         "options": [
-            "A.. transactionsDf.write.save(\"/FileStore/transactions.csv\")",
-            "B.. transactionsDf.write.format(\"csv\").mode(\"error\").path(\"/FileStore/transactions.csv\")",
-            "C.. transactionsDf.write.format(\"csv\").mode(\"ignore\").path(\"/FileStore/transactions.csv\")",
-            "D.. transactionsDf.write(\"csv\").mode(\"error\").save(\"/FileStore/transactions.csv\")",
-            "E.. transactionsDf.write.format(\"csv\").mode(\"error\").save(\"/FileStore/transactions.csv\")"
+            "A. transactionsDf.write.save(\"/FileStore/transactions.csv\")",
+            "B. transactionsDf.write.format(\"csv\").mode(\"error\").path(\"/FileStore/transactions.csv\")",
+            "C. transactionsDf.write.format(\"csv\").mode(\"ignore\").path(\"/FileStore/transactions.csv\")",
+            "D. transactionsDf.write(\"csv\").mode(\"error\").save(\"/FileStore/transactions.csv\")",
+            "E. transactionsDf.write.format(\"csv\").mode(\"error\").save(\"/FileStore/transactions.csv\")"
         ],
         "answer": [
             "E"
@@ -3488,10 +3476,10 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block should return a\nDataFrame where all entries in column supplier contain the letter combination et in this order. Find\nthe error.\nCode block:\nitemsDf.filter(Column('supplier').isin('et'))",
         "options": [
-            "A.. The Column operator should be replaced by the col operator and instead of isin, contains should\nbe used.",
-            "B.. The expression inside the filter parenthesis is malformed and should be replaced by isin('et',\n'supplier').",
-            "C.. Instead of isin, it should be checked whether column supplier contains the letters et, so isin should\nbe replaced with contains. In addition, the column should be accessed using col['supplier'].",
-            "D.. The expression only returns a single column and filter should be replaced by select."
+            "A. The Column operator should be replaced by the col operator and instead of isin, contains should\nbe used.",
+            "B. The expression inside the filter parenthesis is malformed and should be replaced by isin('et',\n'supplier').",
+            "C. Instead of isin, it should be checked whether column supplier contains the letters et, so isin should\nbe replaced with contains. In addition, the column should be accessed using col['supplier'].",
+            "D. The expression only returns a single column and filter should be replaced by select."
         ],
         "answer": [
             "B"
@@ -3501,11 +3489,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block should write DataFrame\ntransactionsDf as a parquet file to location filePath after partitioning it on column storeId. Find the\nerror.\nCode block:\ntransactionsDf.write.partitionOn(\"storeId\").parquet(filePath)",
         "options": [
-            "A.. The partitioning column as well as the file path should be passed to the write() method of\nDataFrame transactionsDf directly and not as appended commands as in the code block.",
-            "B.. The partitionOn method should be called before the write method.",
-            "C.. The operator should use the mode() option to configure the DataFrameWriter so that it replaces\nany existing files at location filePath.",
-            "D.. Column storeId should be wrapped in a col() operator.",
-            "E.. No method partitionOn() exists for the DataFrame class, partitionBy() should be used instead."
+            "A. The partitioning column as well as the file path should be passed to the write() method of\nDataFrame transactionsDf directly and not as appended commands as in the code block.",
+            "B. The partitionOn method should be called before the write method.",
+            "C. The operator should use the mode() option to configure the DataFrameWriter so that it replaces\nany existing files at location filePath.",
+            "D. Column storeId should be wrapped in a col() operator.",
+            "E. No method partitionOn() exists for the DataFrame class, partitionBy() should be used instead."
         ],
         "answer": [
             "E"
@@ -3515,11 +3503,11 @@ const quizData = [
     {
         "question": "The code block shown below should convert up to 5 rows in DataFrame transactionsDf that\nhave the value 25 in column storeId into a Python list. Choose the answer that correctly fills the\nblanks in the code block to accomplish this.\nCode block:\n\n\ntransactionsDf.__1__(__2__).__3__(__4__)",
         "options": [
-            "A.. 1. filter\n2. \"storeId\"==25\n3. collect\n4. 5",
-            "B.. 1. filter\n2. col(\"storeId\")==25\n3. toLocalIterator\n4. 5",
-            "C.. 1. select\n2. storeId==25\n3. head\n4. 5",
-            "D.. 1. filter\n2. col(\"storeId\")==25\n3. take\n4. 5",
-            "E.. 1. filter\n2. col(\"storeId\")==25\n3. collect\n4. 5"
+            "A. 1. filter\n2. \"storeId\"==25\n3. collect\n4. 5",
+            "B. 1. filter\n2. col(\"storeId\")==25\n3. toLocalIterator\n4. 5",
+            "C. 1. select\n2. storeId==25\n3. head\n4. 5",
+            "D. 1. filter\n2. col(\"storeId\")==25\n3. take\n4. 5",
+            "E. 1. filter\n2. col(\"storeId\")==25\n3. collect\n4. 5"
         ],
         "answer": [
             "D"
@@ -3529,11 +3517,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a one-column DataFrame of all values in column\nsupplier of DataFrame itemsDf that do not contain the letter X? In the DataFrame, every value should\nonly be listed once.\nSample of DataFrame itemsDf:\n1.+------+--------------------+--------------------+-------------------+\n2.|itemId| itemName| attributes| supplier|\n3.+------+--------------------+--------------------+-------------------+\n4.| 1|Thick Coat for Wa...|[blue, winter, cozy]|Sports Company Inc.|\n5.| 2|Elegant Outdoors ...|[red, summer, fre...| YetiX|\n6.| 3| Outdoors Backpack|[green, summer, t...|Sports Company Inc.|\n7.+------+--------------------+--------------------+-------------------+",
         "options": [
-            "A.. itemsDf.filter(col(supplier).not_contains('X')).select(supplier).distinct()",
-            "B.. itemsDf.select(~col('supplier').contains('X')).distinct()",
-            "C.. itemsDf.filter(not(col('supplier').contains('X'))).select('supplier').unique()",
-            "D.. itemsDf.filter(~col('supplier').contains('X')).select('supplier').distinct()",
-            "E.. itemsDf.filter(!col('supplier').contains('X')).select(col('supplier')).unique()"
+            "A. itemsDf.filter(col(supplier).not_contains('X')).select(supplier).distinct()",
+            "B. itemsDf.select(~col('supplier').contains('X')).distinct()",
+            "C. itemsDf.filter(not(col('supplier').contains('X'))).select('supplier').unique()",
+            "D. itemsDf.filter(~col('supplier').contains('X')).select('supplier').distinct()",
+            "E. itemsDf.filter(!col('supplier').contains('X')).select(col('supplier')).unique()"
         ],
         "answer": [
             "D"
@@ -3543,11 +3531,11 @@ const quizData = [
     {
         "question": "Which of the following is one of the big performance advantages that Spark has over\nHadoop?",
         "options": [
-            "A.. Spark achieves great performance by storing data in the DAG format, whereas Hadoop can only\nuse parquet files.",
-            "B.. Spark achieves higher resiliency for queries since, different from Hadoop, it can be deployed on\nKubernetes.",
-            "C.. Spark achieves great performance by storing data and performing computation in memory,\nwhereas large jobs in Hadoop require a large amount of relatively slow disk I/O operations.",
-            "D.. Spark achieves great performance by storing data in the HDFS format, whereas Hadoop can only\nuse parquet files.",
-            "E.. Spark achieves performance gains for developers by extending Hadoop's DataFrames with a user-\nfriendly API."
+            "A. Spark achieves great performance by storing data in the DAG format, whereas Hadoop can only\nuse parquet files.",
+            "B. Spark achieves higher resiliency for queries since, different from Hadoop, it can be deployed on\nKubernetes.",
+            "C. Spark achieves great performance by storing data and performing computation in memory,\nwhereas large jobs in Hadoop require a large amount of relatively slow disk I/O operations.",
+            "D. Spark achieves great performance by storing data in the HDFS format, whereas Hadoop can only\nuse parquet files.",
+            "E. Spark achieves performance gains for developers by extending Hadoop's DataFrames with a user-\nfriendly API."
         ],
         "answer": [
             "C"
@@ -3557,11 +3545,11 @@ const quizData = [
     {
         "question": "The code block shown below should return a two-column DataFrame with columns\ntransactionId and supplier, with combined information from DataFrames itemsDf and transactionsDf.\nThe code block should merge rows in which column productId of DataFrame transactionsDf matches\nthe value of column itemId in DataFrame itemsDf, but only where column storeId of DataFrame\ntransactionsDf does not match column itemId of DataFrame itemsDf. Choose the answer that\ncorrectly fills the blanks in the code block to accomplish this.\nCode block:\ntransactionsDf.__1__(itemsDf, __2__).__3__(__4__)",
         "options": [
-            "A.. 1. join\n2. transactionsDf.productId==itemsDf.itemId, how=\"inner\"\n3. select\n4. \"transactionId\", \"supplier\"",
-            "B.. 1. select\n2. \"transactionId\", \"supplier\"\n3. join\n4. [transactionsDf.storeId!=itemsDf.itemId, transactionsDf.productId==itemsDf.itemId]",
-            "C.. 1. join\n2. [transactionsDf.productId==itemsDf.itemId, transactionsDf.storeId!=itemsDf.itemId]\n3. select\n4. \"transactionId\", \"supplier\"",
-            "D.. 1. filter\n2. \"transactionId\", \"supplier\"\n3. join\n4. \"transactionsDf.storeId!=itemsDf.itemId, transactionsDf.productId==itemsDf.itemId\"",
-            "E.. 1. join\n2. transactionsDf.productId==itemsDf.itemId, transactionsDf.storeId!=itemsDf.itemId\n3. filter\n4. \"transactionId\", \"supplier\""
+            "A. 1. join\n2. transactionsDf.productId==itemsDf.itemId, how=\"inner\"\n3. select\n4. \"transactionId\", \"supplier\"",
+            "B. 1. select\n2. \"transactionId\", \"supplier\"\n3. join\n4. [transactionsDf.storeId!=itemsDf.itemId, transactionsDf.productId==itemsDf.itemId]",
+            "C. 1. join\n2. [transactionsDf.productId==itemsDf.itemId, transactionsDf.storeId!=itemsDf.itemId]\n3. select\n4. \"transactionId\", \"supplier\"",
+            "D. 1. filter\n2. \"transactionId\", \"supplier\"\n3. join\n4. \"transactionsDf.storeId!=itemsDf.itemId, transactionsDf.productId==itemsDf.itemId\"",
+            "E. 1. join\n2. transactionsDf.productId==itemsDf.itemId, transactionsDf.storeId!=itemsDf.itemId\n3. filter\n4. \"transactionId\", \"supplier\""
         ],
         "answer": [
             "C"
@@ -3571,11 +3559,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a single-row DataFrame that only has a column\ncorr which shows the Pearson correlation coefficient between columns predError and value in\nDataFrame transactionsDf?",
         "options": [
-            "A.. transactionsDf.select(corr([\"predError\", \"value\"]).alias(\"corr\")).first()",
-            "B.. transactionsDf.select(corr(col(\"predError\"), col(\"value\")).alias(\"corr\")).first()",
-            "C.. transactionsDf.select(corr(predError, value).alias(\"corr\"))",
-            "D.. transactionsDf.select(corr(col(\"predError\"), col(\"value\")).alias(\"corr\")) (Correct)",
-            "E.. transactionsDf.select(corr(\"predError\", \"value\"))"
+            "A. transactionsDf.select(corr([\"predError\", \"value\"]).alias(\"corr\")).first()",
+            "B. transactionsDf.select(corr(col(\"predError\"), col(\"value\")).alias(\"corr\")).first()",
+            "C. transactionsDf.select(corr(predError, value).alias(\"corr\"))",
+            "D. transactionsDf.select(corr(col(\"predError\"), col(\"value\")).alias(\"corr\")) (Correct)",
+            "E. transactionsDf.select(corr(\"predError\", \"value\"))"
         ],
         "answer": [
             "D"
@@ -3585,11 +3573,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks reads in parquet file /FileStore/imports.parquet as a\nDataFrame?",
         "options": [
-            "A.. spark.mode(\"parquet\").read(\"/FileStore/imports.parquet\")",
-            "B.. spark.read.path(\"/FileStore/imports.parquet\", source=\"parquet\")",
-            "C.. spark.read().parquet(\"/FileStore/imports.parquet\")",
-            "D.. spark.read.parquet(\"/FileStore/imports.parquet\")",
-            "E.. spark.read().format('parquet').open(\"/FileStore/imports.parquet\")"
+            "A. spark.mode(\"parquet\").read(\"/FileStore/imports.parquet\")",
+            "B. spark.read.path(\"/FileStore/imports.parquet\", source=\"parquet\")",
+            "C. spark.read().parquet(\"/FileStore/imports.parquet\")",
+            "D. spark.read.parquet(\"/FileStore/imports.parquet\")",
+            "E. spark.read().format('parquet').open(\"/FileStore/imports.parquet\")"
         ],
         "answer": [
             "D"
@@ -3599,10 +3587,10 @@ const quizData = [
     {
         "question": "The code block shown below should return a copy of DataFrame transactionsDf with an\nadded column cos.\nThis column should have the values in column value converted to degrees and having the cosine of\nthose converted values taken, rounded to two decimals. Choose the answer that correctly fills the\nblanks in the code block to accomplish this.\nCode block:\ntransactionsDf.__1__(__2__, round(__3__(__4__(__5__)),2))",
         "options": [
-            "A.. 1. withColumn\n2. col(\"cos\")\n3. cos\n4. degrees\n5. transactionsDf.value",
-            "B.. 1. withColumnRenamed\n2. \"cos\"\n3. cos\n4. degrees\n5. \"transactionsDf.value\"",
-            "C.. 1. withColumn\n2. \"cos\"\n3. cos\n\n\n4. degrees\n5. transactionsDf.value",
-            "D.. 1. withColumn\n2. col(\"cos\")\n3. cos\n4. degrees\n5. col(\"value\")\nE\n. 1. withColumn\n2. \"cos\"\n3. degrees\n4. cos\n5. col(\"value\")"
+            "A. 1. withColumn\n2. col(\"cos\")\n3. cos\n4. degrees\n5. transactionsDf.value",
+            "B. 1. withColumnRenamed\n2. \"cos\"\n3. cos\n4. degrees\n5. \"transactionsDf.value\"",
+            "C. 1. withColumn\n2. \"cos\"\n3. cos\n\n\n4. degrees\n5. transactionsDf.value",
+            "D. 1. withColumn\n2. col(\"cos\")\n3. cos\n4. degrees\n5. col(\"value\")\nE\n. 1. withColumn\n2. \"cos\"\n3. degrees\n4. cos\n5. col(\"value\")"
         ],
         "answer": [
             "C"
@@ -3612,11 +3600,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block should configure Spark to\nsplit data in 20 parts when exchanging data between executors for joins or aggregations. Find the\nerror.\nCode block:\nspark.conf.set(spark.sql.shuffle.partitions, 20)",
         "options": [
-            "A.. The code block uses the wrong command for setting an option.",
-            "B.. The code block sets the wrong option.",
-            "C.. The code block expresses the option incorrectly.",
-            "D.. The code block sets the incorrect number of parts.",
-            "E.. The code block is missing a parameter."
+            "A. The code block uses the wrong command for setting an option.",
+            "B. The code block sets the wrong option.",
+            "C. The code block expresses the option incorrectly.",
+            "D. The code block sets the incorrect number of parts.",
+            "E. The code block is missing a parameter."
         ],
         "answer": [
             "C"
@@ -3626,10 +3614,10 @@ const quizData = [
     {
         "question": "Which of the following code blocks reads all CSV files in directory filePath into a single\nDataFrame, with column names defined in the CSV file headers?\nContent of directory filePath:\n1._SUCCESS\n2._committed_2754546451699747124\n3._started_2754546451699747124\n4.part-00000-tid-2754546451699747124-10eb85bf-8d91-4dd0-b60b-2f3c02eeecaa-298-1-\nc000.csv.gz\n5.part-00001-tid-2754546451699747124-10eb85bf-8d91-4dd0-b60b-2f3c02eeecaa-299-1-\nc000.csv.gz\n6.part-00002-tid-2754546451699747124-10eb85bf-8d91-4dd0-b60b-2f3c02eeecaa-300-1-\nc000.csv.gz\n7.part-00003-tid-2754546451699747124-10eb85bf-8d91-4dd0-b60b-2f3c02eeecaa-301-1-\nc000.csv.gz spark.option(\"header\",True).csv(filePath)",
         "options": [
-            "A.. spark.read.format(\"csv\").option(\"header\",True).option(\"compression\",\"zip\").load(filePath)",
-            "B.. spark.read().option(\"header\",True).load(filePath)",
-            "C.. spark.read.format(\"csv\").option(\"header\",True).load(filePath)",
-            "D.. spark.read.load(filePath)"
+            "A. spark.read.format(\"csv\").option(\"header\",True).option(\"compression\",\"zip\").load(filePath)",
+            "B. spark.read().option(\"header\",True).load(filePath)",
+            "C. spark.read.format(\"csv\").option(\"header\",True).load(filePath)",
+            "D. spark.read.load(filePath)"
         ],
         "answer": [
             "C"
@@ -3639,11 +3627,11 @@ const quizData = [
     {
         "question": "Which of the following is the deepest level in Spark's execution hierarchy?",
         "options": [
-            "A.. Job",
-            "B.. Task",
-            "C.. Executor",
-            "D.. Slot",
-            "E.. Stage"
+            "A. Job",
+            "B. Task",
+            "C. Executor",
+            "D. Slot",
+            "E. Stage"
         ],
         "answer": [
             "B"
@@ -3653,11 +3641,11 @@ const quizData = [
     {
         "question": "The code block shown below should return a DataFrame with columns transactionsId,\npredError, value, and f from DataFrame transactionsDf. Choose the answer that correctly fills the\nblanks in the code block to accomplish this.\ntransactionsDf.__1__(__2__)",
         "options": [
-            "A.. 1. filter\n2. \"transactionId\", \"predError\", \"value\", \"f\"",
-            "B.. 1. select\n2. \"transactionId, predError, value, f\"",
-            "C.. 1. select\n2. [\"transactionId\", \"predError\", \"value\", \"f\"]",
-            "D.. 1. where\n2. col(\"transactionId\"), col(\"predError\"), col(\"value\"), col(\"f\")",
-            "E.. 1. select\n2. col([\"transactionId\", \"predError\", \"value\", \"f\"])"
+            "A. 1. filter\n2. \"transactionId\", \"predError\", \"value\", \"f\"",
+            "B. 1. select\n2. \"transactionId, predError, value, f\"",
+            "C. 1. select\n2. [\"transactionId\", \"predError\", \"value\", \"f\"]",
+            "D. 1. where\n2. col(\"transactionId\"), col(\"predError\"), col(\"value\"), col(\"f\")",
+            "E. 1. select\n2. col([\"transactionId\", \"predError\", \"value\", \"f\"])"
         ],
         "answer": [
             "C"
@@ -3667,11 +3655,11 @@ const quizData = [
     {
         "question": "The code block shown below should read all files with the file ending .png in directory path\ninto Spark.\nChoose the answer that correctly fills the blanks in the code block to accomplish this.\nspark.__1__.__2__(__3__).option(__4__, \"*.png\").__5__(path)",
         "options": [
-            "A.. 1. read()\n2. format\n3. \"binaryFile\"\n4. \"recursiveFileLookup\"\n5. load",
-            "B.. 1. read\n2. format\n3. \"binaryFile\"\n4. \"pathGlobFilter\"\n5. load",
-            "C.. 1. read\n2. format\n3. binaryFile\n4. pathGlobFilter\n5. load",
-            "D.. 1. open\n2. format\n3. \"image\"\n4. \"fileType\"\n5. open",
-            "E.. 1. open\n2. as\n3. \"binaryFile\"\n4. \"pathGlobFilter\"\n5. load"
+            "A. 1. read()\n2. format\n3. \"binaryFile\"\n4. \"recursiveFileLookup\"\n5. load",
+            "B. 1. read\n2. format\n3. \"binaryFile\"\n4. \"pathGlobFilter\"\n5. load",
+            "C. 1. read\n2. format\n3. binaryFile\n4. pathGlobFilter\n5. load",
+            "D. 1. open\n2. format\n3. \"image\"\n4. \"fileType\"\n5. open",
+            "E. 1. open\n2. as\n3. \"binaryFile\"\n4. \"pathGlobFilter\"\n5. load"
         ],
         "answer": [
             "B"
@@ -3681,10 +3669,10 @@ const quizData = [
     {
         "question": "Which of the following code blocks applies the Python function to_limit on column\npredError in table transactionsDf, returning a DataFrame with columns transactionId and result?",
         "options": [
-            "A.. 1.spark.udf.register(\"LIMIT_FCN\", to_limit)\n2.spark.sql(\"SELECT transactionId, LIMIT_FCN(predError) AS result FROM transactionsDf\") (Correct)",
-            "B.. 1.spark.udf.register(\"LIMIT_FCN\", to_limit)\n2.spark.sql(\"SELECT transactionId, LIMIT_FCN(predError) FROM transactionsDf AS result\")",
-            "C.. 1.spark.udf.register(\"LIMIT_FCN\", to_limit)\n2.spark.sql(\"SELECT transactionId, to_limit(predError) AS result FROM transactionsDf\")\nspark.sql(\"SELECT transactionId, udf(to_limit(predError)) AS result FROM transactionsDf\")",
-            "D.. 1.spark.udf.register(to_limit, \"LIMIT_FCN\")\n\n\n2.spark.sql(\"SELECT transactionId, LIMIT_FCN(predError) AS result FROM transactionsDf\")"
+            "A. 1.spark.udf.register(\"LIMIT_FCN\", to_limit)\n2.spark.sql(\"SELECT transactionId, LIMIT_FCN(predError) AS result FROM transactionsDf\") (Correct)",
+            "B. 1.spark.udf.register(\"LIMIT_FCN\", to_limit)\n2.spark.sql(\"SELECT transactionId, LIMIT_FCN(predError) FROM transactionsDf AS result\")",
+            "C. 1.spark.udf.register(\"LIMIT_FCN\", to_limit)\n2.spark.sql(\"SELECT transactionId, to_limit(predError) AS result FROM transactionsDf\")\nspark.sql(\"SELECT transactionId, udf(to_limit(predError)) AS result FROM transactionsDf\")",
+            "D. 1.spark.udf.register(to_limit, \"LIMIT_FCN\")\n\n\n2.spark.sql(\"SELECT transactionId, LIMIT_FCN(predError) AS result FROM transactionsDf\")"
         ],
         "answer": [
             "A"
@@ -3694,11 +3682,11 @@ const quizData = [
     {
         "question": "Which of the following describes the role of tasks in the Spark execution hierarchy?",
         "options": [
-            "A.. Tasks are the smallest element in the execution hierarchy.",
-            "B.. Within one task, the slots are the unit of work done for each partition of the data.",
-            "C.. Tasks are the second-smallest element in the execution hierarchy.",
-            "D.. Stages with narrow dependencies can be grouped into one task.",
-            "E.. Tasks with wide dependencies can be grouped into one stage."
+            "A. Tasks are the smallest element in the execution hierarchy.",
+            "B. Within one task, the slots are the unit of work done for each partition of the data.",
+            "C. Tasks are the second-smallest element in the execution hierarchy.",
+            "D. Stages with narrow dependencies can be grouped into one task.",
+            "E. Tasks with wide dependencies can be grouped into one stage."
         ],
         "answer": [
             "A"
@@ -3708,11 +3696,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a DataFrame that has all columns of DataFrame\ntransactionsDf and an additional column predErrorSquared which is the squared value of column\npredError in DataFrame transactionsDf?",
         "options": [
-            "A.. transactionsDf.withColumn(\"predError\", pow(col(\"predErrorSquared\"), 2))",
-            "B.. transactionsDf.withColumnRenamed(\"predErrorSquared\", pow(predError, 2))",
-            "C.. transactionsDf.withColumn(\"predErrorSquared\", pow(col(\"predError\"), lit(2)))",
-            "D.. transactionsDf.withColumn(\"predErrorSquared\", pow(predError, lit(2)))",
-            "E.. transactionsDf.withColumn(\"predErrorSquared\", \"predError\"**2)"
+            "A. transactionsDf.withColumn(\"predError\", pow(col(\"predErrorSquared\"), 2))",
+            "B. transactionsDf.withColumnRenamed(\"predErrorSquared\", pow(predError, 2))",
+            "C. transactionsDf.withColumn(\"predErrorSquared\", pow(col(\"predError\"), lit(2)))",
+            "D. transactionsDf.withColumn(\"predErrorSquared\", pow(predError, lit(2)))",
+            "E. transactionsDf.withColumn(\"predErrorSquared\", \"predError\"**2)"
         ],
         "answer": [
             "C"
@@ -3722,12 +3710,12 @@ const quizData = [
     {
         "question": "Which of the following code blocks can be used to save DataFrame transactionsDf to\nmemory only, recalculating partitions that do not fit in memory when they are needed?",
         "options": [
-            "A.. from pyspark import StorageLevel\ntransactionsDf.cache(StorageLevel.MEMORY_ONLY)",
-            "B.. transactionsDf.cache()",
-            "C.. transactionsDf.storage_level('MEMORY_ONLY')",
-            "D.. transactionsDf.persist()",
-            "E.. transactionsDf.clear_persist()",
-            "F.. from pyspark import StorageLevel\ntransactionsDf.persist(StorageLevel.MEMORY_ONLY)"
+            "A. from pyspark import StorageLevel\ntransactionsDf.cache(StorageLevel.MEMORY_ONLY)",
+            "B. transactionsDf.cache()",
+            "C. transactionsDf.storage_level('MEMORY_ONLY')",
+            "D. transactionsDf.persist()",
+            "E. transactionsDf.clear_persist()",
+            "F. from pyspark import StorageLevel\ntransactionsDf.persist(StorageLevel.MEMORY_ONLY)"
         ],
         "answer": [
             "F"
@@ -3737,11 +3725,11 @@ const quizData = [
     {
         "question": "The code block shown below should add column transactionDateForm to DataFrame\ntransactionsDf. The column should express the unix-format timestamps in column transactionDate as\nstring type like Apr 26 (Sunday). Choose the answer that correctly fills the blanks in the code block to\naccomplish this.\ntransactionsDf.__1__(__2__, from_unixtime(__3__, __4__))",
         "options": [
-            "A.. 1. withColumn\n2. \"transactionDateForm\"\n3. \"MMM d (EEEE)\"\n4. \"transactionDate\"",
-            "B.. 1. select\n2. \"transactionDate\"\n3. \"transactionDateForm\"\n4. \"MMM d (EEEE)\"",
-            "C.. 1. withColumn\n2. \"transactionDateForm\"\n3. \"transactionDate\"\n4. \"MMM d (EEEE)\"",
-            "D.. 1. withColumn\n2. \"transactionDateForm\"\n3. \"transactionDate\"\n4. \"MM d (EEE)\"",
-            "E.. 1. withColumnRenamed\n2. \"transactionDate\"\n3. \"transactionDateForm\"\n4. \"MM d (EEE)\""
+            "A. 1. withColumn\n2. \"transactionDateForm\"\n3. \"MMM d (EEEE)\"\n4. \"transactionDate\"",
+            "B. 1. select\n2. \"transactionDate\"\n3. \"transactionDateForm\"\n4. \"MMM d (EEEE)\"",
+            "C. 1. withColumn\n2. \"transactionDateForm\"\n3. \"transactionDate\"\n4. \"MMM d (EEEE)\"",
+            "D. 1. withColumn\n2. \"transactionDateForm\"\n3. \"transactionDate\"\n4. \"MM d (EEE)\"",
+            "E. 1. withColumnRenamed\n2. \"transactionDate\"\n3. \"transactionDateForm\"\n4. \"MM d (EEE)\""
         ],
         "answer": [
             "C"
@@ -3751,11 +3739,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks creates a new DataFrame with two columns season and\nwind_speed_ms where column season is of data type string and column wind_speed_ms is of data\ntype double?",
         "options": [
-            "A.. spark.DataFrame({\"season\": [\"winter\",\"summer\"], \"wind_speed_ms\": [4.5, 7.5]})",
-            "B.. spark.createDataFrame([(\"summer\", 4.5), (\"winter\", 7.5)], [\"season\", \"wind_speed_ms\"])",
-            "C.. 1. from pyspark.sql import types as T\n2. spark.createDataFrame(((\"summer\", 4.5), (\"winter\", 7.5)), T.StructType([T.StructField(\"season\",\nT.CharType()), T.StructField(\"season\", T.DoubleType())]))",
-            "D.. spark.newDataFrame([(\"summer\", 4.5), (\"winter\", 7.5)], [\"season\", \"wind_speed_ms\"])",
-            "E.. spark.createDataFrame({\"season\": [\"winter\",\"summer\"], \"wind_speed_ms\": [4.5, 7.5]})"
+            "A. spark.DataFrame({\"season\": [\"winter\",\"summer\"], \"wind_speed_ms\": [4.5, 7.5]})",
+            "B. spark.createDataFrame([(\"summer\", 4.5), (\"winter\", 7.5)], [\"season\", \"wind_speed_ms\"])",
+            "C. 1. from pyspark.sql import types as T\n2. spark.createDataFrame(((\"summer\", 4.5), (\"winter\", 7.5)), T.StructType([T.StructField(\"season\",\nT.CharType()), T.StructField(\"season\", T.DoubleType())]))",
+            "D. spark.newDataFrame([(\"summer\", 4.5), (\"winter\", 7.5)], [\"season\", \"wind_speed_ms\"])",
+            "E. spark.createDataFrame({\"season\": [\"winter\",\"summer\"], \"wind_speed_ms\": [4.5, 7.5]})"
         ],
         "answer": [
             "B"
@@ -3765,11 +3753,11 @@ const quizData = [
     {
         "question": "Which of the following describes Spark's standalone deployment mode?",
         "options": [
-            "A.. Standalone mode uses a single JVM to run Spark driver and executor processes.",
-            "B.. Standalone mode means that the cluster does not contain the driver.",
-            "C.. Standalone mode is how Spark runs on YARN and Mesos clusters.",
-            "D.. Standalone mode uses only a single executor per worker per application.",
-            "E.. Standalone mode is a viable solution for clusters that run multiple frameworks, not only Spark."
+            "A. Standalone mode uses a single JVM to run Spark driver and executor processes.",
+            "B. Standalone mode means that the cluster does not contain the driver.",
+            "C. Standalone mode is how Spark runs on YARN and Mesos clusters.",
+            "D. Standalone mode uses only a single executor per worker per application.",
+            "E. Standalone mode is a viable solution for clusters that run multiple frameworks, not only Spark."
         ],
         "answer": [
             "D"
@@ -3779,11 +3767,11 @@ const quizData = [
     {
         "question": "Which of the following describes a shuffle?",
         "options": [
-            "A.. A shuffle is a process that is executed during a broadcast hash join.",
-            "B.. A shuffle is a process that compares data across executors.",
-            "C.. A shuffle is a process that compares data across partitions.",
-            "D.. A shuffle is a Spark operation that results from DataFrame.coalesce().",
-            "E.. A shuffle is a process that allocates partitions to executors."
+            "A. A shuffle is a process that is executed during a broadcast hash join.",
+            "B. A shuffle is a process that compares data across executors.",
+            "C. A shuffle is a process that compares data across partitions.",
+            "D. A shuffle is a Spark operation that results from DataFrame.coalesce().",
+            "E. A shuffle is a process that allocates partitions to executors."
         ],
         "answer": [
             "C"
@@ -3793,11 +3781,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks reads JSON file imports.json into a DataFrame?",
         "options": [
-            "A.. spark.read().mode(\"json\").path(\"/FileStore/imports.json\")",
-            "B.. spark.read.format(\"json\").path(\"/FileStore/imports.json\")",
-            "C.. spark.read(\"json\", \"/FileStore/imports.json\")",
-            "D.. spark.read.json(\"/FileStore/imports.json\")",
-            "E.. spark.read().json(\"/FileStore/imports.json\")"
+            "A. spark.read().mode(\"json\").path(\"/FileStore/imports.json\")",
+            "B. spark.read.format(\"json\").path(\"/FileStore/imports.json\")",
+            "C. spark.read(\"json\", \"/FileStore/imports.json\")",
+            "D. spark.read.json(\"/FileStore/imports.json\")",
+            "E. spark.read().json(\"/FileStore/imports.json\")"
         ],
         "answer": [
             "D"
@@ -3807,11 +3795,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block is intended to return all\ncolumns of DataFrame transactionsDf except for columns predError, productId, and value. Find the\nerror.\nExcerpt of DataFrame transactionsDf:\ntransactionsDf.select(~col(\"predError\"), ~col(\"productId\"), ~col(\"value\"))",
         "options": [
-            "A.. The select operator should be replaced by the drop operator and the arguments to the drop\noperator should be column names predError, productId and value wrapped in the col operator so\nthey should be expressed like drop(col(predError), col(productId), col(value)).",
-            "B.. The select operator should be replaced with the deselect operator.",
-            "C.. The column names in the select operator should not be strings and wrapped in the col operator, so\nthey should be expressed like select(~col(predError), ~col(productId), ~col(value)).",
-            "D.. The select operator should be replaced by the drop operator.",
-            "E.. The select operator should be replaced by the drop operator and the arguments to the drop\noperator should be column names predError, productId and value as strings.\n(Correct)"
+            "A. The select operator should be replaced by the drop operator and the arguments to the drop\noperator should be column names predError, productId and value wrapped in the col operator so\nthey should be expressed like drop(col(predError), col(productId), col(value)).",
+            "B. The select operator should be replaced with the deselect operator.",
+            "C. The column names in the select operator should not be strings and wrapped in the col operator, so\nthey should be expressed like select(~col(predError), ~col(productId), ~col(value)).",
+            "D. The select operator should be replaced by the drop operator.",
+            "E. The select operator should be replaced by the drop operator and the arguments to the drop\noperator should be column names predError, productId and value as strings.\n(Correct)"
         ],
         "answer": [
             "E"
@@ -3821,11 +3809,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block should return a new\nDataFrame that only contains rows from DataFrame transactionsDf in which the value in column\npredError is at least 5. Find the error.\nCode block:\ntransactionsDf.where(\"col(predError) >= 5\")",
         "options": [
-            "A.. The argument to the where method should be \"predError >= 5\".",
-            "B.. Instead of where(), filter() should be used.",
-            "C.. The expression returns the original DataFrame transactionsDf and not a new DataFrame. To avoid\nthis, the code block should be transactionsDf.toNewDataFrame().where(\"col(predError) >= 5\").",
-            "D.. The argument to the where method cannot be a string.",
-            "E.. Instead of >=, the SQL operator GEQ should be used."
+            "A. The argument to the where method should be \"predError >= 5\".",
+            "B. Instead of where(), filter() should be used.",
+            "C. The expression returns the original DataFrame transactionsDf and not a new DataFrame. To avoid\nthis, the code block should be transactionsDf.toNewDataFrame().where(\"col(predError) >= 5\").",
+            "D. The argument to the where method cannot be a string.",
+            "E. Instead of >=, the SQL operator GEQ should be used."
         ],
         "answer": [
             "A"
@@ -3835,11 +3823,11 @@ const quizData = [
     {
         "question": "Which of the following statements about reducing out-of-memory errors is incorrect?",
         "options": [
-            "A.. Concatenating multiple string columns into a single column may guard against out-of-memory\nerrors.",
-            "B.. Reducing partition size can help against out-of-memory errors.",
-            "C.. Limiting the amount of data being automatically broadcast in joins can help against out-of-\nmemory errors.",
-            "D.. Setting a limit on the maximum size of serialized data returned to the driver may help prevent out-\nof-memory errors.",
-            "E.. Decreasing the number of cores available to each executor can help against out-of-memory errors."
+            "A. Concatenating multiple string columns into a single column may guard against out-of-memory\nerrors.",
+            "B. Reducing partition size can help against out-of-memory errors.",
+            "C. Limiting the amount of data being automatically broadcast in joins can help against out-of-\nmemory errors.",
+            "D. Setting a limit on the maximum size of serialized data returned to the driver may help prevent out-\nof-memory errors.",
+            "E. Decreasing the number of cores available to each executor can help against out-of-memory errors."
         ],
         "answer": [
             "A"
@@ -3849,11 +3837,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block below is intended to add\na column itemNameElements to DataFrame itemsDf that includes an array of all words in column\nitemName. Find the error.\nSample of DataFrame itemsDf:\n1.+------+----------------------------------+-------------------+\n2.|itemId|itemName |supplier |\n3.+------+----------------------------------+-------------------+\n4.|1 |Thick Coat for Walking in the Snow|Sports Company Inc.|\n5.|2 |Elegant Outdoors Summer Dress |YetiX |\n6.|3 |Outdoors Backpack |Sports Company Inc.|\n7.+------+----------------------------------+-------------------+\nCode block:\nitemsDf.withColumnRenamed(\"itemNameElements\", split(\"itemName\"))\nitemsDf.withColumnRenamed(\"itemNameElements\", split(\"itemName\"))",
         "options": [
-            "A.. All column names need to be wrapped in the col() operator.",
-            "B.. Operator withColumnRenamed needs to be replaced with operator withColumn and a second\nargument\n\",\" needs to be passed to the split method.",
-            "C.. Operator withColumnRenamed needs to be replaced with operator withColumn and the split\nmethod needs to be replaced by the splitString method.",
-            "D.. Operator withColumnRenamed needs to be replaced with operator withColumn and a second\nargument \"\n\" needs to be passed to the split method.",
-            "E.. The expressions \"itemNameElements\" and split(\"itemName\") need to be swapped."
+            "A. All column names need to be wrapped in the col() operator.",
+            "B. Operator withColumnRenamed needs to be replaced with operator withColumn and a second\nargument\n\",\" needs to be passed to the split method.",
+            "C. Operator withColumnRenamed needs to be replaced with operator withColumn and the split\nmethod needs to be replaced by the splitString method.",
+            "D. Operator withColumnRenamed needs to be replaced with operator withColumn and a second\nargument \"\n\" needs to be passed to the split method.",
+            "E. The expressions \"itemNameElements\" and split(\"itemName\") need to be swapped."
         ],
         "answer": [
             "D"
@@ -3863,11 +3851,11 @@ const quizData = [
     {
         "question": "Which of the following describes how Spark achieves fault tolerance?",
         "options": [
-            "A.. Spark helps fast recovery of data in case of a worker fault by providing the MEMORY_AND_DISK\nstorage level option.",
-            "B.. If an executor on a worker node fails while calculating an RDD, that RDD can be recomputed by\nanother executor using the lineage.",
-            "C.. Spark builds a fault-tolerant layer on top of the legacy RDD data system, which by itself is not fault\ntolerant.",
-            "D.. Due to the mutability of DataFrames after transformations, Spark reproduces them using\nobserved lineage in case of worker node failure.",
-            "E.. Spark is only fault-tolerant if this feature is specifically enabled via the\nspark.fault_recovery.enabled property."
+            "A. Spark helps fast recovery of data in case of a worker fault by providing the MEMORY_AND_DISK\nstorage level option.",
+            "B. If an executor on a worker node fails while calculating an RDD, that RDD can be recomputed by\nanother executor using the lineage.",
+            "C. Spark builds a fault-tolerant layer on top of the legacy RDD data system, which by itself is not fault\ntolerant.",
+            "D. Due to the mutability of DataFrames after transformations, Spark reproduces them using\nobserved lineage in case of worker node failure.",
+            "E. Spark is only fault-tolerant if this feature is specifically enabled via the\nspark.fault_recovery.enabled property."
         ],
         "answer": [
             "B"
@@ -3877,11 +3865,11 @@ const quizData = [
     {
         "question": "The code block shown below should return a new 2-column DataFrame that shows one\nattribute from column attributes per row next to the associated itemName, for all suppliers in\ncolumn supplier whose name includes Sports. Choose the answer that correctly fills the blanks in the\ncode block to accomplish this.\nSample of DataFrame itemsDf:\n1.+------+----------------------------------+-----------------------------+-------------------+\n\n\n2.|itemId|itemName |attributes |supplier |\n3.+------+----------------------------------+-----------------------------+-------------------+\n4.|1 |Thick Coat for Walking in the Snow|[blue, winter, cozy] |Sports Company Inc.|\n5.|2 |Elegant Outdoors Summer Dress |[red, summer, fresh, cooling]|YetiX |\n6.|3 |Outdoors Backpack |[green, summer, travel] |Sports Company Inc.|\n7.+------+----------------------------------+-----------------------------+-------------------+ Code block:\nitemsDf.__1__(__2__).select(__3__, __4__)",
         "options": [
-            "A.. 1. filter\n2. col(\"supplier\").isin(\"Sports\")\n3. \"itemName\"\n4. explode(col(\"attributes\"))",
-            "B.. 1. where\n2. col(\"supplier\").contains(\"Sports\")\n3. \"itemName\"\n4. \"attributes\"",
-            "C.. 1. where\n2. col(supplier).contains(\"Sports\")\n3. explode(attributes)\n4. itemName",
-            "D.. 1. where\n2. \"Sports\".isin(col(\"Supplier\"))\n3. \"itemName\"\n4. array_explode(\"attributes\")",
-            "E.. 1. filter\n2. col(\"supplier\").contains(\"Sports\")\n3. \"itemName\"\n4. explode(\"attributes\")"
+            "A. 1. filter\n2. col(\"supplier\").isin(\"Sports\")\n3. \"itemName\"\n4. explode(col(\"attributes\"))",
+            "B. 1. where\n2. col(\"supplier\").contains(\"Sports\")\n3. \"itemName\"\n4. \"attributes\"",
+            "C. 1. where\n2. col(supplier).contains(\"Sports\")\n3. explode(attributes)\n4. itemName",
+            "D. 1. where\n2. \"Sports\".isin(col(\"Supplier\"))\n3. \"itemName\"\n4. array_explode(\"attributes\")",
+            "E. 1. filter\n2. col(\"supplier\").contains(\"Sports\")\n3. \"itemName\"\n4. explode(\"attributes\")"
         ],
         "answer": [
             "E"
@@ -3891,11 +3879,11 @@ const quizData = [
     {
         "question": "Which of the following DataFrame methods is classified as a transformation?",
         "options": [
-            "A.. DataFrame.count()",
-            "B.. DataFrame.show()",
-            "C.. DataFrame.select()",
-            "D.. DataFrame.foreach()",
-            "E.. DataFrame.first()"
+            "A. DataFrame.count()",
+            "B. DataFrame.show()",
+            "C. DataFrame.select()",
+            "D. DataFrame.foreach()",
+            "E. DataFrame.first()"
         ],
         "answer": [
             "C"
@@ -3905,11 +3893,11 @@ const quizData = [
     {
         "question": "Which of the following statements about RDDs is incorrect?",
         "options": [
-            "A.. An RDD consists of a single partition.",
-            "B.. The high-level DataFrame API is built on top of the low-level RDD API.",
-            "C.. RDDs are immutable.",
-            "D.. RDD stands for Resilient Distributed Dataset.",
-            "E.. RDDs are great for precisely instructing Spark on how to do a query."
+            "A. An RDD consists of a single partition.",
+            "B. The high-level DataFrame API is built on top of the low-level RDD API.",
+            "C. RDDs are immutable.",
+            "D. RDD stands for Resilient Distributed Dataset.",
+            "E. RDDs are great for precisely instructing Spark on how to do a query."
         ],
         "answer": [
             "A"
@@ -3919,11 +3907,11 @@ const quizData = [
     {
         "question": "Which of the following describes properties of a shuffle?",
         "options": [
-            "A.. Operations involving shuffles are never evaluated lazily.",
-            "B.. Shuffles involve only single partitions.",
-            "C.. Shuffles belong to a class known as \"full transformations\".",
-            "D.. A shuffle is one of many actions in Spark.",
-            "E.. In a shuffle, Spark writes data to disk."
+            "A. Operations involving shuffles are never evaluated lazily.",
+            "B. Shuffles involve only single partitions.",
+            "C. Shuffles belong to a class known as \"full transformations\".",
+            "D. A shuffle is one of many actions in Spark.",
+            "E. In a shuffle, Spark writes data to disk."
         ],
         "answer": [
             "E"
@@ -3933,11 +3921,11 @@ const quizData = [
     {
         "question": "Which of the following statements about Spark's DataFrames is incorrect?",
         "options": [
-            "A.. Spark's DataFrames are immutable.",
-            "B.. Spark's DataFrames are equal to Python's DataFrames.",
-            "C.. Data in DataFrames is organized into named columns.",
-            "D.. RDDs are at the core of DataFrames.",
-            "E.. The data in DataFrames may be split into multiple chunks."
+            "A. Spark's DataFrames are immutable.",
+            "B. Spark's DataFrames are equal to Python's DataFrames.",
+            "C. Data in DataFrames is organized into named columns.",
+            "D. RDDs are at the core of DataFrames.",
+            "E. The data in DataFrames may be split into multiple chunks."
         ],
         "answer": [
             "B"
@@ -3947,11 +3935,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns approximately 1000 rows, some of them\npotentially being duplicates, from the 2000-row DataFrame transactionsDf that only has unique\n\n\nrows?",
         "options": [
-            "A.. transactionsDf.sample(True, 0.5)",
-            "B.. transactionsDf.take(1000).distinct()",
-            "C.. transactionsDf.sample(False, 0.5)",
-            "D.. transactionsDf.take(1000)",
-            "E.. transactionsDf.sample(True, 0.5, force=True)"
+            "A. transactionsDf.sample(True, 0.5)",
+            "B. transactionsDf.take(1000).distinct()",
+            "C. transactionsDf.sample(False, 0.5)",
+            "D. transactionsDf.take(1000)",
+            "E. transactionsDf.sample(True, 0.5, force=True)"
         ],
         "answer": [
             "A"
@@ -3961,11 +3949,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block should read the csv file\nlocated at path data/transactions.csv into DataFrame transactionsDf, using the first row as column\nheader and casting the columns in the most appropriate type. Find the error.\nFirst 3 rows of transactions.csv:\n1.transactionId;storeId;productId;name\n2.1;23;12;green grass\n3.2;35;31;yellow sun\n4.3;23;12;green grass\nCode block:\ntransactionsDf = spark.read.load(\"data/transactions.csv\", sep=\";\", format=\"csv\", header=True)",
         "options": [
-            "A.. The DataFrameReader is not accessed correctly.",
-            "B.. The transaction is evaluated lazily, so no file will be read.",
-            "C.. Spark is unable to understand the file type.",
-            "D.. The code block is unable to capture all columns.",
-            "E.. The resulting DataFrame will not have the appropriate schema."
+            "A. The DataFrameReader is not accessed correctly.",
+            "B. The transaction is evaluated lazily, so no file will be read.",
+            "C. Spark is unable to understand the file type.",
+            "D. The code block is unable to capture all columns.",
+            "E. The resulting DataFrame will not have the appropriate schema."
         ],
         "answer": [
             "E"
@@ -3975,11 +3963,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks displays the 10 rows with the smallest values of column\nvalue in DataFrame transactionsDf in a nicely formatted way?",
         "options": [
-            "A.. transactionsDf.sort(asc(value)).show(10)",
-            "B.. transactionsDf.sort(col(\"value\")).show(10)",
-            "C.. transactionsDf.sort(col(\"value\").desc()).head()",
-            "D.. transactionsDf.sort(col(\"value\").asc()).print(10)",
-            "E.. transactionsDf.orderBy(\"value\").asc().show(10)"
+            "A. transactionsDf.sort(asc(value)).show(10)",
+            "B. transactionsDf.sort(col(\"value\")).show(10)",
+            "C. transactionsDf.sort(col(\"value\").desc()).head()",
+            "D. transactionsDf.sort(col(\"value\").asc()).print(10)",
+            "E. transactionsDf.orderBy(\"value\").asc().show(10)"
         ],
         "answer": [
             "B"
@@ -3989,11 +3977,11 @@ const quizData = [
     {
         "question": "Which is the highest level in Spark's execution hierarchy?",
         "options": [
-            "A.. Task",
-            "B.. Executor",
-            "C.. Slot",
-            "D.. Job",
-            "E.. Stage"
+            "A. Task",
+            "B. Executor",
+            "C. Slot",
+            "D. Job",
+            "E. Stage"
         ],
         "answer": [
             "D"
@@ -4002,12 +3990,12 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block should configure Spark so\nthat DataFrames up to a size of 20 MB will be broadcast to all worker nodes when performing a join.\nFind the error.\nCode block:",
         "options": [
-            "A.. spark.conf.set(\"spark.sql.autoBroadcastJoinThreshold\", 20)",
-            "B.. Spark will only broadcast DataFrames that are much smaller than the default value.",
-            "C.. The correct option to write configurations is through spark.config and not spark.conf.",
-            "D.. Spark will only apply the limit to threshold joins and not to other joins.",
-            "E.. The passed limit has the wrong variable type.",
-            "F.. The command is evaluated lazily and needs to be followed by an action."
+            "A. spark.conf.set(\"spark.sql.autoBroadcastJoinThreshold\", 20)",
+            "B. Spark will only broadcast DataFrames that are much smaller than the default value.",
+            "C. The correct option to write configurations is through spark.config and not spark.conf.",
+            "D. Spark will only apply the limit to threshold joins and not to other joins.",
+            "E. The passed limit has the wrong variable type.",
+            "F. The command is evaluated lazily and needs to be followed by an action."
         ],
         "answer": [
             "B"
@@ -4017,11 +4005,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns a DataFrame with approximately 1,000 rows\nfrom the 10,000-row DataFrame itemsDf, without any duplicates, returning the same rows even if\nthe code block is run twice?",
         "options": [
-            "A.. itemsDf.sampleBy(\"row\", fractions={0: 0.1}, seed=82371)",
-            "B.. itemsDf.sample(fraction=0.1, seed=87238)",
-            "C.. itemsDf.sample(fraction=1000, seed=98263)",
-            "D.. itemsDf.sample(withReplacement=True, fraction=0.1, seed=23536)",
-            "E.. itemsDf.sample(fraction=0.1)"
+            "A. itemsDf.sampleBy(\"row\", fractions={0: 0.1}, seed=82371)",
+            "B. itemsDf.sample(fraction=0.1, seed=87238)",
+            "C. itemsDf.sample(fraction=1000, seed=98263)",
+            "D. itemsDf.sample(withReplacement=True, fraction=0.1, seed=23536)",
+            "E. itemsDf.sample(fraction=0.1)"
         ],
         "answer": [
             "B"
@@ -4031,11 +4019,11 @@ const quizData = [
     {
         "question": "Which of the following statements about DAGs is correct?",
         "options": [
-            "A.. DAGs help direct how Spark executors process tasks, but are a limitation to the proper execution\nof a query when an executor fails.",
-            "B.. DAG stands for \"Directing Acyclic Graph\".",
-            "C.. Spark strategically hides DAGs from developers, since the high degree of automation in Spark\nmeans that developers never need to consider DAG layouts.",
-            "D.. In contrast to transformations, DAGs are never lazily executed.",
-            "E.. DAGs can be decomposed into tasks that are executed in parallel."
+            "A. DAGs help direct how Spark executors process tasks, but are a limitation to the proper execution\nof a query when an executor fails.",
+            "B. DAG stands for \"Directing Acyclic Graph\".",
+            "C. Spark strategically hides DAGs from developers, since the high degree of automation in Spark\nmeans that developers never need to consider DAG layouts.",
+            "D. In contrast to transformations, DAGs are never lazily executed.",
+            "E. DAGs can be decomposed into tasks that are executed in parallel."
         ],
         "answer": [
             "E"
@@ -4045,11 +4033,11 @@ const quizData = [
     {
         "question": "The code block displayed below contains an error. The code block should count the number\nof rows that have a predError of either 3 or 6. Find the error.\nCode block:\ntransactionsDf.filter(col('predError').in([3, 6])).count()",
         "options": [
-            "A.. The number of rows cannot be determined with the count() operator.",
-            "B.. Instead of filter, the select method should be used.",
-            "C.. The method used on column predError is incorrect.",
-            "D.. Instead of a list, the values need to be passed as single arguments to the in operator.",
-            "E.. Numbers 3 and 6 need to be passed as string variables."
+            "A. The number of rows cannot be determined with the count() operator.",
+            "B. Instead of filter, the select method should be used.",
+            "C. The method used on column predError is incorrect.",
+            "D. Instead of a list, the values need to be passed as single arguments to the in operator.",
+            "E. Numbers 3 and 6 need to be passed as string variables."
         ],
         "answer": [
             "C"
@@ -4059,11 +4047,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks shuffles DataFrame transactionsDf, which has 8\npartitions, so that it has\n10 partitions?",
         "options": [
-            "A.. transactionsDf.repartition(transactionsDf.getNumPartitions()+2)",
-            "B.. transactionsDf.repartition(transactionsDf.rdd.getNumPartitions()+2)",
-            "C.. transactionsDf.coalesce(10)",
-            "D.. transactionsDf.coalesce(transactionsDf.getNumPartitions()+2)",
-            "E.. transactionsDf.repartition(transactionsDf._partitions+2)"
+            "A. transactionsDf.repartition(transactionsDf.getNumPartitions()+2)",
+            "B. transactionsDf.repartition(transactionsDf.rdd.getNumPartitions()+2)",
+            "C. transactionsDf.coalesce(10)",
+            "D. transactionsDf.coalesce(transactionsDf.getNumPartitions()+2)",
+            "E. transactionsDf.repartition(transactionsDf._partitions+2)"
         ],
         "answer": [
             "B"
@@ -4073,11 +4061,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks selects all rows from DataFrame transactionsDf in which\ncolumn productId is zero or smaller or equal to 3?",
         "options": [
-            "A.. transactionsDf.filter(productId==3 or productId<1)",
-            "B.. transactionsDf.filter((col(\"productId\")==3) or (col(\"productId\")<1))",
-            "C.. transactionsDf.filter(col(\"productId\")==3 | col(\"productId\")<1)",
-            "D.. transactionsDf.where(\"productId\"=3).or(\"productId\"<1))",
-            "E.. transactionsDf.filter((col(\"productId\")==3) | (col(\"productId\")<1))"
+            "A. transactionsDf.filter(productId==3 or productId<1)",
+            "B. transactionsDf.filter((col(\"productId\")==3) or (col(\"productId\")<1))",
+            "C. transactionsDf.filter(col(\"productId\")==3 | col(\"productId\")<1)",
+            "D. transactionsDf.where(\"productId\"=3).or(\"productId\"<1))",
+            "E. transactionsDf.filter((col(\"productId\")==3) | (col(\"productId\")<1))"
         ],
         "answer": [
             "E"
@@ -4087,11 +4075,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks silently writes DataFrame itemsDf in avro format to\nlocation fileLocation if a file does not yet exist at that location?",
         "options": [
-            "A.. itemsDf.write.avro(fileLocation)",
-            "B.. itemsDf.write.format(\"avro\").mode(\"ignore\").save(fileLocation)",
-            "C.. itemsDf.write.format(\"avro\").mode(\"errorifexists\").save(fileLocation)",
-            "D.. itemsDf.save.format(\"avro\").mode(\"ignore\").write(fileLocation)",
-            "E.. spark.DataFrameWriter(itemsDf).format(\"avro\").write(fileLocation)"
+            "A. itemsDf.write.avro(fileLocation)",
+            "B. itemsDf.write.format(\"avro\").mode(\"ignore\").save(fileLocation)",
+            "C. itemsDf.write.format(\"avro\").mode(\"errorifexists\").save(fileLocation)",
+            "D. itemsDf.save.format(\"avro\").mode(\"ignore\").write(fileLocation)",
+            "E. spark.DataFrameWriter(itemsDf).format(\"avro\").write(fileLocation)"
         ],
         "answer": [
             "A"
@@ -4101,11 +4089,11 @@ const quizData = [
     {
         "question": "Which of the following describes the role of the cluster manager?",
         "options": [
-            "A.. The cluster manager schedules tasks on the cluster in client mode.",
-            "B.. The cluster manager schedules tasks on the cluster in local mode.",
-            "C.. The cluster manager allocates resources to Spark applications and maintains the executor\nprocesses in client mode.",
-            "D.. The cluster manager allocates resources to Spark applications and maintains the executor\nprocesses in remote mode.",
-            "E.. The cluster manager allocates resources to the DataFrame manager."
+            "A. The cluster manager schedules tasks on the cluster in client mode.",
+            "B. The cluster manager schedules tasks on the cluster in local mode.",
+            "C. The cluster manager allocates resources to Spark applications and maintains the executor\nprocesses in client mode.",
+            "D. The cluster manager allocates resources to Spark applications and maintains the executor\nprocesses in remote mode.",
+            "E. The cluster manager allocates resources to the DataFrame manager."
         ],
         "answer": [
             "C"
@@ -4115,11 +4103,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks writes DataFrame itemsDf to disk at storage location\nfilePath, making sure to substitute any existing data at that location?",
         "options": [
-            "A.. itemsDf.write.mode(\"overwrite\").parquet(filePath)",
-            "B.. itemsDf.write.option(\"parquet\").mode(\"overwrite\").path(filePath)",
-            "C.. itemsDf.write(filePath, mode=\"overwrite\")",
-            "D.. itemsDf.write.mode(\"overwrite\").path(filePath)",
-            "E.. itemsDf.write().parquet(filePath, mode=\"overwrite\")"
+            "A. itemsDf.write.mode(\"overwrite\").parquet(filePath)",
+            "B. itemsDf.write.option(\"parquet\").mode(\"overwrite\").path(filePath)",
+            "C. itemsDf.write(filePath, mode=\"overwrite\")",
+            "D. itemsDf.write.mode(\"overwrite\").path(filePath)",
+            "E. itemsDf.write().parquet(filePath, mode=\"overwrite\")"
         ],
         "answer": [
             "A"
@@ -4129,11 +4117,11 @@ const quizData = [
     {
         "question": "The code block shown below should add a column itemNameBetweenSeparators to\nDataFrame itemsDf. The column should contain arrays of maximum 4 strings. The arrays should be\ncomposed of the values in column itemsDf which are separated at - or whitespace characters. Choose\nthe answer that correctly fills the blanks in the code block to accomplish this.\nSample of DataFrame itemsDf:\n1.+------+----------------------------------+-------------------+\n2.|itemId|itemName |supplier |\n3.+------+----------------------------------+-------------------+\n\n\n4.|1 |Thick Coat for Walking in the Snow|Sports Company Inc.|\n5.|2 |Elegant Outdoors Summer Dress |YetiX |\n6.|3 |Outdoors Backpack |Sports Company Inc.|\n7.+------+----------------------------------+-------------------+\nCode block:\nitemsDf.__1__(__2__, __3__(__4__, \"[\\s\\-]\", __5__))",
         "options": [
-            "A.. 1. withColumn\n2. \"itemNameBetweenSeparators\"\n3. split\n4. \"itemName\"\n5. 4\n(Correct)",
-            "B.. 1. withColumnRenamed\n2. \"itemNameBetweenSeparators\"\n3. split\n4. \"itemName\"\n5. 4",
-            "C.. 1. withColumnRenamed\n2. \"itemName\"\n3. split\n4. \"itemNameBetweenSeparators\"\n5. 4",
-            "D.. 1. withColumn\n2. \"itemNameBetweenSeparators\"\n3. split\n4. \"itemName\"\n5. 5",
-            "E.. 1. withColumn\n2. itemNameBetweenSeparators\n3. str_split\n4. \"itemName\"\n5. 5"
+            "A. 1. withColumn\n2. \"itemNameBetweenSeparators\"\n3. split\n4. \"itemName\"\n5. 4\n(Correct)",
+            "B. 1. withColumnRenamed\n2. \"itemNameBetweenSeparators\"\n3. split\n4. \"itemName\"\n5. 4",
+            "C. 1. withColumnRenamed\n2. \"itemName\"\n3. split\n4. \"itemNameBetweenSeparators\"\n5. 4",
+            "D. 1. withColumn\n2. \"itemNameBetweenSeparators\"\n3. split\n4. \"itemName\"\n5. 5",
+            "E. 1. withColumn\n2. itemNameBetweenSeparators\n3. str_split\n4. \"itemName\"\n5. 5"
         ],
         "answer": [
             "A"
@@ -4143,11 +4131,11 @@ const quizData = [
     {
         "question": "Which of the following are valid execution modes?",
         "options": [
-            "A.. Kubernetes, Local, Client",
-            "B.. Client, Cluster, Local",
-            "C.. Server, Standalone, Client",
-            "D.. Cluster, Server, Local",
-            "E.. Standalone, Client, Cluster"
+            "A. Kubernetes, Local, Client",
+            "B. Client, Cluster, Local",
+            "C. Server, Standalone, Client",
+            "D. Cluster, Server, Local",
+            "E. Standalone, Client, Cluster"
         ],
         "answer": [
             "B"
@@ -4157,11 +4145,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks shows the structure of a DataFrame in a tree-like way,\ncontaining both column names and types?",
         "options": [
-            "A.. 1.print(itemsDf.columns)\n2.print(itemsDf.types)",
-            "B.. itemsDf.printSchema()",
-            "C.. spark.schema(itemsDf)",
-            "D.. itemsDf.rdd.printSchema()",
-            "E.. itemsDf.print.schema()"
+            "A. 1.print(itemsDf.columns)\n2.print(itemsDf.types)",
+            "B. itemsDf.printSchema()",
+            "C. spark.schema(itemsDf)",
+            "D. itemsDf.rdd.printSchema()",
+            "E. itemsDf.print.schema()"
         ],
         "answer": [
             "B"
@@ -4171,11 +4159,11 @@ const quizData = [
     {
         "question": "Which of the following code blocks returns all unique values of column storeId in DataFrame\ntransactionsDf?",
         "options": [
-            "A.. transactionsDf[\"storeId\"].distinct()",
-            "B.. transactionsDf.select(\"storeId\").distinct()\n(Correct)",
-            "C.. transactionsDf.filter(\"storeId\").distinct()",
-            "D.. transactionsDf.select(col(\"storeId\").distinct())",
-            "E.. transactionsDf.distinct(\"storeId\")"
+            "A. transactionsDf[\"storeId\"].distinct()",
+            "B. transactionsDf.select(\"storeId\").distinct()\n(Correct)",
+            "C. transactionsDf.filter(\"storeId\").distinct()",
+            "D. transactionsDf.select(col(\"storeId\").distinct())",
+            "E. transactionsDf.distinct(\"storeId\")"
         ],
         "answer": [
             "B"

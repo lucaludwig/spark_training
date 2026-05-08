@@ -98,7 +98,7 @@ function parseTextFile(filePath) {
 
                 let optText = optionsBlock.substring(start, end).trim();
                 optText = optText.replace(/^[A-Z]\.\s/, '');
-                options.push(`${label}. ${optText}`);
+                options.push(`${label} ${optText}`);
             }
 
         } else {
