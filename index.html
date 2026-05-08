@@ -201,6 +201,49 @@
         .q-status.weak { background: #ffe7e7; color: #fa3e3e; }
         .q-status.strong { background: #e7ffe7; color: #42b72a; }
 
+        /* Code blocks */
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            padding: 12px 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 10px 0;
+            white-space: pre;
+        }
+        .code-block .line-num {
+            color: #858585;
+            user-select: none;
+            margin-right: 12px;
+            display: inline-block;
+            min-width: 20px;
+            text-align: right;
+        }
+        .inline-code {
+            background: #f0f0f0;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 13px;
+            padding: 1px 5px;
+            border-radius: 3px;
+            color: #d63384;
+        }
+        /* Tables */
+        .data-table {
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            background: #f8f9fa;
+            border: 1px solid #e9ebee;
+            border-radius: 6px;
+            padding: 10px 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+            white-space: pre;
+        }
+
         /* Setup modal */
         .modal-overlay {
             display: none;
@@ -729,21 +772,105 @@
             return div.innerHTML;
         }
 
+        function isCodeLine(line) {
+            const t = line.trim();
+            // Numbered code lines: 1.spark.read..., 2.df.filter...
+            if (/^\d+\.[\w(]/.test(t)) return true;
+            // Common PySpark/Python patterns
+            if (/^(df|spark|result|from |import |filtered_|joined|\.|\(|#)/.test(t)) return true;
+            if (/^(DataFrame\.|\.select|\.filter|\.groupBy|\.join|\.write|\.read|\.agg|\.withColumn|\.drop|\.show|\.count|\.cache|\.repartition|\.coalesce)/.test(t)) return true;
+            // Lines with chained methods
+            if (/^\.\w+\(/.test(t)) return true;
+            // Assignment patterns: var = something.method()
+            if (/^\w+\s*=\s*\w+\.\w+/.test(t)) return true;
+            return false;
+        }
+
+        function isTableLine(line) {
+            const t = line.trim();
+            return /^\+[-+]+\+$/.test(t) || /^\|.*\|$/.test(t);
+        }
+
         function formatText(text) {
             let escaped = escapeHtml(text);
+            // Remove stray page numbers
             escaped = escaped.replace(/\n\d{1,3}\n/g, '\n');
+            // Remove common PDF artifacts
+            escaped = escaped.replace(/\nCopyEdit\n/g, '\n');
+            escaped = escaped.replace(/\npython\n/g, '\n');
             escaped = escaped.replace(/\n{3,}/g, '\n\n');
-            const paragraphs = escaped.split(/\n\n+/).map(p => p.trim()).filter(p => p);
-            return paragraphs.map(p => {
-                p = p.replace(/\n/g, ' ');
-                p = p.replace(/ {2,}/g, ' ');
-                p = p.replace(/\b(Option [A-F])\b/g, '<strong>$1</strong>');
-                return '<p>' + p + '</p>';
-            }).join('');
+
+            const lines = escaped.split('\n');
+            let result = '';
+            let i = 0;
+
+            while (i < lines.length) {
+                const line = lines[i];
+
+                // Detect table blocks
+                if (isTableLine(line)) {
+                    let tableLines = [];
+                    while (i < lines.length && (isTableLine(lines[i]) || lines[i].trim() === '')) {
+                        if (lines[i].trim() !== '') tableLines.push(lines[i]);
+                        i++;
+                    }
+                    result += '<div class="data-table">' + tableLines.join('\n') + '</div>';
+                    continue;
+                }
+
+                // Detect code blocks (2+ consecutive code lines)
+                if (isCodeLine(line)) {
+                    let codeLines = [];
+                    while (i < lines.length && (isCodeLine(lines[i]) || lines[i].trim() === '')) {
+                        codeLines.push(lines[i]);
+                        i++;
+                    }
+                    // Remove trailing empty lines
+                    while (codeLines.length && codeLines[codeLines.length - 1].trim() === '') codeLines.pop();
+
+                    if (codeLines.length >= 1) {
+                        const formatted = codeLines.map(l => {
+                            // Remove numbered prefix like "1." at start of code
+                            return l.replace(/^(\d+)\./, '<span class="line-num">$1</span>');
+                        }).join('\n');
+                        result += '<div class="code-block">' + formatted + '</div>';
+                    }
+                    continue;
+                }
+
+                // Regular text — collect paragraph
+                let paraLines = [];
+                while (i < lines.length && !isCodeLine(lines[i]) && !isTableLine(lines[i]) && lines[i].trim() !== '') {
+                    paraLines.push(lines[i]);
+                    i++;
+                }
+                // Skip blank lines
+                while (i < lines.length && lines[i].trim() === '') i++;
+
+                if (paraLines.length > 0) {
+                    let p = paraLines.join(' ');
+                    p = p.replace(/ {2,}/g, ' ').trim();
+                    p = p.replace(/\b(Option [A-F])\b/g, '<strong>$1</strong>');
+                    // Inline code: backtick-wrapped or common API references
+                    p = p.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+                    result += '<p>' + p + '</p>';
+                }
+            }
+            return result;
         }
 
         function formatOptionText(text) {
             let escaped = escapeHtml(text);
+            // Check if entire option is code-like
+            const lines = escaped.split('\n').map(l => l.trim()).filter(l => l);
+            const codeLineCount = lines.filter(l => isCodeLine(l)).length;
+
+            if (codeLineCount > 0 && codeLineCount >= lines.length * 0.5) {
+                // Render as code
+                const formatted = lines.map(l => l.replace(/^(\d+)\./, '<span class="line-num">$1</span>')).join('\n');
+                return '<div class="code-block" style="margin:0">' + formatted + '</div>';
+            }
+
             escaped = escaped.replace(/\n/g, ' ');
             escaped = escaped.replace(/ {2,}/g, ' ');
             return escaped;

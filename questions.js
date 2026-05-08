@@ -3151,15 +3151,16 @@ const quizData = [
         "explanation": "Executors stop upon application completion by default.\nCorrect. Executors only persist during the lifetime of an application.\nA notable exception to that is when Dynamic Resource Allocation is enabled (which it is not by\ndefault). With Dynamic Resource Allocation enabled, executors are terminated when they are idle,\nindependent of whether the application has been completed or not.\nAn executor can serve multiple applications.\nWrong. An executor is always specific to the application. It is terminated when the application\ncompletes (exception see above).\nEach node hosts a single executor.\nNo. Each node can host one or more executors.\nExecutors store data in memory only.\nNo. Executors can store data in memory or on disk.\nExecutors are launched by the driver.\nIncorrect. Executors are launched by the cluster manager on behalf of the driver.\nMore info: Job Scheduling - Spark 3.1.2 Documentation, How Applications are Executed on a Spark\nCluster | Anatomy of a Spark Application | InformIT, and Spark Jargon for Starters. This blog is to\nclear some of the... | by Mageswaran D | Medium"
     },
     {
-        "question": "The code block displayed below contains an error. The code block should produce a\nDataFrame with color as the only column and three rows with color values of red, blue, and green,\nrespectively.\nFind the error.\nCode block:\n1.spark.createDataFrame([(\"red\",), (\"blue\",), (\"green\",)], \"color\")\nInstead of calling spark.createDataFrame, just DataFrame should be called.",
+        "question": "The code block displayed below contains an error. The code block should produce a\nDataFrame with color as the only column and three rows with color values of red, blue, and green,\nrespectively.\nFind the error.\nCode block:\n1.spark.createDataFrame([(\"red\",), (\"blue\",), (\"green\",)], \"color\")",
         "options": [
-            "A.. The commas in the tuples with the colors should be eliminated.",
-            "B.. The colors red, blue, and green should be expressed as a simple Python list, and not a list of tuples\n.",
-            "C.. Instead of color, a data type should be specified.",
-            "D.. The \"color\" expression needs to be wrapped in brackets, so it reads [\"color\"]."
+            "A. Instead of calling spark.createDataFrame, just DataFrame should be called.",
+            "B.. The commas in the tuples with the colors should be eliminated.",
+            "C.. The colors red, blue, and green should be expressed as a simple Python list, and not a list of tuples\n.",
+            "D.. Instead of color, a data type should be specified.",
+            "E.. The \"color\" expression needs to be wrapped in brackets, so it reads [\"color\"]."
         ],
         "answer": [
-            "D"
+            "E"
         ],
         "explanation": "Correct code block:\nspark.createDataFrame([(\"red\",), (\"blue\",), (\"green\",)], [\"color\"])\nThe createDataFrame syntax is not exactly straightforward, but luckily the documentation (linked\nbelow) provides several examples on how to use it. It also shows an example very similar to the code\nblock presented here which should help you answer this question correctly.\nMore info: pyspark.sql.SparkSession.createDataFrame - PySpark 3.1.2 documentation Static notebook\n| Dynamic notebook: See test 2"
     },
