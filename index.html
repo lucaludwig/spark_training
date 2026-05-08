@@ -353,6 +353,7 @@
         let currentQuestionIndex = 0;
         let score = 0;
         let currentMode = 'smart';
+        let currentOptionMapping = [];
         let questionOrder = [];
 
         // --- Tracking via localStorage ---
@@ -916,14 +917,21 @@
             }
             questionEl.innerHTML = questionHtml;
 
+            // Shuffle options order
+            const optionsWithIndex = currentQuestion.options.map((opt, idx) => ({ text: opt, origIndex: idx }));
+            shuffle(optionsWithIndex);
+            currentOptionMapping = optionsWithIndex.map(o => o.origIndex);
+
             optionsEl.innerHTML = '';
-            currentQuestion.options.forEach((option, index) => {
+            optionsWithIndex.forEach((opt, index) => {
                 const li = document.createElement('li');
                 const radioId = `option${index}`;
                 const letter = String.fromCharCode(65 + index);
+                // Replace original letter prefix with shuffled letter
+                const displayText = opt.text.replace(/^[A-F]\.\s*/, letter + '. ');
                 li.innerHTML = `
-                    <input type="${inputType}" name="option" id="${radioId}" value="${letter}">
-                    <label for="${radioId}">${formatOptionText(option)}</label>
+                    <input type="${inputType}" name="option" id="${radioId}" value="${index}">
+                    <label for="${radioId}">${formatOptionText(displayText)}</label>
                 `;
                 optionsEl.appendChild(li);
             });
@@ -956,7 +964,9 @@
             const currentQuestion = quizData[qIdx];
             let selectedAnswers = [];
             selectedOptions.forEach(option => {
-                selectedAnswers.push(option.value);
+                const shuffledIdx = parseInt(option.value);
+                const origIdx = currentOptionMapping[shuffledIdx];
+                selectedAnswers.push(String.fromCharCode(65 + origIdx));
             });
 
             const isCorrect = selectedAnswers.sort().join('') === [...currentQuestion.answer].sort().join('');
@@ -968,7 +978,12 @@
                 feedbackEl.innerText = 'Correct!';
                 feedbackEl.className = 'correct';
             } else {
-                const answerDisplay = [...currentQuestion.answer].join(', ');
+                // Map original answer letters to current shuffled display letters
+                const answerDisplay = [...currentQuestion.answer].map(origLetter => {
+                    const origIdx = origLetter.charCodeAt(0) - 65;
+                    const shuffledIdx = currentOptionMapping.indexOf(origIdx);
+                    return String.fromCharCode(65 + shuffledIdx);
+                }).sort().join(', ');
                 feedbackEl.innerText = `Incorrect. The correct answer is ${answerDisplay}.`;
                 feedbackEl.className = 'incorrect';
             }
