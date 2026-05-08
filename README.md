@@ -1,8 +1,8 @@
-# Exam Training Quiz
+# Spark Exam Training Quiz
 
-This repository contains an interactive web-based quiz to practice for the AWS Certified Generative AI Developer - Professional (AIP-C01) exam.
+This repository contains an interactive web-based quiz to practice for the Databricks Certified Associate Developer for Apache Spark exam.
 
-The questions were extracted from the `AIP-C01 V12.35.pdf` document.
+The questions were extracted from `Associate-Developer-Apache-Spark-3.5 V12.65.pdf` (Spark 3.5) and `Associate-Developer-Apache-Spark V12.35.pdf` (Spark 3.0) — 308 questions total.
 
 ## How to Use Locally
 

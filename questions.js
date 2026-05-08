@@ -1,1170 +1,4184 @@
 const quizData = [
     {
-        "question": "A GenAI developer is building a Retrieval Augmented Generation (RAG)-based customer\nsupport application that uses Amazon Bedrock foundation models (FMs). The application needs to\nprocess 50 GB of historical customer conversations that are stored in an Amazon S3 bucket as JSON\nfiles. The application must use the processed data as its retrieval corpus. The application's data\nprocessing workflow must extract relevant data from customer support documents, remove\ncustomer personally identifiable information (PII), and generate embeddings for vector storage. The\nprocessing workflow must be cost-effective and must finish within 4 hours.\nWhich solution will meet these requirements with the LEAST operational overhead?",
+        "question": "A Spark application developer wants to identify which operations cause shuffling, leading to a\nnew stage in the Spark execution plan.\nWhich operation results in a shuffle and a new stage?",
         "options": [
-            "A.. Use AWS Lambda and Amazon Comprehend to process files in parallel, remove PII, and call\nAmazon Bedrock APIs to generate vectors. Configure Lambda concurrency limits and memory\nsettings to optimize throughput.",
-            "B.. Create an AWS Glue ETL job to run PII detection scripts on the data. Use Amazon SageMaker\nProcessing to run the HuggingFaceProcessor to generate embeddings by using a pre-trained model.\nStore the embeddings in Amazon OpenSearch Service.",
-            "C.. Deploy an Amazon EMR cluster that runs Apache Spark with user-defined functions (UDFs) that\ncall Amazon Comprehend to detect PII. Use Amazon Bedrock APIs to generate vectors. Store outputs\nin Amazon Aurora PostgreSQL with the pgvector extension.",
-            "D.. Implement a data processing pipeline that uses AWS Step Functions to orchestrate a workload\nthat uses Amazon Comprehend to detect PII and Amazon Bedrock to generate embeddings. Directly\nintegrate the workflow with Amazon OpenSearch Serverless to store vectors and provide similarity\nsearch capabilities."
+            "A.. DataFrame.groupBy().agg()",
+            "B.. DataFrame.filter()",
+            "C.. DataFrame.withColumn()",
+            "D.. DataFrame.select()"
         ],
-        "answer": "D",
-        "explanation": "Comprehensive and Detailed 250 to 350 words of Explanation From AWS Generative AI concepts and\nservices documents:\nOption D is the best solution because it delivers a fully managed, scalable pipeline with minimal\ninfrastructure management while meeting the 50 GB and 4-hour constraint. AWS Step Functions\nprovides a serverless orchestration layer that can coordinate parallel processing steps, retries, and\nerror handling without managing clusters or tuning long-running compute.\nUsing Amazon Comprehend for PII detection fulfills the requirement to remove customer PII in a\nmanaged and consistent way. Step Functions can coordinate Comprehend calls at scale and route\nsanitized outputs into the embedding step. Generating embeddings with Amazon Bedrock keeps the\nentire workflow within AWS managed services, eliminates the need to maintain custom embedding\nmodels, and supports consistent vector representations for downstream retrieval.\nDirect integration with Amazon OpenSearch Serverless provides a low-operations vector store that\ncan handle large-scale indexing and similarity search without cluster sizing, node maintenance, or\nshard management.\nThis aligns strongly with the requirement for least operational overhead and supports growth beyond\nthe initial 50 GB corpus. Step Functions can batch and parallelize ingestion into OpenSearch\nServerless to meet the 4-hour completion goal in a cost-effective manner by controlling concurrency,\nchunk sizes, and failure handling.\nOption A can be difficult and costly at this scale because Lambda concurrency and per-invocation\noverhead can become complex to tune for 50 GB within 4 hours. Option B introduces SageMaker\nProcessing and embedding model management, increasing operational complexity. Option C requires\nEMR cluster management and tuning, which is the opposite of minimal overhead.\n2\n\n\n\n\nTherefore, Option D is the most operationally efficient, scalable, and managed approach to build the\nrequired PII-sanitized embedding pipeline for a RAG corpus."
+        "answer": [
+            "A"
+        ],
+        "explanation": "Operations that trigger data movement across partitions (like groupBy, join, repartition) result\nin a shuffle and a new stage.\nFrom Spark documentation:\n\"groupBy and aggregation cause data to be shuffled across partitions to combine rows with\nthe same key.\" Option A (groupBy + agg) → causes shuffle.\nOptions B, C, and D (filter, withColumn, select) → transformations that do not require\nshuffling; they are narrow dependencies.\nFinal answer: A"
+    },
+    {
+        "question": "A data scientist has been investigating user profile data to build features for their model. After\nsome exploratory data analysis, the data scientist identified that some records in the user\nprofiles contain NULL values in too many fields to be useful.\nThe schema of the user profile table looks like this:\nuser_id STRING,\nusername STRING,\ndate_of_birth DATE,\ncountry STRING,\ncreated_at TIMESTAMP\nThe data scientist decided that if any record contains a NULL value in any field, they want to\nremove that record from the output before further processing.\nWhich block of Spark code can be used to achieve these requirements?",
+        "options": [
+            "A.. filtered_users = raw_users.na.drop(\"any\")",
+            "B.. filtered_users = raw_users.na.drop(\"all\")",
+            "C.. filtered_users = raw_users.dropna(how=\"any\")",
+            "D.. filtered_users = raw_users.dropna(how=\"all\")"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "In Spark's DataFrame API, the dropna() (or equivalently, DataFrameNaFunctions.drop())\nmethod removes rows containing null values.\nBehavior:\nhow=\"any\" → drops rows where any column has a null value.\nhow=\"all\" → drops rows where all columns are null.\n\n\nSince the data scientist wants to drop records with any null field, the correct parameter is\nhow=\"any\".\nCorrect syntax:\nfiltered_users = raw_users.dropna(how=\"any\")\nThis will remove all records that have at least one null value in any column.\nWhy the other options are incorrect:\nA: Uses na.drop(\"any\") but missing parentheses context (works only as\nraw_users.na.drop(\"any\"), which is equivalent to option C).\nB/D: how=\"all\" only removes rows where all values are null - too strict for this use case.\nReference:\nPySpark DataFrame API - DataFrameNaFunctions.drop() and DataFrame.dropna().\nDatabricks Exam Guide (June 2025): Section \"Developing Apache Spark\nDataFrame/DataSet API Applications\" - covers handling missing data and DataFrame\ncleaning operations."
+    },
+    {
+        "question": "An engineer has two DataFrames: df1 (small) and df2 (large). A broadcast join is used:\npython\nCopyEdit\nfrom pyspark.sql.functions import broadcast\nresult = df2.join(broadcast(df1), on='id', how='inner')\nWhat is the purpose of using broadcast() in this scenario?\nOptions:",
+        "options": [
+            "A.. It filters the id values before performing the join.",
+            "B.. It increases the partition size for df1 and df2.",
+            "C.. It reduces the number of shuffle operations by replicating the smaller DataFrame to all\nnodes.",
+            "D.. It ensures that the join happens only when the id values are identical."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "broadcast(df1) tells Spark to send the small DataFrame (df1) to all worker nodes.\nThis eliminates the need for shuffling df1 during the join.\nBroadcast joins are optimized for scenarios with one large and one small table."
+    },
+    {
+        "question": "A developer runs:\nWhat is the result?\nOptions:",
+        "options": [
+            "A.. It stores all data in a single Parquet file.",
+            "B.. It throws an error if there are null values in either partition column.",
+            "C.. It appends new partitions to an existing Parquet file.",
+            "D.. It creates separate directories for each unique combination of color and fruit."
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "The partitionBy() method in Spark organizes output into subdirectories based on unique\ncombinations of the specified columns:\ne.g.\n/path/to/output/color=red/fruit=apple/part-0000.parquet\n/path/to/output/color=green/fruit=banana/part-0001.parquet\nThis improves query performance via partition pruning.\nIt does not consolidate into a single file.\nNull values are allowed in partitions.\nIt does not \"append\" unless .mode(\"append\") is used."
+    },
+    {
+        "question": "A data scientist is analyzing a large dataset and has written a PySpark script that includes\nseveral transformations and actions on a DataFrame. The script ends with a collect() action\nto retrieve the results.\nHow does Apache Spark™'s execution hierarchy process the operations when the data\nscientist runs this script?",
+        "options": [
+            "A.. The script is first divided into multiple applications, then each application is split into jobs,\nstages, and finally tasks.",
+            "B.. The entire script is treated as a single job, which is then divided into multiple stages, and\neach stage is further divided into tasks based on data partitions.",
+            "C.. The collect() action triggers a job, which is divided into stages at shuffle boundaries, and\neach stage is split into tasks that operate on individual data partitions.",
+            "D.. Spark creates a single task for each transformation and action in the script, and these\ntasks are grouped into stages and jobs based on their dependencies."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "In Apache Spark, the execution hierarchy is structured as follows:\nApplication: The highest-level unit, representing the user program built on Spark.\nJob: Triggered by an action (e.g., collect(), count()). Each action corresponds to a job.\nStage: A job is divided into stages based on shuffle boundaries. Each stage contains tasks\nthat can be executed in parallel.\nTask: The smallest unit of work, representing a single operation applied to a partition of the\ndata.\nWhen the collect() action is invoked, Spark initiates a job. This job is then divided into stages\nat points where data shuffling is required (i.e., wide transformations). Each stage comprises\ntasks that are distributed across the cluster's executors, operating on individual data\npartitions.\nThis hierarchical execution model allows Spark to efficiently process large-scale data by\nparallelizing tasks and optimizing resource utilization."
+    },
+    {
+        "question": "A data engineer has written the following code to join two DataFrames df1 and df2:\ndf1 = spark.read.csv(\"sales_data.csv\")\n\n\ndf2 = spark.read.csv(\"product_data.csv\")\ndf_joined = df1.join(df2, df1.product_id == df2.product_id)\nThe DataFrame df1 contains ~10 GB of sales data, and df2 contains ~8 MB of product data.\nWhich join strategy will Spark use?",
+        "options": [
+            "A.. Shuffle join, as the size difference between df1 and df2 is too large for a broadcast join to\nwork efficiently.",
+            "B.. Shuffle join, because AQE is not enabled, and Spark uses a static query plan.",
+            "C.. Shuffle join because no broadcast hints were provided.",
+            "D.. Broadcast join, as df2 is smaller than the default broadcast threshold."
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "Spark automatically uses a broadcast hash join when one side of the join is small enough to\nfit within the broadcast threshold.\nDefault threshold:\nspark.sql.autoBroadcastJoinThreshold = 10MB (as of Spark 3.5)\nSince df2 is 8 MB, Spark automatically broadcasts it to all executors. This avoids a shuffle on\nthe large dataset (df1) and speeds up the join.\nWhy the other options are incorrect:\nA: 8 MB < 10 MB threshold → broadcast join is efficient.\nB: AQE is not required for broadcast joins; it's a static optimization.\nC: Broadcast hints are optional - Spark infers automatically.\nReference:\nDatabricks Exam Guide (June 2025): Section \"Troubleshooting and Tuning Apache Spark\nDataFrame API Applications\" - broadcast joins and optimization.\nSpark SQL Join Strategies - Broadcast hash join and shuffle join thresholds."
+    },
+    {
+        "question": "A data engineer is reviewing a Spark application that applies several transformations to a\nDataFrame but notices that the job does not start executing immediately.\nWhich two characteristics of Apache Spark's execution model explain this behavior? (Choose\n2 answers)",
+        "options": [
+            "A.. Transformations are executed immediately to build the lineage graph.",
+            "B.. The Spark engine optimizes the execution plan during the transformations, causing\ndelays.",
+            "C.. Transformations are evaluated lazily.",
+            "D.. The Spark engine requires manual intervention to start executing transformations.",
+            "E.. Only actions trigger the execution of the transformation pipeline."
+        ],
+        "answer": [
+            "C",
+            "E"
+        ],
+        "explanation": "Apache Spark follows a lazy evaluation model, meaning transformations (like filter(), select(),\nmap()) are not executed immediately. Instead, they build a logical plan (lineage graph) that\nrepresents the sequence of operations to be applied.\nExecution only begins when an action (e.g., count(), collect(), save(), show()) is called. At that\n\n\npoint, Spark's engine:\nOptimizes the logical plan into a physical plan.\nDivides it into stages and tasks.\nExecutes them across the cluster.\nThis design helps Spark optimize execution paths and avoid unnecessary computations.\nWhy the other options are incorrect:\nA: Transformations do not execute immediately; they are deferred.\nB: Optimization happens during job execution (after an action), not during transformations.\nD: Execution starts automatically once an action is triggered, no manual intervention needed.\nReference:\nDatabricks Exam Guide (June 2025): Section \"Apache Spark Architecture and Components\"\n- covers lazy evaluation, actions vs. transformations, and execution hierarchy.\nSpark 3.5 Documentation - Lazy Evaluation model and DAG scheduling."
+    },
+    {
+        "question": "What is the behavior of the function date_sub(start, days) if a negative value is passed into\nthe days parameter?",
+        "options": [
+            "A.. The number of days specified will be added to the start date.",
+            "B.. An error message of an invalid parameter will be returned.",
+            "C.. The same start date will be returned.",
+            "D.. The number of days specified will be removed from the start date."
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "In Spark SQL, the function date_sub(startDate, days) returns the date that is days before\nstartDate.\nIf the days parameter is negative, Spark interprets it as subtracting a negative number, which\neffectively adds days to the date.\nExample:\nfrom pyspark.sql.functions import date_sub, lit\ndf = spark.createDataFrame([( \"2024-10-01\", )], [\"dt\"])\ndf.select(date_sub(\"dt\", -5).alias(\"new_date\")).show()\nOutput:\n+----------+\n| new_date |\n+----------+\n|2024-10-06|\n+----------+\nWhy the other options are incorrect:\nB: No error occurs; negative values are supported.\nC: The start date changes if days ≠ 0.\nD: Subtracting days would move the date backward, not forward.\nReference:\nSpark SQL Functions - date_sub(startDate, days) and date_add(startDate, days) behavior.\nDatabricks Exam Guide (June 2025): Section \"Using Spark SQL\" - working with date and\n\n\ntimestamp functions."
+    },
+    {
+        "question": "A data scientist at a large e-commerce company needs to process and analyze 2 TB of daily\ncustomer transaction data. The company wants to implement real-time fraud detection and\npersonalized product recommendations.\nCurrently, the company uses a traditional relational database system, which struggles with\nthe increasing data volume and velocity.\nWhich feature of Apache Spark effectively addresses this challenge?",
+        "options": [
+            "A.. Ability to process small datasets efficiently",
+            "B.. In-memory computation and parallel processing capabilities",
+            "C.. Support for SQL queries on structured data",
+            "D.. Built-in machine learning libraries"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "Apache Spark was designed for big data and high-velocity workloads. Its core strength lies in\nits in-memory computation and parallel distributed processing model.\nThese features allow Spark to:\nProcess large-scale datasets quickly across many nodes.\nSupport real-time and near-real-time analytics for tasks like fraud detection and\nrecommendations.\nMinimize disk I/O through caching and memory persistence.\nThus, the key advantage in this use case is Spark's ability to handle large data volumes\nefficiently using distributed, in-memory computation.\nWhy the other options are incorrect:\nA: Spark is optimized for large, not small, datasets.\nC: SQL support is useful but doesn't solve the scalability issue.\nD: MLlib supports machine learning but relies on Spark's parallel computation for speed.\nReference:\nDatabricks Exam Guide (June 2025): Section \"Apache Spark Architecture and Components\"\n- identifies Spark's advantages: in-memory processing, distributed computation, and\nscalability.\nApache Spark 3.5 Overview - Key design goals and cluster computation model."
+    },
+    {
+        "question": "A Spark application is experiencing performance issues in client mode due to the driver being\nresource-constrained.\nHow should this issue be resolved?",
+        "options": [
+            "A.. Switch the deployment mode to cluster mode.",
+            "B.. Add more executor instances to the cluster.",
+            "C.. Increase the driver memory on the client machine.",
+            "D.. Switch the deployment mode to local mode."
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "In client mode, the driver runs on the same machine that submitted the job (often a\ndeveloper's workstation). If the driver has insufficient memory or CPU, it becomes a\nbottleneck.\nSolution: Run the job in cluster mode.\nIn cluster mode, the driver runs inside the cluster on a worker node, benefiting from\ndistributed cluster resources and improved performance for large workloads.\nWhy the other options are incorrect:\nB: Executors handle tasks, not driver overhead.\nC: May help temporarily but doesn't scale; cluster mode is best practice.\nD: Local mode runs everything on one JVM - worse for large workloads.\nReference:\nDatabricks Exam Guide (June 2025): Section \"Using Spark Connect to Deploy Applications\" -\nexplains client vs. cluster deployment modes.\nSpark Deployment Overview - driver behavior and resource management."
+    },
+    {
+        "question": "A Spark application suffers from too many small tasks due to excessive partitioning. How can\nthis be fixed without a full shuffle?\nOptions:",
+        "options": [
+            "A.. Use the distinct() transformation to combine similar partitions",
+            "B.. Use the coalesce() transformation with a lower number of partitions",
+            "C.. Use the sortBy() transformation to reorganize the data",
+            "D.. Use the repartition() transformation with a lower number of partitions"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "coalesce(n) reduces the number of partitions without triggering a full shuffle, unlike\nrepartition().\nThis is ideal when reducing partition count, especially during write operations."
+    },
+    {
+        "question": "A developer needs to produce a Python dictionary using data stored in a small Parquet table,\nwhich looks like this:\n\n\n \nThe resulting Python dictionary must contain a mapping of region -> region id containing the\nsmallest 3 region_id values.\nWhich code fragment meets the requirements?\nA)\n \nB)\n \nC)\n\n\n \nD)\n \nThe resulting Python dictionary must contain a mapping of region -> region_id for the\nsmallest 3 region_id values.\nWhich code fragment meets the requirements?",
+        "options": [
+            "A.. regions = dict(\nregions_df\n.select('region', 'region_id')\n.sort('region_id')\n.take(3)\n)",
+            "B.. regions = dict(\nregions_df\n.select('region_id', 'region')\n.sort('region_id')\n.take(3)\n)",
+            "C.. regions = dict(\nregions_df\n.select('region_id', 'region')\n.limit(3)\n\n\n.collect()\n)",
+            "D.. regions = dict(\nregions_df\n.select('region', 'region_id')\n.sort(desc('region_id'))\n.take(3)\n)"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "The question requires creating a dictionary where keys are region values and values are the\ncorresponding region_id integers. Furthermore, it asks to retrieve only the smallest 3\nregion_id values.\nKey observations:\n.select('region', 'region_id') puts the column order as expected by dict() - where the first\ncolumn becomes the key and the second the value.\n.sort('region_id') ensures sorting in ascending order so the smallest IDs are first.\n.take(3) retrieves exactly 3 rows.\nWrapping the result in dict(...) correctly builds the required Python dictionary: { 'AFRICA': 0,\n'AMERICA': 1, 'ASIA': 2 }.\nIncorrect options:\nOption B flips the order to region_id first, resulting in a dictionary with integer keys - not what's\nasked.\nOption C uses .limit(3) without sorting, which leads to non-deterministic rows based on\npartition layout.\nOption D sorts in descending order, giving the largest rather than smallest region_ids.\nHence, Option A meets all the requirements precisely."
+    },
+    {
+        "question": "A data engineer is streaming data from Kafka and requires:\nMinimal latency\nExactly-once processing guarantees\nWhich trigger mode should be used?",
+        "options": [
+            "A.. .trigger(processingTime='1 second')",
+            "B.. .trigger(continuous=True)",
+            "C.. .trigger(continuous='1 second')",
+            "D.. .trigger(availableNow=True)"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "Exactly-once guarantees in Spark Structured Streaming require micro-batch mode (default),\nnot continuous mode.\nContinuous mode (.trigger(continuous=...)) only supports at-least-once semantics and lacks\nfull fault-tolerance.\ntrigger(availableNow=True) is a batch-style trigger, not suited for low-latency streaming.\n\n\nSo:\nOption A uses micro-batching with a tight trigger interval → minimal latency + exactly-once\nguarantee.\nFinal answer: A"
+    },
+    {
+        "question": "A developer notices that all the post-shuffle partitions in a dataset are smaller than the value\nset for spark.sql.adaptive.maxShuffledHashJoinLocalMapThreshold.\nWhich type of join will Adaptive Query Execution (AQE) choose in this case?",
+        "options": [
+            "A.. A Cartesian join",
+            "B.. A shuffled hash join",
+            "C.. A broadcast nested loop join",
+            "D.. A sort-merge join"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "Adaptive Query Execution (AQE) dynamically selects join strategies based on actual data\nsizes at runtime. If the size of post-shuffle partitions is below the threshold set by:\nspark.sql.adaptive.maxShuffledHashJoinLocalMapThreshold\nthen Spark prefers to use a shuffled hash join.\nFrom the Spark documentation:\n\"AQE selects a shuffled hash join when the size of post-shuffle data is small enough to fit\nwithin the configured threshold, avoiding more expensive sort-merge joins.\" Therefore:\nA is wrong - Cartesian joins are only used with no join condition.\nB is correct - this is the optimized join for small partitioned shuffle data under AQE.\nC and D are used under other scenarios but not for this case.\nFinal answer: B"
+    },
+    {
+        "question": "What is the behavior for function date_sub(start, days) if a negative value is passed into the\ndays parameter?",
+        "options": [
+            "A.. The same start date will be returned",
+            "B.. An error message of an invalid parameter will be returned",
+            "C.. The number of days specified will be added to the start date",
+            "D.. The number of days specified will be removed from the start date"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "The function date_sub(start, days) subtracts the number of days from the start date. If a\nnegative number is passed, the behavior becomes a date addition.\nExample:\nSELECT date_sub('2024-05-01', -5)\n-- Returns: 2024-05-06\nSo, a negative value effectively adds the absolute number of days to the date."
+    },
+    {
+        "question": "A developer created a DataFrame with columns color, fruit, and taste, and wrote the data to a\nParquet directory using:\ndf.write.partitionBy(\"color\", \"taste\").parquet(\"/path/to/output\")\nWhat is the result of this code?",
+        "options": [
+            "A.. It appends new partitions to an existing Parquet file.",
+            "B.. It throws an error if there are null values in either partition column.",
+            "C.. It creates separate directories for each unique combination of color and taste.",
+            "D.. It stores all data in a single Parquet file."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "When writing a DataFrame using .partitionBy() in Spark, the data is physically organized into\ndirectory structures corresponding to unique combinations of the partition columns.\nExample:\n/path/to/output/color=Red/taste=Sweet/part-0001.parquet\n/path/to/output/color=Green/taste=Sour/part-0002.parquet\nThis structure improves query performance by pruning partitions when filtering on these\ncolumns.\nWhy the other options are incorrect:\nA: Appending requires .mode(\"append\"), which isn't used here.\nB: Null values in partition columns are handled; they don't raise errors.\nD: Partitioning prevents storing all data in a single file.\nReference:\nPySpark DataFrameWriter API - partitionBy() and .parquet() methods.\nDatabricks Exam Guide (June 2025): Section \"Using Spark SQL\" - partitioning and writing\noptimized output files."
+    },
+    {
+        "question": "A developer initializes a SparkSession:\n \nspark = SparkSession.builder \\\n.appName(\"Analytics Application\") \\\n.getOrCreate()\nWhich statement describes the spark SparkSession?",
+        "options": [
+            "A.. The getOrCreate() method explicitly destroys any existing SparkSession and creates a\nnew one.",
+            "B.. A SparkSession is unique for each appName, and calling getOrCreate() with the same\nname will return an existing SparkSession once it has been created.",
+            "C.. If a SparkSession already exists, this code will return the existing session instead of\ncreating a new one.",
+            "D.. A new SparkSession is created every time the getOrCreate() method is invoked."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "According to the PySpark API documentation:\n\"getOrCreate(): Gets an existing SparkSession or, if there is no existing one, creates a new\none based on the options set in this builder.\" This means Spark maintains a global singleton\nsession within a JVM process. Repeated calls to getOrCreate() return the same session,\nunless explicitly stopped.\nOption A is incorrect: the method does not destroy any session.\nOption B incorrectly ties uniqueness to appName, which does not influence session\nreusability.\nOption D is incorrect: it contradicts the fundamental behavior of getOrCreate().\n(Source: PySpark SparkSession API Docs)"
+    },
+    {
+        "question": "In the code block below, aggDF contains aggregations on a streaming DataFrame:\n \nWhich output mode at line 3 ensures that the entire result table is written to the console\nduring each trigger execution?",
+        "options": [
+            "A.. complete",
+            "B.. append",
+            "C.. replace",
+            "D.. aggregate"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "The correct output mode for streaming aggregations that need to output the full updated\nresults at each trigger is \"complete\".\nFrom the official documentation:\n\"complete: The entire updated result table will be output to the sink every time there is a\ntrigger.\" This is ideal for aggregations, such as counts or averages grouped by a key, where\nthe result table changes incrementally over time.\nappend: only outputs newly added rows\nreplace and aggregate: invalid values for output mode"
+    },
+    {
+        "question": "A data scientist at an e-commerce company is working with user data obtained from its\n\n\nsubscriber database and has stored the data in a DataFrame df_user.\nBefore further processing, the data scientist wants to create another DataFrame\ndf_user_non_pii and store only the non-PII columns.\nThe PII columns in df_user are name, email, and birthdate.\nWhich code snippet can be used to meet this requirement?",
+        "options": [
+            "A.. df_user_non_pii = df_user.drop(\"name\", \"email\", \"birthdate\")",
+            "B.. df_user_non_pii = df_user.dropFields(\"name\", \"email\", \"birthdate\")",
+            "C.. df_user_non_pii = df_user.select(\"name\", \"email\", \"birthdate\")",
+            "D.. df_user_non_pii = df_user.remove(\"name\", \"email\", \"birthdate\")"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "To exclude sensitive (PII) columns from a DataFrame, the easiest method is to use the\n.drop() function with the list of column names to remove.\nCorrect syntax:\ndf_user_non_pii = df_user.drop(\"name\", \"email\", \"birthdate\")\nThis creates a new DataFrame containing all remaining columns.\nWhy the other options are incorrect:\nB: .dropFields() is not valid for standard DataFrames - it's used for struct fields only.\nC: .select() would keep only PII columns, not remove them.\nD: .remove() does not exist in Spark DataFrame API.\nReference:\nPySpark DataFrame API - drop() method for removing multiple columns.\nDatabricks Exam Guide (June 2025): Section \"Developing Apache Spark\nDataFrame/DataSet API Applications\" - data manipulation, selecting, and dropping columns."
+    },
+    {
+        "question": "What is the risk associated with this operation when converting a large Pandas API on Spark\nDataFrame back to a Pandas DataFrame?",
+        "options": [
+            "A.. The conversion will automatically distribute the data across worker nodes",
+            "B.. The operation will fail if the Pandas DataFrame exceeds 1000 rows",
+            "C.. Data will be lost during conversion",
+            "D.. The operation will load all data into the driver's memory, potentially causing memory\noverflow"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "When you convert a large pyspark.pandas (aka Pandas API on Spark) DataFrame to a local\nPandas DataFrame using .toPandas(), Spark collects all partitions to the driver.\nFrom the Spark documentation:\n\"Be careful when converting large datasets to Pandas. The entire dataset will be pulled into\nthe driver's memory.\" Thus, for large datasets, this can cause memory overflow or out-of-\n\n\nmemory errors on the driver.\nFinal answer: D"
+    },
+    {
+        "question": "A data engineer is running a batch processing job on a Spark cluster with the following\nconfiguration:\n10 worker nodes\n16 CPU cores per worker node\n64 GB RAM per node\nThe data engineer wants to allocate four executors per node, each executor using four cores.\nWhat is the total number of CPU cores used by the application?",
+        "options": [
+            "A.. 160",
+            "B.. 64",
+            "C.. 80",
+            "D.. 40"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "If each of the 10 nodes runs 4 executors, and each executor is assigned 4 CPU cores:\nExecutors per node = 4\nCores per executor = 4\nTotal executors = 4 * 10 = 40\nTotal cores = 40 executors * 4 cores = 160 cores\nHowever, Spark uses 1 core for overhead on each node when managing multiple executors.\nThus, the practical allocation is:\nTotal usable executors = 4 executors/node × 10 nodes = 40\nTotal cores = 4 cores × 40 executors = 160\nAnswe r : A - but the question asks specifically about \"CPU cores used by the application,\"\nassuming all However, if you are considering 4 executors/node × 4 cores = 16 cores per\nnode, across 10 nodes, that's 160.\nFinal Answe r: A"
+    },
+    {
+        "question": "A data engineer needs to join multiple DataFrames and has written the following code:\nfrom pyspark.sql.functions import broadcast\ndata1 = [(1, \"A\"), (2, \"B\")]\ndata2 = [(1, \"X\"), (2, \"Y\")]\ndata3 = [(1, \"M\"), (2, \"N\")]\ndf1 = spark.createDataFrame(data1, [\"id\", \"val1\"])\ndf2 = spark.createDataFrame(data2, [\"id\", \"val2\"])\ndf3 = spark.createDataFrame(data3, [\"id\", \"val3\"])\ndf_joined = df1.join(broadcast(df2), \"id\", \"inner\") \\\n.join(broadcast(df3), \"id\", \"inner\")\nWhat will be the output of this code?",
+        "options": [
+            "A.. The code will work correctly and perform two broadcast joins simultaneously to join df1\n\n\nwith df2, and then the result with df3.",
+            "B.. The code will fail because only one broadcast join can be performed at a time.",
+            "C.. The code will fail because the second join condition (df2.id == df3.id) is incorrect.",
+            "D.. The code will result in an error because broadcast() must be called before the joins, not\ninline."
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "Spark supports multiple broadcast joins in a single query plan, as long as each broadcasted\nDataFrame is small enough to fit under the configured threshold.\nExecution Plan:\nSpark broadcasts df2 to all executors.\nJoins df1 (big) with broadcasted df2.\nThen broadcasts df3 and performs another join with the intermediate result.\nThe result is efficient and avoids shuffling large data.\nWhy the other options are incorrect:\nB: Multiple broadcast joins are supported in Spark 3.x.\nC: The join condition is correct since all use id as the key.\nD: broadcast() can be used inline; it's valid syntax.\nReference:\nPySpark SQL Functions - broadcast() usage.\nDatabricks Exam Guide (June 2025): Section \"Developing Apache Spark\nDataFrame/DataSet API Applications\" - multiple broadcast join optimization."
+    },
+    {
+        "question": "What is the benefit of Adaptive Query Execution (AQE)?",
+        "options": [
+            "A.. It allows Spark to optimize the query plan before execution but does not adapt during\nruntime.",
+            "B.. It enables the adjustment of the query plan during runtime, handling skewed data,\noptimizing join strategies, and improving overall query performance.",
+            "C.. It optimizes query execution by parallelizing tasks and does not adjust strategies based on\nruntime metrics like data skew.",
+            "D.. It automatically distributes tasks across nodes in the clusters and does not perform\nruntime adjustments to the query plan."
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "Adaptive Query Execution (AQE) is a powerful optimization framework introduced in Apache\nSpark 3.0 and enabled by default since Spark 3.2. It dynamically adjusts query execution\nplans based on runtime statistics, leading to significant performance improvements. The key\nbenefits of AQE include:\nDynamic Join Strategy Selection: AQE can switch join strategies at runtime. For instance, it\ncan convert a sort-merge join to a broadcast hash join if it detects that one side of the join is\nsmall enough to be broadcasted, thus optimizing the join operation .\nHandling Skewed Data: AQE detects skewed partitions during join operations and splits them\ninto smaller partitions. This approach balances the workload across tasks, preventing\nscenarios where certain tasks take significantly longer due to data skew .\n\n\nCoalescing Post-Shuffle Partitions: AQE dynamically coalesces small shuffle partitions into\nlarger ones based on the actual data size, reducing the overhead of managing numerous\nsmall tasks and improving overall query performance .\nThese runtime optimizations allow Spark to adapt to the actual data characteristics during\nquery execution, leading to more efficient resource utilization and faster query processing\ntimes."
+    },
+    {
+        "question": "A data engineer writes the following code to join two DataFrames df1 and df2:\ndf1 = spark.read.csv(\"sales_data.csv\") # ~10 GB\ndf2 = spark.read.csv(\"product_data.csv\") # ~8 MB\nresult = df1.join(df2, df1.product_id == df2.product_id)\nWhich join strategy will Spark use?",
+        "options": [
+            "A.. Shuffle join, because AQE is not enabled, and Spark uses a static query plan",
+            "B.. Broadcast join, as df2 is smaller than the default broadcast threshold",
+            "C.. Shuffle join, as the size difference between df1 and df2 is too large for a broadcast join to\nwork efficiently",
+            "D.. Shuffle join because no broadcast hints were provided"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "The default broadcast join threshold in Spark is:\nspark.sql.autoBroadcastJoinThreshold = 10MB\nSince df2 is only 8 MB (less than 10 MB), Spark will automatically apply a broadcast join\nwithout requiring explicit hints.\nFrom the Spark documentation:\n\"If one side of the join is smaller than the broadcast threshold, Spark will automatically\nbroadcast it to all executors.\" A is incorrect because Spark does support auto broadcast even\nwith static plans.\nB is correct: Spark will automatically broadcast df2.\nC and D are incorrect because Spark's default logic handles this optimization.\nFinal answer: B"
+    },
+    {
+        "question": "A data engineer has noticed that upgrading the Spark version in their applications from Spark\n3.0 to Spark 3.5 has improved the runtime of some scheduled Spark applications.\nLooking further, the data engineer realizes that Adaptive Query Execution (AQE) is now\nenabled.\nWhich operation should AQE be implementing to automatically improve the Spark application\nperformance?",
+        "options": [
+            "A.. Dynamically switching join strategies",
+            "B.. Collecting persistent table statistics and storing them in the metastore for future use",
+            "C.. Improving the performance of single-stage Spark jobs",
+            "D.. Optimizing the layout of Delta files on disk"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "Adaptive Query Execution (AQE) in Spark 3.x automatically optimizes query plans at runtime\nbased on the actual data characteristics observed during job execution.\nKey features of AQE include:\nDynamic switching of join strategies: Changes between sort-merge join and broadcast join\nbased on actual shuffle sizes.\nCoalescing shuffle partitions: Reduces small tasks and improves parallelism efficiency.\nHandling skew joins: Dynamically splits large partitions to avoid data skew.\nThus, the most accurate answer describing AQE's function is \"dynamically switching join\nstrategies.\" Why the other options are incorrect:\nB: Table statistics are collected manually or by the metastore, not by AQE.\nC: AQE benefits multi-stage jobs involving shuffles, not single-stage jobs.\nD: Delta file optimization is handled by Databricks utilities, not AQE.\nReference:\nDatabricks Exam Guide (June 2025): Section \"Troubleshooting and Tuning Apache Spark\nDataFrame API Applications\" - covers AQE and its benefits.\nSpark 3.5 Release Notes - Adaptive Query Execution dynamic optimizations."
+    },
+    {
+        "question": "A data engineer wants to create a Streaming DataFrame that reads from a Kafka topic called\nfeed.\nWhich code fragment should be inserted in line 5 to meet the requirement?\nCode context:\nspark \\\n.readStream \\\n.format(\"kafka\") \\\n.option(\"kafka.bootstrap.servers\", \"host1:port1,host2:port2\") \\\n.[LINE 5] \\\n.load()\nOptions:",
+        "options": [
+            "A.. .option(\"subscribe\", \"feed\")",
+            "B.. .option(\"subscribe.topic\", \"feed\")",
+            "C.. .option(\"kafka.topic\", \"feed\")",
+            "D.. .option(\"topic\", \"feed\")"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "To read from a specific Kafka topic using Structured Streaming, the correct syntax is:\npython\nCopyEdit\n.option(\"subscribe\", \"feed\")\nThis is explicitly defined in the Spark documentation:\n\"subscribe - The Kafka topic to subscribe to. Only one topic can be specified for this option.\"\n(Source: Apache Spark Structured Streaming + Kafka Integration Guide)\n\"subscribe - The Kafka topic to subscribe to. Only one topic can be specified for this option.\"\n(Source: Apache Spark Structured Streaming + Kafka Integration Guide) B . \"subscribe.topic\"\nis invalid.\nC . \"kafka.topic\" is not a recognized option.\nD . \"topic\" is not valid for Kafka source in Spark."
+    },
+    {
+        "question": "A developer is trying to join two tables, sales.purchases_fct and sales.customer_dim, using\nthe following code:\nfact_df = purch_df.join(cust_df, F.col('customer_id') == F.col('custid')) The developer has\ndiscovered that customers in the purchases_fct table that do not exist in the customer_dim\ntable are being dropped from the joined table.\nWhich change should be made to the code to stop these customer records from being\ndropped?",
+        "options": [
+            "A.. fact_df = purch_df.join(cust_df, F.col('customer_id') == F.col('custid'), 'left')",
+            "B.. fact_df = cust_df.join(purch_df, F.col('customer_id') == F.col('custid'))",
+            "C.. fact_df = purch_df.join(cust_df, F.col('cust_id') == F.col('customer_id'))",
+            "D.. fact_df = purch_df.join(cust_df, F.col('customer_id') == F.col('custid'), 'right_outer')"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "In Spark, the default join type is an inner join, which returns only the rows with matching keys\nin both DataFrames. To retain all records from the left DataFrame (purch_df) and include\nmatching records from the right DataFrame (cust_df), a left outer join should be used.\nBy specifying the join type as 'left', the modified code ensures that all records from purch_df\nare preserved, and matching records from cust_df are included. Records in purch_df without\na corresponding match in cust_df will have null values for the columns from cust_df.\nThis approach is consistent with standard SQL join operations and is supported in PySpark's\nDataFrame API."
+    },
+    {
+        "question": "A data analyst wants to add a column date derived from a timestamp column.\nOptions:",
+        "options": [
+            "A.. dates_df.withColumn(\"date\", f.unix_timestamp(\"timestamp\")).show()",
+            "B.. dates_df.withColumn(\"date\", f.to_date(\"timestamp\")).show()",
+            "C.. dates_df.withColumn(\"date\", f.date_format(\"timestamp\", \"yyyy-MM-dd\")).show()",
+            "D.. dates_df.withColumn(\"date\", f.from_unixtime(\"timestamp\")).show()"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "f.to_date() converts a timestamp or string to a DateType.\nIdeal for extracting the date component (year-month-day) from a full timestamp.\nExample:\nfrom pyspark.sql.functions import to_date\ndates_df.withColumn(\"date\", to_date(\"timestamp\"))"
+    },
+    {
+        "question": "An engineer wants to join two DataFrames df1 and df2 on the respective employee_id and\nemp_id columns:\ndf1: employee_id INT, name STRING\ndf2: emp_id INT, department STRING\nThe engineer uses:\nresult = df1.join(df2, df1.employee_id == df2.emp_id, how='inner')\nWhat is the behaviour of the code snippet?",
+        "options": [
+            "A.. The code fails to execute because the column names employee_id and emp_id do not\nmatch automatically",
+            "B.. The code fails to execute because it must use on='employee_id' to specify the join column\nexplicitly",
+            "C.. The code fails to execute because PySpark does not support joining DataFrames with a\ndifferent structure",
+            "D.. The code works as expected because the join condition explicitly matches employee_id\nfrom df1 with emp_id from df2"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "In PySpark, when performing a join between two DataFrames, the columns do not have to\nshare the same name. You can explicitly provide a join condition by comparing specific\ncolumns from each DataFrame.\nThis syntax is correct and fully supported:\ndf1.join(df2, df1.employee_id == df2.emp_id, how='inner')\nThis will perform an inner join between df1 and df2 using the employee_id from df1 and\nemp_id from df2."
+    },
+    {
+        "question": "An engineer has a large ORC file located at /file/test_data.orc and wants to read only specific\ncolumns to reduce memory usage.\n\n\nWhich code fragment will select the columns, i.e., col1, col2, during the reading process?",
+        "options": [
+            "A.. spark.read.orc(\"/file/test_data.orc\").filter(\"col1 = 'value' \").select(\"col2\")",
+            "B.. spark.read.format(\"orc\").select(\"col1\", \"col2\").load(\"/file/test_data.orc\")",
+            "C.. spark.read.orc(\"/file/test_data.orc\").selected(\"col1\", \"col2\")",
+            "D.. spark.read.format(\"orc\").load(\"/file/test_data.orc\").select(\"col1\", \"col2\")"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "The correct way to load specific columns from an ORC file is to first load the file using .load()\nand then apply .select() on the resulting DataFrame. This is valid with .read.format(\"orc\") or\nthe shortcut .read.orc().\ndf = spark.read.format(\"orc\").load(\"/file/test_data.orc\").select(\"col1\", \"col2\") Why others are\nincorrect:\nA performs selection after filtering, but doesn't match the intention to minimize memory at\nload.\nB incorrectly tries to use .select() before .load(), which is invalid.\nC uses a non-existent .selected() method.\nD correctly loads and then selects."
+    },
+    {
+        "question": "A developer is creating a Spark application that performs multiple DataFrame transformations\nand actions. The developer wants to maintain optimal performance by properly managing the\nSparkSession.\nHow should the developer handle the SparkSession throughout the application?",
+        "options": [
+            "A.. Use a single SparkSession instance for the entire application.",
+            "B.. Avoid using a SparkSession and rely on SparkContext only.",
+            "C.. Create a new SparkSession instance before each transformation.",
+            "D.. Stop and restart the SparkSession after each action."
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "The SparkSession is the entry point to Spark functionality in modern versions (2.x and later).\nIt unifies the SparkContext, SQLContext, and HiveContext into a single object.\nBest Practice:\nUse one SparkSession for the entire application.\nCreate it once at the start using SparkSession.builder.getOrCreate().\nReuse it across all transformations and actions.\nStop it only after all operations are completed.\nExample:\nfrom pyspark.sql import SparkSession\nspark = SparkSession.builder.appName(\"MyApp\").getOrCreate()\n# Perform transformations and actions\nspark.stop()\nWhy the other options are incorrect:\nB: SparkSession is the recommended interface; SparkContext alone is deprecated for\n\n\nSQL/DataFrame APIs.\nC: Creating multiple sessions increases overhead and wastes resources.\nD: Restarting SparkSession breaks lineage and adds unnecessary startup costs.\nReference:\nSpark API Reference - SparkSession lifecycle.\nDatabricks Exam Guide (June 2025): Section \"Apache Spark Architecture and Components\"\n- explains SparkSession lifecycle and application management."
+    },
+    {
+        "question": "The data engineering team created a pipeline that extracts data from a transaction system.\nThe transaction system stores timestamps in UTC, and the data engineers must now\ntransform the transaction_datetime field to the \"America/New_York\" timezone for reporting.\nWhich code should be used to convert the timestamp to the target timezone?",
+        "options": [
+            "A.. raw.withColumn(\"transaction_datetime\", from_utc_timestamp(col(\"transaction_datetime\"),\n\"America/New_York\"))",
+            "B.. raw.withColumn(\"transaction_datetime\", to_utc_timestamp(col(\"transaction_datetime\"),\n\"America/New_York\"))",
+            "C.. raw.withColumn(\"transaction_datetime\", date_format(col(\"transaction_datetime\"),\n\"America/New_York\"))",
+            "D.. raw.withColumn(\"transaction_datetime\", convert_timezone(col(\"transaction_datetime\"),\n\"America/New_York\"))"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "In Spark SQL, to convert a UTC timestamp to another timezone, you use the function\nfrom_utc_timestamp().\nCorrect syntax:\nfrom pyspark.sql.functions import from_utc_timestamp, col\ndf_converted = raw.withColumn(\n\"transaction_datetime\",\nfrom_utc_timestamp(col(\"transaction_datetime\"), \"America/New_York\")\n)\nThis adjusts the UTC time into the specified timezone using Spark's timezone database.\nWhy the other options are incorrect:\nB: to_utc_timestamp() converts local time to UTC, not the other way around.\nC: date_format() formats timestamps as strings but doesn't adjust timezones.\nD: convert_timezone() is not a valid Spark SQL function.\nReference:\nSpark SQL Functions - from_utc_timestamp() and to_utc_timestamp().\nDatabricks Exam Guide (June 2025): Section \"Using Spark SQL\" - working with timestamps\nand timezone conversions."
+    },
+    {
+        "question": "Given the code fragment:\nimport pyspark.pandas as ps\npsdf = ps.DataFrame({'col1': [1, 2], 'col2': [3, 4]})\nWhich method is used to convert a Pandas API on Spark DataFrame\n(pyspark.pandas.DataFrame) into a standard PySpark DataFrame (pyspark.sql.DataFrame)?",
+        "options": [
+            "A.. psdf.to_spark()",
+            "B.. psdf.to_pyspark()",
+            "C.. psdf.to_pandas()",
+            "D.. psdf.to_dataframe()"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "Pandas API on Spark (pyspark.pandas) allows interoperability with PySpark DataFrames. To\nconvert a pyspark.pandas.DataFrame to a standard PySpark DataFrame, you use\n.to_spark().\nExample:\ndf = psdf.to_spark()\nThis is the officially supported method as per Databricks Documentation.\nIncorrect options:\nB, D: Invalid or nonexistent methods.\nC: Converts to a local pandas DataFrame, not a PySpark DataFrame."
+    },
+    {
+        "question": "An engineer notices a significant increase in the job execution time during the execution of a\nSpark job. After some investigation, the engineer decides to check the logs produced by the\nExecutors.\nHow should the engineer retrieve the Executor logs to diagnose performance issues in the\nSpark application?",
+        "options": [
+            "A.. Locate the executor logs on the Spark master node, typically under the /tmp directory.",
+            "B.. Use the command spark-submit with the -verbose flag to print the logs to the console.",
+            "C.. Use the Spark UI to select the stage and view the executor logs directly from the stages\ntab.",
+            "D.. Fetch the logs by running a Spark job with the spark-sql CLI tool."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "The Spark UI is the standard and most effective way to inspect executor logs, task time, input\nsize, and shuffles.\nFrom the Databricks documentation:\n\"You can monitor job execution via the Spark Web UI. It includes detailed logs and metrics,\nincluding task-level execution time, shuffle reads/writes, and executor memory usage.\"\n\n\n(Source: Databricks Spark Monitoring Guide) Option A is incorrect: logs are not guaranteed\nto be in /tmp, especially in cloud environments.\nB . -verbose helps during job submission but doesn't give detailed executor logs.\nD . spark-sql is a CLI tool for running queries, not for inspecting logs.\nHence, the correct method is using the Spark UI → Stages tab → Executor logs."
+    },
+    {
+        "question": "An application architect has been investigating Spark Connect as a way to modernize\nexisting Spark applications running in their organization.\nWhich requirement blocks the adoption of Spark Connect in this organization?",
+        "options": [
+            "A.. Debuggability: the ability to perform interactive debugging directly from the application\ncode",
+            "B.. Upgradability: the ability to upgrade the Spark applications independently from the Spark\ndriver itself",
+            "C.. Complete Spark API support: the ability to migrate all existing code to Spark Connect\nwithout modification, including the RDD APIs",
+            "D.. Stability: isolation of application code and dependencies from each other and the Spark\ndriver"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "Spark Connect enables a decoupled client-server architecture, allowing remote clients to run\nSpark code via gRPC.\nHowever, as of Spark 3.5, Spark Connect supports DataFrame and SQL APIs, but not RDD\nAPIs.\nLimitation:\nApplications that rely heavily on RDD-based transformations or actions cannot be migrated\ndirectly to Spark Connect.\nThese APIs require tight driver integration, which Spark Connect intentionally decouples.\nThus, complete Spark API compatibility is not yet achieved - this is the key adoption blocker.\nWhy the other options are incorrect:\nA: Debugging is possible through IDE integration and logs on the client side.\nB: Spark Connect actually supports upgradable clients independent of the driver - this is an\nadvantage, not a limitation.\nD: Spark Connect provides strong isolation between the client and driver processes.\nReference:\nSpark 3.5 Documentation - Spark Connect architecture and supported APIs.\nDatabricks Exam Guide (June 2025): Section \"Using Spark Connect to Deploy Applications\" -\nSpark Connect limitations (no RDD API support)."
+    },
+    {
+        "question": "A Spark engineer is troubleshooting a Spark application that has been encountering out-of-\nmemory errors during execution. By reviewing the Spark driver logs, the engineer notices\nmultiple \"GC overhead limit exceeded\" messages.\nWhich action should the engineer take to resolve this issue?",
+        "options": [
+            "A.. Optimize the data processing logic by repartitioning the DataFrame.",
+            "B.. Modify the Spark configuration to disable garbage collection",
+            "C.. Increase the memory allocated to the Spark Driver.",
+            "D.. Cache large DataFrames to persist them in memory."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "The message \"GC overhead limit exceeded\" typically indicates that the JVM is spending too\nmuch time in garbage collection with little memory recovery. This suggests that the driver or\nexecutor is under-provisioned in memory.\nThe most effective remedy is to increase the driver memory using:\n--driver-memory 4g\nThis is confirmed in Spark's official troubleshooting documentation:\n\"If you see a lot of GC overhead limit exceeded errors in the driver logs, it's a sign that the\ndriver is running out of memory.\"\n- Spark Tuning Guide\n\"If you see a lot of GC overhead limit exceeded errors in the driver logs, it's a sign that the\ndriver is running out of memory.\"\n- Spark Tuning Guide\nWhy others are incorrect:\nA may help but does not directly address the driver memory shortage.\nB is not a valid action; GC cannot be disabled.\nD increases memory usage, worsening the problem."
+    },
+    {
+        "question": "In the code block below, aggDF contains aggregations on a streaming DataFrame:\naggDF.writeStream \\\n.format(\"console\") \\\n.outputMode(\"???\") \\\n.start()\nWhich output mode at line 3 ensures that the entire result table is written to the console\nduring each trigger execution?",
+        "options": [
+            "A.. AGGREGATE",
+            "B.. COMPLETE",
+            "C.. REPLACE",
+            "D.. APPEND"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "Structured Streaming supports three output modes:\nAppend: Writes only new rows since the last trigger.\nUpdate: Writes only updated rows.\nComplete: Writes the entire result table after every trigger execution.\nFor aggregations like groupBy().count(), only complete mode outputs the entire table each\ntime.\nExample:\naggDF.writeStream \\\n\n\n.outputMode(\"complete\") \\\n.format(\"console\") \\\n.start()\nWhy the other options are incorrect:\nA: \"AGGREGATE\" is not a valid output mode.\nC: \"REPLACE\" does not exist.\nD: \"APPEND\" writes only new rows, not the full table.\nReference:\nPySpark Structured Streaming - Output Modes (append, update, complete).\nDatabricks Exam Guide (June 2025): Section \"Structured Streaming\" - output modes and use\ncases for aggregations."
+    },
+    {
+        "question": "Given a DataFrame df that has 10 partitions, after running the code:\ndf.repartition(20)\nHow many partitions will the result DataFrame have?",
+        "options": [
+            "A.. 5",
+            "B.. 20",
+            "C.. Same number as the cluster executors",
+            "D.. 10"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "The repartition(n) transformation reshuffles data into exactly n partitions.\nUnlike coalesce(), repartition() always causes a shuffle to evenly redistribute the data.\nCorrect behavior:\ndf2 = df.repartition(20)\ndf2.rdd.getNumPartitions() # returns 20\nThus, the resulting DataFrame will have 20 partitions.\nWhy the other options are incorrect:\nA/D: Doesn't retain old partition count - it's explicitly set to 20.\nC: Number of partitions is not automatically tied to executors.\nReference:\nPySpark DataFrame API - repartition() vs. coalesce().\nDatabricks Exam Guide (June 2025): Section \"Developing Apache Spark\nDataFrame/DataSet API Applications\" - tuning partitioning and shuffling for performance."
+    },
+    {
+        "question": "A data engineer is working on a Streaming DataFrame streaming_df with the given streaming\ndata:\n\n\nWhich operation is supported with streamingdf ?",
+        "options": [
+            "A.. streaming_df. select (countDistinct (\"Name\") )",
+            "B.. streaming_df.groupby(\"Id\") .count ()",
+            "C.. streaming_df.orderBy(\"timestamp\").limit(4)",
+            "D.. streaming_df.filter (col(\"count\") < 30).show()\n\nIn Structured Streaming, only a limited subset of operations is supported due to the nature of\nunbounded data. Operations like sorting (orderBy) and global aggregation (countDistinct)\nrequire a full view of the dataset, which is not possible with streaming data unless specific\nwatermarks or windows are defined.\nReview of Each Option:\nA: select(countDistinct(\"Name\"))\nNot allowed - Global aggregation like countDistinct() requires the full dataset and is not\nsupported directly in streaming without watermark and windowing logic.\nReference: Databricks Structured Streaming Guide - Unsupported Operations.\nB: groupby(\"Id\").count()\nSupported - Streaming aggregations over a key (like groupBy(\"Id\")) are supported. Spark\nmaintains intermediate state for each key.\nReference: Databricks Docs → Aggregations in Structured Streaming\n(https://docs.databricks.com/structured-streaming/aggregation.html) C .\norderBy(\"timestamp\").limit(4)\nNot allowed - Sorting and limiting require a full view of the stream (which is infinite), so this is\nunsupported in streaming DataFrames.\nReference: Spark Structured Streaming - Unsupported Operations (ordering without\nwatermark/window not allowed).\nD: filter(col(\"count\") < 30).show()\nNot allowed - show() is a blocking operation used for debugging batch DataFrames; it's not\nallowed on streaming DataFrames.\n\n\nReference: Structured Streaming Programming Guide - Output operations like show() are not\nsupported.\nReference Extract from Official Guide:\n\"Operations like orderBy, limit, show, and countDistinct are not supported in Structured\nStreaming because they require the full dataset to compute a result. Use groupBy(...).agg(...)\ninstead for incremental aggregations.\"\n- Databricks Structured Streaming Programming Guide"
+        ],
+        "answer": [
+            "B"
+        ]
+    },
+    {
+        "question": "Given the code:\ndf = spark.read.csv(\"large_dataset.csv\")\nfiltered_df = df.filter(col(\"error_column\").contains(\"error\"))\nmapped_df = filtered_df.select(split(col(\"timestamp\"), \" \").getItem(0).alias(\"date\"),\nlit(1).alias(\"count\")) reduced_df = mapped_df.groupBy(\"date\").sum(\"count\")\nreduced_df.count() reduced_df.show() At which point will Spark actually begin processing the\ndata?",
+        "options": [
+            "A.. When the filter transformation is applied",
+            "B.. When the count action is applied",
+            "C.. When the groupBy transformation is applied",
+            "D.. When the show action is applied"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "Spark uses lazy evaluation. Transformations like filter, select, and groupBy only define the\nDAG (Directed Acyclic Graph). No execution occurs until an action is triggered.\nThe first action in the code is:reduced_df.count()\nSo Spark starts processing data at this line."
+    },
+    {
+        "question": "A Spark DataFrame df is cached using the MEMORY_AND_DISK storage level, but the\nDataFrame is too large to fit entirely in memory.\nWhat is the likely behavior when Spark runs out of memory to store the DataFrame?",
+        "options": [
+            "A.. Spark duplicates the DataFrame in both memory and disk. If it doesn't fit in memory, the\nDataFrame is stored and retrieved from the disk entirely.",
+            "B.. Spark splits the DataFrame evenly between memory and disk, ensuring balanced storage\nutilization.",
+            "C.. Spark will store as much data as possible in memory and spill the rest to disk when\nmemory is full, continuing processing with performance overhead.",
+            "D.. Spark stores the frequently accessed rows in memory and less frequently accessed rows\n\n\non disk, utilizing both resources to offer balanced performance."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "When using the MEMORY_AND_DISK storage level, Spark attempts to cache as much of the\nDataFrame in memory as possible. If the DataFrame does not fit entirely in memory, Spark\nwill store the remaining partitions on disk. This allows processing to continue, albeit with a\nperformance overhead due to disk I/O.\nAs per the Spark documentation:\n\"MEMORY_AND_DISK: It stores partitions that do not fit in memory on disk and keeps the\nrest in memory. This can be useful when working with datasets that are larger than the\navailable memory.\"\n- Perficient Blogs: Spark - StorageLevel\nThis behavior ensures that Spark can handle datasets larger than the available memory by\nspilling excess data to disk, thus preventing job failures due to memory constraints."
+    },
+    {
+        "question": "An MLOps engineer is building a Pandas UDF that applies a language model that translates\nEnglish strings into Spanish. The initial code is loading the model on every call to the UDF,\nwhich is hurting the performance of the data pipeline.\nThe initial code is:\ndef in_spanish_inner(df: pd.Series) -> pd.Series:\nmodel = get_translation_model(target_lang='es')\nreturn df.apply(model)\nin_spanish = sf.pandas_udf(in_spanish_inner, StringType())\nHow can the MLOps engineer change this code to reduce how many times the language\nmodel is loaded?",
+        "options": [
+            "A.. Convert the Pandas UDF to a PySpark UDF",
+            "B.. Convert the Pandas UDF from a Series → Series UDF to a Series → Scalar UDF",
+            "C.. Run the in_spanish_inner() function in a mapInPandas() function call",
+            "D.. Convert the Pandas UDF from a Series → Series UDF to an Iterator[Series] →\nIterator[Series] UDF"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "The provided code defines a Pandas UDF of type Series-to-Series, where a new instance of\nthe language model is created on each call, which happens per batch. This is inefficient and\nresults in significant overhead due to repeated model initialization.\nTo reduce the frequency of model loading, the engineer should convert the UDF to an\niterator-based Pandas UDF (Iterator[pd.Series] -> Iterator[pd.Series]). This allows the model\n\n\nto be loaded once per executor and reused across multiple batches, rather than once per\ncall.\nFrom the official Databricks documentation:\n\"Iterator of Series to Iterator of Series UDFs are useful when the UDF initialization is\nexpensive... For example, loading a ML model once per executor rather than once per\nrow/batch.\"\n- Databricks Official Docs: Pandas UDFs\nCorrect implementation looks like:\npython\nCopyEdit\n@pandas_udf(\"string\")\ndef translate_udf(batch_iter: Iterator[pd.Series]) -> Iterator[pd.Series]:\nmodel = get_translation_model(target_lang='es')\nfor batch in batch_iter:\nyield batch.apply(model)\nThis refactor ensures the get_translation_model() is invoked once per executor process, not\nper batch, significantly improving pipeline performance."
+    },
+    {
+        "question": "Given the following code snippet in my_spark_app.py:\nWhat is the role of the driver node?",
+        "options": [
+            "A.. The driver node orchestrates the execution by transforming actions into tasks and\ndistributing them to worker nodes",
+            "B.. The driver node only provides the user interface for monitoring the application",
+            "C.. The driver node holds the DataFrame data and performs all computations locally",
+            "D.. The driver node stores the final result after computations are completed by worker nodes"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "In the Spark architecture, the driver node is responsible for orchestrating the execution of a\nSpark application. It converts user-defined transformations and actions into a logical plan,\noptimizes it into a physical plan, and then splits the plan into tasks that are distributed to the\nexecutor nodes.\n\n\nAs per Databricks and Spark documentation:\n\"The driver node is responsible for maintaining information about the Spark application,\nresponding to a user's program or input, and analyzing, distributing, and scheduling work\nacross the executors.\" This means:\nOption A is correct because the driver schedules and coordinates the job execution.\nOption B is incorrect because the driver does more than just UI monitoring.\nOption C is incorrect since data and computations are distributed across executor nodes.\nOption D is incorrect; results are returned to the driver but not stored long-term by it."
+    },
+    {
+        "question": "What is the relationship between jobs, stages, and tasks during execution in Apache Spark?",
+        "options": [
+            "A.. A job contains multiple tasks, and each task contains multiple stages.",
+            "B.. A stage contains multiple jobs, and each job contains multiple tasks.",
+            "C.. A stage contains multiple tasks, and each task contains multiple jobs.",
+            "D.. A job contains multiple stages, and each stage contains multiple tasks."
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "In Apache Spark's execution hierarchy, the relationships are structured as follows:\nJob: Created when an action (e.g., count(), collect(), save()) is triggered on an RDD or\nDataFrame.\nStage: Each job is divided into one or more stages, separated by shuffle boundaries (e.g.,\nafter a reduceByKey or join).\nTask: Each stage consists of multiple tasks, one per partition, executed in parallel on\nexecutors.\nExecution Hierarchy:\nJob → Stage(s) → Task(s)\nSo, a job contains multiple stages, and each stage contains multiple tasks.\nWhy the other options are incorrect:\nA: A job does not directly contain tasks without stages.\nB: A stage cannot contain multiple jobs; it belongs to a single job.\nC: Tasks do not contain jobs.\nReference (Databricks Apache Spark 3.5 - Python / Study Guide):\nSpark Architecture Overview - Execution Hierarchy: Jobs, Stages, and Tasks.\nDatabricks Exam Guide (June 2025): Section \"Apache Spark Architecture and Components\"\n- describes execution hierarchy and lazy evaluation."
+    },
+    {
+        "question": "A data engineer observes that an upstream streaming source sends duplicate records, where\nduplicates share the same key and have at most a 30-minute difference in event_timestamp.\nThe engineer adds:\ndropDuplicatesWithinWatermark(\"event_timestamp\", \"30 minutes\")\nWhat is the result?",
+        "options": [
+            "A.. It is not able to handle deduplication in this scenario",
+            "B.. It removes duplicates that arrive within the 30-minute window specified by the watermark",
+            "C.. It removes all duplicates regardless of when they arrive",
+            "D.. It accepts watermarks in seconds and the code results in an error"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "The method dropDuplicatesWithinWatermark() in Structured Streaming drops duplicate\nrecords based on a specified column and watermark window. The watermark defines the\nthreshold for how late data is considered valid.\nFrom the Spark documentation:\n\"dropDuplicatesWithinWatermark removes duplicates that occur within the event-time\nwatermark window.\" In this case, Spark will retain the first occurrence and drop subsequent\nrecords within the 30-minute watermark window.\nFinal answer: B"
+    },
+    {
+        "question": "A data engineer needs to add all the rows from one table to all the rows from another, but not\nall the columns in the first table exist in the second table.\nThe error message is:\nAnalysisException: UNION can only be performed on tables with the same number of\ncolumns.\nThe existing code is:\nau_df.union(nz_df)\nThe DataFrame au_df has one extra column that does not exist in the DataFrame nz_df, but\notherwise both DataFrames have the same column names and data types.\nWhat should the data engineer fix in the code to ensure the combined DataFrame can be\nproduced as expected?",
+        "options": [
+            "A.. df = au_df.unionByName(nz_df, allowMissingColumns=True)",
+            "B.. df = au_df.unionAll(nz_df)",
+            "C.. df = au_df.unionByName(nz_df, allowMissingColumns=False)",
+            "D.. df = au_df.union(nz_df, allowMissingColumns=True)"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "When two DataFrames have different column sets, the normal union() or unionAll() functions\nfail unless both have exactly the same columns in the same order.\nSolution: Use unionByName() with allowMissingColumns=True.\nThis aligns columns by name and automatically adds missing columns with null values.\nCorrect syntax:\ncombined_df = au_df.unionByName(nz_df, allowMissingColumns=True)\nThis ensures the union works even if one DataFrame has extra or missing columns.\nWhy the other options are incorrect:\nB: unionAll() is deprecated; also requires identical schemas.\n\n\nC: With allowMissingColumns=False, Spark still throws a mismatch error.\nD: union() doesn't accept the allowMissingColumns argument.\nReference:\nPySpark API - DataFrame.unionByName() with allowMissingColumns option.\nDatabricks Exam Guide (June 2025): Section \"Developing Apache Spark\nDataFrame/DataSet API Applications\" - combining DataFrames and schema alignment."
+    },
+    {
+        "question": "A data engineer needs to write a Streaming DataFrame as Parquet files.\nGiven the code:\nWhich code fragment should be inserted to meet the requirement?\nA)\nB)\nC)\n \nD)\n \nWhich code fragment should be inserted to meet the requirement?",
+        "options": [
+            "A.. .format(\"parquet\")\n.option(\"location\", \"path/to/destination/dir\")",
+            "B.. CopyEdit\n.option(\"format\", \"parquet\")\n.option(\"destination\", \"path/to/destination/dir\")",
+            "C.. .option(\"format\", \"parquet\")\n.option(\"location\", \"path/to/destination/dir\")",
+            "D.. .format(\"parquet\")\n.option(\"path\", \"path/to/destination/dir\")"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "To write a structured streaming DataFrame to Parquet files, the correct way to specify the\nformat and output directory is:\n.writeStream\n.format(\"parquet\")\n.option(\"path\", \"path/to/destination/dir\")\nAccording to Spark documentation:\n\"When writing to file-based sinks (like Parquet), you must specify the path using the\n.option(\"path\", ...) method. Unlike batch writes, .save() is not supported.\" Option A incorrectly\nuses .option(\"location\", ...) (invalid for Parquet sink).\nOption B incorrectly sets the format via .option(\"format\", ...), which is not the correct method.\nOption C repeats the same issue.\nOption D is correct: .format(\"parquet\") + .option(\"path\", ...) is the required syntax.\nFinal answer: D"
+    },
+    {
+        "question": "A data engineer is building a Structured Streaming pipeline and wants the pipeline to recover\nfrom failures or intentional shutdowns by continuing where the pipeline left off.\nHow can this be achieved?",
+        "options": [
+            "A.. By configuring the option checkpointLocation during readStream",
+            "B.. By configuring the option recoveryLocation during the SparkSession initialization",
+            "C.. By configuring the option recoveryLocation during writeStream",
+            "D.. By configuring the option checkpointLocation during writeStream"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "To enable a Structured Streaming query to recover from failures or intentional shutdowns, it\nis essential to specify the checkpointLocation option during the writeStream operation. This\ncheckpoint location stores the progress information of the streaming query, allowing it to\nresume from where it left off.\nAccording to the Databricks documentation:\n\"You must specify the checkpointLocation option before you run a streaming query, as in the\nfollowing example:\n.option(\"checkpointLocation\", \"/path/to/checkpoint/dir\")\n.toTable(\"catalog.schema.table\")\n- Databricks Documentation: Structured Streaming checkpoints\nBy setting the checkpointLocation during writeStream, Spark can maintain state information\nand ensure exactly-once processing semantics, which are crucial for reliable streaming\napplications."
+    },
+    {
+        "question": "A Spark engineer must select an appropriate deployment mode for the Spark jobs.\nWhat is the benefit of using cluster mode in Apache Spark™?",
+        "options": [
+            "A.. In cluster mode, resources are allocated from a resource manager on the cluster, enabling\nbetter performance and scalability for large jobs",
+            "B.. In cluster mode, the driver is responsible for executing all tasks locally without distributing\nthem across the worker nodes.",
+            "C.. In cluster mode, the driver runs on the client machine, which can limit the application's\nability to handle large datasets efficiently.",
+            "D.. In cluster mode, the driver program runs on one of the worker nodes, allowing the\napplication to fully utilize the distributed resources of the cluster."
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "In Apache Spark's cluster mode:\n\"The driver program runs on the cluster's worker node instead of the client's local machine.\nThis allows the driver to be close to the data and other executors, reducing network overhead\nand improving fault tolerance for production jobs.\" (Source: Apache Spark documentation -\nCluster Mode Overview)\n\"The driver program runs on the cluster's worker node instead of the client's local machine.\nThis allows the driver to be close to the data and other executors, reducing network overhead\nand improving fault tolerance for production jobs.\" (Source: Apache Spark documentation -\nCluster Mode Overview) This deployment is ideal for production environments where the job\nis submitted from a gateway node, and Spark manages the driver lifecycle on the cluster\nitself.\nOption A is partially true but less specific than D.\nOption B is incorrect: the driver never executes all tasks; executors handle distributed tasks.\nOption C describes client mode, not cluster mode."
+    },
+    {
+        "question": "Given the schema:\n \nevent_ts TIMESTAMP,\nsensor_id STRING,\nmetric_value LONG,\ningest_ts TIMESTAMP,\n\n\nsource_file_path STRING\nThe goal is to deduplicate based on: event_ts, sensor_id, and metric_value.\nOptions:",
+        "options": [
+            "A.. dropDuplicates on all columns (wrong criteria)",
+            "B.. dropDuplicates with no arguments (removes based on all columns)",
+            "C.. groupBy without aggregation (invalid use)",
+            "D.. dropDuplicates on the exact matching fields"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "dedup_df = iot_bronze_df.dropDuplicates([\"event_ts\", \"sensor_id\", \"metric_value\"])\ndropDuplicates accepts a list of columns to use for deduplication.\nThis ensures only unique records based on the specified keys are retained."
+    },
+    {
+        "question": "A data scientist has identified that some records in the user profile table contain null values in\nany of the fields, and such records should be removed from the dataset before processing.\nThe schema includes fields like user_id, username, date_of_birth, created_ts, etc.\nThe schema of the user profile table looks like this:\n \nWhich block of Spark code can be used to achieve this requirement?\nOptions:",
+        "options": [
+            "A.. filtered_df = users_raw_df.na.drop(thresh=0)",
+            "B.. filtered_df = users_raw_df.na.drop(how='all')",
+            "C.. filtered_df = users_raw_df.na.drop(how='any')",
+            "D.. filtered_df = users_raw_df.na.drop(how='all', thresh=None)"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": ".na.drop(how='any') drops any row that has at least one null value.\nThis is exactly what's needed when the goal is to retain only fully complete records.\nUsage:CopyEdit\nfiltered_df = users_raw_df.na.drop(how='any')\n\n\nExplanation of incorrect options:\nA: thresh=0 is invalid - thresh must be ≥ 1.\nB: how='all' drops only rows where all columns are null (too lenient).\nD: spark.na.drop doesn't support mixing how and thresh in that way; it's incorrect syntax."
+    },
+    {
+        "question": "A data engineer needs to write a DataFrame df to a Parquet file, partitioned by the column\ncountry, and overwrite any existing data at the destination path.\nWhich code should the data engineer use to accomplish this task in Apache Spark?",
+        "options": [
+            "A.. df.write.mode(\"overwrite\").partitionBy(\"country\").parquet(\"/data/output\")",
+            "B.. df.write.mode(\"append\").partitionBy(\"country\").parquet(\"/data/output\")",
+            "C.. df.write.mode(\"overwrite\").parquet(\"/data/output\")",
+            "D.. df.write.partitionBy(\"country\").parquet(\"/data/output\")"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "The .mode(\"overwrite\") ensures that existing files at the path will be replaced.\n.partitionBy(\"country\") optimizes queries by writing data into partitioned folders.\nCorrect syntax:\ndf.write.mode(\"overwrite\").partitionBy(\"country\").parquet(\"/data/output\")\n- Source: Spark SQL, DataFrames and Datasets Guide"
+    },
+    {
+        "question": "A data engineer is working on the DataFrame df1 and wants the Name with the highest count\nto appear first (descending order by count), followed by the next highest, and so on.\nThe DataFrame has columns:\nid | Name | count | timestamp\n---------------------------------\n1 | USA | 10\n2 | India | 20\n3 | England | 50\n4 | India | 50\n5 | France | 20\n6 | India | 10\n7 | USA | 30\n8 | USA | 40\nWhich code fragment should the engineer use to sort the data in the Name and count\ncolumns?",
+        "options": [
+            "A.. df1.orderBy(col(\"count\").desc(), col(\"Name\").asc())",
+            "B.. df1.sort(\"Name\", \"count\")",
+            "C.. df1.orderBy(\"Name\", \"count\")",
+            "D.. df1.orderBy(col(\"Name\").desc(), col(\"count\").asc())"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "To sort a Spark DataFrame by multiple columns, use .orderBy() (or .sort()) with column\n\n\nexpressions.\nCorrect syntax for descending and ascending mix:\nfrom pyspark.sql.functions import col\ndf1.orderBy(col(\"count\").desc(), col(\"Name\").asc())\nThis sorts primarily by count in descending order and secondarily by Name in ascending\norder (alphabetically).\nWhy the other options are incorrect:\nB/C: Default sort order is ascending; won't place highest counts first.\nD: Reverses sorting logic - sorts Name descending, not required.\nReference:\nPySpark DataFrame API - orderBy() and col() for sorting with direction.\nDatabricks Exam Guide (June 2025): Section \"Using Spark DataFrame APIs\" - sorting,\nordering, and column expressions."
+    },
+    {
+        "question": "A data scientist is working with a Spark DataFrame called customerDF that contains\ncustomer information.\nThe DataFrame has a column named email with customer email addresses.\nThe data scientist needs to split this column into username and domain parts.\nWhich code snippet splits the email column into username and domain columns?",
+        "options": [
+            "A.. customerDF = customerDF \\\n.withColumn(\"username\", split(col(\"email\"), \"@\").getItem(0)) \\\n.withColumn(\"domain\", split(col(\"email\"), \"@\").getItem(1))",
+            "B.. customerDF = customerDF.withColumn(\"username\", regexp_replace(col(\"email\"), \"@\", \"\"))",
+            "C.. customerDF = customerDF.select(\"email\").alias(\"username\", \"domain\")",
+            "D.. customerDF = customerDF.withColumn(\"domain\", col(\"email\").split(\"@\")[1])"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "The split() function in PySpark splits strings into an array based on a given delimiter.\nThen, .getItem(index) extracts a specific element from the array.\nCorrect usage:\nfrom pyspark.sql.functions import split, col\ncustomerDF = customerDF \\\n.withColumn(\"username\", split(col(\"email\"), \"@\").getItem(0)) \\\n.withColumn(\"domain\", split(col(\"email\"), \"@\").getItem(1))\nThis creates two new columns derived from the email field:\n\"username\" → text before @\n\"domain\" → text after @\nWhy the other options are incorrect:\nB: regexp_replace only replaces text; does not split into multiple columns.\n\n\nC: .select() cannot alias multiple derived columns like this.\nD: Column objects are not native Python strings; cannot use standard .split().\nReference:\nPySpark SQL Functions - split() and getItem().\nDatabricks Exam Guide (June 2025): Section \"Developing Apache Spark\nDataFrame/DataSet API Applications\" - manipulating and splitting column data."
+    },
+    {
+        "question": "Given the code fragment:\nimport pyspark.pandas as ps\npdf = ps.DataFrame(data)\nWhich method is used to convert a Pandas API on Spark DataFrame\n(pyspark.pandas.DataFrame) into a standard PySpark DataFrame (pyspark.sql.DataFrame)?",
+        "options": [
+            "A.. pdf.to_pandas()",
+            "B.. pdf.to_spark()",
+            "C.. pdf.to_dataframe()",
+            "D.. pdf.spark()"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "In Pandas API on Spark (previously Koalas), the method .to_spark() converts a\npyspark.pandas.DataFrame into a PySpark DataFrame.\nCorrect usage:\nspark_df = pdf.to_spark()\nThis enables interoperability between the Pandas API on Spark and the PySpark SQL API,\nallowing developers to switch seamlessly between both for transformations or performance\noptimization.\nWhy the other options are incorrect:\nA (to_pandas): Converts to a local Pandas DataFrame, not a PySpark DataFrame.\nC (to_dataframe): Not a valid API method.\nD (spark): Not an existing DataFrame method.\nReference:\nPySpark Pandas API Reference - DataFrame.to_spark() method.\nDatabricks Exam Guide (June 2025): Section \"Using Pandas API on Apache Spark\" - covers\nDataFrame conversions and interoperability."
+    },
+    {
+        "question": "What is the difference between df.cache() and df.persist() in Spark DataFrame?",
+        "options": [
+            "A.. Both cache() and persist() can be used to set the default storage level\n(MEMORY_AND_DISK_SER)",
+            "B.. Both functions perform the same operation. The persist() function provides improved\nperformance as its default storage level is DISK_ONLY.",
+            "C.. persist() - Persists the DataFrame with the default storage level\n(MEMORY_AND_DISK_SER) and cache() - Can be used to set different storage levels to\npersist the contents of the DataFrame.",
+            "D.. cache() - Persists the DataFrame with the default storage level (MEMORY_AND_DISK)\nand persist() - Can be used to set different storage levels to persist the contents of the\nDataFrame"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "df.cache() is shorthand for df.persist(StorageLevel.MEMORY_AND_DISK)\ndf.persist() allows specifying any storage level such as MEMORY_ONLY, DISK_ONLY,\nMEMORY_AND_DISK_SER, etc.\nBy default, persist() uses MEMORY_AND_DISK, unless specified otherwise."
+    },
+    {
+        "question": "A developer is running Spark SQL queries and notices underutilization of resources.\nExecutors are idle, and the number of tasks per stage is low.\nWhat should the developer do to improve cluster utilization?",
+        "options": [
+            "A.. Increase the value of spark.sql.shuffle.partitions",
+            "B.. Reduce the value of spark.sql.shuffle.partitions",
+            "C.. Increase the size of the dataset to create more partitions",
+            "D.. Enable dynamic resource allocation to scale resources as needed"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "The number of tasks is controlled by the number of partitions. By default,\nspark.sql.shuffle.partitions is 200. If stages are showing very few tasks (less than total cores),\nyou may not be leveraging full parallelism.\nFrom the Spark tuning guide:\n\"To improve performance, especially for large clusters, increase spark.sql.shuffle.partitions to\ncreate more tasks and parallelism.\" Thus:\nA is correct: increasing shuffle partitions increases parallelism\nB is wrong: it further reduces parallelism\nC is invalid: increasing dataset size doesn't guarantee more partitions D is irrelevant to task\ncount per stage Final answer: A"
+    },
+    {
+        "question": "A data analyst builds a Spark application to analyze finance data and performs the following\noperations: filter, select, groupBy, and coalesce.\nWhich operation results in a shuffle?",
+        "options": [
+            "A.. groupBy",
+            "B.. filter",
+            "C.. select",
+            "D.. coalesce"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "The groupBy() operation causes a shuffle because it requires all values for a specific key to\nbe brought together, which may involve moving data across partitions.\nIn contrast:\n\n\nfilter() and select() are narrow transformations and do not cause shuffles.\ncoalesce() tries to reduce the number of partitions and avoids shuffling by moving data to\nfewer partitions without a full shuffle (unlike repartition())."
+    },
+    {
+        "question": "A data scientist of an e-commerce company is working with user data obtained from its\nsubscriber database and has stored the data in a DataFrame df_user. Before further\nprocessing the data, the data scientist wants to create another DataFrame df_user_non_pii\nand store only the non-PII columns in this DataFrame. The PII columns in df_user are\nfirst_name, last_name, email, and birthdate.\nWhich code snippet can be used to meet this requirement?",
+        "options": [
+            "A.. df_user_non_pii = df_user.drop(\"first_name\", \"last_name\", \"email\", \"birthdate\")",
+            "B.. df_user_non_pii = df_user.drop(\"first_name\", \"last_name\", \"email\", \"birthdate\")",
+            "C.. df_user_non_pii = df_user.dropfields(\"first_name\", \"last_name\", \"email\", \"birthdate\")",
+            "D.. df_user_non_pii = df_user.dropfields(\"first_name, last_name, email, birthdate\")"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "To remove specific columns from a PySpark DataFrame, the drop() method is used. This\nmethod returns a new DataFrame without the specified columns. The correct syntax for\ndropping multiple columns is to pass each column name as a separate argument to the\ndrop() method.\nCorrect Usage:\ndf_user_non_pii = df_user.drop(\"first_name\", \"last_name\", \"email\", \"birthdate\") This line of\ncode will return a new DataFrame df_user_non_pii that excludes the specified PII columns.\nExplanation of Options:\nA . Correct. Uses the drop() method with multiple column names passed as separate\narguments, which is the standard and correct usage in PySpark.\nB . Although it appears similar to Option A, if the column names are not enclosed in quotes or\nif there's a syntax error (e.g., missing quotes or incorrect variable names), it would result in\nan error. However, as written, it's identical to Option A and thus also correct.\nC . Incorrect. The dropfields() method is not a method of the DataFrame class in PySpark. It's\nused with StructType columns to drop fields from nested structures, not top-level DataFrame\ncolumns.\nD . Incorrect. Passing a single string with comma-separated column names to dropfields() is\nnot valid syntax in PySpark.\nReference:\nPySpark Documentation: DataFrame.drop\nStack Overflow Discussion: How to delete columns in PySpark DataFrame"
+    },
+    {
+        "question": "A data scientist is working with a massive dataset that exceeds the memory capacity of a\nsingle machine. The data scientist is considering using Apache Spark™ instead of traditional\nsingle-machine languages like standard Python scripts.\nWhich two advantages does Apache Spark™ offer over a normal single-machine language in\n\n\nthis scenario? (Choose 2 answers)",
+        "options": [
+            "A.. It can distribute data processing tasks across a cluster of machines, enabling horizontal\nscalability.",
+            "B.. It requires specialized hardware to run, making it unsuitable for commodity hardware\nclusters.",
+            "C.. It processes data solely on disk storage, reducing the need for memory resources.",
+            "D.. It eliminates the need to write any code, automatically handling all data processing.",
+            "E.. It has built-in fault tolerance, allowing it to recover seamlessly from node failures during\ncomputation."
+        ],
+        "answer": [
+            "A",
+            "E"
+        ],
+        "explanation": "Apache Spark is a distributed data processing engine designed for large-scale, cluster-based\ncomputation.\nAdvantages:\nHorizontal Scalability: Spark can distribute tasks across many machines, handling datasets\nlarger than the memory of a single node.\nFault Tolerance: Spark automatically recovers from node or task failures using the lineage\ngraph (RDD recovery mechanism) and retry logic.\nThese two features allow Spark to process huge datasets efficiently and reliably, unlike\nstandard Python scripts that are limited to one machine and fail on single-node errors.\nWhy the other options are incorrect:\nB: Spark runs on commodity hardware; no specialized machines required.\nC: Spark emphasizes in-memory processing, not disk-only operations.\nD: Spark still requires user code in Python, Scala, SQL, or Java.\nReference:\nDatabricks Exam Guide (June 2025): Section \"Apache Spark Architecture and Components\"\n- advantages, cluster execution, and fault tolerance.\nApache Spark Overview - distributed processing and resilience design."
+    },
+    {
+        "question": "Which code should be used to display the schema of the Parquet file stored in the location\nevents.parquet?",
+        "options": [
+            "A.. spark.sql(\"SELECT * FROM events.parquet\").show()",
+            "B.. spark.read.format(\"parquet\").load(\"events.parquet\").show()",
+            "C.. spark.read.parquet(\"events.parquet\").printSchema()",
+            "D.. spark.sql(\"SELECT schema FROM events.parquet\").show()"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "To view the schema of a Parquet file, you must use the DataFrameReader to load the\n\n\nParquet data and call the .printSchema() method.\nCorrect syntax:\nspark.read.parquet(\"events.parquet\").printSchema()\nThis command loads the file metadata (without triggering a full read) and prints the column\nnames, data types, and nullability information in a tree format.\nWhy the other options are incorrect:\nA/D: SQL queries can't directly introspect file schemas.\nB: .show() displays data rows, not schema.\nReference:\nPySpark DataFrameReader API - read.parquet() and DataFrame.printSchema().\nDatabricks Exam Guide (June 2025): Section \"Using Spark SQL\" - describes reading files and\nexamining schemas in Spark SQL and DataFrame APIs."
+    },
+    {
+        "question": "A data engineer is asked to build an ingestion pipeline for a set of Parquet files delivered by\nan upstream team on a nightly basis. The data is stored in a directory structure with a base\npath of \"/path/events/data\". The upstream team drops daily data into the underlying\nsubdirectories following the convention year/month/day.\nA few examples of the directory structure are:\n \nWhich of the following code snippets will read all the data within the directory structure?",
+        "options": [
+            "A.. df = spark.read.option(\"inferSchema\", \"true\").parquet(\"/path/events/data/\")",
+            "B.. df = spark.read.option(\"recursiveFileLookup\", \"true\").parquet(\"/path/events/data/\")",
+            "C.. df = spark.read.parquet(\"/path/events/data/*\")",
+            "D.. df = spark.read.parquet(\"/path/events/data/\")"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "To read all files recursively within a nested directory structure, Spark requires the\nrecursiveFileLookup option to be explicitly enabled. According to Databricks official\ndocumentation, when dealing with deeply nested Parquet files in a directory tree (as shown in\nthis example), you should set:\ndf = spark.read.option(\"recursiveFileLookup\", \"true\").parquet(\"/path/events/data/\") This\nensures that Spark searches through all subdirectories under /path/events/data/ and reads\nany Parquet files it finds, regardless of the folder depth.\nOption A is incorrect because while it includes an option, inferSchema is irrelevant here and\ndoes not enable recursive file reading.\n\n\nOption C is incorrect because wildcards may not reliably match deep nested structures\nbeyond one directory level.\nOption D is incorrect because it will only read files directly within /path/events/data/ and not\nsubdirectories like /2023/01/01.\nDatabricks documentation reference:\n\"To read files recursively from nested folders, set the recursiveFileLookup option to true. This\nis useful when data is organized in hierarchical folder structures\" - Databricks documentation\non Parquet files ingestion and options."
+    },
+    {
+        "question": "Given this code:\n.withWatermark(\"event_time\", \"10 minutes\")\n.groupBy(window(\"event_time\", \"15 minutes\"))\n.count()\nWhat happens to data that arrives after the watermark threshold?\nOptions:",
+        "options": [
+            "A.. Records that arrive later than the watermark threshold (10 minutes) will automatically be\nincluded in the aggregation if they fall within the 15-minute window.",
+            "B.. Any data arriving more than 10 minutes after the watermark threshold will be ignored and\nnot included in the aggregation.",
+            "C.. Data arriving more than 10 minutes after the latest watermark will still be included in the\naggregation but will be placed into the next window.",
+            "D.. The watermark ensures that late data arriving within 10 minutes of the latest event_time\nwill be processed and included in the windowed aggregation."
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "According to Spark's watermarking rules:\n\"Records that are older than the watermark (event time < current watermark) are considered\ntoo late and are dropped.\" So, if a record's event_time is earlier than (max event_time seen\nso far - 10 minutes), it is discarded."
+    },
+    {
+        "question": "What is the benefit of using Pandas API on Spark for data transformations?",
+        "options": [
+            "A.. It executes queries faster using all the available cores in the cluster as well as provides\nPandas's rich set of features.",
+            "B.. It is available only with Python, thereby reducing the learning curve.",
+            "C.. It runs on a single node only, utilizing memory efficiently.",
+            "D.. It computes results immediately using eager execution."
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "Pandas API on Spark provides a distributed implementation of the Pandas DataFrame API\non top of Apache Spark.\nAdvantages:\nExecutes transformations in parallel across all nodes and cores in the cluster.\nMaintains Pandas-like syntax, making it easy for Python users to transition.\nEnables scaling of existing Pandas code to handle large datasets without memory limits.\nTherefore, it combines Pandas usability with Spark's distributed power, offering both speed\nand scalability.\nWhy the other options are incorrect:\nB: While it uses Python, that's not its main advantage.\nC: It runs distributed across the cluster, not on a single node.\nD: Pandas API on Spark uses lazy evaluation, not eager computation.\nReference:\nPySpark Pandas API Overview - advantages of distributed execution.\nDatabricks Exam Guide (June 2025): Section \"Using Pandas API on Apache Spark\" -\nexplains the benefits of Pandas API integration for scalable transformations."
+    },
+    {
+        "question": "What is the main advantage of partitioning the data when persisting tables?",
+        "options": [
+            "A.. It compresses the data to save disk space.",
+            "B.. It automatically cleans up unused partitions to optimize storage.",
+            "C.. It ensures that data is loaded into memory all at once for faster query execution.",
+            "D.. It optimizes by reading only the relevant subset of data from fewer partitions."
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "Partitioning a dataset divides data into separate directories based on partition column values.\nWhen queries filter on partitioned columns, Spark can prune irrelevant partitions - meaning it\nonly reads files that match the filter criteria.\nAdvantage:\nReduces I/O and improves performance by scanning only relevant subsets of data.\nExample:\n/data/sales/year=2023/month=10/...\n/data/sales/year=2024/month=01/...\nA query filtering WHERE year = 2024 reads only the relevant partition.\nWhy the other options are incorrect:\nA: Compression is independent of partitioning.\nB: Spark does not automatically clean partitions unless managed manually.\nC: Partitioning does not cause Spark to load entire data into memory.\nReference:\nDatabricks Exam Guide (June 2025): Section \"Using Spark SQL\" - partitioning and pruning for\noptimized data retrieval.\n\n\nSpark SQL Documentation - DataFrameWriter partitionBy() and query optimization."
+    },
+    {
+        "question": "A data engineer is running a Spark job to process a dataset of 1 TB stored in distributed\nstorage. The cluster has 10 nodes, each with 16 CPUs. Spark UI shows:\nLow number of Active Tasks\nMany tasks complete in milliseconds\nFewer tasks than available CPUs\nWhich approach should be used to adjust the partitioning for optimal resource allocation?",
+        "options": [
+            "A.. Set the number of partitions equal to the total number of CPUs in the cluster",
+            "B.. Set the number of partitions to a fixed value, such as 200",
+            "C.. Set the number of partitions equal to the number of nodes in the cluster",
+            "D.. Set the number of partitions by dividing the dataset size (1 TB) by a reasonable partition\nsize, such as 128 MB"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "Spark's best practice is to estimate partition count based on data volume and a reasonable\npartition size - typically 128 MB to 256 MB per partition.\nWith 1 TB of data: 1 TB / 128 MB ≈ ~8000 partitions\nThis ensures that tasks are distributed across available CPUs for parallelism and that each\ntask processes an optimal volume of data.\nOption A (equal to cores) may result in partitions that are too large.\nOption B (fixed 200) is arbitrary and may underutilize the cluster.\nOption C (nodes) gives too few partitions (10), limiting parallelism."
+    },
+    {
+        "question": "A developer wants to refactor some older Spark code to leverage built-in functions introduced\nin Spark 3.5.0. The existing code performs array manipulations manually. Which of the\nfollowing code snippets utilizes new built-in functions in Spark 3.5.0 for array operations?",
+        "options": [
+            "A.. result_df = prices_df \\\n.withColumn(\"valid_price\", F.when(F.col(\"spot_price\") > F.lit(min_price), 1).otherwise(0))",
+            "B.. \n\nresult_df = prices_df \\\n.agg(F.count_if(F.col(\"spot_price\") >= F.lit(min_price)))",
+            "C.. result_df = prices_df \\\n.agg(F.min(\"spot_price\"), F.max(\"spot_price\"))",
+            "D.. result_df = prices_df \\\n.agg(F.count(\"spot_price\").alias(\"spot_price\")) \\\n.filter(F.col(\"spot_price\") > F.lit(\"min_price\"))"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "count_if(condition) counts the number of rows that meet the specified boolean condition.\nIn this example, it directly counts how many times spot_price >= min_price evaluates to true,\nreplacing the older verbose combination of when/otherwise and filtering or summing.\nOfficial Spark 3.5.0 documentation notes the addition of count_if to simplify this kind of logic:\n\"Added count_if aggregate function to count only the rows where a boolean condition holds\n(SPARK-43773).\" Why other options are incorrect or outdated:\nA uses a legacy-style method of adding a flag column (when().otherwise()), which is verbose\ncompared to count_if.\nC performs a simple min/max aggregation-useful but unrelated to conditional array\noperations or the updated functionality.\nD incorrectly applies .filter() after .agg() which will cause an error, and misuses string\n\"min_price\" rather than the variable.\nTherefore, B is the only option leveraging new functionality from Spark 3.5.0 correctly and\nefficiently.\nExplanation:\nThe correct answer is B because it uses the new function count_if, introduced in Spark 3.5.0,\nwhich simplifies conditional counting within aggregations."
+    },
+    {
+        "question": "A data engineer is working on the DataFrame:\n\n\n(Referring to the table image: it has columns Id, Name, count, and timestamp.) Which code\nfragment should the engineer use to extract the unique values in the Name column into an\nalphabetically ordered list?",
+        "options": [
+            "A.. df.select(\"Name\").orderBy(df[\"Name\"].asc())",
+            "B.. df.select(\"Name\").distinct().orderBy(df[\"Name\"])",
+            "C.. df.select(\"Name\").distinct()",
+            "D.. df.select(\"Name\").distinct().orderBy(df[\"Name\"].desc())"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "To extract unique values from a column and sort them alphabetically:\ndistinct() is required to remove duplicate values.\norderBy() is needed to sort the results alphabetically (ascending by default).\nCorrect code:\ndf.select(\"Name\").distinct().orderBy(df[\"Name\"])\nThis is directly aligned with standard DataFrame API usage in PySpark, as documented in\nthe official Databricks Spark APIs. Option A is incorrect because it may not remove\nduplicates. Option C omits sorting. Option D sorts in descending order, which doesn't meet\nthe requirement for alphabetical (ascending) order."
+    },
+    {
+        "question": "A DataFrame df has columns name, age, and salary. The developer needs to sort the\nDataFrame by age in ascending order and salary in descending order.\nWhich code snippet meets the requirement of the developer?",
+        "options": [
+            "A.. df.orderBy(col(\"age\").asc(), col(\"salary\").asc()).show()",
+            "B.. df.sort(\"age\", \"salary\", ascending=[True, True]).show()",
+            "C.. df.sort(\"age\", \"salary\", ascending=[False, True]).show()",
+            "D.. df.orderBy(\"age\", \"salary\", ascending=[True, False]).show()"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "To sort a PySpark DataFrame by multiple columns with mixed sort directions, the correct\nusage is:\npython\nCopyEdit\ndf.orderBy(\"age\", \"salary\", ascending=[True, False])\nage will be sorted in ascending order\nsalary will be sorted in descending order\nThe orderBy() and sort() methods in PySpark accept a list of booleans to specify the sort\ndirection for each column.\nDocumentation Reference: PySpark API - DataFrame.orderBy"
+    },
+    {
+        "question": "Which command overwrites an existing JSON file when writing a DataFrame?",
+        "options": [
+            "A.. df.write.json(\"path/to/file\")",
+            "B.. df.write.mode(\"append\").json(\"path/to/file\")",
+            "C.. df.write.option(\"overwrite\").json(\"path/to/file\")",
+            "D.. df.write.mode(\"overwrite\").json(\"path/to/file\")"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "When writing DataFrames to files using the Spark DataFrameWriter API, Spark by default\nraises an error if the target path already exists. To explicitly overwrite existing data, you must\nspecify the write mode as \"overwrite\".\nCorrect Syntax:\ndf.write.mode(\"overwrite\").json(\"path/to/file\")\nThis command removes the existing file or directory at the specified path and writes the new\noutput in JSON format.\nOther supported save modes include:\n\"append\" - Adds new data to existing files.\n\"ignore\" - Skips writing if the path already exists.\n\"error\" or \"errorifexists\" - Fails the job if the output path exists (default).\nWhy other options are incorrect:\nA: Defaults to \"error\" mode, which fails if the path exists.\nB: \"append\" only adds data; it does not overwrite existing data.\nC: .option(\"overwrite\") is invalid - mode(\"overwrite\") must be used instead.\nReference (Databricks Apache Spark 3.5 - Python / Study Guide):\nPySpark API Reference: DataFrameWriter.mode() - describes valid write modes including\n\"overwrite\".\nPySpark API Reference: DataFrameWriter.json() - method to write DataFrames in JSON\nformat.\nDatabricks Certified Associate Developer for Apache Spark Exam Guide (June 2025):\nSection \"Using Spark DataFrame APIs\" - Reading and writing DataFrames using save modes,\nschema management, and partitioning."
+    },
+    {
+        "question": "A data engineer wants to process a streaming DataFrame that receives sensor readings\nevery second with columns sensor_id, temperature, and timestamp. The engineer needs to\ncalculate the average temperature for each sensor over the last 5 minutes while the data is\nstreaming.\nWhich code implementation achieves the requirement?\nOptions from the images provided:",
+        "options": [
+            "A.. A.",
+            "B.. B.",
+            "C.. D."
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "The correct answer is D because it uses proper time-based window aggregation along with\nwatermarking, which is the required pattern in Spark Structured Streaming for time-based\naggregations over event-time data.\nFrom the Spark 3.5 documentation on structured streaming:\n\"You can define sliding windows on event-time columns, and use groupBy along with\nwindow() to compute aggregates over those windows. To deal with late data, you use\nwithWatermark() to specify how late data is allowed to arrive.\" (Source: Structured Streaming\nProgramming Guide) In option D, the use of:\npython\nCopyEdit\n.groupBy(\"sensor_id\", window(\"timestamp\", \"5 minutes\"))\n.agg(avg(\"temperature\").alias(\"avg_temp\"))\nensures that for each sensor_id, the average temperature is calculated over 5-minute event-\ntime windows. To complete the logic, it is assumed that withWatermark(\"timestamp\", \"5\nminutes\") is used earlier in the pipeline to handle late events.\nExplanation of why other options are incorrect:\nOption A uses Window.partitionBy which applies to static DataFrames or batch queries and is\nnot suitable for streaming aggregations.\nOption B does not apply a time window, thus does not compute the rolling average over 5\nminutes.\nOption C incorrectly applies withWatermark() after an aggregation and does not include any\n\n\ntime window, thus missing the time-based grouping required.\nTherefore, Option D is the only one that meets all requirements for computing a time-\nwindowed streaming aggregation."
+    },
+    {
+        "question": "A developer has been asked to debug an issue with a Spark application. The developer\nidentified that the data being loaded from a CSV file is being read incorrectly into a\nDataFrame.\nThe CSV file has been read using the following Spark SQL statement:\nCREATE TABLE locations\nUSING csv\nOPTIONS (path '/data/locations.csv')\nThe first lines of the command SELECT * FROM locations look like this:\n| city | lat | long |\n| ALTI Sydney | -33... | ... |\nWhich parameter can the developer add to the OPTIONS clause in the CREATE TABLE\nstatement to read the CSV data correctly again?",
+        "options": [
+            "A.. 'header' 'true'",
+            "B.. 'header' 'false'",
+            "C.. 'sep' ','",
+            "D.. 'sep' '|'"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "When reading CSV files using Spark SQL or the DataFrame API, Spark by default assumes\nthat the first line of the file is data, not headers. To interpret the first line as column names,\nthe header option must be set to true.\nCorrect syntax:\nCREATE TABLE locations\nUSING csv\nOPTIONS (\npath '/data/locations.csv',\nheader 'true'\n);\nThis tells Spark to read the first row as column headers and correctly map columns like city,\nlat, and long.\nWhy the other options are incorrect:\nB (header 'false'): Default behavior; would keep reading header as data.\nC / D (sep): Used to specify the delimiter; not relevant unless the file uses a different\nseparator (e.g., |).\nReference (Databricks Apache Spark 3.5 - Python / Study Guide):\nPySpark SQL Data Sources - CSV options (header, inferSchema, sep).\nDatabricks Exam Guide (June 2025): Section \"Using Spark SQL\" - Reading data from files\nwith different formats using Spark SQL and DataFrame APIs."
+    },
+    {
+        "question": "A developer is working on a Spark application that processes a large dataset using SQL\nqueries. Despite having a large cluster, the developer notices that the job is underutilizing the\navailable resources. Executors remain idle for most of the time, and logs reveal that the\nnumber of tasks per stage is very low. The developer suspects that this is causing suboptimal\ncluster performance.\nWhich action should the developer take to improve cluster utilization?",
+        "options": [
+            "A.. Increase the value of spark.sql.shuffle.partitions",
+            "B.. Reduce the value of spark.sql.shuffle.partitions",
+            "C.. Enable dynamic resource allocation to scale resources as needed",
+            "D.. Increase the size of the dataset to create more partitions"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "In Spark SQL and DataFrame operations, the configuration parameter\nspark.sql.shuffle.partitions defines the number of partitions created during shuffle operations\nsuch as join, groupBy, and distinct.\nThe default value (in Spark 3.5) is 200.\nIf this number is too low, Spark creates fewer tasks, leading to idle executors and poor\ncluster utilization.\nIncreasing this value allows Spark to create more tasks that can run in parallel across\nexecutors, effectively using more cluster resources.\nCorrect approach:\nspark.conf.set(\"spark.sql.shuffle.partitions\", 400)\nThis increases the parallelism level of shuffle stages and improves overall resource\nutilization.\nWhy the other options are incorrect:\nB: Reducing partitions further would decrease parallelism and worsen the underutilization\nissue.\nC: Dynamic resource allocation scales executors up or down based on workload, but it\ndoesn't fix low task parallelism caused by insufficient shuffle partitions.\nD: Increasing dataset size is not a tuning solution and doesn't address task-level under-\nparallelization.\nReference (Databricks Apache Spark 3.5 - Python / Study Guide):\nSpark SQL Configuration: spark.sql.shuffle.partitions - controls the number of shuffle\npartitions.\nDatabricks Exam Guide (June 2025): Section \"Troubleshooting and Tuning Apache Spark\nDataFrame API Applications\" - tuning strategies, partitioning, and optimizing cluster utilization\n."
+    },
+    {
+        "question": "Which UDF implementation calculates the length of strings in a Spark DataFrame?",
+        "options": [
+            "A.. df.withColumn(\"length\", spark.udf(\"len\", StringType()))",
+            "B.. df.select(length(col(\"stringColumn\")).alias(\"length\"))",
+            "C.. spark.udf.register(\"stringLength\", lambda s: len(s))",
+            "D.. df.withColumn(\"length\", udf(lambda s: len(s), StringType()))"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "Option B uses Spark's built-in SQL function length(), which is efficient and avoids the\noverhead of a Python UDF:\nfrom pyspark.sql.functions import length, col\ndf.select(length(col(\"stringColumn\")).alias(\"length\"))\nExplanation of other options:\nOption A is incorrect syntax; spark.udf is not called this way.\nOption C registers a UDF but doesn't apply it in the DataFrame transformation.\nOption D is syntactically valid but uses a Python UDF which is less efficient than built-in\nfunctions.\nFinal answer: B"
+    },
+    {
+        "question": "A data engineer uses a broadcast variable to share a DataFrame containing millions of rows\nacross executors for lookup purposes. What will be the outcome?",
+        "options": [
+            "A.. The job may fail if the memory on each executor is not large enough to accommodate the\nDataFrame being broadcasted",
+            "B.. The job may fail if the executors do not have enough CPU cores to process the\nbroadcasted dataset",
+            "C.. The job will hang indefinitely as Spark will struggle to distribute and serialize such a large\nbroadcast variable to all executors",
+            "D.. The job may fail because the driver does not have enough CPU cores to serialize the\nlarge DataFrame"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "In Apache Spark, broadcast variables are used to efficiently distribute large, read-only data to\nall worker nodes. However, broadcasting very large datasets can lead to memory issues on\nexecutors if the data does not fit into the available memory.\nAccording to the Spark documentation:\n\"Broadcast variables allow the programmer to keep a read-only variable cached on each\nmachine rather than shipping a copy of it with tasks. This can greatly reduce the amount of\ndata sent over the network.\" However, it also notes:\n\"Using the broadcast functionality available in SparkContext can greatly reduce the size of\neach serialized task, and the cost of launching a job over a cluster. If your tasks use any\nlarge object from the driver program inside of them (e.g., a static lookup table), consider\nturning it into a broadcast variable.\" But caution is advised when broadcasting large datasets:\n\"Broadcasting large variables can cause out-of-memory errors if the data does not fit in the\nmemory of each executor.\" Therefore, if the broadcasted DataFrame containing millions of\nrows exceeds the memory capacity of the executors, the job may fail due to memory\nconstraints."
+    },
+    {
+        "question": "A data engineer noticed improved performance after upgrading from Spark 3.0 to Spark 3.5.\n\n\nThe engineer found that Adaptive Query Execution (AQE) was enabled.\nWhich operation is AQE implementing to improve performance?",
+        "options": [
+            "A.. Dynamically switching join strategies",
+            "B.. Collecting persistent table statistics and storing them in the metastore for future use",
+            "C.. Improving the performance of single-stage Spark jobs",
+            "D.. Optimizing the layout of Delta files on disk"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "Adaptive Query Execution (AQE) is a Spark 3.x feature that dynamically optimizes query\nplans at runtime. One of its core features is:\nDynamically switching join strategies (e.g., from sort-merge to broadcast) based on runtime\nstatistics.\nOther AQE capabilities include:\nCoalescing shuffle partitions\nSkew join handling\nOption A is correct.\nOption B refers to statistics collection, which is not AQE's primary function.\nOption C is too broad and not AQE-specific.\nOption D refers to Delta Lake optimizations, unrelated to AQE.\nFinal answer: A"
+    },
+    {
+        "question": "A data engineer is working on a num_df DataFrame and has a Python UDF defined as:\ndef cube_func(val):\nreturn val * val * val\nWhich code fragment registers and uses this UDF as a Spark SQL function to work with the\nDataFrame num_df?",
+        "options": [
+            "A.. spark.udf.register(\"cube_func\", cube_func)\nnum_df.selectExpr(\"cube_func(num)\").show()",
+            "B.. num_df.select(cube_func(\"num\")).show()",
+            "C.. spark.createDataFrame(cube_func(\"num\")).show()",
+            "D.. num_df.register(\"cube_func\").select(\"num\").show()"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "To use a Python function as a UDF (User Defined Function) in Spark SQL, it must first be\nregistered using spark.udf.register().\nCorrect usage:\nspark.udf.register(\"cube_func\", cube_func)\nnum_df.selectExpr(\"cube_func(num)\").show()\n\n\nThis registers cube_func as a callable SQL function available in expressions or queries.\nWhy the other options are incorrect:\nB: You must wrap with udf() or selectExpr; calling plain Python functions won't work.\nC: createDataFrame is for building DataFrames, not calling UDFs.\nD: DataFrames cannot directly register UDFs.\nReference:\nPySpark SQL Functions - spark.udf.register() and selectExpr().\nDatabricks Exam Guide (June 2025): Section \"Using Spark SQL\" - user-defined functions and\nSpark SQL integration."
+    },
+    {
+        "question": "What is the benefit of using Pandas on Spark for data transformations?\nOptions:",
+        "options": [
+            "A.. It is available only with Python, thereby reducing the learning curve.",
+            "B.. It computes results immediately using eager execution, making it simple to use.",
+            "C.. It runs on a single node only, utilizing the memory with memory-bound DataFrames and\nhence cost-efficient.",
+            "D.. It executes queries faster using all the available cores in the cluster as well as provides\nPandas's rich set of features."
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "Pandas API on Spark (formerly Koalas) offers:\nFamiliar Pandas-like syntax\nDistributed execution using Spark under the hood\nScalability for large datasets across the cluster\nIt provides the power of Spark while retaining the productivity of Pandas."
+    },
+    {
+        "question": "A data engineer observes that the upstream streaming source feeds the event table\nfrequently and sends duplicate records. Upon analyzing the current production table, the data\nengineer found that the time difference in the event_timestamp column of the duplicate\nrecords is, at most, 30 minutes.\nTo remove the duplicates, the engineer adds the code:\ndf = df.withWatermark(\"event_timestamp\", \"30 minutes\")\nWhat is the result?",
+        "options": [
+            "A.. It removes all duplicates regardless of when they arrive.",
+            "B.. It accepts watermarks in seconds and the code results in an error.",
+            "C.. It removes duplicates that arrive within the 30-minute window specified by the watermark.",
+            "D.. It is not able to handle deduplication in this scenario."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "In Structured Streaming, a watermark defines the maximum delay for event-time data to be\nconsidered in stateful operations like deduplication or window aggregations.\nBehavior:\ndf = df.withWatermark(\"event_timestamp\", \"30 minutes\")\n\n\nThis sets a 30-minute watermark, meaning Spark will only keep track of events that arrive\nwithin 30 minutes of the latest event time seen so far. When used with:\ndf.dropDuplicates([\"event_id\", \"event_timestamp\"])\nSpark removes duplicates that arrive within the watermark threshold (in this case, within 30\nminutes).\nWhy other options are incorrect:\nA: Watermarks do not remove all duplicates; they only manage those within the defined\nevent-time window.\nB: Watermark durations can be expressed as strings like \"30 minutes\", \"10 seconds\", etc.,\nnot only seconds.\nD: Structured Streaming supports deduplication using withWatermark() and dropDuplicates().\nReference (Databricks Apache Spark 3.5 - Python / Study Guide):\nPySpark Structured Streaming Guide - withWatermark() and dropDuplicates() methods for\nevent-time deduplication.\nDatabricks Certified Associate Developer for Apache Spark Exam Guide (June 2025):\nSection \"Structured Streaming\" - Topic: Streaming Deduplication with and without watermark\nusage."
+    },
+    {
+        "question": "An engineer has two DataFrames - df1 (small) and df2 (large). To optimize the join, the\nengineer uses a broadcast join:\nfrom pyspark.sql.functions import broadcast\ndf_result = df2.join(broadcast(df1), on=\"id\", how=\"inner\")\nWhat is the purpose of using broadcast() in this scenario?",
+        "options": [
+            "A.. It increases the partition size for df1 and df2.",
+            "B.. It ensures that the join happens only when the id values are identical.",
+            "C.. It reduces the number of shuffle operations by replicating the smaller DataFrame to all\nnodes.",
+            "D.. It filters the id values before performing the join."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "A broadcast join is a type of join where the smaller DataFrame is replicated (broadcast) to all\nworker nodes in the cluster. This avoids shuffling the large DataFrame across the network.\nBenefits:\nEliminates shuffle for the smaller dataset.\nGreatly improves performance when one side of the join is small enough to fit in memory.\nCorrect usage example:\ndf_result = df2.join(broadcast(df1), \"id\")\nThis is a map-side join, where each executor joins its local partition of the large dataset with\nthe broadcasted copy of the small one.\nWhy the other options are incorrect:\nA: Broadcasting does not change partition sizes.\nB: Joins always match on key equality; this is not specific to broadcast joins.\nD: Broadcasting does not filter; it distributes data for faster joins.\n\n\nReference:\nDatabricks Exam Guide (June 2025): Section \"Developing Apache Spark\nDataFrame/DataSet API Applications\" - broadcast joins and partitioning strategies.\nPySpark SQL Functions - broadcast() method documentation."
+    },
+    {
+        "question": "A data engineer replaces the exact percentile() function with approx_percentile() to improve\nperformance, but the results are drifting too far from expected values.\nWhich change should be made to solve the issue?",
+        "options": [
+            "A.. Decrease the first value of the percentage parameter to increase the accuracy of the\npercentile ranges",
+            "B.. Decrease the value of the accuracy parameter in order to decrease the memory usage but\nalso improve the accuracy",
+            "C.. Increase the last value of the percentage parameter to increase the accuracy of the\npercentile ranges",
+            "D.. Increase the value of the accuracy parameter in order to increase the memory usage but\nalso improve the accuracy"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "The approx_percentile function in Spark is a performance-optimized alternative to percentile.\nIt takes an optional accuracy parameter:\napprox_percentile(column, percentage, accuracy)\nHigher accuracy values → more precise results, but increased memory/computation.\nLower values → faster but less accurate.\nFrom the documentation:\n\"Increasing the accuracy improves precision but increases memory usage.\" Final answer: D"
+    },
+    {
+        "question": "Which Spark configuration controls the number of tasks that can run in parallel on an\nexecutor?",
+        "options": [
+            "A.. spark.executor.cores",
+            "B.. spark.task.maxFailures",
+            "C.. spark.executor.memory",
+            "D.. spark.sql.shuffle.partitions"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "The Spark configuration spark.executor.cores defines how many concurrent tasks can be\nexecuted within a single executor process.\nEach executor is assigned a number of CPU cores.\nEach core executes one task at a time.\nTherefore, increasing spark.executor.cores allows an executor to run more tasks\n\n\nconcurrently.\nExample:\n--conf spark.executor.cores=4\n→ Each executor can run 4 parallel tasks.\nWhy the other options are incorrect:\nB (spark.task.maxFailures): Sets retry attempts for failed tasks.\nC (spark.executor.memory): Sets executor memory, not concurrency.\nD (spark.sql.shuffle.partitions): Defines number of shuffle partitions, not executor\nconcurrency.\nReference:\nSpark Configuration Guide - Executor cores, tasks, and parallelism.\nDatabricks Exam Guide (June 2025): Section \"Apache Spark Architecture and Components\"\n- executor configuration, CPU cores, and parallel task execution."
+    },
+    {
+        "question": "A Spark developer wants to improve the performance of an existing PySpark UDF that runs a\nhash function that is not available in the standard Spark functions library. The existing UDF\ncode is:\nimport hashlib\nimport pyspark.sql.functions as sf\nfrom pyspark.sql.types import StringType\ndef shake_256(raw):\nreturn hashlib.shake_256(raw.encode()).hexdigest(20)\nshake_256_udf = sf.udf(shake_256, StringType())\nThe developer wants to replace this existing UDF with a Pandas UDF to improve\nperformance. The developer changes the definition of shake_256_udf to this:CopyEdit\nshake_256_udf = sf.pandas_udf(shake_256, StringType()) However, the developer receives\nthe error:\nWhat should the signature of the shake_256() function be changed to in order to fix this\nerror?",
+        "options": [
+            "A.. def shake_256(df: pd.Series) -> str:",
+            "B.. def shake_256(df: Iterator[pd.Series]) -> Iterator[pd.Series]:",
+            "C.. def shake_256(raw: str) -> str:",
+            "D.. def shake_256(df: pd.Series) -> pd.Series:"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "When converting a standard PySpark UDF to a Pandas UDF for performance optimization,\nthe function must operate on a Pandas Series as input and return a Pandas Series as output.\nIn this case, the original function signature:\ndef shake_256(raw: str) -> str\nis scalar - not compatible with Pandas UDFs.\nAccording to the official Spark documentation:\n\"Pandas UDFs operate on pandas.Series and return pandas.Series. The function definition\nshould be:\ndef my_udf(s: pd.Series) -> pd.Series:\nand it must be registered using pandas_udf(...).\"\nTherefore, to fix the error:\nThe function should be updated to:\ndef shake_256(df: pd.Series) -> pd.Series:\nreturn df.apply(lambda x: hashlib.shake_256(x.encode()).hexdigest(20))\nThis will allow Spark to efficiently execute the Pandas UDF in vectorized form, improving\nperformance compared to standard UDFs."
+    },
+    {
+        "question": "A Spark application is experiencing performance issues in client mode because the driver is\nresource-constrained.\nHow should this issue be resolved?",
+        "options": [
+            "A.. Add more executor instances to the cluster",
+            "B.. Increase the driver memory on the client machine",
+            "C.. Switch the deployment mode to cluster mode",
+            "D.. Switch the deployment mode to local mode"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "In Spark's client mode, the driver runs on the local machine that submitted the job. If that\nmachine is resource-constrained (e.g., low memory), performance degrades.\nFrom the Spark documentation:\n\"In cluster mode, the driver runs inside the cluster, benefiting from cluster resources and\nscalability.\" Option A is incorrect - executors do not help the driver directly.\nOption B might help short-term but does not scale.\n\n\nOption C is correct - switching to cluster mode moves the driver to the cluster.\nOption D (local mode) is for development/testing, not production.\nFinal answer: C"
+    },
+    {
+        "question": "A developer needs to produce a Python dictionary using data stored in a small Parquet table,\nwhich looks like this:\nregion_id\nregion_name\n10\nNorth\n12\nEast\n14\nWest\nThe resulting Python dictionary must contain a mapping of region_id to region_name,\ncontaining the smallest 3 region_id values.\nWhich code fragment meets the requirements?",
+        "options": [
+            "A.. regions_dict = dict(regions.take(3))",
+            "B.. regions_dict = regions.select(\"region_id\", \"region_name\").take(3)",
+            "C.. regions_dict = dict(regions.select(\"region_id\", \"region_name\").rdd.collect())",
+            "D.. regions_dict = dict(regions.orderBy(\"region_id\").limit(3).rdd.map(lambda x: (x.region_id,\nx.region_name)).collect())"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "To create a Python dictionary from a Spark DataFrame, you can first collect the data to the\ndriver node and then convert it into a Python dictionary using dict().\nSteps:\nSelect only relevant columns.\nOrder by region_id to get the smallest ones.\nLimit to 3 rows.\n\n\nMap each row into key-value pairs.\nCollect results to the driver and convert to a dictionary.\nCorrect code:\nregions_dict = dict(\nregions.orderBy(\"region_id\")\n.limit(3)\n.rdd.map(lambda x: (x.region_id, x.region_name))\n.collect()\n)\nThis produces a dictionary like:\n{10: 'North', 12: 'East', 14: 'West'}\nWhy the other options are incorrect:\nA/B: take(3) returns a list of Row objects, not key-value pairs.\nC: Doesn't order or limit by smallest IDs, so the result may not be correct.\nReference:\nPySpark RDD API - map() and collect().\nDatabricks Exam Guide (June 2025): Section \"Using Spark DataFrame APIs\" - covers\nDataFrame-to-local data conversions and collect operations."
+    },
+    {
+        "question": "A developer is working with a pandas DataFrame containing user behavior data from a web\napplication.\nWhich approach should be used for executing a groupBy operation in parallel across all\nworkers in Apache Spark 3.5?\nA)\nUse the applylnPandas API\nB)\nC)",
+        "options": [
+            "A.. Use the applyInPandas API:\ndf.groupby(\"user_id\").applyInPandas(mean_func, schema=\"user_id long, value\ndouble\").show()",
+            "B.. Use the mapInPandas API:\ndf.mapInPandas(mean_func, schema=\"user_id long, value double\").show()",
+            "C.. Use a regular Spark UDF:\nfrom pyspark.sql.functions import mean\ndf.groupBy(\"user_id\").agg(mean(\"value\")).show()",
+            "D.. Use a Pandas UDF:\n@pandas_udf(\"double\")\ndef mean_func(value: pd.Series) -> float:\nreturn value.mean()\ndf.groupby(\"user_id\").agg(mean_func(df[\"value\"])).show()"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "The correct approach to perform a parallelized groupBy operation across Spark worker\nnodes using Pandas API is via applyInPandas. This function enables grouped map\noperations using Pandas logic in a distributed Spark environment. It applies a user-defined\nfunction to each group of data represented as a Pandas DataFrame.\nAs per the Databricks documentation:\n\"applyInPandas() allows for vectorized operations on grouped data in Spark. It applies a\nuser-defined function to each group of a DataFrame and outputs a new DataFrame. This is\nthe recommended approach for using Pandas logic across grouped data with parallel\nexecution.\" Option A is correct and achieves this parallel execution.\nOption B (mapInPandas) applies to the entire DataFrame, not grouped operations.\nOption C uses built-in aggregation functions, which are efficient but not customizable with\nPandas logic.\nOption D creates a scalar Pandas UDF which does not perform a group-wise transformation.\nTherefore, to run a groupBy with parallel Pandas logic on Spark workers, Option A using\napplyInPandas is the only correct answer."
+    },
+    {
+        "question": "A developer wants to test Spark Connect with an existing Spark application.\nWhat are the two alternative ways the developer can start a local Spark Connect server\nwithout changing their existing application code? (Choose 2 answers)",
+        "options": [
+            "A.. Execute their pyspark shell with the option --remote \"https://localhost\"",
+            "B.. Execute their pyspark shell with the option --remote \"sc://localhost\"",
+            "C.. Set the environment variable SPARK_REMOTE=\"sc://localhost\" before starting the\npyspark shell",
+            "D.. Add .remote(\"sc://localhost\") to their SparkSession.builder calls in their Spark code",
+            "E.. Ensure the Spark property spark.connect.grpc.binding.port is set to 15002 in the\napplication code"
+        ],
+        "answer": [
+            "B",
+            "C"
+        ],
+        "explanation": "Spark Connect enables decoupling of the client and Spark driver processes, allowing remote\naccess. Spark supports configuring the remote Spark Connect server in multiple ways:\nFrom Databricks and Spark documentation:\nOption B (--remote \"sc://localhost\") is a valid command-line argument for the pyspark shell to\nconnect using Spark Connect.\nOption C (setting SPARK_REMOTE environment variable) is also a supported method to\nconfigure the remote endpoint.\nOption A is incorrect because Spark Connect uses the sc:// protocol, not https://.\nOption D requires modifying the code, which the question explicitly avoids.\nOption E configures the port on the server side but doesn't start a client connection.\nFinal Answers: B and C"
+    },
+    {
+        "question": "Which components of Apache Spark's Architecture are responsible for carrying out tasks\nwhen assigned to them?",
+        "options": [
+            "A.. Driver Nodes",
+            "B.. Executors",
+            "C.. CPU Cores",
+            "D.. Worker Nodes"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "In Spark's distributed architecture:\nThe Driver Node coordinates the execution of a Spark application. It converts the logical plan\ninto a physical plan of stages and tasks.\nThe Executors, running on Worker Nodes, are responsible for executing tasks assigned by\nthe driver and storing data (in memory or disk) during execution.\nKey point:\nExecutors are the active agents that perform the actual computations on data partitions. Each\nexecutor runs multiple tasks in parallel using available CPU cores.\nWhy the other options are incorrect:\nA (Driver Nodes): The driver schedules tasks; it doesn't execute them.\n\n\nC (CPU Cores): CPU cores execute within executors, but they are hardware, not Spark\narchitectural components.\nD (Worker Nodes): Worker nodes host executors but do not directly execute tasks; executors\ndo.\nReference (Databricks Apache Spark 3.5 - Python / Study Guide):\nSpark Architecture Components - Driver, Executors, Cluster Manager, Worker Nodes.\nDatabricks Exam Guide (June 2025): Section \"Apache Spark Architecture and Components\"\n- describes the roles of driver and executor nodes in distributed processing."
+    },
+    {
+        "question": "How can a Spark developer ensure optimal resource utilization when running Spark jobs in\nLocal Mode for testing?\nOptions:",
+        "options": [
+            "A.. Configure the application to run in cluster mode instead of local mode.",
+            "B.. Increase the number of local threads based on the number of CPU cores.",
+            "C.. Use the spark.dynamicAllocation.enabled property to scale resources dynamically.",
+            "D.. Set the spark.executor.memory property to a large value."
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "When running in local mode (e.g., local[4]), the number inside the brackets defines how many\nthreads Spark will use.\nUsing local[*] ensures Spark uses all available CPU cores for parallelism.\nExample:\nspark-submit --master local[*]\nDynamic allocation and executor memory apply to cluster-based deployments, not local\nmode."
+    },
+    {
+        "question": "A data scientist wants to ingest a directory full of plain text files so that each record in\nthe output DataFrame contains the entire contents of a single file and the full path of the file\nthe text was read from.\nThe first attempt does read the text files, but each record contains a single line. This code is\nshown below:\ntxt_path = \"/datasets/raw_txt/*\"\ndf = spark.read.text(txt_path) # one row per line by default\ndf = df.withColumn(\"file_path\", input_file_name()) # add full path\nWhich code change can be implemented in a DataFrame that meets the data scientist's\nrequirements?",
+        "options": [
+            "A.. Add the option wholetext to the text() function.",
+            "B.. Add the option lineSep to the text() function.",
+            "C.. Add the option wholetext=False to the text() function.",
+            "D.. Add the option lineSep=\", \" to the text() function."
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "By default, the spark.read.text() method reads a text file one line per record. This means that\n\n\neach line in a text file becomes one row in the resulting DataFrame.\nTo read each file as a single record, Apache Spark provides the option wholetext, which,\nwhen set to True, causes Spark to treat the entire file contents as one single string per row.\nCorrect usage:\ndf = spark.read.option(\"wholetext\", True).text(txt_path)\nThis way, each record in the DataFrame will contain the full content of one file instead of one\nline per record.\nTo also include the file path, the function input_file_name() can be used to create an\nadditional column that stores the complete path of the file being read:\nfrom pyspark.sql.functions import input_file_name\ndf = spark.read.option(\"wholetext\", True).text(txt_path) \\\n.withColumn(\"file_path\", input_file_name())\nThis approach satisfies both requirements from the question:\nEach record holds the entire contents of a file.\nEach record also contains the file path from which the text was read.\nWhy the other options are incorrect:\nB or D (lineSep) - The lineSep option only defines the delimiter between lines. It does not\ncombine the entire file content into a single record.\nC (wholetext=False) - This is the default behavior, which still reads one record per line rather\nthan per file.\nReference (Databricks Apache Spark 3.5 - Python / Study Guide):\nPySpark API Reference: DataFrameReader.text - describes the wholetext option.\nPySpark Functions: input_file_name() - adds a column with the source file path.\nDatabricks Certified Associate Developer for Apache Spark Exam Guide (June 2025):\nSection \"Using Spark DataFrame APIs\" - covers reading files and handling DataFrames."
+    },
+    {
+        "question": "Given a CSV file with the content:\nAnd the following code:\nfrom pyspark.sql.types import *\nschema = StructType([\nStructField(\"name\", StringType()),\nStructField(\"age\", IntegerType())\n])\nspark.read.schema(schema).csv(path).collect()\nWhat is the resulting output?",
+        "options": [
+            "A.. [Row(name='bambi'), Row(name='alladin', age=20)]",
+            "B.. [Row(name='alladin', age=20)]",
+            "C.. [Row(name='bambi', age=None), Row(name='alladin', age=20)]",
+            "D.. The code throws an error due to a schema mismatch."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "In Spark, when a CSV row does not match the provided schema, Spark does not raise an\nerror by default. Instead, it returns null for fields that cannot be parsed correctly.\nIn the first row, \"hello\" cannot be cast to Integer for the age field → Spark sets age=None In\nthe second row, \"20\" is a valid integer → age=20 So the output will be:\n[Row(name='bambi', age=None), Row(name='alladin', age=20)]\nFinal answer: C"
+    },
+    {
+        "question": "A data engineer wants to create an external table from a JSON file located at /data/input.json\nwith the following requirements:\nCreate an external table named users\nAutomatically infer schema\nMerge records with differing schemas\nWhich code snippet should the engineer use?\nOptions:",
+        "options": [
+            "A.. CREATE TABLE users USING json OPTIONS (path '/data/input.json')",
+            "B.. CREATE EXTERNAL TABLE users USING json OPTIONS (path '/data/input.json')",
+            "C.. CREATE EXTERNAL TABLE users USING json OPTIONS (path '/data/input.json',\nmergeSchema 'true')",
+            "D.. CREATE EXTERNAL TABLE users USING json OPTIONS (path '/data/input.json',\nschemaMerge 'true')"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "To create an external table and enable schema merging, the correct syntax is:\nCREATE EXTERNAL TABLE users\nUSING json\nOPTIONS (\npath '/data/input.json',\nmergeSchema 'true'\n)\nmergeSchema is the correct option key (not schemaMerge)\nEXTERNAL allows Spark to query files without managing their lifecycle"
+    },
+    {
+        "question": "A data scientist wants each record in the DataFrame to contain:\nThe first attempt at the code does read the text files but each record contains a single line.\nThis code is shown below:\n\n\n \nThe entire contents of a file\nThe full file path\nThe issue: reading line-by-line rather than full text per file.\nCode:\ncorpus = spark.read.text(\"/datasets/raw_txt/*\") \\\n.select('*', '_metadata.file_path')\nWhich change will ensure one record per file?\nOptions:",
+        "options": [
+            "A.. Add the option wholetext=True to the text() function",
+            "B.. Add the option lineSep='\\n' to the text() function",
+            "C.. Add the option wholetext=False to the text() function",
+            "D.. Add the option lineSep=\", \" to the text() function"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "To read each file as a single record, use:\nspark.read.text(path, wholetext=True)\nThis ensures that Spark reads the entire file contents into one row."
+    },
+    {
+        "question": "A data scientist is working on a large dataset in Apache Spark using PySpark. The data\nscientist has a DataFrame df with columns user_id, product_id, and purchase_amount and\nneeds to perform some operations on this data efficiently.\nWhich sequence of operations results in transformations that require a shuffle followed by\ntransformations that do not?",
+        "options": [
+            "A.. df.filter(df.purchase_amount > 100).groupBy(\"user_id\").sum(\"purchase_amount\")",
+            "B.. df.withColumn(\"discount\", df.purchase_amount * 0.1).select(\"discount\")",
+            "C.. df.withColumn(\"purchase_date\", current_date()).where(\"total_purchase > 50\")",
+            "D.. df.groupBy(\"user_id\").agg(sum(\"purchase_amount\").alias(\"total_purchase\")).repartition(10\n)"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "Shuffling occurs in operations like groupBy, reduceByKey, or join-which cause data to be\nmoved across partitions. The repartition() operation can also cause a shuffle, but in this\ncontext, it follows an aggregation.\nIn Option D, the groupBy followed by agg results in a shuffle due to grouping across nodes.\nThe repartition(10) is a partitioning transformation but does not involve a new shuffle since\n\n\nthe data is already grouped.\nThis sequence - shuffle (groupBy) followed by non-shuffling (repartition) - is correct.\nOption A does the opposite: the filter does not cause a shuffle, but groupBy does - this makes\nit the wrong order."
+    },
+    {
+        "question": "A Data Analyst is working on employees_df and needs to add a new column where a 10%\ntax is calculated on the salary.\nAdditionally, the DataFrame contains the column age, which is not needed.\nWhich code fragment adds the tax column and removes the age column?",
+        "options": [
+            "A.. employees_df = employees_df.withColumn(\"tax\", col(\"salary\") * 0.1).drop(\"age\")",
+            "B.. employees_df = employees_df.withColumn(\"tax\", lit(0.1)).drop(\"age\")",
+            "C.. employees_df = employees_df.dropField(\"age\").withColumn(\"tax\", col(\"salary\") * 0.1)",
+            "D.. employees_df = employees_df.withColumn(\"tax\", col(\"salary\") + 0.1).drop(\"age\")"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "To create a new calculated column in Spark, use the .withColumn() method.\nTo remove an unwanted column, use the .drop() method.\nCorrect syntax:\nfrom pyspark.sql.functions import col\nemployees_df = employees_df.withColumn(\"tax\", col(\"salary\") * 0.1).drop(\"age\")\n.withColumn(\"tax\", col(\"salary\") * 0.1) → adds a new column where tax = 10% of salary.\n.drop(\"age\") → removes the age column from the DataFrame.\nWhy the other options are incorrect:\nB: lit(0.1) creates a constant value, not a calculated tax.\nC: .dropField() is not a DataFrame API method (used only in struct field manipulations).\nD: Adds 0.1 to salary instead of calculating 10%.\nReference:\nPySpark DataFrame API - withColumn(), drop(), and col().\nDatabricks Exam Guide (June 2025): Section \"Developing Apache Spark\nDataFrame/DataSet API Applications\" - manipulating, renaming, and dropping columns."
+    },
+    {
+        "question": "You have:\nDataFrame A: 128 GB of transactions\nDataFrame B: 1 GB user lookup table\nWhich strategy is correct for broadcasting?",
+        "options": [
+            "A.. DataFrame B should be broadcasted because it is smaller and will eliminate the need for\nshuffling itself",
+            "B.. DataFrame B should be broadcasted because it is smaller and will eliminate the need for\n\n\nshuffling DataFrame A",
+            "C.. DataFrame A should be broadcasted because it is larger and will eliminate the need for\nshuffling DataFrame B",
+            "D.. DataFrame A should be broadcasted because it is smaller and will eliminate the need for\nshuffling itself"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "Broadcast joins work by sending the smaller DataFrame to all executors, eliminating the\nshuffle of the larger DataFrame.\nFrom Spark documentation:\n\"Broadcast joins are efficient when one DataFrame is small enough to fit in memory. Spark\navoids shuffling the larger table.\" DataFrame B (1 GB) fits within the default threshold and\nshould be broadcasted.\nIt eliminates the need to shuffle the large DataFrame A.\nFinal answer: B"
+    },
+    {
+        "question": "A data engineer is implementing a streaming pipeline with watermarking to handle late-\narriving records.\nThe engineer has written the following code:\ninputStream \\\n.withWatermark(\"event_time\", \"10 minutes\") \\\n.groupBy(window(\"event_time\", \"15 minutes\"))\nWhat happens to data that arrives after the watermark threshold?",
+        "options": [
+            "A.. Any data arriving more than 10 minutes after the watermark threshold will be ignored and\nnot included in the aggregation.",
+            "B.. Records that arrive later than the watermark threshold (10 minutes) will automatically be\nincluded in the aggregation if they fall within the 15-minute window.",
+            "C.. Data arriving more than 10 minutes after the latest watermark will still be included in the\naggregation but will be placed into the next window.",
+            "D.. The watermark ensures that late data arriving within 10 minutes of the latest event time\nwill be processed and included in the windowed aggregation."
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "Watermarking in Structured Streaming defines how late a record can arrive based on event\ntime before Spark discards it.\nBehavior:\n.withWatermark(\"event_time\", \"10 minutes\")\nThis means Spark will keep state for 10 minutes beyond the maximum event time seen so\nfar.\nAny data arriving later than 10 minutes after the current watermark is ignored - it will not be\nincluded in the aggregation or output.\nWhy the other options are incorrect:\nB: Late data beyond the watermark threshold is not included.\n\n\nC: Late data is not moved to a new window; it's simply dropped.\nD: True for late data within the watermark threshold, not after it.\nReference:\nSpark Structured Streaming Guide - withWatermark() behavior and late data handling.\nDatabricks Exam Guide (June 2025): Section \"Structured Streaming\" - watermarking and\nstate cleanup behavior."
+    },
+    {
+        "question": "An organization has been running a Spark application in production and is considering\ndisabling the Spark History Server to reduce resource usage.\nWhat will be the impact of disabling the Spark History Server in production?",
+        "options": [
+            "A.. Prevention of driver log accumulation during long-running jobs",
+            "B.. Improved job execution speed due to reduced logging overhead",
+            "C.. Loss of access to past job logs and reduced debugging capability for completed jobs",
+            "D.. Enhanced executor performance due to reduced log size"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "The Spark History Server provides a web UI for viewing past completed applications,\nincluding event logs, stages, and performance metrics.\nIf disabled:\nSpark jobs still run normally,\nBut users lose the ability to review historical job metrics, DAGs, or logs after completion.\nThus, debugging, performance analysis, and audit capabilities are lost.\nWhy the other options are incorrect:\nA: Disabling History Server doesn't manage logs.\nB/D: Minimal overhead; disabling doesn't improve runtime speed or executor performance.\nReference:\nDatabricks Exam Guide (June 2025): Section \"Apache Spark Architecture and Components\"\n- Spark UI, History Server, and event logging.\nSpark Administration Docs - History Server functionality and configuration."
+    },
+    {
+        "question": "A data engineer is building a Structured Streaming pipeline and wants it to recover from\nfailures or intentional shutdowns by continuing where it left off.\nHow can this be achieved?",
+        "options": [
+            "A.. By configuring the option recoveryLocation during SparkSession initialization.",
+            "B.. By configuring the option checkpointLocation during readStream.",
+            "C.. By configuring the option checkpointLocation during writeStream.",
+            "D.. By configuring the option recoveryLocation during writeStream."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "In Structured Streaming, checkpoints store state information (offsets, progress, and\nmetadata) needed to resume a stream after a failure or restart.\n\n\nCorrect usage:\nSet the checkpointLocation option when writing the streaming output:\nstreaming_df.writeStream \\\n.format(\"delta\") \\\n.option(\"checkpointLocation\", \"/path/to/checkpoint/dir\") \\\n.start(\"/path/to/output\")\nSpark uses this checkpoint directory to recover progress automatically and maintain exactly-\nonce semantics.\nWhy the other options are incorrect:\nA/D: recoveryLocation is not a valid Spark configuration option.\nB: Checkpointing must be configured in writeStream, not during readStream.\nReference:\nPySpark Structured Streaming Guide - Checkpointing and recovery.\nDatabricks Exam Guide (June 2025): Section \"Structured Streaming\" - explains checkpointing\nand fault-tolerant streaming recovery."
+    },
+    {
+        "question": "A data scientist at a financial services company is working with a Spark DataFrame\ncontaining transaction records. The DataFrame has millions of rows and includes columns for\ntransaction_id, account_number, transaction_amount, and timestamp. Due to an issue with\nthe source system, some transactions were accidentally recorded multiple times with\nidentical information across all fields. The data scientist needs to remove rows with\nduplicates across all fields to ensure accurate financial reporting.\nWhich approach should the data scientist use to deduplicate the orders using PySpark?",
+        "options": [
+            "A.. df = df.dropDuplicates()",
+            "B.. df = df.groupBy(\"transaction_id\").agg(F.first(\"account_number\"),\nF.first(\"transaction_amount\"), F.first(\"timestamp\"))",
+            "C.. df = df.filter(F.col(\"transaction_id\").isNotNull())",
+            "D.. df = df.dropDuplicates([\"transaction_amount\"])"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "dropDuplicates() with no column list removes duplicates based on all columns.\nIt's the most efficient and semantically correct way to deduplicate records that are completely\nidentical across all fields.\nFrom the PySpark documentation:\ndropDuplicates(): Return a new DataFrame with duplicate rows removed, considering all\ncolumns if none are specified.\n- Source: PySpark DataFrame.dropDuplicates() API"
+    },
+    {
+        "question": "Which Spark configuration controls the number of tasks that can run in parallel on the\nexecutor?\nOptions:",
+        "options": [
+            "A.. spark.executor.cores",
+            "B.. spark.task.maxFailures",
+            "C.. spark.driver.cores",
+            "D.. spark.executor.memory"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "spark.executor.cores determines how many concurrent tasks an executor can run.\nFor example, if set to 4, each executor can run up to 4 tasks in parallel.\nOther settings:\nspark.task.maxFailures controls task retry logic.\nspark.driver.cores is for the driver, not executors.\nspark.executor.memory sets memory limits, not task concurrency."
+    },
+    {
+        "question": "Given a DataFrame df that has 10 partitions, after running the code:\nresult = df.coalesce(20)\nHow many partitions will the result DataFrame have?",
+        "options": [
+            "A.. 10",
+            "B.. Same number as the cluster executors",
+            "C.. 1",
+            "D.. 20"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "The .coalesce(numPartitions) function is used to reduce the number of partitions in a\nDataFrame. It does not increase the number of partitions. If the specified number of partitions\nis greater than the current number, it will not have any effect.\nFrom the official Spark documentation:\n\"coalesce() results in a narrow dependency, e.g. if you go from 1000 partitions to 100\npartitions, there will not be a shuffle, instead each of the 100 new partitions will claim one or\nmore of the current partitions.\" However, if you try to increase partitions using coalesce (e.g.,\nfrom 10 to 20), the number of partitions remains unchanged.\nHence, df.coalesce(20) will still return a DataFrame with 10 partitions."
+    },
+    {
+        "question": "What is the relationship between jobs, stages, and tasks during execution in Apache Spark?\nOptions:",
+        "options": [
+            "A.. A job contains multiple stages, and each stage contains multiple tasks.",
+            "B.. A job contains multiple tasks, and each task contains multiple stages.",
+            "C.. A stage contains multiple jobs, and each job contains multiple tasks.",
+            "D.. A stage contains multiple tasks, and each task contains multiple jobs."
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "A Spark job is triggered by an action (e.g., count, show).\nThe job is broken into stages, typically one per shuffle boundary.\nEach stage is divided into multiple tasks, which are distributed across worker nodes."
+    },
+    {
+        "question": "Which feature of Spark Connect is considered when designing an application to enable\nremote interaction with the Spark cluster?",
+        "options": [
+            "A.. It provides a way to run Spark applications remotely in any programming language",
+            "B.. It can be used to interact with any remote cluster using the REST API",
+            "C.. It allows for remote execution of Spark jobs",
+            "D.. It is primarily used for data ingestion into Spark from external sources"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "Spark Connect introduces a decoupled client-server architecture. Its key feature is enabling\nSpark job submission and execution from remote clients - in Python, Java, etc.\nFrom Databricks documentation:\n\"Spark Connect allows remote clients to connect to a Spark cluster and execute Spark jobs\nwithout being co-located with the Spark driver.\" A is close, but \"any language\" is overstated\n(currently supports Python, Java, etc., not literally all).\nB refers to REST, which is not Spark Connect's mechanism.\nD is incorrect; Spark Connect isn't focused on ingestion.\nFinal answer: C"
+    },
+    {
+        "question": "A data engineer needs to persist a file-based data source to a specific location. However, by\ndefault, Spark writes to the warehouse directory (e.g., /user/hive/warehouse). To override\nthis, the engineer must explicitly define the file path.\nWhich line of code ensures the data is saved to a specific location?\nOptions:",
+        "options": [
+            "A.. users.write(path=\"/some/path\").saveAsTable(\"default_table\")",
+            "B.. users.write.saveAsTable(\"default_table\").option(\"path\", \"/some/path\")",
+            "C.. users.write.option(\"path\", \"/some/path\").saveAsTable(\"default_table\")",
+            "D.. users.write.saveAsTable(\"default_table\", path=\"/some/path\")"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "To persist a table and specify the save path, use:\nusers.write.option(\"path\", \"/some/path\").saveAsTable(\"default_table\")\nThe .option(\"path\", ...) must be applied before calling saveAsTable.\nOption A uses invalid syntax (write(path=...)).\nOption B applies .option() after .saveAsTable()-which is too late.\nOption D uses incorrect syntax (no path parameter in saveAsTable)."
+    },
+    {
+        "question": "A Spark application needs to read multiple Parquet files from a directory where the files have\ndiffering but compatible schemas.\nThe data engineer wants to create a DataFrame that includes all columns from all files.\nWhich code should the data engineer use to read the Parquet files and include all columns\nusing Apache Spark?",
+        "options": [
+            "A.. spark.read.parquet(\"/data/parquet/\")",
+            "B.. spark.read.option(\"mergeSchema\", True).parquet(\"/data/parquet/\")",
+            "C.. spark.read.format(\"parquet\").option(\"inferSchema\", \"true\").load(\"/data/parquet/\")",
+            "D.. spark.read.parquet(\"/data/parquet/\").option(\"mergeAllCols\", True)"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "When reading Parquet files, Spark infers a unified schema automatically only if all files share\nidentical structures.\nIf files have different but compatible schemas, you must enable schema merging by setting\nthe option mergeSchema=True.\nCorrect syntax:\ndf = spark.read.option(\"mergeSchema\", True).parquet(\"/data/parquet/\")\nThis option ensures Spark merges all discovered fields across Parquet files into one unified\nDataFrame schema.\nWhy the other options are incorrect:\nA: Loads files but ignores extra columns - uses only the first file's schema.\nC: inferSchema applies to CSV/JSON, not Parquet.\nD: mergeAllCols is not a valid Spark option.\nReference:\nSpark SQL Data Sources - Parquet options (mergeSchema, path).\nDatabricks Exam Guide (June 2025): Section \"Using Spark DataFrame APIs\" - reading/writing\nDataFrames with schema evolution and merging."
+    },
+    {
+        "question": "A data engineer is working with Spark SQL and has a large JSON file stored at\n/data/input.json.\nThe file contains records with varying schemas, and the engineer wants to create an external\ntable in Spark SQL that:\nReads directly from /data/input.json.\nInfers the schema automatically.\nMerges differing schemas.\nWhich code snippet should the engineer use?",
+        "options": [
+            "A.. CREATE EXTERNAL TABLE users\nUSING json\nOPTIONS (path '/data/input.json', mergeSchema 'true');",
+            "B.. CREATE TABLE users\nUSING json\nOPTIONS (path '/data/input.json');",
+            "C.. CREATE EXTERNAL TABLE users\nUSING json\nOPTIONS (path '/data/input.json', inferSchema 'true');",
+            "D.. CREATE EXTERNAL TABLE users\nUSING json\nOPTIONS (path '/data/input.json', mergeAll 'true');"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "To handle JSON files with evolving or differing schemas, Spark SQL supports the option\nmergeSchema 'true', which merges all fields across files into a unified schema.\nCorrect syntax:\nCREATE EXTERNAL TABLE users\nUSING json\nOPTIONS (path '/data/input.json', mergeSchema 'true');\nThis creates an external table directly on the JSON data, inferring schema automatically and\nmerging variations.\nWhy the other options are incorrect:\nB: Missing schema merge configuration - fails with inconsistent files.\nC: inferSchema applies to CSV/other file types, not JSON.\nD: mergeAll is not a valid Spark SQL option.\nReference:\nSpark SQL Data Sources - JSON file options (mergeSchema, path).\nDatabricks Exam Guide (June 2025): Section \"Using Spark SQL\" - creating external tables\nand schema inference for JSON data."
+    },
+    {
+        "question": "A data engineer wants to write a Spark job that creates a new managed table. If the table\nalready exists, the job should fail and not modify anything.\nWhich save mode and method should be used?",
+        "options": [
+            "A.. saveAsTable with mode ErrorIfExists",
+            "B.. saveAsTable with mode Overwrite",
+            "C.. save with mode Ignore",
+            "D.. save with mode ErrorIfExists"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "The method saveAsTable() creates a new table and optionally fails if the table exists.\nFrom Spark documentation:\n\"The mode 'ErrorIfExists' (default) will throw an error if the table already exists.\" Thus:\nOption A is correct.\nOption B (Overwrite) would overwrite existing data - not acceptable here.\nOption C and D use save(), which doesn't create a managed table with metadata in the\nmetastore.\nFinal answer: A"
+    },
+    {
+        "question": "A Data Analyst needs to retrieve employees with 5 or more years of tenure.\nWhich code snippet filters and shows the list?",
+        "options": [
+            "A.. employees_df.filter(employees_df.tenure >= 5).show()",
+            "B.. employees_df.where(employees_df.tenure >= 5)",
+            "C.. filter(employees_df.tenure >= 5)",
+            "D.. employees_df.filter(employees_df.tenure >= 5).collect()"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "To filter rows based on a condition and display them in Spark, use filter(...).show():\nemployees_df.filter(employees_df.tenure >= 5).show()\nOption A is correct and shows the results.\nOption B filters but doesn't display them.\nOption C uses Python's built-in filter, not Spark.\nOption D collects the results to the driver, which is unnecessary if .show() is sufficient.\nFinal answer: A"
+    },
+    {
+        "question": "A developer needs to write the output of a complex chain of Spark transformations to a\nParquet table called events.liveLatest.\nConsumers of this table query it frequently with filters on both year and month of the event_ts\ncolumn (a timestamp).\nThe current code:\nfrom pyspark.sql import functions as F\nfinal = df.withColumn(\"event_year\", F.year(\"event_ts\")) \\\n.withColumn(\"event_month\", F.month(\"event_ts\")) \\\n.bucketBy(42, [\"event_year\", \"event_month\"]) \\\n.saveAsTable(\"events.liveLatest\")\nHowever, consumers report poor query performance.\nWhich change will enable efficient querying by year and month?",
+        "options": [
+            "A.. Replace .bucketBy() with .partitionBy(\"event_year\", \"event_month\")",
+            "B.. Change the bucket count (42) to a lower number",
+            "C.. Add .sortBy() after .bucketBy()",
+            "D.. Replace .bucketBy() with .partitionBy(\"event_year\") only"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "When queries frequently filter on certain columns, partitioning by those columns ensures\npartition pruning, allowing Spark to scan only relevant directories instead of the entire\ndataset.\nCorrect code:\nfinal.write.partitionBy(\"event_year\", \"event_month\").parquet(\"events.liveLatest\") This\nimproves read performance dramatically for filters like:\nSELECT * FROM events.liveLatest WHERE event_year = 2024 AND event_month = 5;\nbucketBy() helps in clustering and joins, not in partition pruning for file-based tables.\nWhy the other options are incorrect:\nB: Bucket count changes parallelism, not query pruning.\n\n\nC: sortBy organizes data within files, not across partitions.\nD: Partitioning by only one column limits pruning benefits.\nReference:\nSpark SQL DataFrameWriter - partitionBy() for partitioned tables.\nDatabricks Exam Guide (June 2025): Section \"Using Spark SQL\" - partitioning vs. bucketing\nand query optimization."
+    },
+    {
+        "question": "A data engineer is working on a Streaming DataFrame (streaming_df) with the following\nstreaming data:\nid\nname\ncount\ntimestamp\n1\nDelhi\n20\n\n\n2024-09-19T10:11\n1\nDelhi\n50\n2024-09-19T10:12\n2\nLondon\n50\n2024-09-19T10:15\n3\nParis\n30\n2024-09-19T10:18\n3\nParis\n20\n2024-09-19T10:20\n4\nWashington\n10\n2024-09-19T10:22\nWhich operation is supported with streaming_df?",
+        "options": [
+            "A.. streaming_df.count()",
+            "B.. streaming_df.filter(\"count < 30\")",
+            "C.. streaming_df.select(countDistinct(\"name\"))",
+            "D.. streaming_df.show()"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "In Structured Streaming, only transformation operations are allowed on streaming\nDataFrames. These include select(), filter(), where(), groupBy(), withColumn(), etc.\nExample of supported transformation:\nfiltered_df = streaming_df.filter(\"count < 30\")\nHowever, actions such as count(), show(), and collect() are not supported directly on\nstreaming DataFrames because streaming queries are unbounded and never finish until\nstopped.\nTo perform aggregations, the query must be executed through writeStream and an output\nsink.\nWhy the other options are incorrect:\nA: count() is an action, not allowed directly on streaming DataFrames.\nC: countDistinct() is a stateful aggregation, not supported outside of a proper streaming\nquery.\nD: show() is also an action, unsupported on streaming queries.\nReference:\nPySpark Structured Streaming Programming Guide - supported transformations and actions.\nDatabricks Exam Guide (June 2025): Section \"Structured Streaming\" - performing operations\n\n\non streaming DataFrames and understanding supported transformations."
+    },
+    {
+        "question": "A data engineer is building an Apache Spark™ Structured Streaming application to process a\nstream of JSON events in real time. The engineer wants the application to be fault-tolerant\nand resume processing from the last successfully processed record in case of a failure. To\nachieve this, the data engineer decides to implement checkpoints.\nWhich code snippet should the data engineer use?",
+        "options": [
+            "A.. query = streaming_df.writeStream \\\n.format(\"console\") \\\n.option(\"checkpoint\", \"/path/to/checkpoint\") \\\n.outputMode(\"append\") \\\n.start()",
+            "B.. query = streaming_df.writeStream \\\n.format(\"console\") \\\n.outputMode(\"append\") \\\n.option(\"checkpointLocation\", \"/path/to/checkpoint\") \\\n.start()",
+            "C.. query = streaming_df.writeStream \\\n.format(\"console\") \\\n.outputMode(\"complete\") \\\n.start()",
+            "D.. query = streaming_df.writeStream \\\n.format(\"console\") \\\n.outputMode(\"append\") \\\n.start()"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "To enable fault tolerance and ensure that Spark can resume from the last committed offset\nafter failure, you must configure a checkpoint location using the correct option key:\n\"checkpointLocation\".\nFrom the official Spark Structured Streaming guide:\n\"To make a streaming query fault-tolerant and recoverable, a checkpoint directory must be\nspecified using .option(\"checkpointLocation\", \"/path/to/dir\").\" Explanation of options:\nOption A uses an invalid option name: \"checkpoint\" (should be \"checkpointLocation\") Option\nB is correct: it sets checkpointLocation properly Option C lacks checkpointing and won't\nresume after failure Option D also lacks checkpointing configuration"
+    },
+    {
+        "question": "Which feature of Spark Connect should be considered when designing an application that\n\n\nplans to enable remote interaction with a Spark cluster?",
+        "options": [
+            "A.. It is primarily used for data ingestion into Spark from external sources.",
+            "B.. It provides a way to run Spark applications remotely in any programming language.",
+            "C.. It can be used to interact with any remote cluster using the REST API.",
+            "D.. It allows for remote execution of Spark jobs."
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "Spark Connect enables remote execution of Spark jobs by decoupling the client from the\ndriver using the Spark Connect protocol (gRPC).\nIt allows users to run Spark code from different environments (like notebooks, IDEs, or\nremote clients) while executing jobs on the cluster.\nKey Features:\nEnables remote interaction between client and Spark driver.\nSupports interactive development and lightweight client sessions.\nImproves developer productivity without needing driver resources locally.\nWhy the other options are incorrect:\nA: Spark Connect is not limited to ingestion tasks.\nB: It allows multi-language clients (Python, Scala, etc.) but runs via Spark Connect API, not\narbitrary remote code.\nC: Uses gRPC protocol, not REST.\nReference:\nDatabricks Exam Guide (June 2025): Section \"Using Spark Connect to Deploy Applications\" -\ndescribes Spark Connect architecture and remote execution model.\nSpark 3.5 Documentation - Spark Connect overview and client-server protocol."
+    },
+    {
+        "question": "Given this view definition:\ndf.createOrReplaceTempView(\"users_vw\")\nWhich approach can be used to query the users_vw view after the session is terminated?\nOptions:",
+        "options": [
+            "A.. Query the users_vw using Spark",
+            "B.. Persist the users_vw data as a table",
+            "C.. Recreate the users_vw and query the data using Spark",
+            "D.. Save the users_vw definition and query using Spark"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "Temp views like createOrReplaceTempView are session-scoped.\nThey disappear once the Spark session ends.\nTo retain data across sessions, it must be persisted:\ndf.write.saveAsTable(\"users_vw\")\nThus, the view needs to be persisted as a table to survive session termination."
+    },
+    {
+        "question": "A Spark developer is developing a Spark application to monitor task performance across a\n\n\ncluster.\nOne requirement is to track the maximum processing time for tasks on each worker node and\nconsolidate this information on the driver for further analysis.\nWhich technique should the developer use?",
+        "options": [
+            "A.. Broadcast a variable to share the maximum time among workers.",
+            "B.. Configure the Spark UI to automatically collect maximum times.",
+            "C.. Use an RDD action like reduce() to compute the maximum time.",
+            "D.. Use an accumulator to record the maximum time on the driver."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "RDD actions like reduce() aggregate values across all partitions and return the result to the\ndriver.\nTo compute the maximum processing time, reduce() is ideal because it combines results\nfrom all tasks efficiently.\nExample:\nmax_time = rdd_times.reduce(lambda x, y: max(x, y))\nThis aggregates maximum values from all executors into a single result on the driver.\nWhy the other options are incorrect:\nA: Broadcast variables distribute read-only data; they cannot aggregate results.\nB: Spark UI provides visualization, not programmatic collection.\nD: Accumulators support additive operations only (e.g., counters, sums), not non-associative\nones like max.\nReference:\nSpark RDD API - reduce() for aggregations.\nDatabricks Exam Guide (June 2025): Section \"Apache Spark Architecture and Components\"\n- actions, accumulators, and broadcast variables."
+    },
+    {
+        "question": "A developer wants to refactor older Spark code to take advantage of built-in functions\nintroduced in Spark 3.5.\nThe original code:\nfrom pyspark.sql import functions as F\nmin_price = 110.50\nresult_df = prices_df.filter(F.col(\"price\") > min_price).agg(F.count(\"*\")) Which code block\nshould the developer use to refactor the code?",
+        "options": [
+            "A.. result_df = prices_df.filter(F.col(\"price\") > F.lit(min_price)).agg(F.count(\"*\"))",
+            "B.. result_df = prices_df.where(F.lit(\"price\") > min_price).groupBy().count()",
+            "C.. result_df = prices_df.withColumn(\"valid_price\", when(col(\"price\") > F.lit(min_price), True))",
+            "D.. result_df = prices_df.filter(F.lit(min_price) > F.col(\"price\")).count()"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "To compare a column value with a Python literal constant in a DataFrame expression, use\nF.lit() to convert it into a Spark literal.\n\n\nCorrect refactor:\nfrom pyspark.sql import functions as F\nmin_price = 110.50\nresult_df = prices_df.filter(F.col(\"price\") > F.lit(min_price)).agg(F.count(\"*\")) This avoids type\nmismatches and ensures Spark executes the filter expression on the cluster.\nWhy the other options are incorrect:\nB: where() syntax is valid, but F.lit(\"price\") is incorrect - wraps string literal, not a column.\nC: withColumn adds a column, not needed for this aggregation.\nD: Comparison logic reversed.\nReference:\nPySpark SQL Functions - lit(), col(), and DataFrame filters.\nDatabricks Exam Guide (June 2025): Section \"Developing Apache Spark\nDataFrame/DataSet API Applications\" - filtering, literals, and aggregations."
+    },
+    {
+        "question": "A Data Analyst is working on the DataFrame sensor_df, which contains two columns:\nWhich code fragment returns a DataFrame that splits the record column into separate\ncolumns and has one array item per row?\nA)\nB)\nC)\nD)",
+        "options": [
+            "A.. exploded_df = sensor_df.withColumn(\"record_exploded\", explode(\"record\")) exploded_df =\nexploded_df.select(\"record_datetime\", \"sensor_id\", \"status\", \"health\")",
+            "B.. exploded_df = exploded_df.select(\n\"record_datetime\",\n\"record_exploded.sensor_id\",\n\"record_exploded.status\",\n\"record_exploded.health\"\n)\nexploded_df = sensor_df.withColumn(\"record_exploded\", explode(\"record\"))",
+            "C.. exploded_df = exploded_df.select(\n\n\n\"record_datetime\",\n\"record_exploded.sensor_id\",\n\"record_exploded.status\",\n\"record_exploded.health\"\n)\nexploded_df = sensor_df.withColumn(\"record_exploded\", explode(\"record\"))",
+            "D.. exploded_df = exploded_df.select(\"record_datetime\", \"record_exploded\")"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "To flatten an array of structs into individual rows and access fields within each struct, you\nmust:\nUse explode() to expand the array so each struct becomes its own row.\nAccess the struct fields via dot notation (e.g., record_exploded.sensor_id).\nOption C does exactly that:\nFirst, explode the record array column into a new column record_exploded.\nThen, access fields of the struct using the dot syntax in select.\nThis is standard practice in PySpark for nested data transformation.\nFinal answer: C"
+    },
+    {
+        "question": "Given:\npython\nCopyEdit\nspark.sparkContext.setLogLevel(\"<LOG_LEVEL>\")\nWhich set contains the suitable configuration settings for Spark driver LOG_LEVELs?",
+        "options": [
+            "A.. ALL, DEBUG, FAIL, INFO",
+            "B.. ERROR, WARN, TRACE, OFF",
+            "C.. WARN, NONE, ERROR, FATAL",
+            "D.. FATAL, NONE, INFO, DEBUG"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "The setLogLevel() method of SparkContext sets the logging level on the driver, which\ncontrols the verbosity of logs emitted during job execution. Supported levels are inherited\nfrom log4j and include the following:\nALL\nDEBUG\nERROR\nFATAL\nINFO\nOFF\nTRACE\nWARN\nAccording to official Spark and Databricks documentation:\n\"Valid log levels include: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, and WARN.\"\n\n\nAmong the choices provided, only option B (ERROR, WARN, TRACE, OFF) includes four\nvalid log levels and excludes invalid ones like \"FAIL\" or \"NONE\"."
+    },
+    {
+        "question": "The following code fragment results in an error:\n@F.udf(T.IntegerType())\ndef simple_udf(t: str) -> str:\nreturn answer * 3.14159\nWhich code fragment should be used instead?",
+        "options": [
+            "A.. @F.udf(T.IntegerType())\ndef simple_udf(t: int) -> int:\nreturn t * 3.14159",
+            "B.. @F.udf(T.DoubleType())\ndef simple_udf(t: float) -> float:\nreturn t * 3.14159",
+            "C.. @F.udf(T.DoubleType())\ndef simple_udf(t: int) -> int:\nreturn t * 3.14159",
+            "D.. @F.udf(T.IntegerType())\ndef simple_udf(t: float) -> float:\nreturn t * 3.14159"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "The original code has several issues:\nIt references a variable answer that is undefined.\nThe function is annotated to return a str, but the logic attempts numeric multiplication.\nThe UDF return type is declared as T.IntegerType() but the function performs a floating-point\noperation, which is incompatible.\nOption B correctly:\nUses DoubleType to reflect the fact that the multiplication involves a float (3.14159).\nDeclares the input as float, which aligns with the multiplication.\nReturns a float, which matches both the logic and the schema type annotation.\nThis structure aligns with how PySpark expects User Defined Functions (UDFs) to be\ndeclared:\n\"To define a UDF you must specify a Python function and provide the return type using the\nrelevant Spark SQL type (e.g., DoubleType for float results).\" Example from official\ndocumentation:\nfrom pyspark.sql.functions import udf\nfrom pyspark.sql.types import DoubleType\n@udf(returnType=DoubleType())\ndef multiply_by_pi(x: float) -> float:\n\n\nreturn x * 3.14159\nThis makes Option B the syntactically and semantically correct choice."
+    },
+    {
+        "question": "A data engineer is investigating a Spark cluster that is experiencing underutilization during\nscheduled batch jobs.\nAfter checking the Spark logs, they noticed that tasks are often getting killed due to timeout\nerrors, and there are several warnings about insufficient resources in the logs.\nWhich action should the engineer take to resolve the underutilization issue?",
+        "options": [
+            "A.. Set the spark.network.timeout property to allow tasks more time to complete without being\nkilled.",
+            "B.. Increase the executor memory allocation in the Spark configuration.",
+            "C.. Reduce the size of the data partitions to improve task scheduling.",
+            "D.. Increase the number of executor instances to handle more concurrent tasks."
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "Underutilization with timeout warnings often indicates insufficient parallelism - meaning there\naren't enough executors to process all tasks concurrently.\nSolution:\nIncrease the number of executors to allow more parallel task execution and better resource\nutilization.\nExample configuration:\n--conf spark.executor.instances=8\nThis distributes the workload more effectively across cluster nodes and reduces idle time for\npending tasks.\nWhy the other options are incorrect:\nA: Extending timeouts hides the symptom, not the root cause (lack of executors).\nB: More memory per executor won't fix scheduling bottlenecks.\nC: Reducing partition size may increase overhead and does not fix resource imbalance.\nReference:\nDatabricks Exam Guide (June 2025): Section \"Troubleshooting and Tuning Apache Spark\nDataFrame API Applications\" - tuning executors and cluster utilization.\nSpark Configuration - executor instances and resource scaling."
+    },
+    {
+        "question": "A Spark developer wants to improve the performance of an existing PySpark UDF that runs a\nhash function not available in the standard Spark functions library.\nThe existing UDF code is:\nimport hashlib\nfrom pyspark.sql.types import StringType\ndef shake_256(raw):\nreturn hashlib.shake_256(raw.encode()).hexdigest(20)\nshake_256_udf = udf(shake_256, StringType())\n\n\nThe developer replaces this UDF with a Pandas UDF for better performance:\n@pandas_udf(StringType())\ndef shake_256(raw: str) -> str:\nreturn hashlib.shake_256(raw.encode()).hexdigest(20)\nHowever, the developer receives this error:\nTypeError: Unsupported signature: (raw: str) -> str\nWhat should the signature of the shake_256() function be changed to in order to fix this\nerror?",
+        "options": [
+            "A.. def shake_256(raw: str) -> str:",
+            "B.. def shake_256(raw: [pd.Series]) -> pd.Series:",
+            "C.. def shake_256(raw: pd.Series) -> pd.Series:",
+            "D.. def shake_256(raw: [str]) -> [str]:"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "Pandas UDFs (vectorized UDFs) process entire Pandas Series objects, not scalar values.\nEach invocation operates on a column (Series) rather than a single value.\nCorrect syntax:\n@pandas_udf(StringType())\ndef shake_256(raw: pd.Series) -> pd.Series:\nreturn raw.apply(lambda x: hashlib.shake_256(x.encode()).hexdigest(20)) This allows Spark\nto apply the function in a vectorized way, improving performance significantly over traditional\nPython UDFs.\nWhy the other options are incorrect:\nA/D: These define scalar functions - not compatible with Pandas UDFs.\nB: Uses an invalid type hint [pd.Series] (not a valid Python type annotation).\nReference:\nPySpark Pandas API - @pandas_udf decorator and function signatures.\nDatabricks Exam Guide (June 2025): Section \"Using Pandas API on Apache Spark\" - creating\nand invoking Pandas UDFs."
+    },
+    {
+        "question": "A Spark developer is building an app to monitor task performance. They need to track the\nmaximum task processing time per worker node and consolidate it on the driver for analysis.\nWhich technique should be used?",
+        "options": [
+            "A.. Use an RDD action like reduce() to compute the maximum time",
+            "B.. Use an accumulator to record the maximum time on the driver",
+            "C.. Broadcast a variable to share the maximum time among workers",
+            "D.. Configure the Spark UI to automatically collect maximum times"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "The correct way to aggregate information (e.g., max value) from distributed workers back to\nthe driver is using RDD actions such as reduce() or aggregate().\nFrom the documentation:\n\"To perform global aggregations on distributed data, actions like reduce() are commonly used\nto collect summaries such as min/max/avg.\" Accumulators (Option B) do not support max\noperations directly and are not intended for such analytics.\nBroadcast (Option C) is used to send data to workers, not collect from them.\nSpark UI (Option D) is a monitoring tool - not an analytics collection interface.\nFinal answer: A"
+    },
+    {
+        "question": "A data engineer is working on a real-time analytics pipeline using Apache Spark Structured\nStreaming. The engineer wants to process incoming data and ensure that triggers control\nwhen the query is executed. The system needs to process data in micro-batches with a fixed\ninterval of 5 seconds.\nWhich code snippet the data engineer could use to fulfil this requirement?\nA)\n \nB)\n \nC)\nD)\n\n\n \nOptions:",
+        "options": [
+            "A.. Uses trigger(continuous='5 seconds') - continuous processing mode.",
+            "B.. Uses trigger() - default micro-batch trigger without interval.",
+            "C.. Uses trigger(processingTime='5 seconds') - correct micro-batch trigger with interval.",
+            "D.. Uses trigger(processingTime=5000) - invalid, as processingTime expects a string."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "To define a micro-batch interval, the correct syntax is:\nquery = df.writeStream \\\n.outputMode(\"append\") \\\n.trigger(processingTime='5 seconds') \\\n.start()\nThis schedules the query to execute every 5 seconds.\nContinuous mode (used in Option A) is experimental and has limited sink support.\nOption D is incorrect because processingTime must be a string (not an integer).\nOption B triggers as fast as possible without interval control."
+    },
+    {
+        "question": "A data scientist is working on a project that requires processing large amounts of structured\ndata, performing SQL queries, and applying machine learning algorithms. The data scientist\nis considering using Apache Spark for this task.\nWhich combination of Apache Spark modules should the data scientist use in this scenario?\nOptions:",
+        "options": [
+            "A.. Spark DataFrames, Structured Streaming, and GraphX",
+            "B.. Spark SQL, Pandas API on Spark, and Structured Streaming",
+            "C.. Spark Streaming, GraphX, and Pandas API on Spark",
+            "D.. Spark DataFrames, Spark SQL, and MLlib"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "Comprehensive\nTo cover structured data processing, SQL querying, and machine learning in Apache Spark,\nthe correct combination of components is:\nSpark DataFrames: for structured data processing\nSpark SQL: to execute SQL queries over structured data\nMLlib: Spark's scalable machine learning library\nThis trio is designed for exactly this type of use case.\nWhy other options are incorrect:\n\n\nA: GraphX is for graph processing - not needed here.\nB: Pandas API on Spark is useful, but MLlib is essential for ML, which this option omits.\nC: Spark Streaming is legacy; GraphX is irrelevant here."
+    },
+    {
+        "question": "A data engineer is working on a real-time analytics pipeline using Spark Structured\nStreaming.\nThey want the system to process incoming data in micro-batches at a fixed interval of 5\nseconds.\nWhich code snippet fulfills this requirement?",
+        "options": [
+            "A.. query = df.writeStream \\\n.outputMode(\"append\") \\\n.trigger(processingTime=\"5 seconds\") \\\n.start()",
+            "B.. query = df.writeStream \\\n.outputMode(\"append\") \\\n.trigger(continuous=\"5 seconds\") \\\n.start()",
+            "C.. query = df.writeStream \\\n.outputMode(\"append\") \\\n.trigger(once=True) \\\n.start()",
+            "D.. query = df.writeStream \\\n.outputMode(\"append\") \\\n.start()"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "To process data in fixed micro-batch intervals, use the .trigger(processingTime=\"interval\")\noption in Structured Streaming.\nCorrect usage:\nquery = df.writeStream \\\n.outputMode(\"append\") \\\n.trigger(processingTime=\"5 seconds\") \\\n.start()\nThis instructs Spark to process available data every 5 seconds.\nWhy the other options are incorrect:\nB: continuous triggers are for continuous processing mode (different execution model).\nC: once=True runs the stream a single time (batch mode).\nD: Default trigger runs as fast as possible, not fixed intervals.\nReference:\n\n\nPySpark Structured Streaming Guide - Trigger types: processingTime, once, continuous.\nDatabricks Exam Guide (June 2025): Section \"Structured Streaming\" - controlling streaming\ntriggers and batch intervals."
+    },
+    {
+        "question": "A data engineer is working with a large JSON dataset containing order information. The\ndataset is stored in a distributed file system and needs to be loaded into a Spark DataFrame\nfor analysis. The data engineer wants to ensure that the schema is correctly defined and that\nthe data is read efficiently.\nWhich approach should the data scientist use to efficiently load the JSON data into a Spark\nDataFrame with a predefined schema?",
+        "options": [
+            "A.. Use spark.read.json() to load the data, then use DataFrame.printSchema() to view the\ninferred schema, and finally use DataFrame.cast() to modify column types.",
+            "B.. Use spark.read.json() with the inferSchema option set to true",
+            "C.. Use spark.read.format(\"json\").load() and then use DataFrame.withColumn() to cast each\ncolumn to the desired data type.",
+            "D.. Define a StructType schema and use spark.read.schema(predefinedSchema).json() to\nload the data."
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "The most efficient and correct approach is to define a schema using StructType and pass it\nto spark.read.schema(...).\nThis avoids schema inference overhead and ensures proper data types are enforced during\nread.\nExample:\nfrom pyspark.sql.types import StructType, StructField, StringType, DoubleType schema =\nStructType([ StructField(\"order_id\", StringType(), True), StructField(\"amount\", DoubleType(),\nTrue),\n...\n])\ndf = spark.read.schema(schema).json(\"path/to/json\")\n- Source: Databricks Guide - Read JSON with predefined schema"
+    },
+    {
+        "question": "What is a feature of Spark Connect?",
+        "options": [
+            "A.. It supports DataStreamReader, DataStreamWriter, StreamingQuery, and Streaming APIs",
+            "B.. Supports DataFrame, Functions, Column, SparkContext PySpark APIs",
+            "C.. It supports only PySpark applications",
+            "D.. It has built-in authentication"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "Spark Connect is a client-server architecture introduced in Apache Spark 3.4, designed to\ndecouple the client from the Spark driver, enabling remote connectivity to Spark clusters.\nAccording to the Spark 3.5.5 documentation:\n\"Majority of the Streaming API is supported, including DataStreamReader, DataStreamWriter,\nStreamingQuery and StreamingQueryListener.\" This indicates that Spark Connect supports\nkey components of Structured Streaming, allowing for robust streaming data processing\ncapabilities.\nRegarding other options:\nB . While Spark Connect supports DataFrame, Functions, and Column APIs, it does not\nsupport SparkContext and RDD APIs.\nC . Spark Connect supports multiple languages, including PySpark and Scala, not just\nPySpark.\nD . Spark Connect does not have built-in authentication but is designed to work seamlessly\nwith existing authentication infrastructures."
+    },
+    {
+        "question": "Which configuration can be enabled to optimize the conversion between Pandas and\nPySpark DataFrames using Apache Arrow?",
+        "options": [
+            "A.. spark.conf.set(\"spark.pandas.arrow.enabled\", \"true\")",
+            "B.. spark.conf.set(\"spark.sql.execution.arrow.pyspark.enabled\", \"true\")",
+            "C.. spark.conf.set(\"spark.sql.execution.arrow.enabled\", \"true\")",
+            "D.. spark.conf.set(\"spark.sql.arrow.pandas.enabled\", \"true\")"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "Apache Arrow is used under the hood to optimize conversion between Pandas and PySpark\nDataFrames. The correct configuration setting is:\nspark.conf.set(\"spark.sql.execution.arrow.pyspark.enabled\", \"true\")\nFrom the official documentation:\n\"This configuration must be enabled to allow for vectorized execution and efficient conversion\nbetween Pandas and PySpark using Arrow.\" Option B is correct.\nOptions A, C, and D are invalid config keys and not recognized by Spark.\nFinal answer: B"
+    },
+    {
+        "question": "A data engineer has been asked to produce a Parquet table which is overwritten every day\nwith the latest data. The downstream consumer of this Parquet table has a hard requirement\nthat the data in this table is produced with all records sorted by the market_time field.\nWhich line of Spark code will produce a Parquet table that meets these requirements?",
+        "options": [
+            "A.. final_df \\\n.sort(\"market_time\") \\\n.write \\\n.format(\"parquet\") \\\n.mode(\"overwrite\") \\\n.saveAsTable(\"output.market_events\")",
+            "B.. final_df \\\n.orderBy(\"market_time\") \\\n.write \\\n.format(\"parquet\") \\\n.mode(\"overwrite\") \\\n.saveAsTable(\"output.market_events\")",
+            "C.. final_df \\\n.sort(\"market_time\") \\\n.coalesce(1) \\\n.write \\\n.format(\"parquet\") \\\n.mode(\"overwrite\") \\\n.saveAsTable(\"output.market_events\")",
+            "D.. final_df \\\n.sortWithinPartitions(\"market_time\") \\\n.write \\\n.format(\"parquet\") \\\n.mode(\"overwrite\") \\\n.saveAsTable(\"output.market_events\")"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "To ensure that data written out to disk is sorted, it is important to consider how Spark writes\ndata when saving to Parquet tables. The methods .sort() or .orderBy() apply a global sort but\ndo not guarantee that the sorting will persist in the final output files unless certain conditions\nare met (e.g. a single partition via .coalesce(1) - which is not scalable).\nInstead, the proper method in distributed Spark processing to ensure rows are sorted within\ntheir respective partitions when written out is:\n.sortWithinPartitions(\"column_name\")\nAccording to Apache Spark documentation:\n\"sortWithinPartitions() ensures each partition is sorted by the specified columns. This is\nuseful for downstream systems that require sorted files.\" This method works efficiently in\ndistributed settings, avoids the performance bottleneck of global sorting (as in .orderBy() or\n.sort()), and guarantees each output partition has sorted records - which meets the\nrequirement of consistently sorted data.\nThus:\nOption A and B do not guarantee the persisted file contents are sorted.\nOption C introduces a bottleneck via .coalesce(1) (single partition).\nOption D correctly applies sorting within partitions and is scalable."
+    },
+    {
+        "question": "Which of the following code blocks stores a part of the data in DataFrame itemsDf on\nexecutors?",
+        "options": [
+            "A.. itemsDf.cache().count()",
+            "B.. itemsDf.cache(eager=True)",
+            "C.. cache(itemsDf)",
+            "D.. itemsDf.cache().filter()",
+            "E.. itemsDf.rdd.storeCopy()"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "Caching means storing a copy of a partition on an executor, so it can be accessed quicker by\nsubsequent operations, instead of having to be recalculated. cache() is a lazily-evaluated method of\nthe DataFrame. Since count() is an action (while filter() is not), it triggers the caching process.\nMore info: pyspark.sql.DataFrame.cache - PySpark 3.1.2 documentation, Learning Spark, 2nd Edition,\nChapter 7 Static notebook | Dynamic notebook: See test 2"
+    },
+    {
+        "question": "The code block shown below should return only the average prediction error (column\npredError) of a random subset, without replacement, of approximately 15% of rows in DataFrame\ntransactionsDf. Choose the answer that correctly fills the blanks in the code block to accomplish this.\ntransactionsDf.__1__(__2__, __3__).__4__(avg('predError'))",
+        "options": [
+            "A.. 1. sample\n2. True\n3. 0.15\n4. filter",
+            "B.. 1. sample\n2. False\n3. 0.15\n4. select",
+            "C.. 1. sample\n2. 0.85\n3. False\n4. select",
+            "D.. 1. fraction\n2. 0.15\n3. True\n4. where",
+            "E.. 1. fraction\n2. False\n3. 0.85\n4. select"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.sample(withReplacement=False, fraction=0.15).select(avg('predError')) You should\nremember that getting a random subset of rows means sampling. This, in turn should point you to\nthe DataFrame.sample() method. Once you know this, you can look up the correct order of\n\n\narguments in the documentation (link below).\nLastly, you have to decide whether to use filter, where or select. where is just an alias for filter().\nfilter() is not the correct method to use here, since it would only allow you to filter rows based on\nsome condition. However, the question asks to return only the average prediction error. You can\ncontrol the columns that a query returns with the select() method - so this is the correct method to\nuse here.\nMore info: pyspark.sql.DataFrame.sample - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 2"
+    },
+    {
+        "question": "In which order should the code blocks shown below be run in order to return the number of\nrecords that are not empty in column value in the DataFrame resulting from an inner join of\nDataFrame transactionsDf and itemsDf on columns productId and itemId, respectively?\n1. .filter(~isnull(col('value')))\n2. .count()\n3. transactionsDf.join(itemsDf, col(\"transactionsDf.productId\")==col(\"itemsDf.itemId\"))\n4. transactionsDf.join(itemsDf, transactionsDf.productId==itemsDf.itemId, how='inner')\n5. .filter(col('value').isnotnull())\n6. .sum(col('value'))",
+        "options": [
+            "A.. 4, 1, 2",
+            "B.. 3, 1, 6",
+            "C.. 3, 1, 2",
+            "D.. 3, 5, 2",
+            "E.. 4, 6"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.join(itemsDf, transactionsDf.productId==itemsDf.itemId,\nhow='inner').filter(~isnull(col('value'))).count()\nExpressions col(\"transactionsDf.productId\") and col(\"itemsDf.itemId\") are invalid. col() does not\naccept the name of a DataFrame, only column names.\nStatic notebook | Dynamic notebook: See test 2"
+    },
+    {
+        "question": "Which of the following statements about lazy evaluation is incorrect?",
+        "options": [
+            "A.. Predicate pushdown is a feature resulting from lazy evaluation.",
+            "B.. Execution is triggered by transformations.",
+            "C.. Spark will fail a job only during execution, but not during definition.",
+            "D.. Accumulators do not change the lazy evaluation model of Spark.",
+            "E.. Lineages allow Spark to coalesce transformations into stages"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "Execution is triggered by transformations.\nCorrect. Execution is triggered by actions only, not by transformations.\nLineages allow Spark to coalesce transformations into stages.\nIncorrect. In Spark, lineage means a recording of transformations. This lineage enables lazy\nevaluation in Spark.\n\n\nPredicate pushdown is a feature resulting from lazy evaluation.\nWrong. Predicate pushdown means that, for example, Spark will execute filters as early in the\nprocess as possible so that it deals with the least possible amount of data in subsequent\ntransformations, resulting in a performance improvements.\nAccumulators do not change the lazy evaluation model of Spark.\nIncorrect. In Spark, accumulators are only updated when the query that refers to the is actually\nexecuted. In other words, they are not updated if the query is not (yet) executed due to lazy\nevaluation.\nSpark will fail a job only during execution, but not during definition.\nWrong. During definition, due to lazy evaluation, the job is not executed and thus certain errors, for\nexample reading from a non-existing file, cannot be caught. To be caught, the job needs to be\nexecuted, for example through an action."
+    },
+    {
+        "question": "Which of the following code blocks returns about 150 randomly selected rows from the 1000-\nrow DataFrame transactionsDf, assuming that any row can appear more than once in the returned\nDataFrame?",
+        "options": [
+            "A.. transactionsDf.resample(0.15, False, 3142)",
+            "B.. transactionsDf.sample(0.15, False, 3142)",
+            "C.. transactionsDf.sample(0.15)",
+            "D.. transactionsDf.sample(0.85, 8429)",
+            "E.. transactionsDf.sample(True, 0.15, 8261)"
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "Answering this question correctly depends on whether you understand the arguments to the\nDataFrame.sample() method (link to the documentation below). The arguments are as follows:\nDataFrame.sample(withReplacement=None, fraction=None, seed=None).\nThe first argument withReplacement specified whether a row can be drawn from the DataFrame\nmultiple times. By default, this option is disabled in Spark. But we have to enable it here, since the\nquestion asks for a row being able to appear more than once. So, we need to pass True for this\nargument.\nAbout replacement: \"Replacement\" is easiest explained with the example of removing random items\nfrom a box. When you remove those \"with replacement\" it means that after you have taken an item\nout of the box, you put it back inside. So, essentially, if you would randomly take 10 items out of a\nbox with 100 items, there is a chance you take the same item twice or more times. \"Without\nreplacement\" means that you would not put the item back into the box after removing it. So, every\ntime you remove an item from the box, there is one less item in the box and you can never take the\nsame item twice.\nThe second argument to the withReplacement method is fraction. This referes to the fraction of\nitems that should be returned. In the question we are asked for 150 out of 1000 items - a fraction of\n0.15.\nThe last argument is a random seed. A random seed makes a randomized processed repeatable. This\nmeans that if you would re-run the same sample() operation with the same random seed, you would\nget the same rows returned from the sample() command. There is no behavior around the random\nseed specified in the question. The varying random seeds are only there to confuse you!\nMore info: pyspark.sql.DataFrame.sample - PySpark 3.1.1 documentation\nStatic notebook | Dynamic notebook: See test 1"
+    },
+    {
+        "question": "The code block shown below should return a DataFrame with two columns, itemId and col. In\nthis DataFrame, for each element in column attributes of DataFrame itemDf there should be a\nseparate row in which the column itemId contains the associated itemId from DataFrame itemsDf.\nThe new DataFrame should only contain rows for rows in DataFrame itemsDf in which the column\nattributes contains the element cozy.\nA sample of DataFrame itemsDf is below.\nCode block:\nitemsDf.__1__(__2__).__3__(__4__, __5__(__6__))",
+        "options": [
+            "A.. 1. filter\n2. array_contains(\"cozy\")\n3. select\n4. \"itemId\"\n5. explode\n6. \"attributes\"",
+            "B.. 1. where\n2. \"array_contains(attributes, 'cozy')\"\n3. select\n4. itemId\n5. explode\n6. attributes",
+            "C.. 1. filter\n2. \"array_contains(attributes, 'cozy')\"\n3. select\n4. \"itemId\"\n5. map\n6. \"attributes\"",
+            "D.. 1. filter\n2. \"array_contains(attributes, cozy)\"\n3. select\n4. \"itemId\"\n5. explode\n6. \"attributes\"",
+            "E.. 1. filter\n2. \"array_contains(attributes, 'cozy')\"\n3. select\n4. \"itemId\"\n5. explode\n6. \"attributes\""
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "The correct code block is:\nitemsDf.filter(\"array_contains(attributes, 'cozy')\").select(\"itemId\", explode(\"attributes\")) The key\nhere is understanding how to use array_contains(). You can either use it as an expression in a string,\nor you can import it from pyspark.sql.functions. In that case, the following would also work:\n\n\nitemsDf.filter(array_contains(\"attributes\", \"cozy\")).select(\"itemId\", explode(\"attributes\")) Static\nnotebook | Dynamic notebook: See test 1\n(https://flrs.github.io/spark_practice_tests_code/#1/29.html ,\nhttps://bit.ly/sparkpracticeexams_import_instructions)"
+    },
+    {
+        "question": "Which of the following describes the characteristics of accumulators?",
+        "options": [
+            "A.. Accumulators are used to pass around lookup tables across the cluster.",
+            "B.. All accumulators used in a Spark application are listed in the Spark UI.",
+            "C.. Accumulators can be instantiated directly via the accumulator(n) method of the pyspark.RDD\nmodule.",
+            "D.. Accumulators are immutable.",
+            "E.. If an action including an accumulator fails during execution and Spark manages to restart the\naction and complete it successfully, only the successful attempt will be counted in the accumulator."
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "If an action including an accumulator fails during execution and Spark manages to restart the action\nand complete it successfully, only the successful attempt will be counted in the accumulator.\nCorrect, when Spark tries to rerun a failed action that includes an accumulator, it will only update the\naccumulator if the action succeeded.\nAccumulators are immutable.\nNo. Although accumulators behave like write-only variables towards the executors and can only be\nread by the driver, they are not immutable.\nAll accumulators used in a Spark application are listed in the Spark UI.\nIncorrect. For scala, only named, but not unnamed, accumulators are listed in the Spark UI. For\npySpark, no accumulators are listed in the Spark UI - this feature is not yet implemented.\nAccumulators are used to pass around lookup tables across the cluster.\nWrong - this is what broadcast variables do.\nAccumulators can be instantiated directly via the accumulator(n) method of the pyspark.RDD\nmodule.\nWrong, accumulators are instantiated via the accumulator(n) method of the sparkContext, for\nexample: counter\n= spark.sparkContext.accumulator(0).\nMore info: python - In Spark, RDDs are immutable, then how Accumulators are implemented? - Stac\nk Overflow, apache spark - When are accumulators truly reliable? - Stack Overflow, Spark - T\nhe Definitive Guide, Chapter 14"
+    },
+    {
+        "question": "Which of the following code blocks removes all rows in the 6-column DataFrame\ntransactionsDf that have missing data in at least 3 columns?",
+        "options": [
+            "A.. transactionsDf.dropna(\"any\")",
+            "B.. transactionsDf.dropna(thresh=4)",
+            "C.. transactionsDf.drop.na(\"\",2)",
+            "D.. transactionsDf.dropna(thresh=2)",
+            "E.. transactionsDf.dropna(\"\",4)"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "transactionsDf.dropna(thresh=4)\nCorrect. Note that by only working with the thresh keyword argument, the first how keyword\nargument is ignored. Also, figuring out which value to set for thresh can be difficult, especially when\nunder pressure in the exam. Here, I recommend you use the notes to create a \"simulation\" of what\ndifferent values for thresh would do to a DataFrame. Here is an explanatory image why thresh=4 is\nthe correct answer to the question:\ntransactionsDf.dropna(thresh=2)\nAlmost right. See the comment about thresh for the correct answer above.\ntransactionsDf.dropna(\"any\")\nNo, this would remove all rows that have at least one missing value.\ntransactionsDf.drop.na(\"\",2)\nNo, drop.na is not a proper DataFrame method.\ntransactionsDf.dropna(\"\",4)\nNo, this does not work and will throw an error in Spark because Spark cannot understand the first\nargument.\nMore info: pyspark.sql.DataFrame.dropna - PySpark 3.1.1 documentation (https://bit.ly/2QZpiCp)\nStatic notebook | Dynamic notebook: See test 1\n(https://flrs.github.io/spark_practice_tests_code/#1/20.html ,\nhttps://bit.ly/sparkpracticeexams_import_instructions)"
+    },
+    {
+        "question": "The code block displayed below contains an error. The code block should create DataFrame\nitemsAttributesDf which has columns itemId and attribute and lists every attribute from the\nattributes column in DataFrame itemsDf next to the itemId of the respective row in itemsDf. Find the\nerror.\nA sample of DataFrame itemsDf is below.\n \nCode block:\nitemsAttributesDf = itemsDf.explode(\"attributes\").alias(\"attribute\").select(\"attribute\", \"itemId\")",
+        "options": [
+            "A.. Since itemId is the index, it does not need to be an argument to the select() method.",
+            "B.. The alias() method needs to be called after the select() method.",
+            "C.. The explode() method expects a Column object rather than a string.",
+            "D.. explode() is not a method of DataFrame. explode() should be used inside the select() method\ninstead.",
+            "E.. The split() method should be used inside the select() method instead of the explode() method."
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "The correct code block looks like this:\n\n\nThen, the first couple of rows of itemAttributesDf look like this:\n \nexplode() is not a method of DataFrame. explode() should be used inside the select() method instead.\nThis is correct.\nThe split() method should be used inside the select() method instead of the explode() method.\nNo, the split() method is used to split strings into parts. However, column attributs is an array of\nstrings. In this case, the explode() method is appropriate.\nSince itemId is the index, it does not need to be an argument to the select() method.\nNo, itemId still needs to be selected, whether it is used as an index or not.\nThe explode() method expects a Column object rather than a string.\nNo, a string works just fine here. This being said, there are some valid alternatives to passing in a\nstring:\nThe alias() method needs to be called after the select() method.\nNo.\nMore info: pyspark.sql.functions.explode - PySpark 3.1.1 documentation (https://bit.ly/2QUZI1J)\nStatic notebook | Dynamic notebook: See test 1\n(https://flrs.github.io/spark_practice_tests_code/#1/22.html ,\nhttps://bit.ly/sparkpracticeexams_import_instructions)"
+    },
+    {
+        "question": "The code block shown below should set the number of partitions that Spark uses when\nshuffling data for joins or aggregations to 100. Choose the answer that correctly fills the blanks in the\ncode block to accomplish this.\nspark.sql.shuffle.partitions\n__1__.__2__.__3__(__4__, 100)",
+        "options": [
+            "A.. 1. spark\n2. conf\n3. set\n4. \"spark.sql.shuffle.partitions\"",
+            "B.. 1. pyspark\n2. config\n3. set\n4. spark.shuffle.partitions",
+            "C.. 1. spark\n2. conf\n3. get\n4. \"spark.sql.shuffle.partitions\"",
+            "D.. 1. pyspark\n2. config\n3. set\n4. \"spark.sql.shuffle.partitions\"",
+            "E.. 1. spark\n2. conf\n3. set\n4. \"spark.sql.aggregate.partitions\""
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "Correct code block:\nspark.conf.set(\"spark.sql.shuffle.partitions\", 100)\nThe conf interface is part of the SparkSession, so you need to call it through spark and not pyspark.\nTo configure spark, you need to use the set method, not the get method. get reads a property, but\ndoes not write it. The correct property to achieve what is outlined in the question is\nspark.sql.aggregate.partitions, which needs to be passed to set as a string. Properties\nspark.shuffle.partitions and spark.sql.aggregate.partitions do not exist in Spark.\nStatic notebook | Dynamic notebook: See test 2"
+    },
+    {
+        "question": "Which of the following statements about the differences between actions and\ntransformations is correct?",
+        "options": [
+            "A.. Actions are evaluated lazily, while transformations are not evaluated lazily.",
+            "B.. Actions generate RDDs, while transformations do not.",
+            "C.. Actions do not send results to the driver, while transformations do.",
+            "D.. Actions can be queued for delayed execution, while transformations can only be processed\nimmediately.",
+            "E.. Actions can trigger Adaptive Query Execution, while transformation cannot."
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "Actions can trigger Adaptive Query Execution, while transformation cannot.\nCorrect. Adaptive Query Execution optimizes queries at runtime. Since transformations are evaluated\nlazily, Spark does not have any runtime information to optimize the query until an action is called. If\nAdaptive Query Execution is enabled, Spark will then try to optimize the query based on the feedback\nit gathers while it is evaluating the query.\nActions can be queued for delayed execution, while transformations can only be processed\nimmediately.\nNo, there is no such concept as \"delayed execution\" in Spark. Actions cannot be evaluated lazily,\nmeaning that they are executed immediately.\nActions are evaluated lazily, while transformations are not evaluated lazily.\nIncorrect, it is the other way around: Transformations are evaluated lazily and actions trigger their\nevaluation.\nActions generate RDDs, while transformations do not.\nNo. Transformations change the data and, since RDDs are immutable, generate new RDDs along the\nway.\nActions produce outputs in Python and data types (integers, lists, text files,...) based on the RDDs, but\nthey do not generate them.\nHere is a great tip on how to differentiate actions from transformations: If an operation returns a\nDataFrame, Dataset, or an RDD, it is a transformation. Otherwise, it is an action.\nActions do not send results to the driver, while transformations do.\nNo. Actions send results to the driver. Think about running DataFrame.count(). The result of this\ncommand will return a number to the driver. Transformations, however, do not send results back to\nthe driver. They produce RDDs that remain on the worker nodes.\nMore info: What is the difference between a transformation and an action in Apache Spark? |\nBartosz Mikulski, How to Speed up SQL Queries with Adaptive Query Execution"
+    },
+    {
+        "question": "Which of the following code blocks reads in the two-partition parquet file stored at filePath,\nmaking sure all columns are included exactly once even though each partition has a different\nschema?\nSchema of first partition:\n1.root\n2. |-- transactionId: integer (nullable = true)\n3. |-- predError: integer (nullable = true)\n4. |-- value: integer (nullable = true)\n5. |-- storeId: integer (nullable = true)\n6. |-- productId: integer (nullable = true)\n7. |-- f: integer (nullable = true)\nSchema of second partition:\n1.root\n2. |-- transactionId: integer (nullable = true)\n3. |-- predError: integer (nullable = true)\n4. |-- value: integer (nullable = true)\n5. |-- storeId: integer (nullable = true)\n6. |-- rollId: integer (nullable = true)\n7. |-- f: integer (nullable = true)\n\n\n8. |-- tax_id: integer (nullable = false)",
+        "options": [
+            "A.. spark.read.parquet(filePath, mergeSchema='y')",
+            "B.. spark.read.option(\"mergeSchema\", \"true\").parquet(filePath)",
+            "C.. spark.read.parquet(filePath)",
+            "D.. 1.nx = 0\n2.for file in dbutils.fs.ls(filePath):\n3. if not file.name.endswith(\".parquet\"):\n4. continue\n5. df_temp = spark.read.parquet(file.path)\n6. if nx == 0:\n7. df = df_temp\n8. else:\n9. df = df.union(df_temp)\n10. nx = nx+1\n11.df",
+            "E.. 1.nx = 0\n2.for file in dbutils.fs.ls(filePath):\n3. if not file.name.endswith(\".parquet\"):\n4. continue\n5. df_temp = spark.read.parquet(file.path)\n6. if nx == 0:\n7. df = df_temp\n8. else:\n9. df = df.join(df_temp, how=\"outer\")\n10. nx = nx+1\n11.df"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "This is a very tricky question and involves both knowledge about merging as well as schemas when\nreading parquet files.\nspark.read.option(\"mergeSchema\", \"true\").parquet(filePath)\nCorrect. Spark's DataFrameReader's mergeSchema option will work well here, since columns that\nappear in both partitions have matching data types. Note that mergeSchema would fail if one or\nmore columns with the same name that appear in both partitions would have different data types.\nspark.read.parquet(filePath)\nIncorrect. While this would read in data from both partitions, only the schema in the parquet file that\nis read in first would be considered, so some columns that appear only in the second partition (e.g.\ntax_id) would be lost.\nnx = 0\nfor file in dbutils.fs.ls(filePath):\nif not file.name.endswith(\".parquet\"):\ncontinue\ndf_temp = spark.read.parquet(file.path)\nif nx == 0:\ndf = df_temp\nelse:\n\n\ndf = df.union(df_temp)\nnx = nx+1\ndf\nWrong. The key idea of this solution is the DataFrame.union() command. While this command\nmerges all data, it requires that both partitions have the exact same number of columns with\nidentical data types.\nspark.read.parquet(filePath, mergeSchema=\"y\")\nFalse. While using the mergeSchema option is the correct way to solve this problem and it can even\nbe called with DataFrameReader.parquet() as in the code block, it accepts the value True as a\nboolean or string variable. But 'y' is not a valid option.\nnx = 0\nfor file in dbutils.fs.ls(filePath):\nif not file.name.endswith(\".parquet\"):\ncontinue\ndf_temp = spark.read.parquet(file.path)\nif nx == 0:\ndf = df_temp\nelse:\ndf = df.join(df_temp, how=\"outer\")\nnx = nx+1\ndf\nNo. This provokes a full outer join. While the resulting DataFrame will have all columns of both\npartitions, columns that appear in both partitions will be duplicated - the question says all columns\nthat are included in the partitions should appear exactly once.\nMore info: Merging different schemas in Apache Spark | by Thiago Cordon | Data Arena | Medium\nStatic notebook | Dynamic notebook: See test 3"
+    },
+    {
+        "question": "The code block shown below should return a copy of DataFrame transactionsDf without\ncolumns value and productId and with an additional column associateId that has the value 5. Choose\nthe answer that correctly fills the blanks in the code block to accomplish this.\ntransactionsDf.__1__(__2__, __3__).__4__(__5__, 'value')",
+        "options": [
+            "A.. 1. withColumn\n2. 'associateId'\n3. 5\n4. remove\n5. 'productId'",
+            "B.. 1. withNewColumn\n2. associateId\n3. lit(5)\n4. drop\n5. productId",
+            "C.. 1. withColumn\n2. 'associateId'\n3. lit(5)\n4. drop\n5. 'productId'",
+            "D.. 1. withColumnRenamed\n2. 'associateId'\n3. 5\n4. drop\n5. 'productId'",
+            "E.. 1. withColumn\n2. col(associateId)\n3. lit(5)\n4. drop\n5. col(productId)"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.withColumn('associateId', lit(5)).drop('productId', 'value') For solving this question it is\nimportant that you know the lit() function (link to documentation below). This function enables you\nto add a column of a constant value to a DataFrame.\nMore info: pyspark.sql.functions.lit - PySpark 3.1.1 documentation\nStatic notebook | Dynamic notebook: See test 1"
+    },
+    {
+        "question": "The code block shown below should return an exact copy of DataFrame transactionsDf that\ndoes not include rows in which values in column storeId have the value 25. Choose the answer that\ncorrectly fills the blanks in the code block to accomplish this.",
+        "options": [
+            "A.. transactionsDf.remove(transactionsDf.storeId==25)",
+            "B.. transactionsDf.where(transactionsDf.storeId!=25)",
+            "C.. transactionsDf.filter(transactionsDf.storeId==25)",
+            "D.. transactionsDf.drop(transactionsDf.storeId==25)",
+            "E.. transactionsDf.select(transactionsDf.storeId!=25)"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "transactionsDf.where(transactionsDf.storeId!=25)\nCorrect. DataFrame.where() is an alias for the DataFrame.filter() method. Using this method, it is\nstraightforward to filter out rows that do not have value 25 in column storeId.\ntransactionsDf.select(transactionsDf.storeId!=25)\nWrong. The select operator allows you to build DataFrames column-wise, but when using it as shown,\nit does not filter out rows.\ntransactionsDf.filter(transactionsDf.storeId==25)\nIncorrect. Although the filter expression works for filtering rows, the == in the filtering condition is\ninappropriate. It should be != instead.\ntransactionsDf.drop(transactionsDf.storeId==25)\nNo. DataFrame.drop() is used to remove specific columns, but not rows, from the DataFrame.\ntransactionsDf.remove(transactionsDf.storeId==25)\nFalse. There is no DataFrame.remove() operator in PySpark.\nMore info: pyspark.sql.DataFrame.where - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 3"
+    },
+    {
+        "question": "Which of the following statements about stages is correct?",
+        "options": [
+            "A.. Different stages in a job may be executed in parallel.",
+            "B.. Stages consist of one or more jobs.",
+            "C.. Stages ephemerally store transactions, before they are committed through actions.",
+            "D.. Tasks in a stage may be executed by multiple machines at the same time.",
+            "E.. Stages may contain multiple actions, narrow, and wide transformations."
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "Tasks in a stage may be executed by multiple machines at the same time.\nThis is correct. Within a single stage, tasks do not depend on each other. Executors on multiple\nmachines may execute tasks belonging to the same stage on the respective partitions they are\nholding at the same time.\nDifferent stages in a job may be executed in parallel.\nNo. Different stages in a job depend on each other and cannot be executed in parallel. The nuance is\nthat every task in a stage may be executed in parallel by multiple machines.\nFor example, if a job consists of Stage A and Stage B, tasks belonging to those stages may not be\nexecuted in parallel. However, tasks from Stage A may be executed on multiple machines at the same\ntime, with each machine running it on a different partition of the same dataset. Then, afterwards,\ntasks from Stage B may be executed on multiple machines at the same time.\nStages may contain multiple actions, narrow, and wide transformations.\nNo, stages may not contain multiple wide transformations. Wide transformations mean that shuffling\nis required. Shuffling typically terminates a stage though, because data needs to be exchanged across\nthe cluster. This data exchange often causes partitions to change and rearrange, making it impossible\nto perform tasks in parallel on the same dataset.\nStages ephemerally store transactions, before they are committed through actions.\nNo, this does not make sense. Stages do not \"store\" any data. Transactions are not \"committed\" in\nSpark.\nStages consist of one or more jobs.\nNo, it is the other way around: Jobs consist of one more stages.\nMore info: Spark: The Definitive Guide, Chapter 15."
+    },
+    {
+        "question": "Which of the following statements about broadcast variables is correct?",
+        "options": [
+            "A.. Broadcast variables are serialized with every single task.",
+            "B.. Broadcast variables are commonly used for tables that do not fit into memory.",
+            "C.. Broadcast variables are immutable.",
+            "D.. Broadcast variables are occasionally dynamically updated on a per-task basis.",
+            "E.. Broadcast variables are local to the worker node and not shared across the cluster."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "Broadcast variables are local to the worker node and not shared across the cluster.\nThis is wrong because broadcast variables are meant to be shared across the cluster. As such, they\nare never just local to the worker node, but available to all worker nodes.\nBroadcast variables are commonly used for tables that do not fit into memory.\nThis is wrong because broadcast variables can only be broadcast because they are small and do fit\ninto memory.\n\n\nBroadcast variables are serialized with every single task.\nThis is wrong because they are cached on every machine in the cluster, precisely avoiding to have to\nbe serialized with every single task.\nBroadcast variables are occasionally dynamically updated on a per-task basis.\nThis is wrong because broadcast variables are immutable - they are never updated.\nMore info: Spark - The Definitive Guide, Chapter 14"
+    },
+    {
+        "question": "Which of the following describes Spark's Adaptive Query Execution?",
+        "options": [
+            "A.. Adaptive Query Execution features include dynamically coalescing shuffle partitions, dynamically\ninjecting scan filters, and dynamically optimizing skew joins.",
+            "B.. Adaptive Query Execution is enabled in Spark by default.",
+            "C.. Adaptive Query Execution reoptimizes queries at execution points.",
+            "D.. Adaptive Query Execution features are dynamically switching join strategies and dynamically\noptimizing skew joins.",
+            "E.. Adaptive Query Execution applies to all kinds of queries."
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "Adaptive Query Execution features include dynamically coalescing shuffle partitions, dynamically\ninjecting scan filters, and dynamically optimizing skew joins.\nThis is almost correct. All of these features, except for dynamically injecting scan filters, are part of\nAdaptive Query Execution. Dynamically injecting scan filters for join operations to limit the amount of\ndata to be considered in a query is part of Dynamic Partition Pruning and not of Adaptive Query\nExecution.\nAdaptive Query Execution reoptimizes queries at execution points.\nNo, Adaptive Query Execution reoptimizes queries at materialization points.\nAdaptive Query Execution is enabled in Spark by default.\nNo, Adaptive Query Execution is disabled in Spark needs to be enabled through the\nspark.sql.adaptive.enabled property.\nAdaptive Query Execution applies to all kinds of queries.\nNo, Adaptive Query Execution applies only to queries that are not streaming queries and that contain\nat least one exchange (typically expressed through a join, aggregate, or window operator) or one\nsubquery.\nMore info: How to Speed up SQL Queries with Adaptive Query Execution, Learning Spark, 2nd Edition,\nChapter 12 (https://bit.ly/3tOh8M1)"
+    },
+    {
+        "question": "The code block shown below should store DataFrame transactionsDf on two different\nexecutors, utilizing the executors' memory as much as possible, but not writing anything to disk.\nChoose the answer that correctly fills the blanks in the code block to accomplish this.\n1.from pyspark import StorageLevel\n2.transactionsDf.__1__(StorageLevel.__2__).__3__",
+        "options": [
+            "A.. 1. cache\n2. MEMORY_ONLY_2\n3. count()",
+            "B.. 1. persist\n2. DISK_ONLY_2\n\n\n3. count()",
+            "C.. 1. persist\n2. MEMORY_ONLY_2\n3. select()",
+            "D.. 1. cache\n2. DISK_ONLY_2\n3. count()",
+            "E.. 1. persist\n2. MEMORY_ONLY_2\n3. count()"
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "Correct code block:\nfrom pyspark import StorageLevel\ntransactionsDf.persist(StorageLevel.MEMORY_ONLY_2).count()\nOnly persist takes different storage levels, so any option using cache() cannot be correct. persist() is\nevaluated lazily, so an action needs to follow this command. select() is not an action, but count() is -\nso all options using select() are incorrect.\nFinally, the question states that \"the executors' memory should be utilized as much as possible, but\nnot writing anything to disk\". This points to a MEMORY_ONLY storage level. In this storage level,\npartitions that do not fit into memory will be recomputed when they are needed, instead of being\nwritten to disk, as with the storage option MEMORY_AND_DISK. Since the data need to be duplicated\nacross two executors, _2 needs to be appended to the storage level.\nStatic notebook | Dynamic notebook: See test 2"
+    },
+    {
+        "question": "Which of the following statements about storage levels is incorrect?",
+        "options": [
+            "A.. The cache operator on DataFrames is evaluated like a transformation.",
+            "B.. In client mode, DataFrames cached with the MEMORY_ONLY_2 level will not be stored in the edge\nnode's memory.",
+            "C.. Caching can be undone using the DataFrame.unpersist() operator.",
+            "D.. MEMORY_AND_DISK replicates cached DataFrames both on memory and disk.",
+            "E.. DISK_ONLY will not use the worker node's memory."
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "MEMORY_AND_DISK replicates cached DataFrames both on memory and disk.\nCorrect, this statement is wrong. Spark prioritizes storage in memory, and will only store data on disk\nthat does not fit into memory.\nDISK_ONLY will not use the worker node's memory.\nWrong, this statement is correct. DISK_ONLY keeps data only on the worker node's disk, but not in\nmemory.\nIn client mode, DataFrames cached with the MEMORY_ONLY_2 level will not be stored in the edge\nnode's memory.\nWrong, this statement is correct. In fact, Spark does not have a provision to cache DataFrames in the\ndriver (which sits on the edge node in client mode). Spark caches DataFrames in the executors'\nmemory.\n\n\nCaching can be undone using the DataFrame.unpersist() operator.\nWrong, this statement is correct. Caching, as achieved via the DataFrame.cache() or\nDataFrame.persist() operators can be undone using the DataFrame.unpersist() operator. This\noperator will remove all of its parts from the executors' memory and disk.\nThe cache operator on DataFrames is evaluated like a transformation.\nWrong, this statement is correct. DataFrame.cache() is evaluated like a transformation: Through lazy\nevaluation. This means that after calling DataFrame.cache() the command will not have any effect\nuntil you call a subsequent action, like DataFrame.cache().count().\nMore info: pyspark.sql.DataFrame.unpersist - PySpark 3.1.2 documentation"
+    },
+    {
+        "question": "Which of the following code blocks produces the following output, given DataFrame\ntransactionsDf?\nOutput:\n1.root\n2. |-- transactionId: integer (nullable = true)\n3. |-- predError: integer (nullable = true)\n4. |-- value: integer (nullable = true)\n5. |-- storeId: integer (nullable = true)\n6. |-- productId: integer (nullable = true)\n7. |-- f: integer (nullable = true)\nDataFrame transactionsDf:\n1.+-------------+---------+-----+-------+---------+----+\n2.|transactionId|predError|value|storeId|productId| f|\n3.+-------------+---------+-----+-------+---------+----+\n4.| 1| 3| 4| 25| 1|null|\n5.| 2| 6| 7| 2| 2|null|\n6.| 3| 3| null| 25| 3|null|\n7.+-------------+---------+-----+-------+---------+----+",
+        "options": [
+            "A.. transactionsDf.schema.print()",
+            "B.. transactionsDf.rdd.printSchema()",
+            "C.. transactionsDf.rdd.formatSchema()",
+            "D.. transactionsDf.printSchema()",
+            "E.. print(transactionsDf.schema)"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "The output is the typical output of a DataFrame.printSchema() call. The DataFrame's RDD\nrepresentation does not have a printSchema or formatSchema method (find available methods in the\nRDD documentation linked below). The output of print(transactionsDf.schema) is this:\nStructType(List(StructField(transactionId,IntegerType,true),StructField(predError,IntegerType,true),St\nructField\n(value,IntegerType,true),StructField(storeId,IntegerType,true),StructField(productId,IntegerType,true\n),StructFiel It includes the same information as the nicely formatted original output, but is not nicely\nformatted itself. Lastly, the DataFrame's schema attribute does not have a print() method.\nMore info:\n- pyspark.RDD: pyspark.RDD - PySpark 3.1.2 documentation\n- DataFrame.printSchema(): pyspark.sql.DataFrame.printSchema - PySpark 3.1.2 documentation Stati\n\n\nc notebook | Dynamic notebook: See test 2"
+    },
+    {
+        "question": "The code block displayed below contains one or more errors. The code block should load\nparquet files at location filePath into a DataFrame, only loading those files that have been modified\nbefore\n2029-03-20 05:44:46. Spark should enforce a schema according to the schema shown below. Find the\nerror.\nSchema:\n1.root\n2. |-- itemId: integer (nullable = true)\n3. |-- attributes: array (nullable = true)\n4. | |-- element: string (containsNull = true)\n5. |-- supplier: string (nullable = true)\nCode block:\n1.schema = StructType([\n2. StructType(\"itemId\", IntegerType(), True),\n3. StructType(\"attributes\", ArrayType(StringType(), True), True),\n4. StructType(\"supplier\", StringType(), True)\n5.])\n6.\n7.spark.read.options(\"modifiedBefore\", \"2029-03-20T05:44:46\").schema(schema).load(filePath)",
+        "options": [
+            "A.. The attributes array is specified incorrectly, Spark cannot identify the file format, and the syntax of\nthe call to Spark's DataFrameReader is incorrect.",
+            "B.. Columns in the schema definition use the wrong object type and the syntax of the call to Spark's\nDataFrameReader is incorrect.",
+            "C.. The data type of the schema is incompatible with the schema() operator and the modification date\nthreshold is specified incorrectly.",
+            "D.. Columns in the schema definition use the wrong object type, the modification date threshold is\nspecified incorrectly, and Spark cannot identify the file format.",
+            "E.. Columns in the schema are unable to handle empty values and the modification date threshold is\nspecified incorrectly."
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "Correct code block:\nschema = StructType([\nStructField(\"itemId\", IntegerType(), True),\nStructField(\"attributes\", ArrayType(StringType(), True), True),\nStructField(\"supplier\", StringType(), True)\n])\nspark.read.options(modifiedBefore=\"2029-03-20T05:44:46\").schema(schema).parquet(filePath) This\nquestion is more difficult than what you would encounter in the exam. In the exam, for this question\ntype, only one error needs to be identified and not \"one or multiple\" as in the question.\nColumns in the schema definition use the wrong object type, the modification date threshold is\nspecified incorrectly, and Spark cannot identify the file format.\nCorrect! Columns in the schema definition should use the StructField type. Building a schema from\n\n\npyspark.sql.types, as here using classes like StructType and StructField, is one of multiple ways of\nexpressing a schema in Spark. A StructType always contains a list of StructFields (see documentation\nlinked below). So, nesting StructType and StructType as shown in the question is wrong.\nThe modification date threshold should be specified by a keyword argument like\noptions(modifiedBefore=\"2029-03-20T05:44:46\") and not two consecutive non-keyword arguments\nas in the original code block (see documentation linked below).\nSpark cannot identify the file format correctly, because either it has to be specified by using the\nDataFrameReader.format(), as an argument to DataFrameReader.load(), or directly by calling, for\nexample, DataFrameReader.parquet().\nColumns in the schema are unable to handle empty values and the modification date threshold is\nspecified incorrectly.\nNo. If StructField would be used for the columns instead of StructType (see above), the third\nargument specified whether the column is nullable. The original schema shows that columns should\nbe nullable and this is specified correctly by the third argument being True in the schema in the code\nblock.\nIt is correct, however, that the modification date threshold is specified incorrectly (see above).\nThe attributes array is specified incorrectly, Spark cannot identify the file format, and the syntax of\nthe call to Spark's DataFrameReader is incorrect.\nWrong. The attributes array is specified correctly, following the syntax for ArrayType (see linked\ndocumentation below). That Spark cannot identify the file format is correct, see correct answer\nabove. In addition, the DataFrameReader is called correctly through the SparkSession spark.\nColumns in the schema definition use the wrong object type and the syntax of the call to Spark's\nDataFrameReader is incorrect.\nIncorrect, the object types in the schema definition are correct and syntax of the call to Spark's\nDataFrameReader is correct.\nThe data type of the schema is incompatible with the schema() operator and the modification date\nthreshold is specified incorrectly.\nFalse. The data type of the schema is StructType and an accepted data type for the\nDataFrameReader.schema() method. It is correct however that the modification date threshold is\nspecified incorrectly (see correct answer above)."
+    },
+    {
+        "question": "Which of the following statements about Spark's execution hierarchy is correct?",
+        "options": [
+            "A.. In Spark's execution hierarchy, a job may reach over multiple stage boundaries.",
+            "B.. In Spark's execution hierarchy, manifests are one layer above jobs.",
+            "C.. In Spark's execution hierarchy, a stage comprises multiple jobs.",
+            "D.. In Spark's execution hierarchy, executors are the smallest unit.",
+            "E.. In Spark's execution hierarchy, tasks are one layer above slots."
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "In Spark's execution hierarchy, a job may reach over multiple stage boundaries.\nCorrect. A job is a sequence of stages, and thus may reach over multiple stage boundaries.\nIn Spark's execution hierarchy, tasks are one layer above slots.\nIncorrect. Slots are not a part of the execution hierarchy. Tasks are the lowest layer.\nIn Spark's execution hierarchy, a stage comprises multiple jobs.\nNo. It is the other way around - a job consists of one or multiple stages.\nIn Spark's execution hierarchy, executors are the smallest unit.\n\n\nFalse. Executors are not a part of the execution hierarchy. Tasks are the smallest unit!\nIn Spark's execution hierarchy, manifests are one layer above jobs.\nWrong. Manifests are not a part of the Spark ecosystem."
+    },
+    {
+        "question": "The code block displayed below contains multiple errors. The code block should remove\ncolumn transactionDate from DataFrame transactionsDf and add a column transactionTimestamp in\nwhich dates that are expressed as strings in column transactionDate of DataFrame transactionsDf are\nconverted into unix timestamps. Find the errors.\nSample of DataFrame transactionsDf:\n1.+-------------+---------+-----+-------+---------+----+----------------+\n2.|transactionId|predError|value|storeId|productId| f| transactionDate|\n3.+-------------+---------+-----+-------+---------+----+----------------+\n4.| 1| 3| 4| 25| 1|null|2020-04-26 15:35|\n5.| 2| 6| 7| 2| 2|null|2020-04-13 22:01|\n6.| 3| 3| null| 25| 3|null|2020-04-02 10:53|\n7.+-------------+---------+-----+-------+---------+----+----------------+ Code block:\n1.transactionsDf = transactionsDf.drop(\"transactionDate\")\n2.transactionsDf[\"transactionTimestamp\"] = unix_timestamp(\"transactionDate\", \"yyyy-MM-dd\")",
+        "options": [
+            "A.. Column transactionDate should be dropped after transactionTimestamp has been written. The\nstring indicating the date format should be adjusted. The withColumn operator should be used\ninstead of the existing column assignment. Operator to_unixtime() should be used instead of\nunix_timestamp().",
+            "B.. Column transactionDate should be dropped after transactionTimestamp has been written. The\nwithColumn operator should be used instead of the existing column assignment. Column\ntransactionDate should be wrapped in a col() operator.",
+            "C.. Column transactionDate should be wrapped in a col() operator.",
+            "D.. The string indicating the date format should be adjusted. The withColumnReplaced operator\nshould be used instead of the drop and assign pattern in the code block to replace column\ntransactionDate with the new column transactionTimestamp.",
+            "E.. Column transactionDate should be dropped after transactionTimestamp has been written. The\nstring indicating the date format should be adjusted. The withColumn operator should be used\ninstead of the existing column assignment."
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "This question requires a lot of thinking to get right. For solving it, you may take advantage of the\ndigital notepad that is provided to you during the test. You have probably seen that the code block\nincludes multiple errors. In the test, you are usually confronted with a code block that only contains a\nsingle error. However, since you are practicing here, this challenging multi-error question will make it\neasier for you to deal with single-error questions in the real exam.\nYou can clearly see that column transactionDate should be dropped only after transactionTimestamp\nhas been written. This is because to generate column transactionTimestamp, Spark needs to read the\nvalues from column transactionDate.\nValues in column transactionDate in the original transactionsDf DataFrame look like 2020-04-26\n15:35. So, to convert those correctly, you would have to pass yyyy-MM-dd HH:mm. In other words:\nThe string indicating the date format should be adjusted.\n\n\nWhile you might be tempted to change unix_timestamp() to to_unixtime() (in line with the\nfrom_unixtime() operator), this function does not exist in Spark. unix_timestamp() is the correct\noperator to use here.\nAlso, there is no DataFrame.withColumnReplaced() operator. A similar operator that exists is\nDataFrame.withColumnRenamed().\nWhether you use col() or not is irrelevant with unix_timestamp() - the command is fine with both.\nFinally, you cannot assign a column like transactionsDf[\"columnName\"] = ... in Spark. This is Pandas\nsyntax (Pandas is a popular Python package for data analysis), but it is not supported in Spark.\nSo, you need to use Spark's DataFrame.withColumn() syntax instead.\nMore info: pyspark.sql.functions.unix_timestamp - PySpark 3.1.2 documentation Static notebook |\nDynamic notebook: See test 3"
+    },
+    {
+        "question": "Which of the following code blocks returns a DataFrame showing the mean value of column\n\"value\" of DataFrame transactionsDf, grouped by its column storeId?",
+        "options": [
+            "A.. transactionsDf.groupBy(col(storeId).avg())",
+            "B.. transactionsDf.groupBy(\"storeId\").avg(col(\"value\"))",
+            "C.. transactionsDf.groupBy(\"storeId\").agg(avg(\"value\"))",
+            "D.. transactionsDf.groupBy(\"storeId\").agg(average(\"value\"))",
+            "E.. transactionsDf.groupBy(\"value\").average()"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "This question tests your knowledge about how to use the groupBy and agg pattern in Spark. Using\nthe documentation, you can find out that there is no average() method in pyspark.sql.functions.\nStatic notebook | Dynamic notebook: See test 2"
+    },
+    {
+        "question": "Which of the following code blocks returns a copy of DataFrame itemsDf where the column\nsupplier has been renamed to manufacturer?",
+        "options": [
+            "A.. itemsDf.withColumn([\"supplier\", \"manufacturer\"])",
+            "B.. itemsDf.withColumn(\"supplier\").alias(\"manufacturer\")",
+            "C.. itemsDf.withColumnRenamed(\"supplier\", \"manufacturer\")",
+            "D.. itemsDf.withColumnRenamed(col(\"manufacturer\"), col(\"supplier\"))",
+            "E.. itemsDf.withColumnsRenamed(\"supplier\", \"manufacturer\")"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "itemsDf.withColumnRenamed(\"supplier\", \"manufacturer\")\nCorrect! This uses the relatively trivial DataFrame method withColumnRenamed for renaming column\nsupplier to column manufacturer.\nNote that the question asks for \"a copy of DataFrame itemsDf\". This may be confusing if you are not\nfamiliar with Spark yet. RDDs (Resilient Distributed Datasets) are the foundation of Spark DataFrames\nand are immutable. As such, DataFrames are immutable, too. Any command that changes anything in\nthe DataFrame therefore necessarily returns a copy, or a new version, of it that has the changes\napplied.\nitemsDf.withColumnsRenamed(\"supplier\", \"manufacturer\")\nIncorrect. Spark's DataFrame API does not have a withColumnsRenamed() method.\nitemsDf.withColumnRenamed(col(\"manufacturer\"), col(\"supplier\"))\n\n\nNo. Watch out - although the col() method works for many methods of the DataFrame API,\nwithColumnRenamed is not one of them. As outlined in the documentation linked below,\nwithColumnRenamed expects strings.\nitemsDf.withColumn([\"supplier\", \"manufacturer\"])\nWrong. While DataFrame.withColumn() exists in Spark, it has a different purpose than renaming\ncolumns.\nwithColumn is typically used to add columns to DataFrames, taking the name of the new column as a\nfirst, and a Column as a second argument. Learn more via the documentation that is linked below.\nitemsDf.withColumn(\"supplier\").alias(\"manufacturer\")\nNo. While DataFrame.withColumn() exists, it requires 2 arguments. Furthermore, the alias() method\non DataFrames would not help the cause of renaming a column much. DataFrame.alias() can be\nuseful in addressing the input of join statements. However, this is far outside of the scope of this\nquestion. If you are curious nevertheless, check out the link below.\nMore info: pyspark.sql.DataFrame.withColumnRenamed - PySpark 3.1.1 documentation,\npyspark.sql.DataFrame.withColumn - PySpark 3.1.1 documentation, and pyspark.sql.DataFrame.alias\n- PySpark 3.1.2 documentation (https://bit.ly/3aSB5tm , https://bit.ly/2Tv4rbE ,\nhttps://bit.ly/2RbhBd2) Static notebook | Dynamic notebook: See test 1\n(https://flrs.github.io/spark_practice_tests_code/#1/31.html ,\nhttps://bit.ly/sparkpracticeexams_import_instructions)"
+    },
+    {
+        "question": "Which of the following code blocks stores DataFrame itemsDf in executor memory and, if\ninsufficient memory is available, serializes it and saves it to disk?",
+        "options": [
+            "A.. itemsDf.persist(StorageLevel.MEMORY_ONLY)",
+            "B.. itemsDf.cache(StorageLevel.MEMORY_AND_DISK)",
+            "C.. itemsDf.store()",
+            "D.. itemsDf.cache()",
+            "E.. itemsDf.write.option('destination', 'memory').save()"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "The key to solving this question is knowing (or reading in the documentation) that, by default, cache()\nstores values to memory and writes any partitions for which there is insufficient memory to disk.\npersist() can achieve the exact same behavior, however not with the StorageLevel.MEMORY_ONLY\noption listed here. It is also worth noting that cache() does not have any arguments.\nIf you have troubles finding the storage level information in the documentation, please also see this\nstudent Q&A thread that sheds some light here.\nStatic notebook | Dynamic notebook: See test 2"
+    },
+    {
+        "question": "Which of the following code blocks applies the boolean-returning Python function\nevaluateTestSuccess to column storeId of DataFrame transactionsDf as a user-defined function?",
+        "options": [
+            "A.. 1.from pyspark.sql import types as T\n2.evaluateTestSuccessUDF = udf(evaluateTestSuccess, T.BooleanType())\n3.transactionsDf.withColumn(\"result\", evaluateTestSuccessUDF(col(\"storeId\")))",
+            "B.. 1.evaluateTestSuccessUDF = udf(evaluateTestSuccess)\n2.transactionsDf.withColumn(\"result\", evaluateTestSuccessUDF(storeId))",
+            "C.. 1.from pyspark.sql import types as T\n\n\n2.evaluateTestSuccessUDF = udf(evaluateTestSuccess, T.IntegerType())\n3.transactionsDf.withColumn(\"result\", evaluateTestSuccess(col(\"storeId\")))",
+            "D.. 1.evaluateTestSuccessUDF = udf(evaluateTestSuccess)\n2.transactionsDf.withColumn(\"result\", evaluateTestSuccessUDF(col(\"storeId\")))",
+            "E.. 1.from pyspark.sql import types as T\n2.evaluateTestSuccessUDF = udf(evaluateTestSuccess, T.BooleanType())\n3.transactionsDf.withColumn(\"result\", evaluateTestSuccess(col(\"storeId\")))"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "Recognizing that the UDF specification requires a return type (unless it is a string, which is the\ndefault) is important for solving this question. In addition, you should make sure that the generated\nUDF (evaluateTestSuccessUDF) and not the Python function (evaluateTestSuccess) is applied to\ncolumn storeId.\nMore info: pyspark.sql.functions.udf - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 2"
+    },
+    {
+        "question": "Which of the following code blocks reads in the JSON file stored at filePath, enforcing the\nschema expressed in JSON format in variable json_schema, shown in the code block below?\nCode block:\n1.json_schema = \"\"\"\n2.{\"type\": \"struct\",\n3. \"fields\": [\n4. {\n5. \"name\": \"itemId\",\n6. \"type\": \"integer\",\n7. \"nullable\": true,\n8. \"metadata\": {}\n9. },\n10. {\n11. \"name\": \"supplier\",\n12. \"type\": \"string\",\n13. \"nullable\": true,\n14. \"metadata\": {}\n15. }\n16. ]\n17.}\n18.\"\"\"",
+        "options": [
+            "A.. spark.read.json(filePath, schema=json_schema)",
+            "B.. spark.read.schema(json_schema).json(filePath)\n1.schema = StructType.fromJson(json.loads(json_schema))\n2.spark.read.json(filePath, schema=schema)",
+            "C.. spark.read.json(filePath, schema=schema_of_json(json_schema))",
+            "D.. spark.read.json(filePath, schema=spark.read.json(json_schema))"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "Spark provides a way to digest JSON-formatted strings as schema. However, it is not trivial to use.\nAlthough slightly above exam difficulty, this question is beneficial to your exam preparation, since it\nhelps you to familiarize yourself with the concept of enforcing schemas on data you are reading in - a\ntopic within the scope of the exam.\nThe first answer that jumps out here is the one that uses spark.read.schema instead of\nspark.read.json. Looking at the documentation of spark.read.schema (linked below), we notice that\nthe operator expects types pyspark.sql.types.StructType or str as its first argument. While variable\njson_schema is a string, the documentation states that the str should be \"a DDL-formatted string (For\nexample col0 INT, col1 DOUBLE)\". Variable json_schema does not contain a string in this type of\nformat, so this answer option must be wrong.\nWith four potentially correct answers to go, we now look at the schema parameter of\nspark.read.json() (documentation linked below). Here, too, the schema parameter expects an input\nof type pyspark.sql.types.StructType or \"a DDL-formatted string (For example col0 INT, col1\nDOUBLE)\". We already know that json_schema does not follow this format, so we should focus on\nhow we can transform json_schema into pyspark.sql.types.StructType. Hereby, we also eliminate the\noption where schema=json_schema.\nThe option that includes schema=spark.read.json(json_schema) is also a wrong pick, since\nspark.read.json returns a DataFrame, and not a pyspark.sql.types.StructType type.\nRuling out the option which includes schema_of_json(json_schema) is rather difficult. The operator's\ndocumentation (linked below) states that it \"[p]arses a JSON string and infers its schema in DDL\nformat\". This use case is slightly different from the case at hand: json_schema already is a schema\ndefinition, it does not make sense to \"infer\" a schema from it. In the documentation you can see an\nexample use case which helps you understand the difference better. Here, you pass string '{a: 1}' to\nschema_of_json() and the method infers a DDL-format schema STRUCT<a: BIGINT> from it.\nIn our case, we may end up with the output schema of schema_of_json() describing the schema of\nthe JSON schema, instead of using the schema itself. This is not the right answer option.\nNow you may consider looking at the StructType.fromJson() method. It returns a variable of type\nStructType - exactly the type which the schema parameter of spark.read.json expects.\nAlthough we could have looked at the correct answer option earlier, this explanation is kept as\nexhaustive as necessary to teach you how to systematically eliminate wrong answer options.\nMore info:\n- pyspark.sql.DataFrameReader.schema - PySpark 3.1.2 documentation\n- pyspark.sql.DataFrameReader.json - PySpark 3.1.2 documentation\n- pyspark.sql.functions.schema_of_json - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 3"
+    },
+    {
+        "question": "Which of the following statements about garbage collection in Spark is incorrect?",
+        "options": [
+            "A.. Garbage collection information can be accessed in the Spark UI's stage detail view.",
+            "B.. Optimizing garbage collection performance in Spark may limit caching ability.",
+            "C.. Manually persisting RDDs in Spark prevents them from being garbage collected.",
+            "D.. In Spark, using the G1 garbage collector is an alternative to using the default Parallel garbage\ncollector.",
+            "E.. Serialized caching is a strategy to increase the performance of garbage collection."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "Manually persisting RDDs in Spark prevents them from being garbage collected.\n\n\nThis statement is incorrect, and thus the correct answer to the question. Spark's garbage collector\nwill remove even persisted objects, albeit in an \"LRU\" fashion. LRU stands for least recently used.\nSo, during a garbage collection run, the objects that were used the longest time ago will be garbage\ncollected first.\nSee the linked StackOverflow post below for more information.\nSerialized caching is a strategy to increase the performance of garbage collection.\nThis statement is correct. The more Java objects Spark needs to collect during garbage collection, the\nlonger it takes. Storing a collection of many Java objects, such as a DataFrame with a complex\nschema, through serialization as a single byte array thus increases performance. This means that\ngarbage collection takes less time on a serialized DataFrame than an unserialized DataFrame.\nOptimizing garbage collection performance in Spark may limit caching ability.\nThis statement is correct. A full garbage collection run slows down a Spark application. When taking\nabout\n\"tuning\" garbage collection, we mean reducing the amount or duration of these slowdowns.\nA full garbage collection run is triggered when the Old generation of the Java heap space is almost\nfull. (If you are unfamiliar with this concept, check out the link to the Garbage Collection Tuning docs\nbelow.) Thus, one measure to avoid triggering a garbage collection run is to prevent the Old\ngeneration share of the heap space to be almost full.\nTo achieve this, one may decrease its size. Objects with sizes greater than the Old generation space\nwill then be discarded instead of cached (stored) in the space and helping it to be \"almost full\".\nThis will decrease the number of full garbage collection runs, increasing overall performance.\nInevitably, however, objects will need to be recomputed when they are needed. So, this mechanism\nonly works when a Spark application needs to reuse cached data as little as possible.\nGarbage collection information can be accessed in the Spark UI's stage detail view.\nThis statement is correct. The task table in the Spark UI's stage detail view has a \"GC Time\" column,\nindicating the garbage collection time needed per task.\nIn Spark, using the G1 garbage collector is an alternative to using the default Parallel garbage\ncollector.\nThis statement is correct. The G1 garbage collector, also known as garbage first garbage collector, is\nan alternative to the default Parallel garbage collector.\nWhile the default Parallel garbage collector divides the heap into a few static regions, the G1 garbage\ncollector divides the heap into many small regions that are created dynamically. The G1 garbage\ncollector has certain advantages over the Parallel garbage collector which improve performance\nparticularly for Spark workloads that require high throughput and low latency.\nThe G1 garbage collector is not enabled by default, and you need to explicitly pass an argument to\nSpark to enable it. For more information about the two garbage collectors, check out the Databricks\narticle linked below."
+    },
+    {
+        "question": "Which of the following options describes the responsibility of the executors in Spark?",
+        "options": [
+            "A.. The executors accept jobs from the driver, analyze those jobs, and return results to the driver.",
+            "B.. The executors accept tasks from the driver, execute those tasks, and return results to the cluster\nmanager.",
+            "C.. The executors accept tasks from the driver, execute those tasks, and return results to the driver.",
+            "D.. The executors accept tasks from the cluster manager, execute those tasks, and return results to\nthe driver.",
+            "E.. The executors accept jobs from the driver, plan those jobs, and return results to the cluster\n\n\nmanager."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "More info: Running Spark: an overview of Spark's runtime architecture - Manning\n(https://bit.ly/2RPmJn9)"
+    },
+    {
+        "question": "Which of the following code blocks returns a single-column DataFrame of all entries in Python\nlist throughputRates which contains only float-type values ?",
+        "options": [
+            "A.. spark.createDataFrame((throughputRates), FloatType)",
+            "B.. spark.createDataFrame(throughputRates, FloatType)",
+            "C.. spark.DataFrame(throughputRates, FloatType)",
+            "D.. spark.createDataFrame(throughputRates)",
+            "E.. spark.createDataFrame(throughputRates, FloatType())"
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "spark.createDataFrame(throughputRates, FloatType())\nCorrect! spark.createDataFrame is the correct operator to use here and the type FloatType() which is\npassed in for the command's schema argument is correctly instantiated using the parentheses.\nRemember that it is essential in PySpark to instantiate types when passing them to\nSparkSession.createDataFrame. And, in Databricks, spark returns a SparkSession object.\nspark.createDataFrame((throughputRates), FloatType)\nNo. While packing throughputRates in parentheses does not do anything to the execution of this\ncommand, not instantiating the FloatType with parentheses as in the previous answer will make this\ncommand fail.\nspark.createDataFrame(throughputRates, FloatType)\nIncorrect. Given that it does not matter whether you pass throughputRates in parentheses or not, see\nthe explanation of the previous answer for further insights.\nspark.DataFrame(throughputRates, FloatType)\nWrong. There is no SparkSession.DataFrame() method in Spark.\nspark.createDataFrame(throughputRates)\nFalse. Avoiding the schema argument will have PySpark try to infer the schema. However, as you can\nsee in the documentation (linked below), the inference will only work if you pass in an \"RDD of either\nRow, namedtuple, or dict\" for data (the first argument to createDataFrame). But since you are\npassing a Python list, Spark's schema inference will fail.\nMore info: pyspark.sql.SparkSession.createDataFrame - PySpark 3.1.2 documentation Static notebook\n| Dynamic notebook: See test 3"
+    },
+    {
+        "question": "Which of the following code blocks returns a one-column DataFrame for which every row\ncontains an array of all integer numbers from 0 up to and including the number given in column\npredError of DataFrame transactionsDf, and null if predError is null?\nSample of DataFrame transactionsDf:\n1.+-------------+---------+-----+-------+---------+----+\n2.|transactionId|predError|value|storeId|productId| f|\n3.+-------------+---------+-----+-------+---------+----+\n4.| 1| 3| 4| 25| 1|null|\n\n\n5.| 2| 6| 7| 2| 2|null|\n6.| 3| 3| null| 25| 3|null|\n7.| 4| null| null| 3| 2|null|\n8.| 5| null| null| null| 2|null|\n9.| 6| 3| 2| 25| 2|null|\n10.+-------------+---------+-----+-------+---------+----+",
+        "options": [
+            "A.. 1.def count_to_target(target):\n2. if target is None:\n3. return\n4.\n5. result = [range(target)]\n6. return result\n7.\n8.count_to_target_udf = udf(count_to_target, ArrayType[IntegerType])\n9.\n10.transactionsDf.select(count_to_target_udf(col('predError')))",
+            "B.. 1.def count_to_target(target):\n2. if target is None:\n3. return\n4.\n5. result = list(range(target))\n6. return result\n7.\n8.transactionsDf.select(count_to_target(col('predError')))",
+            "C.. 1.def count_to_target(target):\n2. if target is None:\n3. return\n4.\n5. result = list(range(target))\n6. return result\n7.\n8.count_to_target_udf = udf(count_to_target, ArrayType(IntegerType()))\n9.\n10.transactionsDf.select(count_to_target_udf('predError'))\n(Correct)",
+            "D.. 1.def count_to_target(target):\n2. result = list(range(target))\n3. return result\n4.\n5.count_to_target_udf = udf(count_to_target, ArrayType(IntegerType()))\n6.\n7.df = transactionsDf.select(count_to_target_udf('predError'))",
+            "E.. 1.def count_to_target(target):\n2. if target is None:\n3. return\n4.\n\n\n5. result = list(range(target))\n6. return result\n7.\n8.count_to_target_udf = udf(count_to_target)\n9.\n10.transactionsDf.select(count_to_target_udf('predError'))"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "Correct code block:\ndef count_to_target(target):\nif target is None:\nreturn\nresult = list(range(target))\nreturn result\ncount_to_target_udf = udf(count_to_target, ArrayType(IntegerType()))\ntransactionsDf.select(count_to_target_udf('predError'))\nOutput of correct code block:\n+--------------------------+\n|count_to_target(predError)|\n+--------------------------+\n| [0, 1, 2]|\n| [0, 1, 2, 3, 4, 5]|\n| [0, 1, 2]|\n| null|\n| null|\n| [0, 1, 2]|\n+--------------------------+\nThis question is not exactly easy. You need to be familiar with the syntax around UDFs (user-defined\nfunctions). Specifically, in this question it is important to pass the correct types to the udf method -\nreturning an array of a specific type rather than just a single type means you need to think harder\nabout type implications than usual.\nRemember that in Spark, you always pass types in an instantiated way like ArrayType(IntegerType()),\nnot like ArrayType(IntegerType). The parentheses () are the key here - make sure you do not forget\nthose.\nYou should also pay attention that you actually pass the UDF count_to_target_udf, and not the\nPython method count_to_target to the select() operator.\nFinally, null values are always a tricky case with UDFs. So, take care that the code can handle them\ncorrectly.\nMore info: How to Turn Python Functions into PySpark Functions (UDF) - Chang Hsin Lee - Committin\ng my thoughts to words.\nStatic notebook | Dynamic notebook: See test 3"
+    },
+    {
+        "question": "Which of the following is not a feature of Adaptive Query Execution?",
+        "options": [
+            "A.. Replace a sort merge join with a broadcast join, where appropriate.",
+            "B.. Coalesce partitions to accelerate data processing.",
+            "C.. Split skewed partitions into smaller partitions to avoid differences in partition processing time.",
+            "D.. Reroute a query in case of an executor failure.",
+            "E.. Collect runtime statistics during query execution."
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "Reroute a query in case of an executor failure.\nCorrect. Although this feature exists in Spark, it is not a feature of Adaptive Query Execution. The\ncluster manager keeps track of executors and will work together with the driver to launch an\nexecutor and assign the workload of the failed executor to it (see also link below).\nReplace a sort merge join with a broadcast join, where appropriate.\nNo, this is a feature of Adaptive Query Execution.\nCoalesce partitions to accelerate data processing.\nWrong, Adaptive Query Execution does this.\nCollect runtime statistics during query execution.\nIncorrect, Adaptive Query Execution (AQE) collects these statistics to adjust query plans. This\nfeedback loop is an essential part of accelerating queries via AQE.\nSplit skewed partitions into smaller partitions to avoid differences in partition processing time.\nNo, this is indeed a feature of Adaptive Query Execution. Find more information in the Databricks\nblog post linked below.\nMore info: Learning Spark, 2nd Edition, Chapter 12, On which way does RDD of spark finish fault-\ntolerance?\n- Stack Overflow, How to Speed up SQL Queries with Adaptive Query Execution"
+    },
+    {
+        "question": "The code block displayed below contains an error. The code block is intended to join\nDataFrame itemsDf with the larger DataFrame transactionsDf on column itemId. Find the error.\nCode block:\ntransactionsDf.join(itemsDf, \"itemId\", how=\"broadcast\")",
+        "options": [
+            "A.. The syntax is wrong, how= should be removed from the code block.",
+            "B.. The join method should be replaced by the broadcast method.",
+            "C.. Spark will only perform the broadcast operation if this behavior has been enabled on the Spark\ncluster.",
+            "D.. The larger DataFrame transactionsDf is being broadcasted, rather than the smaller DataFrame\nitemsDf.",
+            "E.. broadcast is not a valid join type."
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "broadcast is not a valid join type.\nCorrect! The code block should read transactionsDf.join(broadcast(itemsDf), \"itemId\"). This would\nimply an inner join (this is the default in DataFrame.join()), but since the join type is not given in the\nquestion, this would be a valid choice.\nThe larger DataFrame transactionsDf is being broadcasted, rather than the smaller DataFrame\nitemsDf.\nThis option does not apply here, since the syntax around broadcasting is incorrect.\nSpark will only perform the broadcast operation if this behavior has been enabled on the Spark\ncluster.\nNo, it is enabled by default, since the spark.sql.autoBroadcastJoinThreshold property is set to 10 MB\n\n\nby default. If that property would be set to -1, then broadcast joining would be disabled.\nMore info: Performance Tuning - Spark 3.1.1 Documentation (https://bit.ly/3gCz34r) The join method\nshould be replaced by the broadcast method.\nNo, DataFrame has no broadcast() method.\nThe syntax is wrong, how= should be removed from the code block.\nNo, having the keyword argument how= is totally acceptable."
+    },
+    {
+        "question": "The code block shown below should return a one-column DataFrame where the column\nstoreId is converted to string type. Choose the answer that correctly fills the blanks in the code block\nto accomplish this.\ntransactionsDf.__1__(__2__.__3__(__4__))",
+        "options": [
+            "A.. 1. select\n2. col(\"storeId\")\n3. cast\n4. StringType",
+            "B.. 1. select\n2. col(\"storeId\")\n3. as\n4. StringType",
+            "C.. 1. cast\n2. \"storeId\"\n3. as\n4. StringType()",
+            "D.. 1. select\n2. col(\"storeId\")\n3. cast\n4. StringType()",
+            "E.. 1. select\n2. storeId\n3. cast\n4. StringType()"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.select(col(\"storeId\").cast(StringType()))\nSolving this question involves understanding that, when using types from the pyspark.sql.types such\nas StringType, these types need to be instantiated when using them in Spark, or, in simple words,\nthey need to be followed by parentheses like so: StringType(). You could also use .cast(\"string\")\ninstead, but that option is not given here.\nMore info: pyspark.sql.Column.cast - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 2"
+    },
+    {
+        "question": "Which of the following code blocks returns the number of unique values in column storeId of\nDataFrame transactionsDf?",
+        "options": [
+            "A.. transactionsDf.select(\"storeId\").dropDuplicates().count()",
+            "B.. transactionsDf.select(count(\"storeId\")).dropDuplicates()",
+            "C.. transactionsDf.select(distinct(\"storeId\")).count()",
+            "D.. transactionsDf.dropDuplicates().agg(count(\"storeId\"))",
+            "E.. transactionsDf.distinct().select(\"storeId\").count()"
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "transactionsDf.select(\"storeId\").dropDuplicates().count()\nCorrect! After dropping all duplicates from column storeId, the remaining rows get counted,\nrepresenting the number of unique values in the column.\ntransactionsDf.select(count(\"storeId\")).dropDuplicates()\nNo. transactionsDf.select(count(\"storeId\")) just returns a single-row DataFrame showing the number\nof non-null rows. dropDuplicates() does not have any effect in this context.\ntransactionsDf.dropDuplicates().agg(count(\"storeId\"))\nIncorrect. While transactionsDf.dropDuplicates() removes duplicate rows from transactionsDf, it does\nnot do so taking only column storeId into consideration, but eliminates full row duplicates instead.\ntransactionsDf.distinct().select(\"storeId\").count()\nWrong. transactionsDf.distinct() identifies unique rows across all columns, but not only unique rows\nwith respect to column storeId. This may leave duplicate values in the column, making the count not\nrepresent the number of unique values in that column.\ntransactionsDf.select(distinct(\"storeId\")).count()\nFalse. There is no distinct method in pyspark.sql.functions."
+    },
+    {
+        "question": "Which of the following statements about data skew is incorrect?",
+        "options": [
+            "A.. Spark will not automatically optimize skew joins by default.",
+            "B.. Broadcast joins are a viable way to increase join performance for skewed data over sort-merge\njoins.",
+            "C.. In skewed DataFrames, the largest and the smallest partition consume very different amounts of\nmemory.",
+            "D.. To mitigate skew, Spark automatically disregards null values in keys when joining.",
+            "E.. Salting can resolve data skew."
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "To mitigate skew, Spark automatically disregards null values in keys when joining.\nThis statement is incorrect, and thus the correct answer to the question. Joining keys that contain\nnull values is of particular concern with regard to data skew.\nIn real-world applications, a table may contain a great number of records that do not have a value\nassigned to the column used as a join key. During the join, the data is at risk of being heavily skewed.\nThis is because all records with a null-value join key are then evaluated as a single large partition,\nstanding in stark contrast to the potentially diverse key values (and therefore small partitions) of the\nnon-null-key records.\nSpark specifically does not handle this automatically. However, there are several strategies to\nmitigate this problem like discarding null values temporarily, only to merge them back later (see last\nlink below).\nIn skewed DataFrames, the largest and the smallest partition consume very different amounts of\nmemory.\n\n\nThis statement is correct. In fact, having very different partition sizes is the very definition of skew.\nSkew can degrade Spark performance because the largest partition occupies a single executor for a\nlong time. This blocks a Spark job and is an inefficient use of resources, since other executors that\nprocessed smaller partitions need to idle until the large partition is processed.\nSalting can resolve data skew.\nThis statement is correct. The purpose of salting is to provide Spark with an opportunity to repartition\ndata into partitions of similar size, based on a salted partitioning key.\nA salted partitioning key typically is a column that consists of uniformly distributed random numbers.\nThe number of unique entries in the partitioning key column should match the number of your\ndesired number of partitions. After repartitioning by the salted key, all partitions should have roughly\nthe same size.\nSpark does not automatically optimize skew joins by default.\nThis statement is correct. Automatic skew join optimization is a feature of Adaptive Query Execution\n(AQE).\nBy default, AQE is disabled in Spark. To enable it, Spark's spark.sql.adaptive.enabled configuration\noption needs to be set to true instead of leaving it at the default false.\nTo automatically optimize skew joins, Spark's spark.sql.adaptive.skewJoin.enabled options also needs\nto be set to true, which it is by default.\nWhen skew join optimization is enabled, Spark recognizes skew joins and optimizes them by splitting\nthe bigger partitions into smaller partitions which leads to performance increases.\nBroadcast joins are a viable way to increase join performance for skewed data over sort-merge joins.\nThis statement is correct. Broadcast joins can indeed help increase join performance for skewed data,\nunder some conditions. One of the DataFrames to be joined needs to be small enough to fit into each\nexecutor's memory, along a partition from the other DataFrame. If this is the case, a broadcast join\nincreases join performance over a sort-merge join.\nThe reason is that a sort-merge join with skewed data involves excessive shuffling. During shuffling,\ndata is sent around the cluster, ultimately slowing down the Spark application. For skewed data, the\namount of data, and thus the slowdown, is particularly big.\nBroadcast joins, however, help reduce shuffling data. The smaller table is directly stored on all\nexecutors, eliminating a great amount of network traffic, ultimately increasing join performance\nrelative to the sort-merge join.\nIt is worth noting that for optimizing skew join behavior it may make sense to manually adjust Spark's\nspark.sql.autoBroadcastJoinThreshold configuration property if the smaller DataFrame is bigger than\nthe 10 MB set by default.\nMore info:\n- Performance Tuning - Spark 3.0.0 Documentation\n- Data Skew and Garbage Collection to Improve Spark Performance\n- Section 1.2 - Joins on Skewed Data * GitBook"
+    },
+    {
+        "question": "The code block displayed below contains an error. The code block should return a copy of\nDataFrame transactionsDf where the name of column transactionId has been changed to\ntransactionNumber. Find the error.\nCode block:\ntransactionsDf.withColumn(\"transactionNumber\", \"transactionId\")",
+        "options": [
+            "A.. The arguments to the withColumn method need to be reordered.",
+            "B.. The arguments to the withColumn method need to be reordered and the copy() operator should\n\n\nbe appended to the code block to ensure a copy is returned.",
+            "C.. The copy() operator should be appended to the code block to ensure a copy is returned.",
+            "D.. Each column name needs to be wrapped in the col() method and method withColumn should be\nreplaced by method withColumnRenamed.",
+            "E.. The method withColumn should be replaced by method withColumnRenamed and the arguments\nto the method need to be reordered."
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.withColumnRenamed(\"transactionId\", \"transactionNumber\")\nNote that in Spark, a copy is returned by default. So, there is no need to append copy() to the code\nblock.\nMore info: pyspark.sql.DataFrame.withColumnRenamed - PySpark 3.1.2 documentation Static\nnotebook | Dynamic notebook: See test 2"
+    },
+    {
+        "question": "Which of the following code blocks returns a DataFrame with a single column in which all\nitems in column attributes of DataFrame itemsDf are listed that contain the letter i?\nSample of DataFrame itemsDf:\n1.+------+----------------------------------+-----------------------------+-------------------+\n2.|itemId|itemName |attributes |supplier |\n3.+------+----------------------------------+-----------------------------+-------------------+\n4.|1 |Thick Coat for Walking in the Snow|[blue, winter, cozy] |Sports Company Inc.|\n5.|2 |Elegant Outdoors Summer Dress |[red, summer, fresh, cooling]|YetiX |\n6.|3 |Outdoors Backpack |[green, summer, travel] |Sports Company Inc.|\n7.+------+----------------------------------+-----------------------------+-------------------+",
+        "options": [
+            "A.. itemsDf.select(explode(\"attributes\").alias(\"attributes_exploded\")).filter(attributes_exploded.contains\n(\"i\"))",
+            "B.. itemsDf.explode(attributes).alias(\"attributes_exploded\").filter(col(\"attributes_exploded\").contains(\"i\n\"))",
+            "C.. itemsDf.select(explode(\"attributes\")).filter(\"attributes_exploded\".contains(\"i\"))",
+            "D.. itemsDf.select(explode(\"attributes\").alias(\"attributes_exploded\")).filter(col(\"attributes_exploded\").c\nontain",
+            "E.. itemsDf.select(col(\"attributes\").explode().alias(\"attributes_exploded\")).filter(col(\"attributes_explode\nd\").co"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "Result of correct code block:\n+-------------------+\n|attributes_exploded|\n+-------------------+\n| winter|\n\n\n| cooling|\n+-------------------+\nTo solve this question, you need to know about explode(). This operation helps you to split up arrays\ninto single rows. If you did not have a chance to familiarize yourself with this method yet, find more\nexamples in the documentation (link below).\nNote that explode() is a method made available through pyspark.sql.functions - it is not available as a\nmethod of a DataFrame or a Column, as written in some of the answer options.\nMore info: pyspark.sql.functions.explode - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 2"
+    },
+    {
+        "question": "The code block shown below should return the number of columns in the CSV file stored at\nlocation filePath.\nFrom the CSV file, only lines should be read that do not start with a # character. Choose the answer\nthat correctly fills the blanks in the code block to accomplish this.\nCode block:\n__1__(__2__.__3__.csv(filePath, __4__).__5__)",
+        "options": [
+            "A.. 1. size\n2. spark\n3. read()\n4. escape='#'\n5. columns",
+            "B.. 1. DataFrame\n2. spark\n3. read()\n4. escape='#'\n5. shape[0]",
+            "C.. 1. len\n2. pyspark\n3. DataFrameReader\n4. comment='#'\n5. columns",
+            "D.. 1. size\n2. pyspark\n3. DataFrameReader\n4. comment='#'\n5. columns",
+            "E.. 1. len\n2. spark\n3. read\n4. comment='#'\n5. columns"
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "Correct code block:\nlen(spark.read.csv(filePath, comment='#').columns)\nThis is a challenging question with difficulties in an unusual context: The boundary between\n\n\nDataFrame and the DataFrameReader. It is unlikely that a question of this difficulty level appears in\nthe exam. However, solving it helps you get more comfortable with the DataFrameReader, a subject\nyou will likely have to deal with in the exam.\nBefore dealing with the inner parentheses, it is easier to figure out the outer parentheses, gaps 1 and\n5. Given the code block, the object in gap 5 would have to be evaluated by the object in gap 1,\nreturning the number of columns in the read-in CSV. One answer option includes DataFrame in gap 1\nand shape[0] in gap 2. Since DataFrame cannot be used to evaluate shape[0], we can discard this\nanswer option.\nOther answer options include size in gap 1. size() is not a built-in Python command, so if we use it, it\nwould have to come from somewhere else. pyspark.sql.functions includes a size() method, but this\nmethod only returns the length of an array or map stored within a column (documentation linked\nbelow).\nSo, using a size() method is not an option here. This leaves us with two potentially valid answers.\nWe have to pick between gaps 2 and 3 being spark.read or pyspark.DataFrameReader. Looking at the\ndocumentation (linked below), the DataFrameReader is actually a child class of pyspark.sql, which\nmeans that we cannot import it using pyspark.DataFrameReader. Moreover, spark.read makes sense\nbecause on Databricks, spark references current Spark session (pyspark.sql.SparkSession) and\nspark.read therefore returns a DataFrameReader (also see documentation below). Finally, there is\nonly one correct answer option remaining.\nMore info:\n- pyspark.sql.functions.size - PySpark 3.1.2 documentation\n- pyspark.sql.DataFrameReader.csv - PySpark 3.1.2 documentation\n- pyspark.sql.SparkSession.read - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 3"
+    },
+    {
+        "question": "Which of the following code blocks prints out in how many rows the expression Inc. appears\nin the string-type column supplier of DataFrame itemsDf?",
+        "options": [
+            "A.. 1.counter = 0\n2.\n3.for index, row in itemsDf.iterrows():\n4. if 'Inc.' in row['supplier']:\n5. counter = counter + 1\n6.\n7.print(counter)",
+            "B.. 1.counter = 0\n2.\n3.def count(x):\n4. if 'Inc.' in x['supplier']:\n5. counter = counter + 1\n6.\n7.itemsDf.foreach(count)\n8.print(counter)",
+            "C.. print(itemsDf.foreach(lambda x: 'Inc.' in x))",
+            "D.. print(itemsDf.foreach(lambda x: 'Inc.' in x).sum())",
+            "E.. 1.accum=sc.accumulator(0)\n2.\n\n\n3.def check_if_inc_in_supplier(row):\n4. if 'Inc.' in row['supplier']:\n5. accum.add(1)\n6.\n7.itemsDf.foreach(check_if_inc_in_supplier)\n8.print(accum.value)"
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "Correct code block:\naccum=sc.accumulator(0)\ndef check_if_inc_in_supplier(row):\nif 'Inc.' in row['supplier']:\naccum.add(1)\nitemsDf.foreach(check_if_inc_in_supplier)\nprint(accum.value)\nTo answer this question correctly, you need to know both about the DataFrame.foreach() method\nand accumulators.\nWhen Spark runs the code, it executes it on the executors. The executors do not have any\ninformation about variables outside of their scope. This is whhy simply using a Python variable\ncounter, like in the two examples that start with counter = 0, will not work. You need to tell the\nexecutors explicitly that counter is a special shared variable, an Accumulator, which is managed by\nthe driver and can be accessed by all executors for the purpose of adding to it.\nIf you have used Pandas in the past, you might be familiar with the iterrows() command. Notice that\nthere is no such command in PySpark.\nThe two examples that start with print do not work, since DataFrame.foreach() does not have a\nreturn value.\nMore info: pyspark.sql.DataFrame.foreach - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 3"
+    },
+    {
+        "question": "Which of the following code blocks returns a copy of DataFrame transactionsDf where the\ncolumn storeId has been converted to string type?",
+        "options": [
+            "A.. transactionsDf.withColumn(\"storeId\", convert(\"storeId\", \"string\"))",
+            "B.. transactionsDf.withColumn(\"storeId\", col(\"storeId\", \"string\"))",
+            "C.. transactionsDf.withColumn(\"storeId\", col(\"storeId\").convert(\"string\"))",
+            "D.. transactionsDf.withColumn(\"storeId\", col(\"storeId\").cast(\"string\"))",
+            "E.. transactionsDf.withColumn(\"storeId\", convert(\"storeId\").as(\"string\"))"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "This question asks for your knowledge about the cast syntax. cast is a method of the Column class. It\nis worth noting that one could also convert a column type using the Column.astype() method, which\nis just an alias for cast.\nFind more info in the documentation linked below.\nMore info: pyspark.sql.Column.cast - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 2"
+    },
+    {
+        "question": "Which of the following code blocks returns a single row from DataFrame transactionsDf?\n\n\nFull DataFrame transactionsDf:\n1.+-------------+---------+-----+-------+---------+----+\n2.|transactionId|predError|value|storeId|productId| f|\n3.+-------------+---------+-----+-------+---------+----+\n4.| 1| 3| 4| 25| 1|null|\n5.| 2| 6| 7| 2| 2|null|\n6.| 3| 3| null| 25| 3|null|\n7.| 4| null| null| 3| 2|null|\n8.| 5| null| null| null| 2|null|\n9.| 6| 3| 2| 25| 2|null|\n10.+-------------+---------+-----+-------+---------+----+",
+        "options": [
+            "A.. transactionsDf.where(col(\"storeId\").between(3,25))",
+            "B.. transactionsDf.filter((col(\"storeId\")!=25) | (col(\"productId\")==2))",
+            "C.. transactionsDf.filter(col(\"storeId\")==25).select(\"predError\",\"storeId\").distinct()",
+            "D.. transactionsDf.select(\"productId\", \"storeId\").where(\"storeId == 2 OR storeId != 25\")",
+            "E.. transactionsDf.where(col(\"value\").isNull()).select(\"productId\", \"storeId\").distinct()"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "Output of correct code block:\n+---------+-------+\n|predError|storeId|\n+---------+-------+\n| 3| 25|\n+---------+-------+\nThis question is difficult because it requires you to understand different kinds of commands and\noperators. All answers are valid Spark syntax, but just one expression returns a single-row\nDataFrame.\nFor reference, here is what the incorrect answers return:\ntransactionsDf.filter((col(\"storeId\")!=25) | (col(\"productId\")==2)) returns\n+-------------+---------+-----+-------+---------+----+\n|transactionId|predError|value|storeId|productId| f|\n+-------------+---------+-----+-------+---------+----+\n| 2| 6| 7| 2| 2|null|\n| 4| null| null| 3| 2|null|\n| 5| null| null| null| 2|null|\n| 6| 3| 2| 25| 2|null|\n+-------------+---------+-----+-------+---------+----+\ntransactionsDf.where(col(\"storeId\").between(3,25)) returns\n+-------------+---------+-----+-------+---------+----+\n|transactionId|predError|value|storeId|productId| f|\n+-------------+---------+-----+-------+---------+----+\n| 1| 3| 4| 25| 1|null|\n| 3| 3| null| 25| 3|null|\n| 4| null| null| 3| 2|null|\n| 6| 3| 2| 25| 2|null|\n+-------------+---------+-----+-------+---------+----+\n\n\ntransactionsDf.where(col(\"value\").isNull()).select(\"productId\", \"storeId\").distinct() returns\n+---------+-------+\n|productId|storeId|\n+---------+-------+\n| 3| 25|\n| 2| 3|\n| 2| null|\n+---------+-------+\ntransactionsDf.select(\"productId\", \"storeId\").where(\"storeId == 2 OR storeId != 25\") returns\n+---------+-------+\n|productId|storeId|\n+---------+-------+\n| 2| 2|\n| 2| 3|\n+---------+-------+\nStatic notebook | Dynamic notebook: See test 2"
+    },
+    {
+        "question": "The code block shown below should write DataFrame transactionsDf as a parquet file to path\nstoreDir, using brotli compression and replacing any previously existing file. Choose the answer that\ncorrectly fills the blanks in the code block to accomplish this.\ntransactionsDf.__1__.format(\"parquet\").__2__(__3__).option(__4__, \"brotli\").__5__(storeDir)",
+        "options": [
+            "A.. 1. save\n2. mode\n3. \"ignore\"\n4. \"compression\"\n5. path",
+            "B.. 1. store\n2. with\n3. \"replacement\"\n4. \"compression\"\n5. path",
+            "C.. 1. write\n2. mode\n3. \"overwrite\"\n4. \"compression\"\n5. save\n(Correct)",
+            "D.. 1. save\n2. mode\n3. \"replace\"\n4. \"compression\"\n5. path",
+            "E.. 1. write\n2. mode\n3. \"overwrite\"\n4. compression\n\n\n5. parquet"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.write.format(\"parquet\").mode(\"overwrite\").option(\"compression\",\n\"snappy\").save(storeDir) Solving this question requires you to know how to access the\nDataFrameWriter (link below) from the DataFrame API - through DataFrame.write.\nAnother nuance here is about knowing the different modes available for writing parquet files that\ndetermine Spark's behavior when dealing with existing files. These, together with the compression\noptions are explained in the DataFrameWriter.parquet documentation linked below.\nFinally, bracket __5__ poses a certain challenge. You need to know which command you can use to\npass down the file path to the DataFrameWriter. Both save and parquet are valid options here.\nMore info:\n- DataFrame.write: pyspark.sql.DataFrame.write - PySpark 3.1.1 documentation\n- DataFrameWriter.parquet: pyspark.sql.DataFrameWriter.parquet - PySpark 3.1.1 documentatio\nn Static notebook | Dynamic notebook: See test 1"
+    },
+    {
+        "question": "Which of the following code blocks displays various aggregated statistics of all columns in\nDataFrame transactionsDf, including the standard deviation and minimum of values in each column?",
+        "options": [
+            "A.. transactionsDf.summary()",
+            "B.. transactionsDf.agg(\"count\", \"mean\", \"stddev\", \"25%\", \"50%\", \"75%\", \"min\")",
+            "C.. transactionsDf.summary(\"count\", \"mean\", \"stddev\", \"25%\", \"50%\", \"75%\", \"max\").show()",
+            "D.. transactionsDf.agg(\"count\", \"mean\", \"stddev\", \"25%\", \"50%\", \"75%\", \"min\").show()",
+            "E.. transactionsDf.summary().show()"
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "The DataFrame.summary() command is very practical for quickly calculating statistics of a DataFrame.\nYou need to call .show() to display the results of the calculation. By default, the command calculates\nvarious statistics (see documentation linked below), including standard deviation and minimum.\nNote that the answer that lists many options in the summary() parentheses does not include the\nminimum, which is asked for in the question.\nAnswer options that include agg() do not work here as shown, since DataFrame.agg() expects more\ncomplex, column-specific instructions on how to aggregate values.\nMore info:\n- pyspark.sql.DataFrame.summary - PySpark 3.1.2 documentation\n- pyspark.sql.DataFrame.agg - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 3"
+    },
+    {
+        "question": "Which of the following code blocks returns a single-column DataFrame showing the number\nof words in column supplier of DataFrame itemsDf?\nSample of DataFrame itemsDf:\n1.+------+-----------------------------+-------------------+\n2.|itemId|attributes |supplier |\n3.+------+-----------------------------+-------------------+\n4.|1 |[blue, winter, cozy] |Sports Company Inc.|\n5.|2 |[red, summer, fresh, cooling]|YetiX |\n\n\n6.|3 |[green, summer, travel] |Sports Company Inc.|\n7.+------+-----------------------------+-------------------+",
+        "options": [
+            "A.. itemsDf.split(\"supplier\", \" \").count()",
+            "B.. itemsDf.split(\"supplier\", \" \").size()",
+            "C.. itemsDf.select(word_count(\"supplier\"))",
+            "D.. spark.select(size(split(col(supplier), \" \")))",
+            "E.. itemsDf.select(size(split(\"supplier\", \" \")))"
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "Output of correct code block:\n+----------------------------+\n|size(split(supplier, , -1))|\n+----------------------------+\n| 3|\n| 1|\n| 3|\n+----------------------------+\nThis question shows a typical use case for the split command: Splitting a string into words. An\nadditional difficulty is that you are asked to count the words. Although it is tempting to use the count\nmethod here, the size method (as in: size of an array) is actually the correct one to use. Familiarize\nyourself with the split and the size methods using the linked documentation below.\nMore info:\nSplit method: pyspark.sql.functions.split - PySpark 3.1.2 documentation Size method:\npyspark.sql.functions.size - PySpark 3.1.2 documentation Static notebook | Dynamic notebook: See\ntest 2"
+    },
+    {
+        "question": "Which of the following code blocks returns only rows from DataFrame transactionsDf in\nwhich values in column productId are unique?",
+        "options": [
+            "A.. transactionsDf.distinct(\"productId\")",
+            "B.. transactionsDf.dropDuplicates(subset=[\"productId\"])",
+            "C.. transactionsDf.drop_duplicates(subset=\"productId\")",
+            "D.. transactionsDf.unique(\"productId\")",
+            "E.. transactionsDf.dropDuplicates(subset=\"productId\")"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "Although the question suggests using a method called unique() here, that method does not actually\nexist in PySpark. In PySpark, it is called distinct(). But then, this method is not the right one to use\nhere, since with distinct() we could filter out unique values in a specific column.\nHowever, we want to return the entire rows here. So the trick is to use dropDuplicates with the\nsubset keyword parameter. In the documentation for dropDuplicates, the examples show that subset\nshould be used with a list. And this is exactly the key to solving this question: The productId column\nneeds to be fed into the subset argument in a list, even though it is just a single column.\nMore info: pyspark.sql.DataFrame.dropDuplicates - PySpark 3.1.1 documentation Static notebook |\nDynamic notebook: See test 1"
+    },
+    {
+        "question": "Which of the following code blocks returns a 2-column DataFrame that shows the distinct\nvalues in column productId and the number of rows with that productId in DataFrame\ntransactionsDf?",
+        "options": [
+            "A.. transactionsDf.count(\"productId\").distinct()",
+            "B.. transactionsDf.groupBy(\"productId\").agg(col(\"value\").count())",
+            "C.. transactionsDf.count(\"productId\")",
+            "D.. transactionsDf.groupBy(\"productId\").count()",
+            "E.. transactionsDf.groupBy(\"productId\").select(count(\"value\"))"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "transactionsDf.groupBy(\"productId\").count()\nCorrect. This code block first groups DataFrame transactionsDf by column productId and then counts\nthe rows in each group.\ntransactionsDf.groupBy(\"productId\").select(count(\"value\"))\nIncorrect. You cannot call select on a GroupedData object (the output of a groupBy) statement.\ntransactionsDf.count(\"productId\")\nNo. DataFrame.count() does not take any arguments.\ntransactionsDf.count(\"productId\").distinct()\nWrong. Since DataFrame.count() does not take any arguments, this option cannot be right.\ntransactionsDf.groupBy(\"productId\").agg(col(\"value\").count())\nFalse. A Column object, as returned by col(\"value\"), does not have a count() method. You can see all\navailable methods for Column object linked in the Spark documentation below.\nMore info: pyspark.sql.DataFrame.count - PySpark 3.1.2 documentation, pyspark.sql.Column - PySpar\nk\n3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 3"
+    },
+    {
+        "question": "Which of the following is the idea behind dynamic partition pruning in Spark?",
+        "options": [
+            "A.. Dynamic partition pruning is intended to skip over the data you do not need in the results of a\nquery.",
+            "B.. Dynamic partition pruning concatenates columns of similar data types to optimize join\nperformance.",
+            "C.. Dynamic partition pruning performs wide transformations on disk instead of in memory.",
+            "D.. Dynamic partition pruning reoptimizes physical plans based on data types and broadcast variables.",
+            "E.. Dynamic partition pruning reoptimizes query plans based on runtime statistics collected during\nquery execution."
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "Dynamic partition pruning reoptimizes query plans based on runtime statistics collected during query\nexecution.\nNo - this is what adaptive query execution does, but not dynamic partition pruning.\nDynamic partition pruning concatenates columns of similar data types to optimize join performance.\nWrong, this answer does not make sense, especially related to dynamic partition pruning.\nDynamic partition pruning reoptimizes physical plans based on data types and broadcast variables.\nIt is true that dynamic partition pruning works in joins using broadcast variables. This actually\n\n\nhappens in both the logical optimization and the physical planning stage. However, data types do not\nplay a role for the reoptimization.\nDynamic partition pruning performs wide transformations on disk instead of in memory.\nThis answer does not make sense. Dynamic partition pruning is meant to accelerate Spark -\nperforming any transformation involving disk instead of memory resources would decelerate Spark\nand certainly achieve the opposite effect of what dynamic partition pruning is intended for."
+    },
+    {
+        "question": "The code block shown below should show information about the data type that column\nstoreId of DataFrame transactionsDf contains. Choose the answer that correctly fills the blanks in the\ncode block to accomplish this.\nCode block:\ntransactionsDf.__1__(__2__).__3__",
+        "options": [
+            "A.. 1. select\n2. \"storeId\"\n3. print_schema()",
+            "B.. 1. limit\n2. 1\n3. columns",
+            "C.. 1. select\n2. \"storeId\"\n3. printSchema()",
+            "D.. 1. limit\n2. \"storeId\"\n3. printSchema()",
+            "E.. 1. select\n2. storeId\n3. dtypes"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.select(\"storeId\").printSchema()\nThe difficulty of this question is that it is hard to solve with the stepwise first-to-last-gap approach\nthat has worked well for similar questions, since the answer options are so different from one\nanother. Instead, you might want to eliminate answers by looking for patterns of frequently wrong\nanswers.\nA first pattern that you may recognize by now is that column names are not expressed in quotes. For\nthis reason, the answer that includes storeId should be eliminated.\nBy now, you may have understood that the DataFrame.limit() is useful for returning a specified\namount of rows. It has nothing to do with specific columns. For this reason, the answer that resolves\nto limit(\"storeId\") can be eliminated.\nGiven that we are interested in information about the data type, you should question whether the\nanswer that resolves to limit(1).columns provides you with this information. While\nDataFrame.columns is a valid call, it will only report back column names, but not column types. So,\nyou can eliminate this option.\nThe two remaining options either use the printSchema() or print_schema() command. You may\nremember that DataFrame.printSchema() is the only valid command of the two. The select(\"storeId\")\n\n\npart just returns the storeId column of transactionsDf - this works here, since we are only interested\nin that column's type anyways.\nMore info: pyspark.sql.DataFrame.printSchema - PySpark 3.1.2 documentation Static notebook |\nDynamic notebook: See test 3"
+    },
+    {
+        "question": "The code block shown below should return a DataFrame with all columns of DataFrame\ntransactionsDf, but only maximum 2 rows in which column productId has at least the value 2. Choose\nthe answer that correctly fills the blanks in the code block to accomplish this.\ntransactionsDf.__1__(__2__).__3__",
+        "options": [
+            "A.. 1. where\n2. \"productId\" > 2\n3. max(2)",
+            "B.. 1. where\n2. transactionsDf[productId] >= 2\n3. limit(2)",
+            "C.. 1. filter\n2. productId > 2\n3. max(2)",
+            "D.. 1. filter\n2. col(\"productId\") >= 2\n3. limit(2)",
+            "E.. 1. where\n2. productId >= 2\n3. limit(2)"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.filter(col(\"productId\") >= 2).limit(2)\nThe filter and where operators in gap 1 are just aliases of one another, so you cannot use them to\npick the right answer.\nThe column definition in gap 2 is more helpful. The DataFrame.filter() method takes an argument of\ntype Column or str. From all possible answers, only the one including col(\"productId\") >= 2 fits this\nprofile, since it returns a Column type.\nThe answer option using \"productId\" > 2 is invalid, since Spark does not understand that \"productId\"\nrefers to column productId. The answer option using transactionsDf[productId] >= 2 is wrong because\nyou cannot refer to a column using square bracket notation in Spark (if you are coming from Python\nusing Pandas, this is something to watch out for). In all other options, productId is being referred to\nas a Python variable, so they are relatively easy to eliminate.\nAlso note that the question asks for the value in column productId being at least 2. This translates to\na\n\"greater or equal\" sign (>= 2), but not a \"greater\" sign (> 2).\nAnother thing worth noting is that there is no DataFrame.max() method. If you picked any option\nincluding this, you may be confusing it with the pyspark.sql.functions.max method. The correct\nmethod to limit the amount of rows is the DataFrame.limit() method.\nMore info:\n- pyspark.sql.DataFrame.filter - PySpark 3.1.2 documentation\n\n\n- pyspark.sql.DataFrame.limit - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 3"
+    },
+    {
+        "question": "Which of the following code blocks returns DataFrame transactionsDf sorted in descending\norder by column predError, showing missing values last?",
+        "options": [
+            "A.. transactionsDf.sort(asc_nulls_last(\"predError\"))",
+            "B.. transactionsDf.orderBy(\"predError\").desc_nulls_last()",
+            "C.. transactionsDf.sort(\"predError\", ascending=False)",
+            "D.. transactionsDf.desc_nulls_last(\"predError\")",
+            "E.. transactionsDf.orderBy(\"predError\").asc_nulls_last()"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "transactionsDf.sort(\"predError\", ascending=False)\nCorrect! When using DataFrame.sort() and setting ascending=False, the DataFrame will be sorted by\nthe specified column in descending order, putting all missing values last. An alternative, although not\nlisted as an answer here, would be transactionsDf.sort(desc_nulls_last(\"predError\")).\ntransactionsDf.sort(asc_nulls_last(\"predError\"))\nIncorrect. While this is valid syntax, the DataFrame will be sorted on column predError in ascending\norder and not in descending order, putting missing values last.\ntransactionsDf.desc_nulls_last(\"predError\")\nWrong, this is invalid syntax. There is no method DataFrame.desc_nulls_last() in the Spark API. There\nis a Spark function desc_nulls_last() however (link see below).\ntransactionsDf.orderBy(\"predError\").desc_nulls_last()\nNo. While transactionsDf.orderBy(\"predError\") is correct syntax (although it sorts the DataFrame by\ncolumn predError in ascending order) and returns a DataFrame, there is no method\nDataFrame.desc_nulls_last() in the Spark API. There is a Spark function desc_nulls_last() however\n(link see below).\ntransactionsDf.orderBy(\"predError\").asc_nulls_last()\nIncorrect. There is no method DataFrame.asc_nulls_last() in the Spark API (see above).\nMore info: pyspark.sql.functions.desc_nulls_last - PySpark 3.1.2 documentation and\npyspark.sql.DataFrame.sort - PySpark 3.1.2 documentation (https://bit.ly/3g1JtbI ,\nhttps://bit.ly/2R90NCS) Static notebook | Dynamic notebook: See test 1\n(https://flrs.github.io/spark_practice_tests_code/#1/32.html ,\nhttps://bit.ly/sparkpracticeexams_import_instructions)"
+    },
+    {
+        "question": "The code block displayed below contains an error. The code block is intended to perform an\nouter join of DataFrames transactionsDf and itemsDf on columns productId and itemId, respectively.\nFind the error.\nCode block:\ntransactionsDf.join(itemsDf, [itemsDf.itemId, transactionsDf.productId], \"outer\")",
+        "options": [
+            "A.. The \"outer\" argument should be eliminated, since \"outer\" is the default join type.",
+            "B.. The join type needs to be appended to the join() operator, like join().outer() instead of listing it as\nthe last argument inside the join() call.",
+            "C.. The term [itemsDf.itemId, transactionsDf.productId] should be replaced by itemsDf.itemId ==\ntransactionsDf.productId.",
+            "D.. The term [itemsDf.itemId, transactionsDf.productId] should be replaced by itemsDf.col(\"itemId\")\n== transactionsDf.col(\"productId\").",
+            "E.. The \"outer\" argument should be eliminated from the call and join should be replaced by joinOuter."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.join(itemsDf, itemsDf.itemId == transactionsDf.productId, \"outer\") Static notebook |\nDynamic notebook: See test 1 (https://flrs.github.io/spark_practice_tests_code/#1/33.html ,\nhttps://bit.ly/sparkpracticeexams_import_instructions)"
+    },
+    {
+        "question": "Which of the following code blocks immediately removes the previously cached DataFrame\ntransactionsDf from memory and disk?",
+        "options": [
+            "A.. array_remove(transactionsDf, \"*\")",
+            "B.. transactionsDf.unpersist()\n(Correct)",
+            "C.. del transactionsDf",
+            "D.. transactionsDf.clearCache()",
+            "E.. transactionsDf.persist()"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "transactionsDf.unpersist()\nCorrect. The DataFrame.unpersist() command does exactly what the question asks for - it removes all\ncached parts of the DataFrame from memory and disk.\ndel transactionsDf\nFalse. While this option can help remove the DataFrame from memory and disk, it does not do so\nimmediately. The reason is that this command just notifies the Python garbage collector that the\ntransactionsDf now may be deleted from memory. However, the garbage collector does not do so\nimmediately and, if you wanted it to run immediately, would need to be specifically triggered to do\nso. Find more information linked below.\narray_remove(transactionsDf, \"*\")\nIncorrect. The array_remove method from pyspark.sql.functions is used for removing elements from\narrays in columns that match a specific condition. Also, the first argument would be a column, and\nnot a DataFrame as shown in the code block.\ntransactionsDf.persist()\nNo. This code block does exactly the opposite of what is asked for: It caches (writes) DataFrame\ntransactionsDf to memory and disk. Note that even though you do not pass in a specific storage level\nhere, Spark will use the default storage level (MEMORY_AND_DISK).\ntransactionsDf.clearCache()\nWrong. Spark's DataFrame does not have a clearCache() method.\nMore info: pyspark.sql.DataFrame.unpersist - PySpark 3.1.2 documentation, python - How to delete a\nn RDD in PySpark for the purpose of releasing resources? - Stack Overflow Static notebook | Dynamic\nnotebook: See test 3"
+    },
+    {
+        "question": "The code block shown below should return a single-column DataFrame with a column named\nconsonant_ct that, for each row, shows the number of consonants in column itemName of\n\n\nDataFrame itemsDf. Choose the answer that correctly fills the blanks in the code block to accomplish\nthis.\nDataFrame itemsDf:\n1.+------+----------------------------------+-----------------------------+-------------------+\n2.|itemId|itemName |attributes |supplier |\n3.+------+----------------------------------+-----------------------------+-------------------+\n4.|1 |Thick Coat for Walking in the Snow|[blue, winter, cozy] |Sports Company Inc.|\n5.|2 |Elegant Outdoors Summer Dress |[red, summer, fresh, cooling]|YetiX |\n6.|3 |Outdoors Backpack |[green, summer, travel] |Sports Company Inc.|\n7.+------+----------------------------------+-----------------------------+-------------------+ Code block:\nitemsDf.select(__1__(__2__(__3__(__4__), \"a|e|i|o|u|\\s\", \"\")).__5__(\"consonant_ct\"))",
+        "options": [
+            "A.. 1. length\n2. regexp_extract\n3. upper\n4. col(\"itemName\")\n5. as",
+            "B.. 1. size\n2. regexp_replace\n3. lower\n4. \"itemName\"\n5. alias",
+            "C.. 1. lower\n2. regexp_replace\n3. length\n4. \"itemName\"\n5. alias",
+            "D.. 1. length\n2. regexp_replace\n3. lower\n4. col(\"itemName\")\n5. alias",
+            "E.. 1. size\n2. regexp_extract\n3. lower\n4. col(\"itemName\")\n5. alias"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "Correct code block:\nitemsDf.select(length(regexp_replace(lower(col(\"itemName\")), \"a|e|i|o|u|\\s\",\n\"\")).alias(\"consonant_ct\")) Returned DataFrame:\n+------------+\n|consonant_ct|\n+------------+\n| 19|\n\n\n| 16|\n| 10|\n+------------+\nThis question tries to make you think about the string functions Spark provides and in which order\nthey should be applied. Arguably the most difficult part, the regular expression \"a|e|i|o|u|\n\\s\", is not a numbered blank. However, if you are not familiar with the string functions, it may be a\ngood idea to review those before the exam.\nThe size operator and the length operator can easily be confused. size works on arrays, while length\nworks on strings. Luckily, this is something you can read up about in the documentation.\nThe code block works by first converting all uppercase letters in column itemName into lowercase\n(the lower() part). Then, it replaces all vowels by \"nothing\" - an empty character \"\" (the\nregexp_replace() part). Now, only lowercase characters without spaces are included in the\nDataFrame. Then, per row, the length operator counts these remaining characters. Note that column\nitemName in itemsDf does not include any numbers or other characters, so we do not need to make\nany provisions for these. Finally, by using the alias() operator, we rename the resulting column to\nconsonant_ct.\nMore info:\n- lower: pyspark.sql.functions.lower - PySpark 3.1.2 documentation\n- regexp_replace: pyspark.sql.functions.regexp_replace - PySpark 3.1.2 documentation\n- length: pyspark.sql.functions.length - PySpark 3.1.2 documentation\n- alias: pyspark.sql.Column.alias - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 2"
+    },
+    {
+        "question": "Which of the following is a characteristic of the cluster manager?",
+        "options": [
+            "A.. Each cluster manager works on a single partition of data.",
+            "B.. The cluster manager receives input from the driver through the SparkContext.",
+            "C.. The cluster manager does not exist in standalone mode.",
+            "D.. The cluster manager transforms jobs into DAGs.",
+            "E.. In client mode, the cluster manager runs on the edge node."
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "The cluster manager receives input from the driver through the SparkContext.\nCorrect. In order for the driver to contact the cluster manager, the driver launches a SparkContext.\nThe driver then asks the cluster manager for resources to launch executors.\nIn client mode, the cluster manager runs on the edge node.\nNo. In client mode, the cluster manager is independent of the edge node and runs in the cluster.\nThe cluster manager does not exist in standalone mode.\nWrong, the cluster manager exists even in standalone mode. Remember, standalone mode is an easy\nmeans to deploy Spark across a whole cluster, with some limitations. For example, in standalone\nmode, no other frameworks can run in parallel with Spark. The cluster manager is part of Spark in\nstandalone deployments however and helps launch and maintain resources across the cluster.\nThe cluster manager transforms jobs into DAGs.\nNo, transforming jobs into DAGs is the task of the Spark driver.\nEach cluster manager works on a single partition of data.\nNo. Cluster managers do not work on partitions directly. Their job is to coordinate cluster resources\nso that they can be requested by and allocated to Spark drivers.\n\n\nMore info: Introduction to Core Spark Concepts * BigData"
+    },
+    {
+        "question": "The code block displayed below contains an error. The code block should return DataFrame\ntransactionsDf, but with the column storeId renamed to storeNumber. Find the error.\nCode block:\ntransactionsDf.withColumn(\"storeNumber\", \"storeId\")",
+        "options": [
+            "A.. Instead of withColumn, the withColumnRenamed method should be used.",
+            "B.. Arguments \"storeNumber\" and \"storeId\" each need to be wrapped in a col() operator.",
+            "C.. Argument \"storeId\" should be the first and argument \"storeNumber\" should be the second\nargument to the withColumn method.",
+            "D.. The withColumn operator should be replaced with the copyDataFrame operator.",
+            "E.. Instead of withColumn, the withColumnRenamed method should be used and argument \"storeId\"\nshould be the first and argument \"storeNumber\" should be the second argument to that method."
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.withColumnRenamed(\"storeId\", \"storeNumber\")\nMore info: pyspark.sql.DataFrame.withColumnRenamed - PySpark 3.1.1 documentation Static\nnotebook | Dynamic notebook: See test 1"
+    },
+    {
+        "question": "Which of the following code blocks performs an inner join of DataFrames transactionsDf and\nitemsDf on columns productId and itemId, respectively, excluding columns value and storeId from\nDataFrame transactionsDf and column attributes from DataFrame itemsDf?",
+        "options": [
+            "A.. transactionsDf.drop('value', 'storeId').join(itemsDf.select('attributes'),\ntransactionsDf.productId==itemsDf.itemId)",
+            "B.. 1.transactionsDf.createOrReplaceTempView('transactionsDf')\n2.itemsDf.createOrReplaceTempView('itemsDf')\n3.\n4.spark.sql(\"SELECT -value, -storeId FROM transactionsDf INNER JOIN itemsDf ON\nproductId==itemId\").drop(\"attributes\")",
+            "C.. transactionsDf.drop(\"value\", \"storeId\").join(itemsDf.drop(\"attributes\"),\n\"transactionsDf.productId==itemsDf.itemId\")",
+            "D.. 1.transactionsDf \\\n2. .drop(col('value'), col('storeId')) \\\n3. .join(itemsDf.drop(col('attributes')), col('productId')==col('itemId'))",
+            "E.. 1.transactionsDf.createOrReplaceTempView('transactionsDf')\n2.itemsDf.createOrReplaceTempView('itemsDf')\n3.\n4.statement = \"\"\"\n5.SELECT * FROM transactionsDf\n6.INNER JOIN itemsDf\n7.ON transactionsDf.productId==itemsDf.itemId\n8.\"\"\"\n9.spark.sql(statement).drop(\"value\", \"storeId\", \"attributes\")"
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "This question offers you a wide variety of answers for a seemingly simple question. However, this\nvariety reflects the variety of ways that one can express a join in PySpark. You need to understand\nsome SQL syntax to get to the correct answer here.\ntransactionsDf.createOrReplaceTempView('transactionsDf')\nitemsDf.createOrReplaceTempView('itemsDf')\nstatement = \"\"\"\nSELECT * FROM transactionsDf\nINNER JOIN itemsDf\nON transactionsDf.productId==itemsDf.itemId\n\"\"\"\nspark.sql(statement).drop(\"value\", \"storeId\", \"attributes\")\nCorrect - this answer uses SQL correctly to perform the inner join and afterwards drops the unwanted\ncolumns. This is totally fine. If you are unfamiliar with the triple-quote \"\"\" in Python: This allows you\nto express strings as multiple lines.\ntransactionsDf \\\ndrop(col('value'), col('storeId')) \\\njoin(itemsDf.drop(col('attributes')), col('productId')==col('itemId'))\nNo, this answer option is a trap, since DataFrame.drop() does not accept a list of Column objects. You\ncould use transactionsDf.drop('value', 'storeId') instead.\ntransactionsDf.drop(\"value\", \"storeId\").join(itemsDf.drop(\"attributes\"),\n\"transactionsDf.productId==itemsDf.itemId\")\nIncorrect - Spark does not evaluate \"transactionsDf.productId==itemsDf.itemId\" as a valid join\nexpression.\nThis would work if it would not be a string.\ntransactionsDf.drop('value', 'storeId').join(itemsDf.select('attributes'),\ntransactionsDf.productId==itemsDf.itemId) Wrong, this statement incorrectly uses itemsDf.select\ninstead of itemsDf.drop.\ntransactionsDf.createOrReplaceTempView('transactionsDf')\nitemsDf.createOrReplaceTempView('itemsDf')\nspark.sql(\"SELECT -value, -storeId FROM transactionsDf INNER JOIN itemsDf ON\nproductId==itemId\").drop(\"attributes\") No, here the SQL expression syntax is incorrect. Simply\nspecifying -columnName does not drop a column.\nMore info: pyspark.sql.DataFrame.join - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 3"
+    },
+    {
+        "question": "Which of the following code blocks reorders the values inside the arrays in column attributes\nof DataFrame itemsDf from last to first one in the alphabet?\n1.+------+-----------------------------+-------------------+\n2.|itemId|attributes |supplier |\n3.+------+-----------------------------+-------------------+\n4.|1 |[blue, winter, cozy] |Sports Company Inc.|\n5.|2 |[red, summer, fresh, cooling]|YetiX |\n6.|3 |[green, summer, travel] |Sports Company Inc.|\n7.+------+-----------------------------+-------------------+",
+        "options": [
+            "A.. itemsDf.withColumn('attributes', sort_array(col('attributes').desc()))",
+            "B.. itemsDf.withColumn('attributes', sort_array(desc('attributes')))",
+            "C.. itemsDf.withColumn('attributes', sort(col('attributes'), asc=False))",
+            "D.. itemsDf.withColumn(\"attributes\", sort_array(\"attributes\", asc=False))",
+            "E.. itemsDf.select(sort_array(\"attributes\"))"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "Output of correct code block:\n+------+-----------------------------+-------------------+\n|itemId|attributes |supplier |\n+------+-----------------------------+-------------------+\n|1 |[winter, cozy, blue] |Sports Company Inc.|\n|2 |[summer, red, fresh, cooling]|YetiX |\n|3 |[travel, summer, green] |Sports Company Inc.|\n+------+-----------------------------+-------------------+\nIt can be confusing to differentiate between the different sorting functions in PySpark. In this case, a\nparticularity about sort_array has to be considered: The sort direction is given by the second\nargument, not by the desc method. Luckily, this is documented in the documentation (link below).\nAlso, for solving this question you need to understand the difference between sort and sort_array.\nWith sort, you cannot sort values in arrays. Also, sort is a method of DataFrame, while sort_array is a\nmethod of pyspark.sql.functions.\nMore info: pyspark.sql.functions.sort_array - PySpark 3.1.2 documentation Static notebook | Dynamic\nnotebook: See test 2"
+    },
+    {
+        "question": "Which of the following describes characteristics of the Dataset API?",
+        "options": [
+            "A.. The Dataset API does not support unstructured data.",
+            "B.. In Python, the Dataset API mainly resembles Pandas' DataFrame API.",
+            "C.. In Python, the Dataset API's schema is constructed via type hints.",
+            "D.. The Dataset API is available in Scala, but it is not available in Python.",
+            "E.. The Dataset API does not provide compile-time type safety."
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "The Dataset API is available in Scala, but it is not available in Python.\nCorrect. The Dataset API uses fixed typing and is typically used for object-oriented programming. It is\navailable when Spark is used with the Scala programming language, but not for Python. In Python,\nyou use the DataFrame API, which is based on the Dataset API.\nThe Dataset API does not provide compile-time type safety.\nNo - in fact, depending on the use case, the type safety that the Dataset API provides is an advantage.\nThe Dataset API does not support unstructured data.\nWrong, the Dataset API supports structured and unstructured data.\nIn Python, the Dataset API's schema is constructed via type hints.\nNo, this is not applicable since the Dataset API is not available in Python.\nIn Python, the Dataset API mainly resembles Pandas' DataFrame API.\nThe Dataset API does not exist in Python, only in Scala and Java."
+    },
+    {
+        "question": "Which of the following describes a valid concern about partitioning?",
+        "options": [
+            "A.. A shuffle operation returns 200 partitions if not explicitly set.",
+            "B.. Decreasing the number of partitions reduces the overall runtime of narrow transformations if\nthere are more executors available than partitions.",
+            "C.. No data is exchanged between executors when coalesce() is run.",
+            "D.. Short partition processing times are indicative of low skew.",
+            "E.. The coalesce() method should be used to increase the number of partitions."
+        ],
+        "answer": [
+            "A"
+        ],
+        "explanation": "A shuffle operation returns 200 partitions if not explicitly set.\nCorrect. 200 is the default value for the Spark property spark.sql.shuffle.partitions. This property\ndetermines how many partitions Spark uses when shuffling data for joins or aggregations.\nThe coalesce() method should be used to increase the number of partitions.\nIncorrect. The coalesce() method can only be used to decrease the number of partitions.\nDecreasing the number of partitions reduces the overall runtime of narrow transformations if there\nare more executors available than partitions.\nNo. For narrow transformations, fewer partitions usually result in a longer overall runtime, if more\nexecutors are available than partitions.\nA narrow transformation does not include a shuffle, so no data need to be exchanged between\nexecutors.\nShuffles are expensive and can be a bottleneck for executing Spark workloads.\nNarrow transformations, however, are executed on a per-partition basis, blocking one executor per\npartition.\nSo, it matters how many executors are available to perform work in parallel relative to the number of\npartitions. If the number of executors is greater than the number of partitions, then some executors\nare idle while other process the partitions. On the flip side, if the number of executors is smaller than\nthe number of partitions, the entire operation can only be finished after some executors have\nprocessed multiple partitions, one after the other. To minimize the overall runtime, one would want\nto have the number of partitions equal to the number of executors (but not more).\nSo, for the scenario at hand, increasing the number of partitions reduces the overall runtime of\nnarrow transformations if there are more executors available than partitions.\nNo data is exchanged between executors when coalesce() is run.\nNo. While coalesce() avoids a full shuffle, it may still cause a partial shuffle, resulting in data exchange\nbetween executors.\nShort partition processing times are indicative of low skew.\nIncorrect. Data skew means that data is distributed unevenly over the partitions of a dataset. Low\nskew therefore means that data is distributed evenly.\nPartition processing time, the time that executors take to process partitions, can be indicative of\nskew if some executors take a long time to process a partition, but others do not. However, a short\nprocessing time is not per se indicative a low skew: It may simply be short because the partition is\nsmall.\nA situation indicative of low skew may be when all executors finish processing their partitions in the\nsame timeframe. High skew may be indicated by some executors taking much longer to finish their\npartitions than others. But the answer does not make any comparison - so by itself it does not provide\nenough information to make any assessment about skew.\nMore info: Spark Repartition & Coalesce - Explained and Performance Tuning - Spark 3.1.\n\n\n2 Documentation"
+    },
+    {
+        "question": "Which of the following code blocks adds a column predErrorSqrt to DataFrame transactionsDf\nthat is the square root of column predError?",
+        "options": [
+            "A.. transactionsDf.withColumn(\"predErrorSqrt\", sqrt(predError))",
+            "B.. transactionsDf.select(sqrt(predError))",
+            "C.. transactionsDf.withColumn(\"predErrorSqrt\", col(\"predError\").sqrt())",
+            "D.. transactionsDf.withColumn(\"predErrorSqrt\", sqrt(col(\"predError\")))",
+            "E.. transactionsDf.select(sqrt(\"predError\"))"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "transactionsDf.withColumn(\"predErrorSqrt\", sqrt(col(\"predError\")))\nCorrect. The DataFrame.withColumn() operator is used to add a new column to a DataFrame. It takes\ntwo arguments: The name of the new column (here: predErrorSqrt) and a Column expression as the\nnew column. In PySpark, a Column expression means referring to a column using the col(\"predError\")\ncommand or by other means, for example by transactionsDf.predError, or even just using the column\nname as a string, \"predError\".\nThe question asks for the square root. sqrt() is a function in pyspark.sql.functions and calculates the\nsquare root. It takes a value or a Column as an input. Here it is the predError column of DataFrame\ntransactionsDf expressed through col(\"predError\").\ntransactionsDf.withColumn(\"predErrorSqrt\", sqrt(predError))\nIncorrect. In this expression, sqrt(predError) is incorrect syntax. You cannot refer to predError in this\nway - to Spark it looks as if you are trying to refer to the non-existent Python variable predError.\nYou could pass transactionsDf.predError, col(\"predError\") (as in the correct solution), or even just\n\"predError\" instead.\ntransactionsDf.select(sqrt(predError))\nWrong. Here, the explanation just above this one about how to refer to predError applies.\ntransactionsDf.select(sqrt(\"predError\"))\nNo. While this is correct syntax, it will return a single-column DataFrame only containing a column\nshowing the square root of column predError. However, the question asks for a column to be added\nto the original DataFrame transactionsDf.\ntransactionsDf.withColumn(\"predErrorSqrt\", col(\"predError\").sqrt())\nNo. The issue with this statement is that column col(\"predError\") has no sqrt() method. sqrt() is a\nmember of pyspark.sql.functions, but not of pyspark.sql.Column.\nMore info: pyspark.sql.DataFrame.withColumn - PySpark 3.1.2 documentation and\npyspark.sql.functions.sqrt - PySpark 3.1.2 documentation Static notebook | Dynamic notebook: See\ntest 2"
+    },
+    {
+        "question": "Which of the following code blocks sorts DataFrame transactionsDf both by column storeId in\nascending and by column productId in descending order, in this priority?",
+        "options": [
+            "A.. transactionsDf.sort(\"storeId\", asc(\"productId\"))",
+            "B.. transactionsDf.sort(col(storeId)).desc(col(productId))",
+            "C.. transactionsDf.order_by(col(storeId), desc(col(productId)))",
+            "D.. transactionsDf.sort(\"storeId\", desc(\"productId\"))",
+            "E.. transactionsDf.sort(\"storeId\").sort(desc(\"productId\"))"
+        ],
+        "answer": [
+            "D"
+        ],
+        "explanation": "In this question it is important to realize that you are asked to sort transactionDf by two columns.\nThis means that the sorting of the second column depends on the sorting of the first column.\nSo, any option that sorts the entire DataFrame (through chaining sort statements) will not work. The\ntwo columns need to be channeled through the same call to sort().\nAlso, order_by is not a valid DataFrame API method.\nMore info: pyspark.sql.DataFrame.sort - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 2"
+    },
+    {
+        "question": "The code block displayed below contains an error. The code block should merge the rows of\nDataFrames transactionsDfMonday and transactionsDfTuesday into a new DataFrame, matching\ncolumn names and inserting null values where column names do not appear in both DataFrames.\nFind the error.\nSample of DataFrame transactionsDfMonday:\n1.+-------------+---------+-----+-------+---------+----+\n2.|transactionId|predError|value|storeId|productId| f|\n3.+-------------+---------+-----+-------+---------+----+\n4.| 5| null| null| null| 2|null|\n5.| 6| 3| 2| 25| 2|null|\n6.+-------------+---------+-----+-------+---------+----+\nSample of DataFrame transactionsDfTuesday:\n1.+-------+-------------+---------+-----+\n2.|storeId|transactionId|productId|value|\n3.+-------+-------------+---------+-----+\n4.| 25| 1| 1| 4|\n5.| 2| 2| 2| 7|\n6.| 3| 4| 2| null|\n7.| null| 5| 2| null|\n8.+-------+-------------+---------+-----+\nCode block:\nsc.union([transactionsDfMonday, transactionsDfTuesday])",
+        "options": [
+            "A.. The DataFrames' RDDs need to be passed into the sc.union method instead of the DataFrame\nvariable names.",
+            "B.. Instead of union, the concat method should be used, making sure to not use its default arguments.",
+            "C.. Instead of the Spark context, transactionDfMonday should be called with the join method instead\nof the union method, making sure to use its default arguments.",
+            "D.. Instead of the Spark context, transactionDfMonday should be called with the union method.",
+            "E.. Instead of the Spark context, transactionDfMonday should be called with the unionByName\nmethod instead of the union method, making sure to not use its default arguments."
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "Correct code block:\ntransactionsDfMonday.unionByName(transactionsDfTuesday, True)\nOutput of correct code block:\n\n\n+-------------+---------+-----+-------+---------+----+\n|transactionId|predError|value|storeId|productId| f|\n+-------------+---------+-----+-------+---------+----+\n| 5| null| null| null| 2|null|\n| 6| 3| 2| 25| 2|null|\n| 1| null| 4| 25| 1|null|\n| 2| null| 7| 2| 2|null|\n| 4| null| null| 3| 2|null|\n| 5| null| null| null| 2|null|\n+-------------+---------+-----+-------+---------+----+\nFor solving this question, you should be aware of the difference between the DataFrame.union() and\nDataFrame.unionByName() methods. The first one matches columns independent of their names,\njust by their order. The second one matches columns by their name (which is asked for in the\nquestion). It also has a useful optional argument, allowMissingColumns. This allows you to merge\nDataFrames that have different columns - just like in this example.\nsc stands for SparkContext and is automatically provided when executing code on Databricks. While\nsc.union() allows you to join RDDs, it is not the right choice for joining DataFrames. A hint away from\nsc.union() is given where the question talks about joining \"into a new DataFrame\".\nconcat is a method in pyspark.sql.functions. It is great for consolidating values from different\ncolumns, but has no place when trying to join rows of multiple DataFrames.\nFinally, the join method is a contender here. However, the default join defined for that method is an\ninner join which does not get us closer to the goal to match the two DataFrames as instructed,\nespecially given that with the default arguments we cannot define a join condition.\nMore info:\n- pyspark.sql.DataFrame.unionByName - PySpark 3.1.2 documentation\n- pyspark.SparkContext.union - PySpark 3.1.2 documentation\n- pyspark.sql.functions.concat - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 3"
+    },
+    {
+        "question": "In which order should the code blocks shown below be run in order to read a JSON file from\nlocation jsonPath into a DataFrame and return only the rows that do not have value 3 in column\nproductId?\n1. importedDf.createOrReplaceTempView(\"importedDf\")\n2. spark.sql(\"SELECT * FROM importedDf WHERE productId != 3\")\n3. spark.sql(\"FILTER * FROM importedDf WHERE productId != 3\")\n4. importedDf = spark.read.option(\"format\", \"json\").path(jsonPath)\n5. importedDf = spark.read.json(jsonPath)",
+        "options": [
+            "A.. 4, 1, 2",
+            "B.. 5, 1, 3",
+            "C.. 5, 2",
+            "D.. 4, 1, 3",
+            "E.. 5, 1, 2"
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "Correct code block:\nimportedDf = spark.read.json(jsonPath)\n\n\nimportedDf.createOrReplaceTempView(\"importedDf\")\nspark.sql(\"SELECT * FROM importedDf WHERE productId != 3\")\nOption 5 is the only correct way listed of reading in a JSON in PySpark. The option(\"format\", \"json\") is\nnot the correct way to tell Spark's DataFrameReader that you want to read a JSON file. You would do\nthis through format(\"json\") instead. Also, you can communicate the specific path of the JSON file to\nthe DataFramReader using the load() method, not the path() method.\nIn order to use a SQL command through the SparkSession spark, you first need to create a temporary\nview through DataFrame.createOrReplaceTempView().\nThe SQL statement should start with the SELECT operator. The FILTER operator SQL provides is not\nthe correct one to use here.\nStatic notebook | Dynamic notebook: See test 2"
+    },
+    {
+        "question": "Which of the following code blocks reduces a DataFrame from 12 to 6 partitions and\nperforms a full shuffle?",
+        "options": [
+            "A.. DataFrame.repartition(12)",
+            "B.. DataFrame.coalesce(6).shuffle()",
+            "C.. DataFrame.coalesce(6)",
+            "D.. DataFrame.coalesce(6, shuffle=True)",
+            "E.. DataFrame.repartition(6)"
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "DataFrame.repartition(6)\nCorrect. repartition() always triggers a full shuffle (different from coalesce()).\nDataFrame.repartition(12)\nNo, this would just leave the DataFrame with 12 partitions and not 6.\nDataFrame.coalesce(6)\ncoalesce does not perform a full shuffle of the data. Whenever you see \"full shuffle\", you know that\nyou are not dealing with coalesce(). While coalesce() can perform a partial shuffle when required, it\nwill try to minimize shuffle operations, so the amount of data that is sent between executors.\nHere, 12 partitions can easily be repartitioned to be 6 partitions simply by stitching every two\npartitions into one.\nDataFrame.coalesce(6, shuffle=True) and DataFrame.coalesce(6).shuffle() These statements are not\nvalid Spark API syntax.\nMore info: Spark Repartition & Coalesce - Explained and Repartition vs Coalesce in Apache Spark\n- Rock the JVM Blog"
+    },
+    {
+        "question": "Which of the following describes a difference between Spark's cluster and client execution\nmodes?",
+        "options": [
+            "A.. In cluster mode, the cluster manager resides on a worker node, while it resides on an edge node in\nclient mode.",
+            "B.. In cluster mode, executor processes run on worker nodes, while they run on gateway nodes in\nclient mode.",
+            "C.. In cluster mode, the driver resides on a worker node, while it resides on an edge node in client\nmode.",
+            "D.. In cluster mode, a gateway machine hosts the driver, while it is co-located with the executor in\n\n\nclient mode.",
+            "E.. In cluster mode, the Spark driver is not co-located with the cluster manager, while it is co-located\nin client mode."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "In cluster mode, the driver resides on a worker node, while it resides on an edge node in client mode.\nCorrect. The idea of Spark's client mode is that workloads can be executed from an edge node, also\nknown as gateway machine, from outside the cluster. The most common way to execute Spark\nhowever is in cluster mode, where the driver resides on a worker node.\nIn practice, in client mode, there are tight constraints about the data transfer speed relative to the\ndata transfer speed between worker nodes in the cluster. Also, any job in that is executed in client\nmode will fail if the edge node fails. For these reasons, client mode is usually not used in a production\nenvironment.\nIn cluster mode, the cluster manager resides on a worker node, while it resides on an edge node in\nclient execution mode.\nNo. In both execution modes, the cluster manager may reside on a worker node, but it does not\nreside on an edge node in client mode.\nIn cluster mode, executor processes run on worker nodes, while they run on gateway nodes in client\nmode.\nThis is incorrect. Only the driver runs on gateway nodes (also known as \"edge nodes\") in client mode,\nbut not the executor processes.\nIn cluster mode, the Spark driver is not co-located with the cluster manager, while it is co-located in\nclient mode.\nNo, in client mode, the Spark driver is not co-located with the driver. The whole point of client mode\nis that the driver is outside the cluster and not associated with the resource that manages the cluster\n(the machine that runs the cluster manager).\nIn cluster mode, a gateway machine hosts the driver, while it is co-located with the executor in client\nmode.\nNo, it is exactly the opposite: There are no gateway machines in cluster mode, but in client mode,\nthey host the driver."
+    },
+    {
+        "question": "Which of the following code blocks creates a new one-column, two-row DataFrame dfDates\nwith column date of type timestamp?",
+        "options": [
+            "A.. 1.dfDates = spark.createDataFrame([\"23/01/2022 11:28:12\",\"24/01/2022 10:58:34\"], [\"date\"])\n2.dfDates = dfDates.withColumn(\"date\", to_timestamp(\"dd/MM/yyyy HH:mm:ss\", \"date\"))",
+            "B.. 1.dfDates = spark.createDataFrame([(\"23/01/2022 11:28:12\",),(\"24/01/2022 10:58:34\",)], [\"date\"]\n)\n2.dfDates = dfDates.withColumnRenamed(\"date\", to_timestamp(\"date\", \"yyyy-MM-dd HH:mm:ss\"))",
+            "C.. 1.dfDates = spark.createDataFrame([(\"23/01/2022 11:28:12\",),(\"24/01/2022 10:58:34\",)], [\"date\"])\n2.dfDates = dfDates.withColumn(\"date\", to_timestamp(\"date\", \"dd/MM/yyyy HH:mm:ss\"))",
+            "D.. 1.dfDates = spark.createDataFrame([\"23/01/2022 11:28:12\",\"24/01/2022 10:58:34\"], [\"date\"])\n2.dfDates = dfDates.withColumnRenamed(\"date\", to_datetime(\"date\", \"yyyy-MM-dd HH:mm:ss\"))",
+            "E.. 1.dfDates = spark.createDataFrame([(\"23/01/2022 11:28:12\",),(\"24/01/2022 10:58:34\",)], [\"date\"])"
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "This question is tricky. Two things are important to know here:\nFirst, the syntax for createDataFrame: Here you need a list of tuples, like so: [(1,), (2,)]. To define a\ntuple in Python, if you just have a single item in it, it is important to put a comma after the item so\nthat Python interprets it as a tuple and not just a normal parenthesis.\nSecond, you should understand the to_timestamp syntax. You can find out more about it in the\ndocumentation linked below.\nFor good measure, let's examine in detail why the incorrect options are wrong:\ndfDates = spark.createDataFrame([(\"23/01/2022 11:28:12\",),(\"24/01/2022 10:58:34\",)], [\"date\"]) This\ncode snippet does everything the question asks for - except that the data type of the date column is a\nstring and not a timestamp. When no schema is specified, Spark sets the string data type as default.\ndfDates = spark.createDataFrame([\"23/01/2022 11:28:12\",\"24/01/2022 10:58:34\"], [\"date\"]) dfDates\n= dfDates.withColumn(\"date\", to_timestamp(\"dd/MM/yyyy HH:mm:ss\", \"date\")) In the first row of\nthis command, Spark throws the following error: TypeError: Can not infer schema for type:\n<class 'str'>. This is because Spark expects to find row information, but instead finds strings. This is\nwhy you need to specify the data as tuples. Fortunately, the Spark documentation (linked below)\nshows a number of examples for creating DataFrames that should help you get on the right track\nhere.\ndfDates = spark.createDataFrame([(\"23/01/2022 11:28:12\",),(\"24/01/2022 10:58:34\",)], [\"date\"])\ndfDates = dfDates.withColumnRenamed(\"date\", to_timestamp(\"date\", \"yyyy-MM-dd HH:mm:ss\"))\nThe issue with this answer is that the operator withColumnRenamed is used. This operator simply\nrenames a column, but it has no power to modify its actual content. This is why withColumn should\nbe used instead. In addition, the date format yyyy-MM-dd HH:mm:ss does not reflect the format of\nthe actual timestamp: \"23/01/2022 11:28:12\".\ndfDates = spark.createDataFrame([\"23/01/2022 11:28:12\",\"24/01/2022 10:58:34\"], [\"date\"]) dfDates\n= dfDates.withColumnRenamed(\"date\", to_datetime(\"date\", \"yyyy-MM-dd HH:mm:ss\")) Here,\nwithColumnRenamed is used instead of withColumn (see above). In addition, the rows are not\nexpressed correctly - they should be written as tuples, using parentheses. Finally, even the date\nformat is off here (see above).\nMore info: pyspark.sql.functions.to_timestamp - PySpark 3.1.2 documentation and\npyspark.sql.SparkSession.createDataFrame - PySpark 3.1.1 documentation Static notebook | Dynamic\nnotebook: See test 2"
+    },
+    {
+        "question": "Which of the following statements about executors is correct, assuming that one can consider\neach of the JVMs working as executors as a pool of task execution slots?",
+        "options": [
+            "A.. Slot is another name for executor.",
+            "B.. There must be less executors than tasks.",
+            "C.. An executor runs on a single core.",
+            "D.. There must be more slots than tasks.",
+            "E.. Tasks run in parallel via slots."
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "Tasks run in parallel via slots.\nCorrect. Given the assumption, an executor then has one or more \"slots\", defined by the equation\nspark.executor.cores / spark.task.cpus. With the executor's resources divided into slots, each task\ntakes up a slot and multiple tasks can be executed in parallel.\nSlot is another name for executor.\n\n\nNo, a slot is part of an executor.\nAn executor runs on a single core.\nNo, an executor can occupy multiple cores. This is set by the spark.executor.cores option.\nThere must be more slots than tasks.\nNo. Slots just process tasks. One could imagine a scenario where there was just a single slot for\nmultiple tasks, processing one task at a time. Granted - this is the opposite of what Spark should be\nused for, which is distributed data processing over multiple cores and machines, performing many\ntasks in parallel.\nThere must be less executors than tasks.\nNo, there is no such requirement.\nMore info: Spark Architecture | Distributed Systems Architecture (https://bit.ly/3x4MZZt)"
+    },
+    {
+        "question": "Which of the following code blocks efficiently converts DataFrame transactionsDf from 12\ninto 24 partitions?",
+        "options": [
+            "A.. transactionsDf.repartition(24, boost=True)",
+            "B.. transactionsDf.repartition()",
+            "C.. transactionsDf.repartition(\"itemId\", 24)",
+            "D.. transactionsDf.coalesce(24)",
+            "E.. transactionsDf.repartition(24)"
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "transactionsDf.coalesce(24)\nNo, the coalesce() method can only reduce, but not increase the number of partitions.\ntransactionsDf.repartition()\nNo, repartition() requires a numPartitions argument.\ntransactionsDf.repartition(\"itemId\", 24)\nNo, here the cols and numPartitions argument have been mixed up. If the code block would be\ntransactionsDf.repartition(24, \"itemId\"), this would be a valid solution.\ntransactionsDf.repartition(24, boost=True)\nNo, there is no boost argument in the repartition() method."
+    },
+    {
+        "question": "Which of the following code blocks returns a DataFrame that is an inner join of DataFrame\nitemsDf and DataFrame transactionsDf, on columns itemId and productId, respectively and in which\nevery itemId just appears once?",
+        "options": [
+            "A.. itemsDf.join(transactionsDf, \"itemsDf.itemId==transactionsDf.productId\").distinct(\"itemId\")",
+            "B.. itemsDf.join(transactionsDf,\nitemsDf.itemId==transactionsDf.productId).dropDuplicates([\"itemId\"])",
+            "C.. itemsDf.join(transactionsDf, itemsDf.itemId==transactionsDf.productId).dropDuplicates(\"itemId\")",
+            "D.. itemsDf.join(transactionsDf, itemsDf.itemId==transactionsDf.productId,\nhow=\"inner\").distinct([\"itemId\"])",
+            "E.. itemsDf.join(transactionsDf, \"itemsDf.itemId==transactionsDf.productId\",\nhow=\"inner\").dropDuplicates([\"itemId\"])"
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "Filtering out distinct rows based on columns is achieved with the dropDuplicates method, not the\n\n\ndistinct method which does not take any arguments.\nThe second argument of the join() method only accepts strings if they are column names. The SQL-\nlike statement \"itemsDf.itemId==transactionsDf.productId\" is therefore invalid.\nIn addition, it is not necessary to specify how=\"inner\", since the default join type for the join\ncommand is already inner.\nMore info: pyspark.sql.DataFrame.join - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 2"
+    },
+    {
+        "question": "Which of the following describes Spark's way of managing memory?",
+        "options": [
+            "A.. Spark uses a subset of the reserved system memory.",
+            "B.. Storage memory is used for caching partitions derived from DataFrames.",
+            "C.. As a general rule for garbage collection, Spark performs better on many small objects than few big\nobjects.",
+            "D.. Disabling serialization potentially greatly reduces the memory footprint of a Spark application.",
+            "E.. Spark's memory usage can be divided into three categories: Execution, transaction, and storage."
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "Spark's memory usage can be divided into three categories: Execution, transaction, and storage.\nNo, it is either execution or storage.\nAs a general rule for garbage collection, Spark performs better on many small objects than few big\nobjects.\nNo, Spark's garbage collection runs faster on fewer big objects than many small objects.\nDisabling serialization potentially greatly reduces the memory footprint of a Spark application.\nThe opposite is true - serialization reduces the memory footprint, but may impact performance in a\nnegative way.\nSpark uses a subset of the reserved system memory.\nNo, the reserved system memory is separate from Spark memory. Reserved memory stores Spark's\ninternal objects.\nMore info: Tuning - Spark 3.1.2 Documentation, Spark Memory Management | Distributed Systems\nArchitecture, Learning Spark, 2nd Edition, Chapter 7"
+    },
+    {
+        "question": "The code block displayed below contains multiple errors. The code block should return a\nDataFrame that contains only columns transactionId, predError, value and storeId of DataFrame\ntransactionsDf. Find the errors.\nCode block:\ntransactionsDf.select([col(productId), col(f)])\nSample of transactionsDf:\n1.+-------------+---------+-----+-------+---------+----+\n2.|transactionId|predError|value|storeId|productId| f|\n3.+-------------+---------+-----+-------+---------+----+\n4.| 1| 3| 4| 25| 1|null|\n5.| 2| 6| 7| 2| 2|null|\n6.| 3| 3| null| 25| 3|null|\n7.+-------------+---------+-----+-------+---------+----+",
+        "options": [
+            "A.. The column names should be listed directly as arguments to the operator and not as a list.",
+            "B.. The select operator should be replaced by a drop operator, the column names should be listed\ndirectly as arguments to the operator and not as a list, and all column names should be expressed as\nstrings without being wrapped in a col() operator.",
+            "C.. The select operator should be replaced by a drop operator.",
+            "D.. The column names should be listed directly as arguments to the operator and not as a list and\nfollowing the pattern of how column names are expressed in the code block, columns productId and f\nshould be replaced by transactionId, predError, value and storeId.",
+            "E.. The select operator should be replaced by a drop operator, the column names should be listed\ndirectly as arguments to the operator and not as a list, and all col() operators should be removed."
+        ],
+        "answer": [
+            "B"
+        ],
+        "explanation": "Correct code block: transactionsDf.drop(\"productId\", \"f\")\nThis question requires a lot of thinking to get right. For solving it, you may take advantage of the\ndigital notepad that is provided to you during the test. You have probably seen that the code block\nincludes multiple errors. In the test, you are usually confronted with a code block that only contains a\nsingle error. However, since you are practicing here, this challenging multi-error question will make it\neasier for you to deal with single-error questions in the real exam.\nThe select operator should be replaced by a drop operator, the column names should be listed\ndirectly as arguments to the operator and not as a list, and all column names should be expressed as\nstrings without being wrapped in a col() operator.\nCorrect! Here, you need to figure out the many, many things that are wrong with the initial code\nblock. While the question can be solved by using a select statement, a drop statement, given the\nanswer options, is the correct one. Then, you can read in the documentation that drop does not take\na list as an argument, but just the column names that should be dropped. Finally, the column names\nshould be expressed as strings and not as Python variable names as in the original code block.\nThe column names should be listed directly as arguments to the operator and not as a list.\nIncorrect. While this is a good first step and part of the correct solution (see above), this modification\nis insufficient to solve the question.\nThe column names should be listed directly as arguments to the operator and not as a list and\nfollowing the pattern of how column names are expressed in the code block, columns productId and f\nshould be replaced by transactionId, predError, value and storeId.\nWrong. If you use the same pattern as in the original code block (col(productId), col(f)), you are still\nmaking a mistake. col(productId) will trigger Python to search for the content of a variable named\nproductId instead of telling Spark to use the column productId - for that, you need to express it as a\nstring.\nThe select operator should be replaced by a drop operator, the column names should be listed\ndirectly as arguments to the operator and not as a list, and all col() operators should be removed.\nNo. This still leaves you with Python trying to interpret the column names as Python variables (see\nabove).\nThe select operator should be replaced by a drop operator.\nWrong, this is not enough to solve the question. If you do this, you will still face problems since you\nare passing a Python list to drop and the column names are still interpreted as Python variables (see\nabove).\nMore info: pyspark.sql.DataFrame.drop - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 3"
     },
     {
-        "question": "A pharmaceutical company is developing a Retrieval Augmented Generation application that\nuses an Amazon Bedrock knowledge base. The knowledge base uses Amazon OpenSearch Service as\na data source for more than 25 million scientific papers. Users report that the application produces\ninconsistent answers that cite irrelevant sections of papers when queries span methodology, results,\nand discussion sections of the papers.\nThe company needs to improve the knowledge base to preserve semantic context across related\nparagraphs on the scale of the entire corpus of data.\nWhich solution will meet these requirements?",
+        "question": "Which of the following describes a narrow transformation?",
         "options": [
-            "A.. Configure the knowledge base to use fixed-size chunking. Set a 300-token maximum chunk size\nand a\n10% overlap between chunks. Use an appropriate Amazon Bedrock embedding model.",
-            "B.. Configure the knowledge base to use hierarchical chunking. Use parent chunks that contain 1,000\ntokens and child chunks that contain 200 tokens. Set a 50-token overlap between chunks.",
-            "C.. Configure the knowledge base to use semantic chunking. Use a buffer size of 1 and a breakpoint\npercentile threshold of 85% to determine chunk boundaries based on content meaning.",
-            "D.. Configure the knowledge base not to use chunking. Manually split each document into separate\nfiles before ingestion. Apply post-processing reranking during retrieval."
+            "A.. narrow transformation is an operation in which data is exchanged across partitions.",
+            "B.. A narrow transformation is a process in which data from multiple RDDs is used.",
+            "C.. A narrow transformation is a process in which 32-bit float variables are cast to smaller float\nvariables, like 16-bit or 8-bit float variables.",
+            "D.. A narrow transformation is an operation in which data is exchanged across the cluster.",
+            "E.. A narrow transformation is an operation in which no data is exchanged across the cluster."
         ],
-        "answer": "B",
-        "explanation": "Option B is the best fit because hierarchical chunking is designed to preserve local detail while\nkeeping broader document context available during retrieval, which directly addresses the problem\nof questions spanning methodology, results, and discussion. In large scientific papers, a single answer\noften depends on linked paragraphs across adjacent sections. If the knowledge base retrieves only\nsmall, isolated chunks, the RAG system can cite text that is semantically close to a query term but not\ncontextually correct, producing inconsistent answers and irrelevant citations.\nWith hierarchical chunking, the knowledge base creates child chunks that are small enough for highprecision vector similarity matching, such as 200 tokens, which improves the likelihood that the\nretrieved text is tightly related to the user's query. At the same time, each child chunk is associated\nwith a larger parent chunk, such as 1,000 tokens, which retains the surrounding narrative and\nsection-level context. This structure helps the retrieval pipeline return passages that include the\nrelevant subsection plus the explanatory framing that prevents misinterpretation, which is especially\nimportant in scientific writing where methods, results, and discussion are interdependent.\nThe configured overlap further reduces boundary effects where key statements split across chunks.\nThis improves continuity for paragraphs that bridge sections, such as a results paragraph that\nreferences the methodological setup or a discussion paragraph interpreting a specific metric.\nOption A can improve consistency slightly, but fixed-size chunking still risks separating related\nparagraphs and does not provide a built-in mechanism to retrieve broader context linked to precise\nmatches. Option C can create more meaningful boundaries, but it does not guarantee the parentlevel context that hierarchical chunking provides at retrieval time. Option D increases operational\nburden and is not practical at the scale of\n25 million"
+        "answer": [
+            "E"
+        ],
+        "explanation": "A narrow transformation is an operation in which no data is exchanged across the cluster.\nCorrect! In narrow transformations, no data is exchanged across the cluster, since these\ntransformations do not require any data from outside of the partition they are applied on. Typical\nnarrow transformations include filter, drop, and coalesce.\nA narrow transformation is an operation in which data is exchanged across partitions.\nNo, that would be one definition of a wide transformation, but not of a narrow transformation. Wide\ntransformations typically cause a shuffle, in which data is exchanged across partitions, executors, and\nthe cluster.\nA narrow transformation is an operation in which data is exchanged across the cluster.\nNo, see explanation just above this one.\nA narrow transformation is a process in which 32-bit float variables are cast to smaller float variables,\nlike\n16-bit or 8-bit float variables.\nNo, type conversion has nothing to do with narrow transformations in Spark.\nA narrow transformation is a process in which data from multiple RDDs is used.\nNo. A resilient distributed dataset (RDD) can be described as a collection of partitions. In a narrow\ntransformation, no data is exchanged between partitions. Thus, no data is exchanged between RDDs.\nOne could say though that a narrow transformation and, in fact, any transformation results in a new\nRDD being created. This is because a transformation results in a change to an existing RDD (RDDs are\nthe foundation of other Spark data structures, like DataFrames). But, since RDDs are immutable, a\nnew RDD needs to be created to reflect the change caused by the transformation.\nMore info: Spark Transformation and Action: A Deep Dive | by Misbah Uddin | CodeX | Medium"
+    },
+    {
+        "question": "Which of the following describes tasks?",
+        "options": [
+            "A.. A task is a command sent from the driver to the executors in response to a transformation.",
+            "B.. Tasks transform jobs into DAGs.",
+            "C.. A task is a collection of slots.",
+            "D.. A task is a collection of rows.",
+            "E.. Tasks get assigned to the executors by the driver."
+        ],
+        "answer": [
+            "E"
+        ],
+        "explanation": "Tasks get assigned to the executors by the driver.\nCorrect! Or, in other words: Executors take the tasks that they were assigned to by the driver, run\nthem over partitions, and report the their outcomes back to the driver.\nTasks transform jobs into DAGs.\nNo, this statement disrespects the order of elements in the Spark hierarchy. The Spark driver\n\n\ntransforms jobs into DAGs. Each job consists of one or more stages. Each stage contains one or more\ntasks.\nA task is a collection of rows.\nWrong. A partition is a collection of rows. Tasks have little to do with a collection of rows. If anything,\na task processes a specific partition.\nA task is a command sent from the driver to the executors in response to a transformation.\nIncorrect. The Spark driver does not send anything to the executors in response to a transformation,\nsince transformations are evaluated lazily. So, the Spark driver would send tasks to executors only in\nresponse to actions.\nA task is a collection of slots.\nNo. Executors have one or more slots to process tasks and each slot can be assigned a task."
+    },
+    {
+        "question": "Which of the following describes Spark actions?",
+        "options": [
+            "A.. Writing data to disk is the primary purpose of actions.",
+            "B.. Actions are Spark's way of exchanging data between executors.",
+            "C.. The driver receives data upon request by actions.",
+            "D.. Stage boundaries are commonly established by actions.",
+            "E.. Actions are Spark's way of modifying RDDs."
+        ],
+        "answer": [
+            "C"
+        ],
+        "explanation": "The driver receives data upon request by actions.\nCorrect! Actions trigger the distributed execution of tasks on executors which, upon task completion,\ntransfer result data back to the driver.\nActions are Spark's way of exchanging data between executors.\nNo. In Spark, data is exchanged between executors via shuffles.\nWriting data to disk is the primary purpose of actions.\nNo. The primary purpose of actions is to access data that is stored in Spark's RDDs and return the\ndata, often in aggregated form, back to the driver.\nActions are Spark's way of modifying RDDs.\nIncorrect. Firstly, RDDs are immutable - they cannot be modified. Secondly, Spark generates new\nRDDs via transformations and not actions.\nStage boundaries are commonly established by actions.\nWrong. A stage boundary is commonly established by a shuffle, for example caused by a wide\ntransformation."
     },
     {
-        "question": "A company uses an organization in AWS Organizations with all features enabled to manage\n3\n\n\n\n\nmultiple AWS accounts. Employees use Amazon Bedrock across multiple accounts. The company\nmust prevent specific topics and proprietary information from being included in prompts to Amazon\nBedrock models. The company must ensure that employees can use only approved Amazon Bedrock\nmodels. The company wants to manage these controls centrally.\nWhich combination of solutions will meet these requirements? (Select TWO.)",
+        "question": "Which of the following statements about Spark's configuration properties is incorrect?",
         "options": [
-            "A.. Create an IAM permissions boundary for each employee's IAM role. Configure the permissions\nboundary to require an approved Amazon Bedrock guardrail identifier to invoke Amazon Bedrock\nmodels. Create an SCP that allows employees to use only approved models.",
-            "B.. Create an SCP that allows employees to use only approved models. Configure the SCP to require\nemployees to specify a guardrail identifier in calls to invoke an approved model.",
-            "C.. Create an SCP that prevents an employee from invoking a model if a centrally deployed guardrail\nidentifier is not specified in a call to the model. Create a permissions boundary on each employee's\nIAM role that allows each employee to invoke only approved models.",
-            "D.. Use AWS CloudFormation to create a custom Amazon Bedrock guardrail that has a block filtering\npolicy. Use stack sets to deploy the guardrail to each account in the organization.",
-            "E.. Use AWS CloudFormation to create a custom Amazon Bedrock guardrail that has a mask filtering\npolicy. Use stack sets to deploy the guardrail to each account in the organization."
+            "A.. The maximum number of tasks that an executor can process at the same time is controlled by the\nspark.task.cpus property.",
+            "B.. The maximum number of tasks that an executor can process at the same time is controlled by the\nspark.executor.cores property.",
+            "C.. The default value for spark.sql.autoBroadcastJoinThreshold is 10MB.",
+            "D.. The default number of partitions to use when shuffling data for joins or aggregations is 300.",
+            "E.. The default number of partitions returned from certain transformations can be controlled by the\nspark.default.parallelism property."
+        ],
+        "answer": [
+            "D"
         ],
-        "answer": "CD",
-        "explanation": "The correct combination is C and D because together they enforce centralized governance over both\nmodel access and prompt content controls, which are the two core requirements of the scenario.\nTo ensure employees can use only approved Amazon Bedrock models, governance must be enforced\nat the organization level and not rely on individual application logic. Service Control Policies (SCPs)\nare the strongest control mechanism available in AWS Organizations because they define the\nmaximum permissions an account or principal can have. In option C, the SCP prevents any Amazon\nBedrock model invocation unless a centrally approved guardrail identifier is specified. This ensures\nthat guardrails are always enforced, regardless of how or where the invocation originates. The\nadditional use of IAM permissions boundaries ensures that even within allowed accounts, employees\nare restricted to invoking only explicitly approved foundation models.\nTo prevent specific topics and proprietary information from being included in prompts, Amazon\nBedrock Guardrails must be used. Guardrails operate inline during model invocation and can block\ndisallowed content before it is processed by the model. Option D correctly specifies a block filtering\npolicy, which is appropriate when content must be prevented entirely rather than partially redacted.\nDeploying the guardrail using AWS CloudFormation StackSets allows the company to centrally\nmanage and consistently deploy the same guardrail configuration across all accounts in the\norganization, ensuring uniform enforcement.\nOption E uses mask filtering, which is better suited for redacting sensitive output rather than\npreventing prohibited content from being submitted in prompts. Option B attempts to use SCPs\nalone but does not enforce guardrail deployment or content filtering. Option A incorrectly places\nguardrail enforcement in permissions boundaries, which are not designed to validate request\nparameters such as guardrail identifiers.\nBy combining SCP-based enforcement with centrally deployed Bedrock guardrails, options C and D\ntogether provide strong, scalable, and centrally managed controls for both content safety and model\ngovernance across the organization."
+        "explanation": "The default number of partitions to use when shuffling data for joins or aggregations is 300.\nNo, the default value of the applicable property spark.sql.shuffle.partitions is 200.\nThe maximum number of tasks that an executor can process at the same time is controlled by the\nspark.executor.cores property.\nCorrect, see below.\nThe maximum number of tasks that an executor can process at the same time is controlled by the\nspark.task.cpus property.\nCorrect, the maximum number of tasks that an executor can process in parallel depends on both\nproperties spark.task.cpus and spark.executor.cores. This is because the available number of slots is\ncalculated by dividing the number of cores per executor by the number of cores per task. For more\ninfo specifically to this point, check out Spark Architecture | Distributed Systems Architecture.\nMore info: Configuration - Spark 3.1.2 Documentation"
     },
     {
-        "question": "A company has a recommendation system. The system's applications run on Amazon EC2\ninstances. The applications make API calls to Amazon Bedrock foundation models (FMs) to analyze\ncustomer behavior and generate personalized product recommendations.\nThe system is experiencing intermittent issues. Some recommendations do not match customer\npreferences.\nThe company needs an observability solution to monitor operational metrics and detect patterns of\noperational performance degradation compared to established baselines. The solution must also\ngenerate alerts with correlation data within 10 minutes when FM behavior deviates from expected\npatterns.\nWhich solution will meet these requirements?",
+        "question": "The code block displayed below contains an error. The code block should combine data from\nDataFrames itemsDf and transactionsDf, showing all rows of DataFrame itemsDf that have a\nmatching value in column itemId with a value in column transactionsId of DataFrame transactionsDf.\nFind the error.\nCode block:\nitemsDf.join(itemsDf.itemId==transactionsDf.transactionId)",
         "options": [
-            "A.. Configure Amazon CloudWatch Container Insights for the application infrastructure. Set up\nCloudWatch alarms for latency thresholds. Add custom metrics for token counts by using the\nCloudWatch embedded metric format. Create CloudWatch dashboards to visualize the data.",
-            "B.. Implement AWS X-Ray to trace requests through the application components. Enable CloudWatch\nLogs Insights for error pattern detection. Set up AWS CloudTrail to monitor all API calls to Amazon\nBedrock. Create custom dashboards in Amazon QuickSight.",
-            "C.. Enable Amazon CloudWatch Application Insights for the application resources. Create custom\nmetrics for recommendation quality, token usage, and response latency by using the CloudWatch\nembedded metric format with dimensions for request types and user segments. Configure\nCloudWatch anomaly detection on the model metrics. Establish log pattern analysis by using\nCloudWatch Logs Insights.",
-            "D.. Use Amazon OpenSearch Service with the Observability plugin. Ingest model metrics and logs by\nusing Amazon Kinesis. Create custom Piped Processing Language (PPL) queries to analyze model\nbehavior patterns. Establish operational dashboards to visualize anomalies in real time."
+            "A.. The join statement is incomplete.",
+            "B.. The union method should be used instead of join.",
+            "C.. The join method is inappropriate.",
+            "D.. The merge method should be used instead of join.",
+            "E.. The join expression is malformed."
         ],
-        "answer": "C",
-        "explanation": "Option C best satisfies the requirements because it combines application-aware observability, metric\nbaselining, anomaly detection, and correlated alerting using fully managed AWS services with\nminimal operational overhead. Amazon CloudWatch Application Insights is designed to automatically\nmonitor application health by analyzing metrics, logs, and events across EC2-based workloads. This\naligns directly with the need to detect intermittent performance issues and deviations from expected\nbehavior.\nBy publishing custom metrics using the CloudWatch embedded metric format, the application can\ntrack generative AI-specific signals such as recommendation quality indicators, token usage, request\nvolume, and response latency from Amazon Bedrock foundation model calls. Adding dimensions such\nas request type or user segment enables fine-grained visibility into which workloads or customer\ngroups are impacted when recommendation quality degrades.\nA critical requirement is detecting degradation compared to established baselines and generating\nalerts within\n10 minutes. CloudWatch anomaly detection automatically builds statistical models of normal\nbehavior for time-series metrics and flags deviations without requiring manually tuned thresholds.\nThis capability is well suited for monitoring foundation model behavior, which can vary subtly over\ntime. When anomalies are detected, CloudWatch alarms can trigger notifications with contextual\nmetric data quickly, meeting the alerting requirement.\nCloudWatch Logs Insights complements the metric-based view by enabling log pattern analysis and\n\n\n\n\ncorrelation. Engineers can query application logs and model response logs to identify recurring error\npatterns or shifts in output behavior that explain why recommendations no longer align with user\npreferences.\nApplication Insights further correlates metrics and logs to surface probable root causes, reducing\nmean time to resolution.\nThe other options lack one or more critical elements. Option A focuses on infrastructure-level metrics\nwithout baseline anomaly detection. Option B emphasizes tracing and auditing but does not provide\nautomated performance deviation analysis. Option D offers flexibility but requires significantly more\ndevelopment and operational effort than a native CloudWatch-based solution."
+        "answer": [
+            "A"
+        ],
+        "explanation": "Correct code block:\nitemsDf.join(transactionsDf, itemsDf.itemId==transactionsDf.transactionId) The join statement is\nincomplete.\nCorrect! If you look at the documentation of DataFrame.join() (linked below), you see that the very\nfirst argument of join should be the DataFrame that should be joined with. This first argument is\nmissing in the code block.\nThe join method is inappropriate.\nNo. By default, DataFrame.join() uses an inner join. This method is appropriate for the scenario\ndescribed in the question.\nThe join expression is malformed.\nIncorrect. The join expression itemsDf.itemId==transactionsDf.transactionId is correct syntax.\nThe merge method should be used instead of join.\nFalse. There is no DataFrame.merge() method in PySpark.\nThe union method should be used instead of join.\nWrong. DataFrame.union() merges rows, but not columns as requested in the question.\nMore info: pyspark.sql.DataFrame.join - PySpark 3.1.2 documentation, pyspark.sql.DataFrame.union\n- PySpark 3.1.2 documentation Static notebook | Dynamic notebook: See test 3"
     },
     {
-        "question": "A company runs a generative AI (GenAI)-powered summarization application in an application\nAWS account that uses Amazon Bedrock. The application architecture includes an Amazon API\nGateway REST API that forwards requests to AWS Lambda functions that are attached to private VPC\nsubnets. The application summarizes sensitive customer records that the company stores in a\ngoverned data lake in a centralized data storage account. The company has enabled Amazon S3,\nAmazon Athena, and AWS Glue in the data storage account.\nThe company must ensure that calls that the application makes to Amazon Bedrock use only private\nconnectivity between the company's application VPC and Amazon Bedrock. The company's data lake\nmust provide fine-grained column-level access across the company's AWS accounts.\nWhich solution will meet these requirements?",
+        "question": "The code block shown below should return all rows of DataFrame itemsDf that have at least 3\n\n\nitems in column itemNameElements. Choose the answer that correctly fills the blanks in the code\nblock to accomplish this.\nExample of DataFrame itemsDf:\n1.+------+----------------------------------+-------------------+------------------------------------------+\n2.|itemId|itemName |supplier |itemNameElements |\n3.+------+----------------------------------+-------------------+------------------------------------------+\n4.|1 |Thick Coat for Walking in the Snow|Sports Company Inc.|[Thick, Coat, for, Walking, in, the,\nSnow]|\n5.|2 |Elegant Outdoors Summer Dress |YetiX |[Elegant, Outdoors, Summer, Dress] |\n6.|3 |Outdoors Backpack |Sports Company Inc.|[Outdoors, Backpack] |\n7.+------+----------------------------------+-------------------+------------------------------------------+ Code block:\nitemsDf.__1__(__2__(__3__)__4__)",
         "options": [
-            "A.. In the application account, create interface VPC endpoints for Amazon Bedrock runtimes. Run\nLambda functions in private subnets. Use IAM conditions on inference and data-plane policies to\nallow calls only to approved endpoints and roles. In the data storage account, use AWS Lake\nFormation LF-tag- based access control to create table-level and column-level cross-account grants.",
-            "B.. Run Lambda functions in private subnets. Configure a NAT gateway to provide access to Amazon\nBedrock and the data lake. Use S3 bucket policies and ACLs to manage permissions. Export AWS\nCloudTrail logs to Amazon S3 to perform weekly reviews.",
-            "C.. Create a gateway endpoint only for Amazon S3 in the application account. Invoke Amazon Bedrock\nthrough public endpoints. Use database-level grants in AWS Lake Formation to manage data access.\nStream AWS CloudTrail logs to Amazon CloudWatch Logs. Do not set up metric filters or alarms.",
-            "D.. Use VPC endpoints to provide access to Amazon Bedrock and Amazon S3 in the application\naccount.Use only IAM path-based policies to manage data lake access. Send AWS CloudTrail logs to\nAmazon CloudWatch Logs. Periodically create dashboards and allow public fallback for cross-Region\nreads to reduce setup time."
+            "A.. 1. select\n2. count\n3. col(\"itemNameElements\")\n4. >3",
+            "B.. 1. filter\n2. count\n3. itemNameElements\n4. >=3",
+            "C.. 1. select\n2. count\n3. \"itemNameElements\"\n4. >3",
+            "D.. 1. filter\n2. size\n3. \"itemNameElements\"\n4. >=3\n(Correct)",
+            "E.. 1. select\n2. size\n3. \"itemNameElements\"\n4. >3"
+        ],
+        "answer": [
+            "D"
         ],
-        "answer": "B",
-        "explanation": "The first option labeled B is the correct solution because it fully satisfies both private connectivity and\nfine- grained cross-account data governance requirements using AWS-native services.\nCreating interface VPC endpoints for Amazon Bedrock runtimes ensures that all inference calls\nremain on the AWS private network and never traverse the public internet. Running AWS Lambda\nfunctions in private subnets enforces network isolation, and using IAM conditions that restrict access\nto specific VPC endpoints and roles prevents unauthorized inference calls.\nFor the governed data lake, AWS Lake Formation LF-tag-based access control is the recommended\nAWS mechanism for enforcing cross-account, column-level permissions. LF-tags allow the company\nto define data access policies once and apply them consistently across accounts, databases, tables,\n\n\n\n\nand even individual columns. This is required for sensitive customer records and is not achievable\nwith S3 bucket policies or IAM alone.\nThe second option labeled B uses a NAT gateway, which violates the private connectivity\nrequirement.\nOption C uses public Bedrock endpoints and only database-level grants, which are insufficient. Option\nD relies on IAM path-based policies, which cannot enforce column-level access and introduces public\nfallback paths.\nTherefore, the first option labeled B is the only solution that meets all networking, security, and data\ngovernance requirements."
+        "explanation": "Correct code block:\nitemsDf.filter(size(\"itemNameElements\")>3)\nOutput of code block:\n+------+----------------------------------+-------------------+------------------------------------------+\n|itemId|itemName |supplier |itemNameElements |\n+------+----------------------------------+-------------------+------------------------------------------+\n|1 |Thick Coat for Walking in the Snow|Sports Company Inc.|[Thick, Coat, for, Walking, in, the,\nSnow]|\n|2 |Elegant Outdoors Summer Dress |YetiX |[Elegant, Outdoors, Summer, Dress] |\n+------+----------------------------------+-------------------+------------------------------------------+ The big difficulty\n\n\nwith this question is in knowing the difference between count and size (refer to documentation\nbelow). size is the correct function to choose here since it returns the number of elements in an array\non a per-row basis.\nThe other consideration for solving this question is the difference between select and filter. Since we\nwant to return the rows in the original DataFrame, filter is the right choice. If we would use select, we\nwould simply get a single-column DataFrame showing which rows match the criteria, like so:\n+----------------------------+\n|(size(itemNameElements) > 3)|\n+----------------------------+\n|true |\n|true |\n|false |\n+----------------------------+\nMore info:\nCount documentation: pyspark.sql.functions.count - PySpark 3.1.1 documentation Size\ndocumentation: pyspark.sql.functions.size - PySpark 3.1.1 documentation Static notebook | Dynamic\nnotebook: See test 1"
     },
     {
-        "question": "A company upgraded its Amazon Bedrock-powered foundation model (FM) that supports a\nmultilingual customer service assistant. After the upgrade, the assistant exhibited inconsistent\nbehavior across languages.\nThe assistant began generating different responses in some languages when presented with identical\nquestions.\nThe company needs a solution to detect and address similar problems for future updates. The\nevaluation must be completed within 45 minutes for all supported languages. The evaluation must\nprocess at least 15,000 test conversations in parallel. The evaluation process must be fully automated\nand integrated into the CI/CD pipeline. The solution must block deployment if quality thresholds are\nnot met.\nWhich solution will meet these requirements?",
+        "question": "Which of the following code blocks returns a DataFrame with an added column to DataFrame\ntransactionsDf that shows the unix epoch timestamps in column transactionDate as strings in the\nformat month/day/year in column transactionDateFormatted?\nExcerpt of DataFrame transactionsDf:",
         "options": [
-            "A.. Create a distributed traffic simulation framework that sends translation-heavy workloads to the\nassistant in multiple languages simultaneously. Use Amazon CloudWatch metrics to monitor latency,\nconcurrency, and throughput. Run simulations before production releases to identify infrastructure\nbottlenecks.",
-            "B.. Deploy the assistant in multiple AWS Regions with Amazon Route 53 latency-based routing and\nAWS Global Accelerator to improve global performance. Store multilingual conversation logs in\nAmazon S3.\nPerform weekly post-deployment audits to review consistency.",
-            "C.. Create a pre-processing pipeline that normalizes all incoming messages into a consistent format\nbefore sending the messages to the assistant. Apply rule-based checks to flag potential hallucinations\nin the outputs. Focus evaluation on normalized text to simplify testing across languages.",
-            "D.. Set up standardized multilingual test conversations with identical meaning. Run the test\nconversations in parallel by using Amazon Bedrock model evaluation jobs. Apply similarity and\nhallucination thresholds. Integrate the process into the CI/CD pipeline to block releases that fail."
+            "A.. transactionsDf.withColumn(\"transactionDateFormatted\", from_unixtime(\"transactionDate\",\nformat=\"dd/MM/yyyy\"))",
+            "B.. transactionsDf.withColumnRenamed(\"transactionDate\", \"transactionDateFormatted\",\nfrom_unixtime(\"transactionDateFormatted\", format=\"MM/dd/yyyy\"))",
+            "C.. transactionsDf.apply(from_unixtime(format=\"MM/dd/yyyy\")).asColumn(\"transactionDateFormatted\"\n)",
+            "D.. transactionsDf.withColumn(\"transactionDateFormatted\", from_unixtime(\"transactionDate\",\nformat=\"MM/dd/yyyy\"))",
+            "E.. transactionsDf.withColumn(\"transactionDateFormatted\", from_unixtime(\"transactionDate\"))"
         ],
-        "answer": "D",
-        "explanation": "Option D is the correct solution because it directly evaluates multilingual output consistency and\nquality in an automated, scalable, and deployment-gating workflow. Amazon Bedrock model\nevaluation jobs are designed to run large-scale, repeatable evaluations against defined datasets and\nto produce quantitative metrics that can be used as objective release criteria.\nThe core issue is semantic inconsistency across languages for equivalent inputs. The most reliable\nway to detect this is to create standardized test conversations where each language version\nexpresses the same intent and constraints. Running those tests through the updated model and\ncomparing results with similarity metrics (for example, semantic similarity between expected and\n\n\n\n\nactual answers, or between language variants) surfaces regressions that infrastructure testing cannot\ndetect.\nBedrock evaluation jobs support running evaluations at scale and are well suited for processing large\ndatasets quickly. By parallelizing evaluation runs across languages and conversations, the company\ncan meet the 45- minute requirement while executing at least 15,000 conversations. Because the\nprocess is standardized, it also allows consistent baseline comparisons across releases.\nApplying hallucination thresholds ensures that answers remain grounded and do not introduce\nfabricated details, which is particularly important when language-specific behavior shifts after a\nmodel upgrade.\nIntegrating evaluation jobs into the CI/CD pipeline enables fully automated execution on every model\nor configuration update. The pipeline can enforce a hard quality gate that blocks deployment if\nthresholds are not met, preventing regressions from reaching production.\nOption A focuses on performance and infrastructure bottlenecks, not multilingual response quality.\nOption B is post-deployment and too slow to prevent regressions. Option C normalizes inputs but\ndoes not measure multilingual output equivalence or provide robust, quantitative gating.\nTherefore, Option D best meets the automation, scale, timing, and deployment-blocking\nrequirements."
+        "answer": [
+            "D"
+        ],
+        "explanation": "transactionsDf.withColumn(\"transactionDateFormatted\", from_unixtime(\"transactionDate\",\nformat=\"MM/dd/yyyy\")) Correct. This code block adds a new column with the name\ntransactionDateFormatted to DataFrame transactionsDf, using Spark's from_unixtime method to\ntransform values in column transactionDate into strings, following the format requested in the\nquestion.\ntransactionsDf.withColumn(\"transactionDateFormatted\", from_unixtime(\"transactionDate\",\nformat=\"dd/MM/yyyy\")) No. Although almost correct, this uses the wrong format for the timestamp\nto date conversion: day/month/year instead of month/day/year.\ntransactionsDf.withColumnRenamed(\"transactionDate\", \"transactionDateFormatted\",\nfrom_unixtime(\"transactionDateFormatted\", format=\"MM/dd/yyyy\")) Incorrect. This answer uses\nwrong syntax. The command DataFrame.withColumnRenamed() is for renaming an existing column\n\n\nonly has two string parameters, specifying the old and the new name of the column.\ntransactionsDf.apply(from_unixtime(format=\"MM/dd/yyyy\")).asColumn(\"transactionDateFormatted\"\n) Wrong. Although this answer looks very tempting, it is actually incorrect Spark syntax. In Spark,\nthere is no method DataFrame.apply(). Spark has an apply() method that can be used on grouped\ndata - but this is irrelevant for this question, since we do not deal with grouped data here.\ntransactionsDf.withColumn(\"transactionDateFormatted\", from_unixtime(\"transactionDate\")) No.\nAlthough this is valid Spark syntax, the strings in column transactionDateFormatted would look like\nthis:\n2020-04-26 15:35:32, the default format specified in Spark for from_unixtime and not what is asked\nfor in the question.\nMore info: pyspark.sql.functions.from_unixtime - PySpark 3.1.1 documentation and\npyspark.sql.DataFrame.withColumnRenamed - PySpark 3.1.1 documentation Static notebook |\nDynamic notebook: See test 1"
     },
     {
-        "question": "An insurance company uses existing Amazon SageMaker AI infrastructure to support a webbased application that allows customers to predict what their insurance premiums will be. The\ncompany stores customer data that is used to train the SageMaker AI model in an Amazon S3 bucket.\nThe dataset is growing rapidly. The company wants a solution to continuously re-train the model. The\nsolution must automatically re-train and re- deploy the model to the application when an employee\nuploads a new customer data file to the S3 bucket.\nWhich solution will meet these requirements?",
+        "question": "Which of the following describes a way for resizing a DataFrame from 16 to 8 partitions in the\nmost efficient way?",
         "options": [
-            "A.. Use AWS Glue to run an ETL job on each uploaded file. Configure the ETL job to use the AWS SDK\nto invoke the SageMaker AI model endpoint. Use real-time inference with the endpoint to re-deploy\nthe model after it is re-trained on the updated customer dataset.",
-            "B.. Create an AWS Lambda function and webhook handlers to generate an event when an employee\nuploads a new file. Configure SageMaker Pipelines to re-deploy the model after it is re-trained on the\nupdated customer dataset. Use Amazon EventBridge to create an event bus. Set the Lambda function\nevent as the source and SageMaker Pipelines as the target.",
-            "C.. Create an AWS Step Functions Express workflow with AWS SDK integrations to retrieve the\ncustomer data from the S3 bucket when an employee uploads a new file to the S3 bucket. Use a\nSageMaker Data Wrangler flow to export the data from the S3 bucket to SageMaker Autopilot. Use\nthe SageMaker Autopilot to re-deploy the model after it has been re-trained on the updated\ncustomer dataset.",
-            "D.. Create an AWS Step Functions Standard workflow. Configure the first state to call an AWS Lambda\nfunction to respond when an employee uploads a new file to the S3 bucket. Use a pipeline in\nSageMaker Pipelines to re-deploy the model after it has been re-trained on the updated customer\ndataset. Use the next state in the workflow to run the pipeline when the first state receives a\nresponse."
+            "A.. Use operation DataFrame.repartition(8) to shuffle the DataFrame and reduce the number of\npartitions.",
+            "B.. Use operation DataFrame.coalesce(8) to fully shuffle the DataFrame and reduce the number of\npartitions.",
+            "C.. Use a narrow transformation to reduce the number of partitions.",
+            "D.. Use a wide transformation to reduce the number of partitions.\nUse operation DataFrame.coalesce(0.5) to halve the number of partitions in the DataFrame."
+        ],
+        "answer": [
+            "C"
         ],
-        "answer": "D",
-        "explanation": "Option D is the best fit because it implements a reliable event-driven MLOps workflow that\n\n\n\n\nautomates retraining and redeployment with clear orchestration, auditability, and production-grade\nerror handling. The requirement is explicit: whenever a new file is uploaded to Amazon S3, the\nsystem must retrain and then redeploy the model used by a web application. A common AWS pattern\nis to use an S3 event notification to trigger an AWS Lambda function, which then starts a controlled\nworkflow. In option D, Lambda serves as the event handler that reacts immediately to the S3 upload\nevent and passes the necessary context (bucket, object key, dataset version) into an AWS Step\nFunctions Standard state machine.\nStep Functions Standard is appropriate for model retraining pipelines because training and\ndeployment steps can be long-running and benefit from durable state, retries, and failure handling. It\nprovides execution history, making it easier to troubleshoot why a particular retraining run failed and\nto prove which dataset version produced which model version. This operational visibility is critical\nwhen the dataset is \"growing rapidly\" and retraining is frequent.\nWithin the workflow, Amazon SageMaker Pipelines is the right service to run the ML lifecycle stages\nin a repeatable way: data processing (if needed), training, evaluation/quality checks, model\nregistration, and deployment to an endpoint used by the application. SageMaker Pipelines is\npurpose-built for CI/CD-style ML, supporting automated redeployments when a new approved model\nartifact is produced. By calling a pipeline execution from Step Functions, the company can add\ngovernance gates (for example, only deploy if evaluation metrics meet thresholds), and can apply\nconsistent rollback and notification steps when deployment fails.\nThe other options are weaker: A confuses inference with retraining and does not provide deployment\norchestration. B adds unnecessary webhook complexity and describes an awkward event bus\nconfiguration. C introduces Autopilot/Data Wrangler, which may be useful but adds extra moving\nparts and is not required to meet the trigger-and-redeploy requirement."
+        "explanation": "Use a narrow transformation to reduce the number of partitions.\nCorrect! DataFrame.coalesce(n) is a narrow transformation, and in fact the most efficient way to\nresize the DataFrame of all options listed. One would run DataFrame.coalesce(8) to resize the\nDataFrame.\nUse operation DataFrame.coalesce(8) to fully shuffle the DataFrame and reduce the number of\npartitions.\nWrong. The coalesce operation avoids a full shuffle, but will shuffle data if needed. This answer is\nincorrect because it says \"fully shuffle\" - this is something the coalesce operation will not do. As a\ngeneral rule, it will reduce the number of partitions with the very least movement of data possible.\nMore info:\ndistributed computing - Spark - repartition() vs coalesce() - Stack Overflow Use operati\non DataFrame.coalesce(0.5) to halve the number of partitions in the DataFrame.\nIncorrect, since the num_partitions parameter needs to be an integer number defining the exact\nnumber of partitions desired after the operation. More info: pyspark.sql.DataFrame.coalesce -\nPySpark 3.1.2 documentation Use operation DataFrame.repartition(8) to shuffle the DataFrame and\nreduce the number of partitions.\nNo. The repartition operation will fully shuffle the DataFrame. This is not the most efficient way of\nreducing the number of partitions of all listed options.\nUse a wide transformation to reduce the number of partitions.\nNo. While possible via the DataFrame.repartition(n) command, the resulting full shuffle is not the\nmost efficient way of reducing the number of partitions."
     },
     {
-        "question": "A healthcare company is using Amazon Bedrock to build a system to help practitioners make\nclinical decisions. The system must provide treatment recommendations to physicians based only on\napproved medical documentation and must cite specific sources. The system must not hallucinate or\nproduce factually incorrect information.\nWhich solution will meet these requirements with the LEAST operational overhead?",
+        "question": "Which of the following describes characteristics of the Spark UI?",
         "options": [
-            "A.. Integrate Amazon Bedrock with Amazon Kendra to retrieve approved documents. Implement\ncustom post-processing to compare generated responses against source documents and to include\ncitations.",
-            "B.. Deploy an Amazon Bedrock Knowledge Base and connect it to approved clinical source\ndocuments.\nUse the Amazon Bedrock RetrieveAndGenerate API to return citations from the knowledge base.",
-            "C.. Use Amazon Bedrock and Amazon Comprehend Medical to extract medical entities. Implement\nverification logic against a medical terminology database.",
-            "D.. Use an Amazon Bedrock knowledge base with Retrieve API calls and InvokeModel API calls to\nretrieve approved clinical source documents. Implement verification logic to compare against\nretrieved sources and to cite sources."
+            "A.. Via the Spark UI, workloads can be manually distributed across executors.",
+            "B.. Via the Spark UI, stage execution speed can be modified.",
+            "C.. The Scheduler tab shows how jobs that are run in parallel by multiple users are distributed across\nthe cluster.",
+            "D.. There is a place in the Spark UI that shows the property spark.executor.memory.",
+            "E.. Some of the tabs in the Spark UI are named Jobs, Stages, Storage, DAGs, Executors, and SQL."
         ],
-        "answer": "B",
-        "explanation": "Option B is the correct solution because Amazon Bedrock Knowledge Bases with the\nRetrieveAndGenerate API provide a fully managed Retrieval Augmented Generation (RAG) capability\nthat directly addresses grounding, citation, and hallucination prevention with the least operational\n\n\n\n\noverhead.\nAmazon Bedrock Knowledge Bases automatically manage document ingestion, chunking, embedding,\nretrieval, and ranking from approved data sources. When used with the RetrieveAndGenerate API,\nthe model is constrained to generate responses only from retrieved, approved clinical\ndocumentation, significantly reducing the risk of hallucinations or unsupported claims. The API also\nreturns explicit source citations, which satisfies regulatory and clinical transparency requirements\nwithout requiring custom comparison or validation logic.\nThis approach aligns with AWS best practices for healthcare GenAI workloads, where correctness and\ntraceability are critical. Because retrieval and generation are tightly integrated, the system avoids\nmulti-step orchestration, custom verification pipelines, or additional compute layers that would\nincrease latency and maintenance burden.\nOption A introduces Amazon Kendra and custom post-processing logic, increasing operational\ncomplexity.\nOption C focuses on entity extraction rather than controlled knowledge grounding and does not\nguarantee citation or hallucination prevention. Option D requires manual orchestration between\nretrieval and generation and custom verification logic, which increases development and\nmaintenance effort.\nTherefore, Option B delivers accurate, grounded, and cited clinical recommendations with minimal\ninfrastructure and operational overhead."
+        "answer": [
+            "D"
+        ],
+        "explanation": "There is a place in the Spark UI that shows the property spark.executor.memory.\nCorrect, you can see Spark properties such as spark.executor.memory in the Environment tab.\nSome of the tabs in the Spark UI are named Jobs, Stages, Storage, DAGs, Executors, and SQL.\nWrong - Jobs, Stages, Storage, Executors, and SQL are all tabs in the Spark UI. DAGs can be inspected\nin the\n\"Jobs\" tab in the job details or in the Stages or SQL tab, but are not a separate tab.\nVia the Spark UI, workloads can be manually distributed across distributors.\nNo, the Spark UI is meant for inspecting the inner workings of Spark which ultimately helps\nunderstand, debug, and optimize Spark transactions.\nVia the Spark UI, stage execution speed can be modified.\nNo, see above.\nThe Scheduler tab shows how jobs that are run in parallel by multiple users are distributed across the\ncluster.\nNo, there is no Scheduler tab."
     },
     {
-        "question": "A company is creating a generative AI (GenAI) application that uses Amazon Bedrock\nfoundation models (FMs). The application must use Microsoft Entra ID to authenticate. All FM API\ncalls must stay on private network paths. Access to the application must be limited by department to\nspecific model families. The company also needs a comprehensive audit trail of model interactions.\nWhich solution will meet these requirements?",
+        "question": "Which of the following DataFrame operators is never classified as a wide transformation?",
         "options": [
-            "A.. Configure SAML federation between Microsoft Entra ID and AWS Identity and Access\nManagement.\nCreate department-specific IAM roles that allow only the required ModelId values. Create AWS\nPrivateLink interface VPC endpoints for Amazon Bedrock runtime services. Enable AWS CloudTrail to\ncapture Amazon Bedrock API calls. Configure Amazon Bedrock model invocation logging to record\ndetailed model interactions.",
-            "B.. Create an identity provider (IdP) connection in IAM to authenticate by using Microsoft Entra ID.\nAssign department permission sets to control access to specific model families. Deploy AWS Lambda\nfunctions in private subnets with a NAT gateway for egress to Amazon Bedrock public endpoints.\nEnable CloudWatch Logs to capture model interactions for auditing purposes.",
-            "C.. Create a SAML identity provider (IdP) in IAM to authenticate by using Microsoft Entra ID. Use IAM\npermissions boundaries to limit department roles' access to specific model families. Configure public\nAmazon Bedrock API endpoints with VPC routing to maintain private network connectivity. Set up\nCloudTrail with Amazon S3 Lifecycle rules to manage audit logs of model interactions.",
-            "D.. Configure OpenID Connect (OIDC) federation between Microsoft Entra ID and IAM. Use attributebased access control to map department attributes to specific model access permissions. Apply SCP\npolicies to restrict access to Amazon Bedrock FM families based on department. Use Microsoft Entra\nID's built-in logging capabilities to maintain an audit trail of model interactions."
+            "A.. DataFrame.sort()",
+            "B.. DataFrame.aggregate()",
+            "C.. DataFrame.repartition()",
+            "D.. DataFrame.select()",
+            "E.. DataFrame.join()"
+        ],
+        "answer": [
+            "D"
         ],
-        "answer": "A",
-        "explanation": "Option A is the correct solution because it satisfies authentication, private connectivity, fine-grained\nauthorization, and auditing using AWS-recommended patterns.\nSAML federation between Microsoft Entra ID and IAM is a mature, well-supported integration that\nenables centralized enterprise authentication. Department-specific IAM roles allow precise control\nover which Bedrock ModelId values each department can invoke, enforcing access by model family.\nUsing AWS PrivateLink interface VPC endpoints for Amazon Bedrock runtime services ensures that all\ninference traffic stays on private AWS network paths, with no public internet exposure. NAT\ngateways and public endpoints, as used in other options, violate this requirement.\nAWS CloudTrail provides authoritative audit logs of all Bedrock API calls, which is required for\ncompliance.\nAmazon Bedrock model invocation logging complements CloudTrail by capturing detailed prompt and\nresponse metadata for deeper auditing and investigation.\nOption B uses public endpoints via NAT. Option C incorrectly claims public endpoints can be private.\nOption D relies on IdP-side logs, which do not capture Bedrock API activity.\nTherefore, Option A is the only solution that fully meets security, compliance, and observability\nrequirements."
+        "explanation": "As a general rule: After having gone through the practice tests you probably have a good feeling for\nwhat classifies as a wide and what classifies as a narrow transformation. If you are unsure, feel free\nto play around in Spark and display the explanation of the Spark execution plan via\nDataFrame.[operation, for example sort()].explain(). If repartitioning is involved, it would count as a\nwide transformation.\nDataFrame.select()\nCorrect! A wide transformation includes a shuffle, meaning that an input partition maps to one or\nmore output partitions. This is expensive and causes traffic across the cluster. With the select()\noperation however, you pass commands to Spark that tell Spark to perform an operation on a specific\nslice of any partition. For this, Spark does not need to exchange data across partitions, each partition\ncan be worked on independently. Thus, you do not cause a wide transformation.\nDataFrame.repartition()\n\n\nIncorrect. When you repartition a DataFrame, you redefine partition boundaries. Data will flow\nacross your cluster and end up in different partitions after the repartitioning is completed. This is\nknown as a shuffle and, in turn, is classified as a wide transformation.\nDataFrame.aggregate()\nNo. When you aggregate, you may compare and summarize data across partitions. In the process,\ndata are exchanged across the cluster, and newly formed output partitions depend on one or more\ninput partitions. This is a typical characteristic of a shuffle, meaning that the aggregate operation may\nclassify as a wide transformation.\nDataFrame.join()\nWrong. Joining multiple DataFrames usually means that large amounts of data are exchanged across\nthe cluster, as new partitions are formed. This is a shuffle and therefore DataFrame.join() counts as a\nwide transformation.\nDataFrame.sort()\nFalse. When sorting, Spark needs to compare many rows across all partitions to each other. This is an\nexpensive operation, since data is exchanged across the cluster and new partitions are formed as\ndata is reordered. This process classifies as a shuffle and, as a result, DataFrame.sort() counts as wide\ntransformation.\nMore info: Understanding Apache Spark Shuffle | Philipp Brunenberg"
     },
     {
-        "question": "A company is developing a generative AI (GenAI)-powered customer support application that\nuses Amazon Bedrock foundation models (FMs). The application must maintain conversational\ncontext across multiple interactions with the same user. The application must run clarification\nworkflows to handle ambiguous user queries. The company must store encrypted records of each\nuser conversation to use for personalization. The application must be able to handle thousands of\nconcurrent users while responding to each user quickly.\nWhich solution will meet these requirements?",
+        "question": "Which of the following describes slots?",
         "options": [
-            "A.. Use an AWS Step Functions Express workflow to orchestrate conversation flow. Invoke AWS\nLambda functions to run clarification logic. Store conversation history in Amazon RDS and use session\nIDs as the primary key.",
-            "B.. Use an AWS Step Functions Standard workflow to orchestrate clarification workflows. Include Wait\nfor a Callback patterns to manage the workflows. Store conversation history in Amazon DynamoDB.\nPurchase on-demand capacity and configure server-side encryption.",
-            "C.. Deploy the application by using an Amazon API Gateway REST API to route user requests to an\nAWS Lambda function to update and retrieve conversation context. Store conversation history in\nAmazon S3 and configure server-side encryption. Save each interaction as a separate JSON file.",
-            "D.. Use AWS Lambda functions to call Amazon Bedrock inference APIs. Use Amazon SQS queues to\norchestrate clarification steps. Store conversation history in an Amazon ElastiCache (Redis OSS)\ncluster. Configure encryption at rest."
+            "A.. Slots are dynamically created and destroyed in accordance with an executor's workload.",
+            "B.. To optimize I/O performance, Spark stores data on disk in multiple slots.",
+            "C.. A Java Virtual Machine (JVM) working as an executor can be considered as a pool of slots for task\nexecution.",
+            "D.. A slot is always limited to a single core.\nSlots are the communication interface for executors and are used for receiving commands and\nsending results to the driver."
         ],
-        "answer": "B",
-        "explanation": "Option B is the correct solution because it provides a scalable, durable, and secure architecture for\nconversational GenAI workloads that require multi-step clarification workflows and persistent\nmemory.\nAWS Step Functions Standard workflows are designed for long-running, stateful workflows with high\nreliability, which is ideal for clarification loops that may require multiple back-and-forth interactions.\nThe Wait for a Callback pattern allows the workflow to pause while awaiting additional user input,\nmaking it well- suited for handling ambiguous queries without losing execution state.\n\n\n\n\nStoring conversation history in Amazon DynamoDB enables millisecond-latency reads and writes at\nmassive scale, supporting thousands of concurrent users. DynamoDB's on-demand capacity mode\nautomatically scales with traffic, eliminating capacity planning. Server-side encryption ensures that\nstored conversation data is encrypted at rest, meeting security and compliance requirements for\npersonalized data.\nOption A uses Step Functions Express and Amazon RDS, which is not ideal for long-lived\nconversational workflows and introduces scaling and connection management challenges. Option C\nstores conversations as individual S3 objects, which increases latency and complicates context\nretrieval. Option D relies on Amazon ElastiCache, which is optimized for ephemeral caching rather\nthan durable, auditable conversation history.\nTherefore, Option B best balances scalability, performance, durability, and security for a\nconversational Amazon Bedrock-based customer support application."
+        "answer": [
+            "C"
+        ],
+        "explanation": "Slots are the communication interface for executors and are used for receiving commands and\nsending results to the driver.\nWrong, executors communicate with the driver directly.\nSlots are dynamically created and destroyed in accordance with an executor's workload.\nNo, Spark does not actively create and destroy slots in accordance with the workload. Per executor,\nslots are made available in accordance with how many cores per executor (property\nspark.executor.cores) and how many CPUs per task (property spark.task.cpus) the Spark\nconfiguration calls for.\nA slot is always limited to a single core.\nNo, a slot can span multiple cores. If a task would require multiple cores, it would have to be\nexecuted through a slot that spans multiple cores.\nIn Spark documentation, \"core\" is often used interchangeably with \"thread\", although \"thread\" is the\nmore accurate word. A single physical core may be able to make multiple threads available. So, it is\nbetter to say that a slot can span multiple threads.\nTo optimize I/O performance, Spark stores data on disk in multiple slots.\nNo - Spark stores data on disk in multiple partitions, not slots.\nMore info: Spark Architecture | Distributed Systems Architecture"
     },
     {
-        "question": "A company uses Amazon Bedrock to build a Retrieval Augmented Generation (RAG) system.\nThe RAG system uses an Amazon Bedrock Knowledge Bases that is based on an Amazon S3 bucket as\nthe data source for emergency news video content. The system retrieves transcripts, archived\nreports, and related documents from the S3 bucket.\nThe RAG system uses state-of-the-art embedding models and a high-performing retrieval setup.\nHowever, users report slow responses and irrelevant results, which cause decreased user\nsatisfaction. The company notices that vector searches are evaluating too many documents across\ntoo many content types and over long periods of time.\nThe company determines that the underlying models will not benefit from additional fine-tuning. The\ncompany must improve retrieval accuracy by applying smarter constraints and wants a solution that\nrequires minimal changes to the existing architecture.\nWhich solution will meet these requirements?",
+        "question": "Which of the following code blocks returns a copy of DataFrame transactionsDf in which\ncolumn productId has been renamed to productNumber?",
         "options": [
-            "A.. Enhance embeddings by using a domain-adapted model that is specifically trained on emergency\nnews content for improved vector similarity.",
-            "B.. Migrate to Amazon OpenSearch Service. Use vector fields and metadata filters to define the scope\nof results retrieval.",
-            "C.. Enable metadata-aware filtering within the Amazon Bedrock knowledge base by indexing S3 object\nmetadata.",
-            "D.. Migrate to an Amazon Q Business index to perform structured metadata filtering and document\ncategorization during retrieval."
+            "A.. transactionsDf.withColumnRenamed(\"productId\", \"productNumber\")",
+            "B.. transactionsDf.withColumn(\"productId\", \"productNumber\")",
+            "C.. transactionsDf.withColumnRenamed(\"productNumber\", \"productId\")",
+            "D.. transactionsDf.withColumnRenamed(col(productId), col(productNumber))",
+            "E.. transactionsDf.withColumnRenamed(productId, productNumber)"
+        ],
+        "answer": [
+            "A"
         ],
-        "answer": "C",
-        "explanation": "Option C is the correct solution because it directly addresses the root cause of the problem-overly\nbroad retrieval-while requiring minimal architectural change. Amazon Bedrock Knowledge Bases\nsupport metadata-aware filtering, which allows the system to constrain retrieval queries based on\nindexed metadata such as content type, publication date, source, or category.\nBy indexing Amazon S3 object metadata, the company can restrict vector searches to relevant\nsubsets of the corpus, such as recent emergency reports, specific content formats, or trusted sources.\nThis significantly reduces the number of documents evaluated during retrieval, which improves both\nlatency and result relevance without changing embedding models or retrieval infrastructure.\nThis approach aligns with AWS best practices for optimizing RAG systems: when embeddings are\nalready strong, retrieval quality is often improved by narrowing the candidate set rather than\nincreasing model complexity. Metadata filtering reduces noise and ensures that retrieved documents\n12\n\n\n\n\nare more contextually aligned with user queries.\nOption A requires retraining or adapting embedding models, which the company has already\ndetermined will not provide additional benefit. Option B introduces a migration to OpenSearch,\nwhich adds operational overhead and deviates from the existing Bedrock knowledge base\narchitecture. Option D requires moving to a different indexing service, increasing complexity and\nimplementation effort.\nTherefore, Option C provides the most effective and low-effort solution to improve retrieval accuracy\nand performance in the existing Amazon Bedrock RAG system."
+        "explanation": "More info: pyspark.sql.DataFrame.withColumnRenamed - PySpark 3.1.2 documentation Static\nnotebook | Dynamic notebook: See test 2"
     },
     {
-        "question": "A healthcare company is using Amazon Bedrock to build a Retrieval Augmented Generation\n(RAG) application that helps practitioners make clinical decisions. The application must achieve high\naccuracy for patient information retrievals, identify hallucinations in generated content, and reduce\nhuman review costs.\nWhich solution will meet these requirements?",
+        "question": "In which order should the code blocks shown below be run in order to assign articlesDf a\nDataFrame that lists all items in column attributes ordered by the number of times these items occur,\nfrom most to least often?\nSample of DataFrame articlesDf:\n1.+------+-----------------------------+-------------------+\n2.|itemId|attributes |supplier |\n3.+------+-----------------------------+-------------------+\n4.|1 |[blue, winter, cozy] |Sports Company Inc.|\n5.|2 |[red, summer, fresh, cooling]|YetiX |\n6.|3 |[green, summer, travel] |Sports Company Inc.|\n7.+------+-----------------------------+-------------------+",
         "options": [
-            "A.. Use Amazon Comprehend to analyze and classify RAG responses and to extract medical entities\nand relationships. Use AWS Step Functions to orchestrate automated evaluations. Configure Amazon\nCloudWatch metrics to track entity recognition confidence scores. Configure CloudWatch to send an\nalert when accuracy falls below specified thresholds.",
-            "B.. Implement automated large language model (LLM)-based evaluations that use a specialized model\nthat is fine-tuned for medical content to assess all responses. Deploy AWS Lambda functions to\nparallelize evaluations. Publish results to Amazon CloudWatch metrics that track relevance and\nfactual accuracy.",
-            "C.. Configure Amazon CloudWatch Synthetics to generate test queries that have known answers on a\nregular schedule, and track model success rates. Set up dashboards that compare synthetic test\nresults against expected outcomes.",
-            "D.. Deploy a hybrid evaluation system that uses an automated LLM-as-a-judge evaluation to initially\nscreen responses and targeted human reviews for edge cases. Use a built-in Amazon Bedrock\nevaluation to track retrieval precision and hallucination rates."
+            "A.. 1. articlesDf = articlesDf.groupby(\"col\")\n2. articlesDf = articlesDf.select(explode(col(\"attributes\")))\n3. articlesDf = articlesDf.orderBy(\"count\").select(\"col\")\n4. articlesDf = articlesDf.sort(\"count\",ascending=False).select(\"col\")\n5. articlesDf = articlesDf.groupby(\"col\").count()",
+            "B.. 4, 5",
+            "C.. 2, 5, 3",
+            "D.. 5, 2",
+            "E.. 2, 3, 4",
+            "F.. 2, 5, 4"
         ],
-        "answer": "D",
-        "explanation": "Option D is the correct solution because it directly addresses all three requirements: high retrieval\naccuracy, hallucination detection, and reduced human review costs. AWS recommends a layered\nevaluation strategy for high-stakes domains such as healthcare, where generative outputs must be\nboth accurate and safe.\nUsing an automated LLM-as-a-judge evaluation enables scalable, consistent assessment of generated\nresponses for factual grounding, relevance, and hallucination risk. This automated screening\nsignificantly reduces the number of responses that require manual inspection. Only responses that\nfall below defined quality thresholds or exhibit ambiguous behavior are escalated to targeted human\nreviews, which optimizes review effort and cost.\nThe use of Amazon Bedrock built-in evaluations provides standardized metrics specifically designed\nfor RAG systems, including retrieval precision, faithfulness to source documents, and hallucination\nrates. These evaluations integrate directly with Amazon Bedrock knowledge bases and models,\neliminating the need to build and maintain custom evaluation pipelines.\nOption A focuses on entity extraction confidence, which does not reliably detect hallucinations in\ngenerative text. Option B requires maintaining and scaling a separate fine-tuned evaluation model,\n\n\n\n\nincreasing complexity and cost. Option C is useful for regression testing but cannot detect\nhallucinations in real-world, open-ended clinical queries.\nTherefore, Option D provides the most effective and operationally efficient approach to maintaining\nclinical- grade accuracy while minimizing human review effort."
+        "answer": [
+            "E"
+        ],
+        "explanation": "Correct code block:\narticlesDf = articlesDf.select(explode(col('attributes')))\narticlesDf = articlesDf.groupby('col').count()\narticlesDf = articlesDf.sort('count',ascending=False).select('col')\nOutput of correct code block:\n+-------+\n| col|\n+-------+\n| summer|\n\n\n| winter|\n| blue|\n| cozy|\n| travel|\n| fresh|\n| red|\n|cooling|\n| green|\n+-------+\nStatic notebook | Dynamic notebook: See test 2"
     },
     {
-        "question": "A media company must use Amazon Bedrock to implement a robust governance process for\nAI-generated content. The company needs to manage hundreds of prompt templates. Multiple teams\nuse the templates across multiple AWS Regions to generate content. The solution must provide\nversion control with approval workflows that include notifications for pending reviews. The solution\nmust also provide detailed audit trails that document prompt activities and consistent prompt\nparameterization to enforce quality standards.\nWhich solution will meet these requirements?",
+        "question": "Which of the following code blocks concatenates rows of DataFrames transactionsDf and\ntransactionsNewDf, omitting any duplicates?",
         "options": [
-            "A.. Configure Amazon Bedrock Studio prompt templates. Use Amazon CloudWatch dashboards to\ndisplay prompt usage metrics. Store approval status in Amazon DynamoDB. Use AWS Lambda\nfunctions to enforce approvals.",
-            "B.. Use Amazon Bedrock Prompt Management to implement version control. Configure AWS\nCloudTrail for audit logging. Use AWS Identity and Access Management policies to control approval\npermissions.\nCreate parameterized prompt templates by specifying variables.",
-            "C.. Use AWS Step Functions to create an approval workflow. Store prompts in Amazon S3. Use tags to\nimplement version control. Use Amazon EventBridge to send notifications.",
-            "D.. Deploy Amazon SageMaker Canvas with prompt templates stored in Amazon S3. Use AWS\nCloudFormation for version control. Use AWS Config to enforce approval policies."
+            "A.. transactionsDf.concat(transactionsNewDf).unique()",
+            "B.. transactionsDf.union(transactionsNewDf).distinct()",
+            "C.. spark.union(transactionsDf, transactionsNewDf).distinct()",
+            "D.. transactionsDf.join(transactionsNewDf, how=\"union\").distinct()",
+            "E.. transactionsDf.union(transactionsNewDf).unique()"
+        ],
+        "answer": [
+            "B"
         ],
-        "answer": "B",
-        "explanation": "Option B is the correct solution because Amazon Bedrock Prompt Management is purpose-built to\nmanage, govern, and standardize prompt usage at scale across teams and Regions. It provides native\nversion control, allowing teams to track prompt changes over time and ensure that only approved\nversions are used in production workflows.\nPrompt Management supports approval workflows that align with enterprise governance\nrequirements.\nApproval permissions can be enforced through IAM policies, ensuring that only authorized reviewers\ncan approve or publish prompt versions. This removes the need for custom workflow engines or\nexternal storage systems, significantly reducing operational overhead.\nParameterized prompt templates enable consistent prompt structure while allowing controlled\nvariation through defined variables. This ensures consistent quality standards and reduces prompt\ndrift, which is critical when hundreds of prompts are reused across multiple applications and teams.\nAWS CloudTrail integrates natively with Amazon Bedrock to provide immutable audit logs for prompt\ncreation, updates, approvals, and usage. These detailed audit trails satisfy compliance requirements\nand allow security and governance teams to trace prompt activity across Regions and users.\nOption A requires significant custom development to coordinate approvals and maintain state.\nOption C relies on general-purpose workflow services and manual versioning mechanisms that are\nerror-prone and difficult to scale. Option D uses services not designed for large-scale GenAI prompt\ngovernance and introduces unnecessary complexity.\nTherefore, Option B best meets the requirements for scalable, auditable, and low-overhead\n\n\n\n\ngovernance of AI- generated content using Amazon Bedrock."
+        "explanation": "DataFrame.unique() and DataFrame.concat() do not exist and union() is not a method of the\nSparkSession. In addition, there is no union option for the join method in the DataFrame.join()\nstatement.\nMore info: pyspark.sql.DataFrame.union - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 2"
     },
     {
-        "question": "A healthcare company is using Amazon Bedrock to develop a real-time patient care AI\nassistant to respond to queries for separate departments that handle clinical inquiries, insurance\nverification, appointment scheduling, and insurance claims. The company wants to use a multi-agent\narchitecture.\nThe company must ensure that the AI assistant is scalable and can onboard new features for patients.\nThe AI assistant must be able to handle thousands of parallel patient interactions. The company must\nensure that patients receive appropriate domain-specific responses to queries.\nWhich solution will meet these requirements?",
+        "question": "The code block displayed below contains an error. The code block is intended to write\nDataFrame transactionsDf to disk as a parquet file in location /FileStore/transactions_split, using\ncolumn storeId as key for partitioning. Find the error.\nCode block:\ntransactionsDf.write.format(\"parquet\").partitionOn(\"storeId\").save(\"/FileStore/transactions_split\")A.",
         "options": [
-            "A.. Isolate data for each agent by using separate knowledge bases. Use IAM filtering to control access\nto each knowledge base. Deploy a supervisor agent to perform natural language intent classification\non patient inquiries. Configure the supervisor agent to route queries to specialized collaborator\nagents to respond to department-specific queries. Configure each specialized collaborator agent to\nuse Retrieval Augmented Generation (RAG) with the agent's department-specific knowledge base.",
-            "B.. Create a separate supervisor agent for each department. Configure individual collaborator agents\nto perform natural language intent classification for each specialty domain within each department.\nIntegrate each collaborator agent with department-specific knowledge bases only. Implement\nmanual handoff processes between the supervisor agents.",
-            "C.. Isolate data for each department in separate knowledge bases. Use IAM filtering to control access\nto each knowledge base. Deploy a single general-purpose agent. Configure multiple action groups\nwithin the general-purpose agent to perform specific department functions. Implement rule-based\nrouting logic within the general-purpose agent instructions.",
-            "D.. Implement multiple independent supervisor agents that run in parallel to respond to patient\ninquiries for each department. Configure multiple collaborator agents for each supervisor agent.\nIntegrate all agents with the same knowledge base. Use external routing logic to merge responses\nfrom multiple supervisor agents."
+            "A.. The format(\"parquet\") expression is inappropriate to use here, \"parquet\" should be passed as first\nargument to the save() operator and \"/FileStore/transactions_split\" as the second argument.",
+            "B.. Partitioning data by storeId is possible with the partitionBy expression, so partitionOn should be\nreplaced by partitionBy.",
+            "C.. Partitioning data by storeId is possible with the bucketBy expression, so partitionOn should be\nreplaced by bucketBy.",
+            "D.. partitionOn(\"storeId\") should be called before the write operation.",
+            "E.. The format(\"parquet\") expression should be removed and instead, the information should be\nadded to the write expression like so: write(\"parquet\")."
         ],
-        "answer": "A",
-        "explanation": "Option A is the most appropriate design because it provides scalable multi-agent orchestration, clear\ndomain separation, and strong governance with minimal operational complexity. A supervisor-agent\npattern is a standard AWS-recommended approach for multi-agent systems: one agent performs\nintent classification and routing, while specialized agents handle domain-specific tasks.\nIsolating data with separate knowledge bases ensures that each specialized collaborator agent\nretrieves only the information relevant to its department. This improves response accuracy, reduces\nhallucinations, and supports privacy controls because clinical content, claims content, and scheduling\ncontent can have different access policies. IAM-based filtering ensures that each agent has\npermission only to the knowledge base it is authorized to use.\nRouting patient inquiries through a supervisor agent supports high concurrency and extensibility.\nNew departments or features can be added by introducing new collaborator agents and knowledge\nbases without redesigning the entire system. Because routing is handled centrally, changes in\nclassification logic do not require updates across many independent supervisors.\nUsing RAG within each collaborator agent ensures that responses are grounded in departmentapproved information sources, which is critical in healthcare settings to reduce unsafe or incorrect\nguidance. This approach also improves performance because each retrieval scope is smaller and\n\n\n\n\nmore relevant, supporting thousands of parallel interactions.\nOption B introduces manual handoffs that do not scale. Option C relies on rule-based routing inside\none general agent, which becomes brittle and difficult to govern as complexity grows. Option D mixes\nall departments into a single knowledge base and merges responses externally, increasing risk of\nincorrect domain answers and operational overhead.\nTherefore, Option A best meets the scalability, correctness, and multi-agent onboarding\nrequirements."
+        "answer": [
+            "B"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.write.format(\"parquet\").partitionBy(\"storeId\").save(\"/FileStore/transactions_split\")\nMore info: partition by - Reading files which are written using PartitionBy or BucketBy in Spark - Stac\n\n\nk Overflow Static notebook | Dynamic notebook: See test 1"
     },
     {
-        "question": "A company has a recommendation system running on Amazon EC2 instances. The\napplications make API calls to Amazon Bedrock foundation models (FMs) to analyze customer\nbehavior and generate personalized product recommendations.\nThe system experiences intermittent issues where some recommendations do not match customer\npreferences.\nThe company needs an observability solution to monitor operational metrics and detect patterns of\nperformance degradation compared to established baselines. The solution must generate alerts with\ncorrelation data within 10 minutes when FM behavior deviates from expected patterns.\nWhich solution will meet these requirements?",
+        "question": "The code block displayed below contains an error. The code block should return a DataFrame\nin which column predErrorAdded contains the results of Python function add_2_if_geq_3 as applied\nto numeric and nullable column predError in DataFrame transactionsDf. Find the error.\nCode block:\n1.def add_2_if_geq_3(x):\n2. if x is None:\n3. return x\n4. elif x >= 3:\n5. return x+2\n6. return x\n7.\n8.add_2_if_geq_3_udf = udf(add_2_if_geq_3)\n9.\n10.transactionsDf.withColumnRenamed(\"predErrorAdded\", add_2_if_geq_3_udf(col(\"predError\")))",
         "options": [
-            "A.. Configure Amazon CloudWatch Container Insights. Set up alarms for latency thresholds. Add\ncustom token metrics using the CloudWatch embedded metric format.",
-            "B.. Implement AWS X-Ray. Enable CloudWatch Logs Insights. Set up AWS CloudTrail and create\ndashboards in Amazon QuickSight.",
-            "C.. Enable Amazon CloudWatch Application Insights. Create custom metrics for recommendation\nquality, token usage, and response latency using the CloudWatch embedded metric format with\ndimensions for request types and user segments. Configure CloudWatch anomaly detection on model\nmetrics. Use CloudWatch Logs Insights for pattern analysis.",
-            "D.. Use Amazon OpenSearch Service with the Observability plugin. Ingest metrics and logs through\nAmazon Kinesis and analyze behavior with custom queries."
+            "A.. The operator used to adding the column does not add column predErrorAdded to the DataFrame.",
+            "B.. Instead of col(\"predError\"), the actual DataFrame with the column needs to be passed, like so\ntransactionsDf.predError.",
+            "C.. The udf() method does not declare a return type.",
+            "D.. UDFs are only available through the SQL API, but not in the Python API as shown in the code block.",
+            "E.. The Python function is unable to handle null values, resulting in the code block crashing on\nexecution."
+        ],
+        "answer": [
+            "A"
         ],
-        "answer": "C",
-        "explanation": "Option C best satisfies the requirement for rapid, correlated detection of model-related performance\ndegradation. Amazon CloudWatch Application Insights provides automated observability across\napplication components running on Amazon EC2, identifying abnormal behavior patterns without\nrequiring extensive manual configuration.\nUsing custom metrics for recommendation quality, token usage, and response latency allows the\ncompany to directly monitor FM behavior, not just infrastructure health. Applying dimensions such as\nrequest type and user segment enables fine-grained correlation between performance issues and\nspecific customer interactions or workloads.\nCloudWatch anomaly detection is critical because it establishes dynamic baselines from historical\ndata and detects deviations automatically. This enables alerts to be generated within minutes when\nFM behavior changes unexpectedly, satisfying the 10-minute alerting requirement without static\nthresholds that can miss subtle degradations.\nCloudWatch Logs Insights complements metrics by enabling rapid analysis of log patterns, error\nmessages, or unusual request flows associated with degraded recommendations. Because all data\nremains within CloudWatch, correlation between metrics, logs, and alerts is straightforward and\noperationally efficient.\nOption A focuses on infrastructure metrics and lacks behavioral baselining. Option B provides tracing\n16\n\n\n\n\nbut not automated anomaly detection. Option D adds significant operational overhead and ingestion\ncomplexity for a use case already well supported by CloudWatch-native features.\nTherefore, Option C delivers the most effective, scalable, and low-overhead observability solution for\ndetecting FM-related performance deviations."
+        "explanation": "Correct code block:\ndef add_2_if_geq_3(x):\nif x is None:\nreturn x\nelif x >= 3:\nreturn x+2\nreturn x\nadd_2_if_geq_3_udf = udf(add_2_if_geq_3)\ntransactionsDf.withColumn(\"predErrorAdded\", add_2_if_geq_3_udf(col(\"predError\"))).show()\nInstead of withColumnRenamed, you should use the withColumn operator.\nThe udf() method does not declare a return type.\nIt is fine that the udf() method does not declare a return type, this is not a required argument.\nHowever, the default return type is StringType. This may not be the ideal return type for numeric,\nnullable data - but the code will run without specified return type nevertheless.\nThe Python function is unable to handle null values, resulting in the code block crashing on execution.\nThe Python function is able to handle null values, this is what the statement if x is None does.\nUDFs are only available through the SQL API, but not in the Python API as shown in the code block.\nNo, they are available through the Python API. The code in the code block that concerns UDFs is\ncorrect.\nInstead of col(\"predError\"), the actual DataFrame with the column needs to be passed, like so\n\n\ntransactionsDf.predError.\nYou may choose to use the transactionsDf.predError syntax, but the col(\"predError\") syntax is fine."
     },
     {
-        "question": "A company has deployed an AI assistant as a React application that uses AWS Amplify, an\nAWS AppSync GraphQL API, and Amazon Bedrock Knowledge Bases. The application uses the\nGraphQL API to call the Amazon Bedrock RetrieveAndGenerate API for knowledge base interactions.\nThe company configures an AWS Lambda resolver to use the RequestResponse invocation type.\nApplication users report frequent timeouts and slow response times. Users report these problems\nmore frequently for complex questions that require longer processing.\nThe company needs a solution to fix these performance issues and enhance the user experience.\nWhich solution will meet these requirements?",
+        "question": "Which of the following code blocks returns a copy of DataFrame transactionsDf that only\nincludes columns transactionId, storeId, productId and f?\nSample of DataFrame transactionsDf:\n1.+-------------+---------+-----+-------+---------+----+\n2.|transactionId|predError|value|storeId|productId| f|\n3.+-------------+---------+-----+-------+---------+----+\n4.| 1| 3| 4| 25| 1|null|\n5.| 2| 6| 7| 2| 2|null|\n6.| 3| 3| null| 25| 3|null|\n7.+-------------+---------+-----+-------+---------+----+",
         "options": [
-            "A.. Use AWS Amplify AI Kit to implement streaming responses from the GraphQL API and to optimize\nclient-side rendering.",
-            "B.. Increase the timeout value of the Lambda resolver. Implement retry logic with exponential\nbackoff.",
-            "C.. Update the application to send an API request to an Amazon SQS queue. Update the AWS AppSync\nresolver to poll and process the queue.",
-            "D.. Change the RetrieveAndGenerate API to the InvokeModelWithResponseStream API. Update the\napplication to use an Amazon API Gateway WebSocket API to support the streaming response."
+            "A.. transactionsDf.drop(col(\"value\"), col(\"predError\"))",
+            "B.. transactionsDf.drop(\"predError\", \"value\")",
+            "C.. transactionsDf.drop(value, predError)",
+            "D.. transactionsDf.drop([\"predError\", \"value\"])",
+            "E.. transactionsDf.drop([col(\"predError\"), col(\"value\")])"
         ],
-        "answer": "A",
-        "explanation": "Option A is the best solution because it directly addresses both observed problems: user-perceived\nlatency and resolver timeouts that occur more frequently for complex prompts. In the current design,\nan AWS AppSync Lambda resolver is configured with synchronous RequestResponse behavior. That\nmeans the client receives nothing until the entire retrieval and generation workflow completes. For\nlonger-running knowledge base queries, this increases the likelihood of hitting request time limits in\nthe synchronous path and creates a poor user experience because the UI appears stalled.\nUsing AWS Amplify AI Kit to implement streaming responses allows the application to return partial\noutput incrementally as the model produces tokens. This improves perceived responsiveness because\nusers can see the answer forming immediately, even when the full response takes longer. Streaming\nalso reduces the impact of variable model latency and retrieval time because the client no longer\nwaits for a single final payload before rendering content. From a troubleshooting perspective,\nstreaming makes it easier to distinguish \"slow generation\" from \"no response,\" and it provides faster\nfeedback during testing of complex questions.\nOption B is not sufficient because increasing timeouts and adding retries can worsen load and cost\nwhile still producing a stalled UI experience. Retries also risk duplicating requests to the knowledge\nbase and can amplify token usage. Option C introduces an awkward polling model for GraphQL\ninteractions and adds significant operational complexity, while not inherently improving interactivity.\nOption D adds major architectural changes by replacing the knowledge base RetrieveAndGenerate\ncall path with a different streaming invocation API and introducing a WebSocket layer, which is\nunnecessary when the goal is primarily to fix timeouts and improve UX within the existing AppSync\nand Amplify design.\nTherefore, streaming through Amplify AI Kit is the most effective and lowest-friction improvement.\nThought for 24s\n17"
+        "answer": [
+            "B"
+        ],
+        "explanation": "Output of correct code block:\n+-------------+-------+---------+----+\n|transactionId|storeId|productId| f|\n+-------------+-------+---------+----+\n| 1| 25| 1|null|\n| 2| 2| 2|null|\n| 3| 25| 3|null|\n+-------------+-------+---------+----+\nTo solve this question, you should be fmailiar with the drop() API. The order of column names does\nnot matter\n- in this question the order differs in some answers just to confuse you. Also, drop() does not take a\nlist. The *cols operator in the documentation means that all arguments passed to drop() are\ninterpreted as column names.\nMore info: pyspark.sql.DataFrame.drop - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 2"
     },
     {
-        "question": "A company is using Amazon Bedrock to design an application to help researchers apply for\ngrants. The application is based on an Amazon Nova Pro foundation model (FM). The application\ncontains four required inputs and must provide responses in a consistent text format. The company\nwants to receive a notification in Amazon Bedrock if a response contains bullying language. However,\nthe company does not want to block all flagged responses.\nThe company creates an Amazon Bedrock flow that takes an input prompt and sends it to the\nAmazon Nova Pro FM. The Amazon Nova Pro FM provides a response.\nWhich additional steps must the company take to meet these requirements? (Select TWO.)",
+        "question": "Which of the following code blocks returns a new DataFrame with only columns predError\nand values of every second row of DataFrame transactionsDf?\nEntire DataFrame transactionsDf:\n1.+-------------+---------+-----+-------+---------+----+\n2.|transactionId|predError|value|storeId|productId| f|\n3.+-------------+---------+-----+-------+---------+----+\n4.| 1| 3| 4| 25| 1|null|\n5.| 2| 6| 7| 2| 2|null|\n6.| 3| 3| null| 25| 3|null|\n7.| 4| null| null| 3| 2|null|\n\n\n8.| 5| null| null| null| 2|null|\n9.| 6| 3| 2| 25| 2|null|\n10.+-------------+---------+-----+-------+---------+----+",
         "options": [
-            "A.. Use Amazon Bedrock Prompt Management to specify the required inputs as variables. Select an\nAmazon Nova Pro FM. Specify the output format for the response. Add the prompt to the prompts\nnode of the flow.",
-            "B.. Create an Amazon Bedrock guardrail that applies the hate content filter. Set the filter response to\nblock.\nAdd the guardrail to the prompts node of the flow.",
-            "C.. Create an Amazon Bedrock prompt router. Specify an Amazon Nova Pro FM. Add the required\ninputs as variables to the input node of the flow. Add the prompt router to the prompts node. Add\nthe output format to the output node.",
-            "D.. Create an Amazon Bedrock guardrail that applies the insults content filter. Set the filter response\nto detect. Add the guardrail to the prompts node of the flow.",
-            "E.. Create an Amazon Bedrock application inference profile that specifies an Amazon Nova Pro\nFM.Specify the output format for the response in the description. Include a tag for each of the input\nvariables. Add the profile to the prompts node of the flow."
+            "A.. transactionsDf.filter(col(\"transactionId\").isin([3,4,6])).select([predError, value])",
+            "B.. transactionsDf.select(col(\"transactionId\").isin([3,4,6]), \"predError\", \"value\")",
+            "C.. transactionsDf.filter(\"transactionId\" % 2 == 0).select(\"predError\", \"value\")",
+            "D.. transactionsDf.filter(col(\"transactionId\") % 2 == 0).select(\"predError\", \"value\") (Correct)",
+            "E.. 1.transactionsDf.createOrReplaceTempView(\"transactionsDf\")\n2.spark.sql(\"FROM transactionsDf SELECT predError, value WHERE transactionId % 2 = 2\")",
+            "F.. transactionsDf.filter(col(transactionId).isin([3,4,6]))"
+        ],
+        "answer": [
+            "D"
         ],
-        "answer": "AD",
-        "explanation": "The correct answers are A and D because they collectively satisfy the requirements for structured\ninputs, consistent output formatting, and non-blocking detection of bullying language.\nOption A is required because Amazon Bedrock Prompt Management enables prompt templates with\nexplicit input variables and defined output formats. By defining the four required inputs as variables,\nthe company ensures that every invocation of the Amazon Nova Pro FM receives the correct\nstructured inputs. Specifying the output format ensures consistent responses, which is essential for a\ngrants application workflow. Adding the managed prompt to the prompts node of the flow allows\nBedrock Flows to invoke the model using this standardized configuration.\nOption D addresses the requirement to receive notifications when bullying language is detected\nwithout blocking responses. Amazon Bedrock guardrails support content filters with configurable\nactions. By applying the insults content filter and setting the response action to detect, the system\nflags responses containing bullying or insulting language while still allowing the response to be\nreturned. This enables monitoring, alerting, and auditing without interrupting application\nfunctionality.\nOption B is incorrect because setting the filter response to block contradicts the requirement not to\nblock all flagged responses. Option C introduces a prompt router, which is unnecessary because the\napplication uses a single Amazon Nova Pro FM. Option E incorrectly attempts to enforce input\nvariables and output formatting through an inference profile, which does not provide prompt-level\nvariable enforcement or formatting guarantees.\nTherefore, A and D together provide structured prompt management and non-blocking safety\n\n\n\n\ndetection with minimal operational complexity."
+        "explanation": "Output of correct code block:\n+---------+-----+\n|predError|value|\n+---------+-----+\n| 6| 7|\n| null| null|\n| 3| 2|\n+---------+-----+\nThis is not an easy question to solve. You need to know that % stands for the module operator in\nPython. % 2 will return true for every second row. The statement using spark.sql gets it almost right\n(the modulo operator exists in SQL as well), but % 2 = 2 will never yield true, since modulo 2 is either\n0 or 1.\nOther answers are wrong since they are missing quotes around the column names and/or use filter or\nselect incorrectly.\nIf you have any doubts about SparkSQL and answer options 3 and 4 in this question, check out the\nnotebook I created as a response to a related student question.\nStatic notebook | Dynamic notebook: See test 1"
     },
     {
-        "question": "A company needs a system to automatically generate study materials from multiple content\nsources. The content sources include document files (PDF files, PowerPoint presentations, and Word\ndocuments) and multimedia files (recorded videos). The system must process more than 10,000\ncontent sources daily with peak loads of 500 concurrent uploads. The system must also extract key\nconcepts from document files and multimedia files and create contextually accurate summaries. The\ngenerated study materials must support real- time collaboration with version control.\nWhich solution will meet these requirements?",
+        "question": "Which of the following describes the difference between client and cluster execution modes?",
         "options": [
-            "A.. Use Amazon Bedrock Data Automation (BDA) with AWS Lambda functions to orchestrate\ndocument file processing. Use Amazon Bedrock Knowledge Bases to process all multimedia. Store the\ncontent in Amazon DocumentDB with replication. Collaborate by using Amazon SNS topic\nsubscriptions. Track changes by using Amazon Bedrock Agents.",
-            "B.. Use Amazon Bedrock Data Automation (BDA) with foundation models (FMs) to process document\nfiles. Integrate BDA with Amazon Textract for PDF extraction and with Amazon Transcribe for\nmultimedia files. Store the processed content in Amazon S3 with versioning enabled. Store the\nmetadata in Amazon DynamoDB. Collaborate in real time by using AWS AppSync GraphQL\nsubscriptions and DynamoDB.",
-            "C.. Use Amazon Bedrock Data Automation (BDA) with Amazon SageMaker AI endpoints to host\ncontent extraction and summarization models. Use Amazon Bedrock Guardrails to extract content\nfrom all file types. Store document files in Amazon Neptune for time series analysis. Collaborate by\nusing Amazon Bedrock Chat for real-time messaging.",
-            "D.. Use Amazon Bedrock Data Automation (BDA) with AWS Lambda functions to process batches of\ncontent files. Fine-tune foundation models (FMs) in Amazon Bedrock to classify documents across all\ncontent types. Store the processed data in Amazon ElastiCache (Redis OSS) by using Cluster Mode\nwith sharding. Use Prompt management in Amazon Bedrock for version control."
+            "A.. In cluster mode, the driver runs on the worker nodes, while the client mode runs the driver on the\nclient machine.",
+            "B.. In cluster mode, the driver runs on the edge node, while the client mode runs the driver in a\nworker node.",
+            "C.. In cluster mode, each node will launch its own executor, while in client mode, executors will\nexclusively run on the client machine.",
+            "D.. In client mode, the cluster manager runs on the same host as the driver, while in cluster mode, the\ncluster manager runs on a separate node.",
+            "E.. In cluster mode, the driver runs on the master node, while in client mode, the driver runs on a\nvirtual machine in the cloud."
         ],
-        "answer": "B",
-        "explanation": "Option B best fulfills all functional, scalability, and collaboration requirements by combining purposebuilt AWS services with Amazon Bedrock capabilities. Amazon Bedrock Data Automation is designed\nto orchestrate large-scale, multimodal data processing pipelines and integrates naturally with\nfoundation models for summarization and concept extraction. Using BDA to process document files\nensures consistent preprocessing and model invocation at scale, which is essential for handling more\nthan 10,000 sources per day with high concurrency.\nIntegrating Amazon Textract for PDFs enables accurate extraction of structured and unstructured text\nfrom scanned and digital documents, while Amazon Transcribe is the appropriate service for\nconverting recorded videos into text for downstream semantic analysis. These services are optimized\nfor their respective media types and feed clean, normalized inputs into Bedrock foundation models,\nimproving the quality of contextual summaries.\nStoring processed content in Amazon S3 with versioning enabled directly addresses the requirement\nfor version control. S3 versioning provides immutable object history and rollback capabilities without\nadditional complexity. Metadata storage in Amazon DynamoDB supports high-throughput, lowlatency access patterns and scales automatically to handle peak upload concurrency.\nReal-time collaboration is achieved through AWS AppSync GraphQL subscriptions combined with\nDynamoDB. AppSync enables real-time updates to connected clients whenever study materials are\n\n\n\n\ncreated or modified, making it well suited for collaborative editing and live synchronization.\nDynamoDB streams integrate seamlessly with AppSync to propagate changes efficiently.\nThe other options misuse services or fail to meet key requirements. Amazon SNS does not support\ncollaborative state synchronization, Amazon DocumentDB is not optimized for versioned document\nstorage, Amazon Neptune is unsuitable for document-centric workloads, and Amazon ElastiCache is\nnot designed for durable storage or version control. Option B aligns with AWS best practices for\nscalable, multimodal generative AI systems built on Amazon Bedrock."
+        "answer": [
+            "A"
+        ],
+        "explanation": "In cluster mode, the driver runs on the master node, while in client mode, the driver runs on a virtual\nmachine in the cloud.\n\n\nThis is wrong, since execution modes do not specify whether workloads are run in the cloud or on-\npremise.\nIn cluster mode, each node will launch its own executor, while in client mode, executors will\nexclusively run on the client machine.\nWrong, since in both cases executors run on worker nodes.\nIn cluster mode, the driver runs on the edge node, while the client mode runs the driver in a worker\nnode.\nWrong - in cluster mode, the driver runs on a worker node. In client mode, the driver runs on the\nclient machine.\nIn client mode, the cluster manager runs on the same host as the driver, while in cluster mode, the\ncluster manager runs on a separate node.\nNo. In both modes, the cluster manager is typically on a separate node - not on the same host as the\ndriver. It only runs on the same host as the driver in local execution mode.\nMore info: Learning Spark, 2nd Edition, Chapter 1, and Spark: The Definitive Guide, Chapter 15. ()"
     },
     {
-        "question": "A company is designing a solution that uses foundation models (FMs) to support multiple AI\nworkloads.\nSome FMs must be invoked on demand and in real time. Other FMs require consistent highthroughput access for batch processing.\nThe solution must support hybrid deployment patterns and run workloads across cloud infrastructure\nand on- premises infrastructure to comply with data residency and compliance requirements.\nWhich combination of steps will meet these requirements? (Select TWO.)",
+        "question": "Which of the following code blocks returns all unique values across all values in columns\nvalue and productId in DataFrame transactionsDf in a one-column DataFrame?",
         "options": [
-            "A.. Use AWS Lambda to orchestrate low-latency FM inference by invoking FMs hosted on Amazon\nSageMaker AI asynchronous endpoints.",
-            "B.. Configure provisioned throughput in Amazon Bedrock to ensure consistent performance for highvolume workloads.",
-            "C.. Deploy FMs to Amazon SageMaker AI endpoints with support for edge deployment by using\nAmazon SageMaker Neo. Orchestrate the FMs by using AWS Lambda to support hybrid deployment.",
-            "D.. Use Amazon Bedrock with auto-scaling to handle unpredictable traffic surges.",
-            "E.. Use Amazon SageMaker JumpStart to host and invoke the FMs."
+            "A.. tranactionsDf.select('value').join(transactionsDf.select('productId'), col('value')==col('productId'),\n'outer')",
+            "B.. transactionsDf.select(col('value'), col('productId')).agg({'*': 'count'})",
+            "C.. transactionsDf.select('value', 'productId').distinct()",
+            "D.. transactionsDf.select('value').union(transactionsDf.select('productId')).distinct()",
+            "E.. transactionsDf.agg({'value': 'collect_set', 'productId': 'collect_set'})"
+        ],
+        "answer": [
+            "D"
         ],
-        "answer": "BC",
-        "explanation": "The correct combination is B and C because together they address both workload diversity and hybrid\ndeployment requirements with minimal custom engineering.\nOption B provides consistent, high-throughput access by configuring provisioned throughput in\nAmazon Bedrock. Provisioned throughput guarantees predictable capacity and performance, which is\nessential for batch processing workloads that require sustained inference rates. This eliminates cold\nstarts and throttling concerns that can occur with purely on-demand usage, making it well suited for\nhigh-volume enterprise workloads.\nOption C enables hybrid deployment across cloud and on-premises environments by deploying\nfoundation models to Amazon SageMaker AI endpoints and using Amazon SageMaker Neo for edge\nand on-premises optimization. SageMaker Neo compiles models for target hardware, allowing\ninference to run efficiently outside the AWS cloud while still using AWS-managed tooling.\nOrchestrating these deployments with AWS Lambda allows consistent invocation patterns across\nenvironments.\nOption A uses asynchronous endpoints, which are not suitable for real-time, low-latency inference.\nOption D addresses scaling but does not support on-premises or hybrid deployment. Option E\nsimplifies model onboarding but does not address hybrid execution or guaranteed throughput.\nTherefore, Options B and C together provide real-time and batch support, predictable performance,\nand true hybrid deployment while minimizing operational overhead."
+        "explanation": "transactionsDf.select('value').union(transactionsDf.select('productId')).distinct() Correct. This code\nblock uses a common pattern for finding the unique values across multiple columns: union and\ndistinct. In fact, it is so common that it is even mentioned in the Spark documentation for the union\ncommand (link below).\ntransactionsDf.select('value', 'productId').distinct()\nWrong. This code block returns unique rows, but not unique values.\ntransactionsDf.agg({'value': 'collect_set', 'productId': 'collect_set'}) Incorrect. This code block will\noutput a one-row, two-column DataFrame where each cell has an array of unique values in the\nrespective column (even omitting any nulls).\ntransactionsDf.select(col('value'), col('productId')).agg({'*': 'count'}) No. This command will count the\nnumber of rows, but will not return unique values.\ntransactionsDf.select('value').join(transactionsDf.select('productId'), col('value')==col('productId'),\n'outer') Wrong. This command will perform an outer join of the value and productId columns. As\nsuch, it will return a two-column DataFrame. If you picked this answer, it might be a good idea for\nyou to read up on the difference between union and join, a link is posted below.\nMore info: pyspark.sql.DataFrame.union - PySpark 3.1.2 documentation, sql - What is the differenc\ne between JOIN and UNION? - Stack Overflow Static notebook | Dynamic notebook: See test 3"
     },
     {
-        "question": "A company provides a service that helps users from around the world discover new\nrestaurants. The service has 50 million monthly active users. The company wants to implement a\n20\n\n\n\n\nsemantic search solution across a database that contains 20 million restaurants and 200 million\nreviews. The company currently stores the data in PostgreSQL.\nThe solution must support complex natural language queries and return results for at least 95% of\nqueries within 500 ms. The solution must maintain data freshness for restaurant details that update\nhourly. The solution must also scale cost-effectively during peak usage periods.\nWhich solution will meet these requirements with the LEAST development effort?",
+        "question": "Which of the following is a viable way to improve Spark's performance when dealing with\nlarge amounts of data, given that there is only a single application running on the cluster?",
         "options": [
-            "A.. Migrate the restaurant data to Amazon OpenSearch Service. Implement keyword-based search\nrules that use custom analyzers and relevance tuning to find restaurants based on attributes such as\ncuisine type, features, and location. Create Amazon API Gateway HTTP API endpoints to transform\nuser queries into structured search parameters.",
-            "B.. Migrate the restaurant data to Amazon OpenSearch Service. Use a foundation model (FM) in\nAmazon Bedrock to generate vector embeddings from restaurant descriptions, reviews, and menu\nitems. When users submit natural language queries, convert the queries to embeddings by using the\nsame FM.\nPerform k-nearest neighbors (k-NN) searches to find semantically similar results.",
-            "C.. Keep the restaurant data in PostgreSQL and implement a pgvector extension. Use a foundation\nmodel (FM) in Amazon Bedrock to generate vector embeddings from restaurant data. Store the\nvector embeddings directly in PostgreSQL. Create an AWS Lambda function to convert natural\nlanguage queries to vector representations by using the same FM. Configure the Lambda function to\nperform similarity searches within the database.",
-            "D.. Migrate restaurant data to an Amazon Bedrock knowledge base by using a custom ingestion\npipeline.Configure the knowledge base to automatically generate embeddings from restaurant\ninformation. Use the Amazon Bedrock Retrieve API with built-in vector search capabilities to query\nthe knowledge base directly by using natural language input."
+            "A.. Increase values for the properties spark.default.parallelism and spark.sql.shuffle.partitions",
+            "B.. Decrease values for the properties spark.default.parallelism and spark.sql.partitions",
+            "C.. Increase values for the properties spark.sql.parallelism and spark.sql.partitions",
+            "D.. Increase values for the properties spark.sql.parallelism and spark.sql.shuffle.partitions",
+            "E.. Increase values for the properties spark.dynamicAllocation.maxExecutors,\nspark.default.parallelism, and spark.sql.shuffle.partitions"
         ],
-        "answer": "B",
-        "explanation": "Option B best satisfies the requirements while minimizing development effort by combining managed\nsemantic search capabilities with fully managed foundation models. AWS Generative AI guidance\ndescribes semantic search as a vector-based retrieval pattern where both documents and user\nqueries are embedded into a shared vector space. Similarity search (such as k-nearest neighbors)\nthen retrieves results based on meaning rather than exact keywords.\nAmazon OpenSearch Service natively supports vector indexing and k-NN search at scale. This makes it\nwell suited for large datasets such as 20 million restaurants and 200 million reviews while still\nachieving sub- second latency for the majority of queries. Because OpenSearch is a distributed,\nmanaged service, it automatically scales during peak traffic periods and provides cost-effective\nperformance compared with building and tuning custom vector search pipelines on relational\ndatabases.\nUsing Amazon Bedrock to generate embeddings significantly reduces development complexity. AWS\nmanages the foundation models, eliminates the need for custom model hosting, and ensures\nconsistency by using the same FM for both document embeddings and query embeddings. This aligns\ndirectly with AWS- recommended semantic search architectures and removes the need for model\nlifecycle management.\nHourly updates to restaurant data can be handled efficiently through incremental re-indexing in\nOpenSearch without disrupting query performance. This approach cleanly separates transactional\ndata storage from search workloads, which is a best practice in AWS architectures.\n\n\n\n\nOption A does not meet the semantic search requirement because keyword-based search cannot\nreliably interpret complex natural language intent. Option C introduces scalability and performance\nrisks by running large-scale vector similarity searches inside PostgreSQL, which increases operational\ncomplexity. Option D adds unnecessary ingestion and abstraction layers intended for retrievalaugmented generation, not high- throughput semantic search.\nTherefore, Option B provides the optimal balance of performance, scalability, data freshness, and\nminimal development effort using AWS Generative AI services."
+        "answer": [
+            "A"
+        ],
+        "explanation": "Decrease values for the properties spark.default.parallelism and spark.sql.partitions No, these values\nneed to be increased.\nIncrease values for the properties spark.sql.parallelism and spark.sql.partitions Wrong, there is no\nproperty spark.sql.parallelism.\nIncrease values for the properties spark.sql.parallelism and spark.sql.shuffle.partitions See above.\nIncrease values for the properties spark.dynamicAllocation.maxExecutors, spark.default.parallelism,\nand spark.sql.shuffle.partitions The property spark.dynamicAllocation.maxExecutors is only in effect\nif dynamic allocation is enabled, using the spark.dynamicAllocation.enabled property. It is disabled by\ndefault. Dynamic allocation can be useful when to run multiple applications on the same cluster in\nparallel. However, in this case there is only a single application running on the cluster, so enabling\ndynamic allocation would not yield a performance benefit.\nMore info: Practical Spark Tips For Data Scientists | Experfy.com and Basics of Apache Spark\nConfiguration Settings | by Halil Ertan | Towards Data Science (https://bit.ly/3gA0A6w ,\nhttps://bit.ly/2QxhNTr)"
     },
     {
-        "question": "A company is building a generative AI (GenAI) application that uses Amazon Bedrock APIs to\nprocess complex customer inquiries. During peak usage periods, the application experiences\nintermittent API timeouts that cause issues such as broken response chunks and delayed data\ndelivery. The application struggles to ensure that prompts remain within token limits when handling\ncomplex customer inquiries of varying lengths.\nUsers have reported truncated inputs and incomplete responses. The company has also observed\nfoundation model (FM) invocation failures.\nThe company needs a retry strategy that automatically handles transient service errors and prevents\noverwhelming Amazon Bedrock during peak usage periods. The strategy must also adapt to changing\nservice availability and support response streaming and token-aware request handling.\nWhich solution will meet these requirements?",
+        "question": "Which of the following code blocks performs an inner join between DataFrame itemsDf and\nDataFrame transactionsDf, using columns itemId and transactionId as join keys, respectively?",
         "options": [
-            "A.. Implement a standard retry strategy that uses a 1-second fixed delay between attempts and a 3retry maximum for all errors. Handle streaming response timeouts by restarting streams. Cap token\nusage for each session.",
-            "B.. Implement an adaptive retry strategy that uses exponential backoff with jitter and a circuit\nbreaker pattern that temporarily disables retries when error rates exceed a predefined threshold.\nImplement a streaming response handler that monitors for chunk delivery timeouts. Configure the\nhandler to buffer successfully received chunks and intelligently resume streaming from the last\nreceived chunk when connections are re-established.",
-            "C.. Use the AWS SDK to configure a retry strategy in standard mode. Wrap Amazon Bedrock API calls\nin try-catch blocks that handle timeout exceptions. Return cached completions for failed streaming\nrequests. Enforce a global token limit for all users. Add jitter-based retry logic and lightweight token\ntrimming for each request. Resume broken streams by requesting only missing chunks from the point\nof failure. Maintain a small in-memory buffer of the most recent chunks.",
-            "D.. Set Amazon Bedrock client request timeouts to 30 seconds. Implement client-side load\nshedding.Buffer partial results and stop new requests when application performance degrades. Set\nstatic token usage caps for all requests. Configure exponential backoff retries, dynamic chunk sizing,\nand context- aware token limits."
+            "A.. itemsDf.join(transactionsDf, \"inner\", itemsDf.itemId == transactionsDf.transactionId)",
+            "B.. itemsDf.join(transactionsDf, itemId == transactionId)",
+            "C.. itemsDf.join(transactionsDf, itemsDf.itemId == transactionsDf.transactionId, \"inner\")",
+            "D.. itemsDf.join(transactionsDf, \"itemsDf.itemId == transactionsDf.transactionId\", \"inner\")",
+            "E.. itemsDf.join(transactionsDf, col(itemsDf.itemId) == col(transactionsDf.transactionId))"
+        ],
+        "answer": [
+            "C"
         ],
-        "answer": "B",
-        "explanation": "Option B best meets all requirements because it combines AWS-recommended resiliency patterns for\ntransient failures with streaming-aware handling and adaptive protection against cascading retries\nduring peak load. When timeouts and throttling occur, naive retries can amplify traffic and worsen\noutages. Exponential backoff with jitter is the standard AWS best practice because it spreads retry\nattempts over time, reduces synchronized retry storms, and lowers the probability of repeatedly\ncolliding with service limits.\nThe requirement also states the strategy must \"adapt to changing service availability\" and \"prevent\n\n\n\n\noverwhelming Amazon Bedrock.\" A circuit breaker pattern directly addresses this by temporarily\nstopping or reducing retries when failure rates exceed a threshold, allowing the system to degrade\ngracefully instead of continually hammering the service. This is a key mechanism to prevent\ncascading failures during throttling events.\nBecause the application uses response streaming and experiences broken chunks, the retry strategy\nmust be streaming-aware. A streaming response handler that detects chunk delivery timeouts and\nbuffers already received chunks prevents the user from losing progress when a connection drops.\nResuming from the last successfully received chunk minimizes redundant generation and reduces\nadditional load on the model compared with restarting the entire stream. This supports better user\nexperience and better service efficiency during intermittent failures.\nToken-aware request handling is supported in this architecture because the application can apply\ntoken budgeting before invoking the model (for example, trimming or summarizing excessive\ncontext) while still preserving streaming output behavior. Option B provides the correct backbone for\nthis by focusing on adaptive control and robust streaming recovery.\nOption A is too simplistic and risks retry storms. Option C combines conflicting elements (global token\nlimit, cached completions for streaming) and includes impractical \"request only missing chunks\"\nbehavior that is not a reliable property of streamed generative output. Option D includes useful ideas\n(load shedding) but relies on static caps and does not provide as strong adaptive retry control as\ncircuit breaking.\nTherefore, Option B is the most correct and operationally safe strategy for peak-load Bedrock\nstreaming workloads."
+        "explanation": "More info: pyspark.sql.DataFrame.join - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 2"
     },
     {
-        "question": "A specialty coffee company has a mobile app that generates personalized coffee roast\nprofiles by using Amazon Bedrock with a three-stage prompt chain. The prompt chain converts user\ninputs into structured metadata, retrieves relevant logs for coffee roasts, and generates a\npersonalized roast recommendation for each customer.\nUsers in multiple AWS Regions report inconsistent roast recommendations for identical inputs, slow\ninference during the retrieval step, and unsafe recommendations such as brewing at excessively high\ntemperatures. The company must improve the stability of outputs for repeated inputs. The company\nmust also improve app performance and the safety of the app's outputs. The updated solution must\nensure 99.5% output consistency for identical inputs and achieve inference latency of less than 1\nsecond. The solution must also block unsafe or hallucinated recommendations by using validated\nsafety controls.\nWhich solution will meet these requirements?",
+        "question": "The code block displayed below contains an error. The code block should save DataFrame\ntransactionsDf at path path as a parquet file, appending to any existing parquet file. Find the error.\nCode block:",
         "options": [
-            "A.. Deploy Amazon Bedrock with provisioned throughput to stabilize inference latency. Apply Amazon\nBedrock guardrails that have semantic denial rules to block unsafe outputs. Use Amazon Bedrock\nPrompt Management to manage prompts by using approval workflows.",
-            "B.. Use Amazon Bedrock Agents to manage chaining. Log model inputs and outputs to Amazon\nCloudWatch Logs. Use logs from Amazon CloudWatch to perform A/B testing for prompt versions.",
-            "C.. Cache prompt results in Amazon ElastiCache. Use AWS Lambda functions to pre-process metadata\nand to trace end-to-end latency. Use AWS X-Ray to identify and remediate performance bottlenecks.",
-            "D.. Use Amazon Kendra to improve roast log retrieval accuracy. Store normalized prompt metadata\nwithin Amazon DynamoDB. Use AWS Step Functions to orchestrate multi-step prompts."
+            "A.. transactionsDf.format(\"parquet\").option(\"mode\", \"append\").save(path)",
+            "B.. The code block is missing a reference to the DataFrameWriter.",
+            "C.. save() is evaluated lazily and needs to be followed by an action.",
+            "D.. The mode option should be omitted so that the command uses the default mode.",
+            "E.. The code block is missing a bucketBy command that takes care of partitions.",
+            "F.. Given that the DataFrame should be saved as parquet file, path is being passed to the wrong\nmethod."
         ],
-        "answer": "A",
-        "explanation": "Option A best meets the combined requirements of low latency, stability, and validated safety\n23\n\n\n\n\ncontrols by using purpose-built Amazon Bedrock features designed for production GenAI operations.\nThe company's latency target of under 1 second and its observation of degradation during spikes\nstrongly indicate capacity and throughput variability. Provisioned throughput for Amazon Bedrock is\nintended to deliver more predictable performance by reserving inference capacity for a chosen\nmodel, reducing throttling risk and stabilizing response times under load. This directly improves\noperational consistency across Regions where on-demand capacity can vary.\nThe requirement to \"block unsafe or hallucinated recommendations\" is most directly addressed by\nAmazon Bedrock Guardrails. Guardrails provide managed safety enforcement, including sensitive\ninformation controls and configurable content policies. Using semantic denial rules enables the\napplication to prevent unsafe guidance such as dangerous brewing temperatures or other harmful\nprocedural instructions, enforcing safety at the model boundary rather than relying on downstream\nfiltering.\nThe remaining requirement is \"99.5% output consistency for identical inputs.\" While generative\nmodels can be probabilistic, production systems achieve practical consistency by controlling prompt\nversions, inputs, and policy behavior. Amazon Bedrock Prompt Management supports controlled\nprompt lifecycle practices, including versioning and approval workflows, which reduce unintended\ndrift across deployments and Regions. By ensuring the same approved prompt templates and\nparameters are used consistently, the company can materially improve repeatability for the same\nstructured inputs and retrieval context, which is essential in multi-stage prompt chains.\nThe other options are incomplete. B improves experimentation and observability but does not\nenforce safety controls or stabilize latency. C can improve performance, but it does not provide\nvalidated safety enforcement at inference time. D can help retrieval relevance, but it does not\naddress unsafe outputs or inference stability.\nTherefore, A is the only option that simultaneously targets predictable latency, governance of prompt\nbehavior, and strong safety controls within Amazon Bedrock."
+        "answer": [
+            "B"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.write.format(\"parquet\").option(\"mode\", \"append\").save(path)"
     },
     {
-        "question": "A company is building a multicloud generative AI (GenAI)-powered secret resolution\napplication that uses Amazon Bedrock and Agent Squad. The application resolves secrets from\nmultiple sources, including key stores and hardware security modules (HSMs). The application uses\nAWS Lambda functions to retrieve secrets from the sources. The application uses AWS AppConfig to\nimplement dynamic feature gating. The application supports secret chaining and detects secret drift.\nThe application handles short-lived and expiring secrets. The application also supports prompt flows\nfor templated instructions. The application uses AWS Step Functions to orchestrate agents to resolve\nthe secrets and to manage secret validation and drift detection.\nThe company finds multiple issues during application testing. The application does not refresh\nexpired secrets in time for agents to use. The application sends alerts for secret drift, but agents still\nuse stale data. Prompt flows within the application reuse outdated templates, which cause cascading\nfailures. The company must resolve the performance issues.\nWhich solution will meet this requirement?",
+        "question": "In which order should the code blocks shown below be run in order to create a table of all\nvalues in column attributes next to the respective values in column supplier in DataFrame itemsDf?\n1. itemsDf.createOrReplaceView(\"itemsDf\")\n2. spark.sql(\"FROM itemsDf SELECT 'supplier', explode('Attributes')\")\n3. spark.sql(\"FROM itemsDf SELECT supplier, explode(attributes)\")\n4. itemsDf.createOrReplaceTempView(\"itemsDf\")",
         "options": [
-            "A.. Use Step Functions Map states to run agent workflows in parallel. Pass updated secret metadata\nthrough Lambda function outputs. Use AWS AppConfig to version all prompt flows to gate and roll\nback faulty templates.",
-            "B.. Use Amazon Bedrock Agents only. Configure Amazon Bedrock guardrails to restrict prompt\nvariation.\nUse an inline JSON schema for a single agent's workflow definition to chain tool calls.",
-            "C.. Use a centralized Amazon EventBridge pipeline to invoke each agent. Store intermediate prompts\n24\n\n\n\n\nin Amazon DynamoDB. Resolve agent ordering by using TTL-based backoff and retries.",
-            "D.. Use Amazon EventBridge Pipes to invoke resolvers based on Amazon CloudWatch log patterns.\nStore response metadata in DynamoDB with TTL and versioned writes. Use Amazon Q Developer to\ndynamically generate fallback prompts."
+            "A.. 4, 3",
+            "B.. 1, 3",
+            "C.. 2",
+            "D.. 4, 2",
+            "E.. 1, 2"
+        ],
+        "answer": [
+            "A"
         ],
-        "answer": "A",
-        "explanation": "Option A is the correct solution because it directly addresses all identified failure modes while\npreserving the existing Step Functions-based orchestration architecture with minimal redesign.\nUsing Step Functions Map states enables parallel execution of secret resolution workflows, which\nimproves refresh latency for short-lived and expiring secrets. This ensures that secrets are refreshed\nin time before downstream agents require them. Passing updated secret metadata through Lambda\noutputs guarantees that subsequent steps always consume the latest resolved values, preventing\nagents from using stale data even after drift alerts are generated.\nVersioning prompt flows in AWS AppConfig is critical to resolving cascading failures caused by\noutdated templates. AppConfig natively supports version control, validation, staged rollout, and\nrollback of configuration artifacts. By gating prompt flows through AppConfig, the company can\nimmediately roll back faulty templates and prevent agents from reusing outdated instructions.\nThis solution maintains clear separation of concerns: Step Functions handle orchestration and\nparallelism, Lambda handles secret retrieval and metadata propagation, and AppConfig governs\nprompt lifecycle management. No additional event pipelines or custom retry coordination layers are\nrequired.\nOption B oversimplifies the architecture and does not address secret lifecycle or drift. Option C\nintroduces event-driven ordering complexity without solving prompt versioning. Option D introduces\nunnecessary tooling and dynamic prompt generation risk.\nTherefore, Option A best resolves performance, correctness, and stability issues while minimizing\noperational overhead."
+        "explanation": "Static notebook | Dynamic notebook: See test 1"
     },
     {
-        "question": "A company uses Amazon Bedrock to generate technical content for customers. The company\nhas recently experienced a surge in hallucinated outputs when the company's model generates\nsummaries of long technical documents. The model outputs include inaccurate or fabricated details.\nThe company's current solution uses a large foundation model (FM) with a basic one-shot prompt\nthat includes the full document in a single input.\nThe company needs a solution that will reduce hallucinations and meet factual accuracy goals. The\nsolution must process more than 1,000 documents each hour and deliver summaries within 3\nseconds for each document.\nWhich combination of solutions will meet these requirements? (Select TWO.)",
+        "question": "In which order should the code blocks shown below be run in order to create a DataFrame\nthat shows the mean of column predError of DataFrame transactionsDf per column storeId and\nproductId, where productId should be either 2 or 3 and the returned DataFrame should be sorted in\nascending order by column storeId, leaving out any nulls in that column?\nDataFrame transactionsDf:\n1.+-------------+---------+-----+-------+---------+----+\n2.|transactionId|predError|value|storeId|productId| f|\n3.+-------------+---------+-----+-------+---------+----+\n4.| 1| 3| 4| 25| 1|null|\n5.| 2| 6| 7| 2| 2|null|\n6.| 3| 3| null| 25| 3|null|\n7.| 4| null| null| 3| 2|null|\n8.| 5| null| null| null| 2|null|\n9.| 6| 3| 2| 25| 2|null|\n10.+-------------+---------+-----+-------+---------+----+\n1. .mean(\"predError\")\n2. .groupBy(\"storeId\")\n3. .orderBy(\"storeId\")\n4. transactionsDf.filter(transactionsDf.storeId.isNotNull())\n5. .pivot(\"productId\", [2, 3])",
         "options": [
-            "A.. Implement zero-shot chain-of-thought (CoT) instructions that require step-by-step reasoning with\nexplicit fact verification before the model generates each summary.",
-            "B.. Use Retrieval Augmented Generation (RAG) with an Amazon Bedrock knowledge base. Apply\nsemantic chunking and tuned embeddings to ground summaries in source content.",
-            "C.. Configure Amazon Bedrock guardrails to block any generated output that matches patterns that\nare associated with hallucinated content.",
-            "D.. Increase the temperature parameter in Amazon Bedrock.",
-            "E.. Prompt the Amazon Bedrock model to summarize each full document in one pass.\n\n25"
+            "A.. 4, 5, 2, 3, 1",
+            "B.. 4, 2, 1",
+            "C.. 4, 1, 5, 2, 3",
+            "D.. 4, 2, 5, 1, 3",
+            "E.. 4, 3, 2, 5, 1"
         ],
-        "answer": "BC",
-        "explanation": "The correct answers are B and C because they directly address hallucination reduction while\nmaintaining high throughput and low latency.\nOption B reduces hallucinations at their source by grounding model outputs in verified content\nthrough Retrieval Augmented Generation (RAG). Using an Amazon Bedrock knowledge base with\nsemantic chunking ensures that long technical documents are broken into meaningfully coherent\nsections. This allows the model to retrieve only the most relevant chunks, rather than processing an\nentire document in one pass, which significantly improves factual accuracy and reduces cognitive\noverload on the model. This approach scales efficiently and supports processing more than 1,000\ndocuments per hour.\nOption C adds a defense-in-depth safety layer by using Amazon Bedrock guardrails to detect and\nblock hallucination-like output patterns. Guardrails operate at inference time with minimal\nperformance overhead, making them suitable for low-latency requirements. While guardrails do not\neliminate hallucinations entirely, they effectively prevent unsafe or clearly fabricated outputs from\nreaching users.\nOption A increases latency and cost due to explicit reasoning steps and does not scale well for highthroughput workloads. Option D increases randomness and worsens hallucinations. Option E repeats\nthe existing flawed approach.\nTherefore, Options B and C together provide scalable grounding and runtime protection that meet\naccuracy, performance, and throughput requirements."
+        "answer": [
+            "D"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.filter(transactionsDf.storeId.isNotNull()).groupBy(\"storeId\").pivot(\"productId\", [2,\n3]).mean(\"predError\").orderBy(\"storeId\")\nOutput of correct code block:\n+-------+----+----+\n|storeId| 2| 3|\n+-------+----+----+\n| 2| 6.0|null|\n| 3|null|null|\n| 25| 3.0| 3.0|\n+-------+----+----+\nThis question is quite convoluted and requires you to think hard about the correct order of\noperations.\nThe pivot method also makes an appearance - a method that you may not know all that much about\n(yet).\nAt the first position in all answers is code block 4, so the question is essentially just about the\nordering of the remaining 4 code blocks.\nThe question states that the returned DataFrame should be sorted by column storeId. So, it should\nmake sense to have code block 3 which includes the orderBy operator at the very end of the code\nblock. This leaves you with only two answer options.\nNow, it is useful to know more about the context of pivot in PySpark. A common pattern is groupBy,\npivot, and then another aggregating function, like mean. In the documentation linked below you can\nsee that pivot is a method of pyspark.sql.GroupedData - meaning that before pivoting, you have to\nuse groupBy. The only answer option matching this requirement is the one in which code block 2\n(which includes groupBy) is stated before code block 5 (which includes pivot).\nMore info: pyspark.sql.GroupedData.pivot - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 3"
     },
     {
-        "question": "A company is developing a generative AI (GenAI) application by using Amazon Bedrock. The\napplication will analyze patterns and relationships in the company's data. The application will process\nmillions of new data points daily across AWS Regions in Europe, North America, and Asia before\nstoring the data in Amazon S3.\nThe application must comply with local data protection and storage regulations. Data residency and\nprocessing must occur within the same continent. The application must also maintain audit trails of\nthe application's decision-making processes and provide data classification capabilities.\nWhich solution will meet these requirements?",
+        "question": "The code block displayed below contains an error. The code block should arrange the rows of\nDataFrame transactionsDf using information from two columns in an ordered fashion, arranging first\nby column value, showing smaller numbers at the top and greater numbers at the bottom, and then\nby column predError, for which all values should be arranged in the inverse way of the order of items\nin column value. Find the error.\nCode block:\ntransactionsDf.orderBy('value', asc_nulls_first(col('predError')))",
         "options": [
-            "A.. Deploy the application in each Region with local IAM policies. Use Amazon Bedrock cross-Region\ninference to distribute the workload. Use Amazon CloudWatch to log AI decision-making processes.\nManually track compliance certifications across Regions.",
-            "B.. Use SCPs with AWS Organizations to manage location-specific permissions. Use AWS CloudTrail\nimmutable logs to audit decision-making processes. Import a custom model into Amazon Bedrock\nand deploy the model to each Region.",
-            "C.. Use Amazon S3 Object Lock with Region-specific S3 bucket policies. Pre-process the data points\nwithin the Region based on geographic origin before sending the data points to Amazon Bedrock. Use\nAmazon Macie to classify the data. Use AWS CloudTrail immutable logs to audit the decision-making\nprocesses.",
-            "D.. Create separate AWS accounts for each Region with individual compliance frameworks. Use\nAmazon SageMaker AI with custom monitoring. Create manual compliance reports for each\nregulatory jurisdiction."
+            "A.. Two orderBy statements with calls to the individual columns should be chained, instead of having\nboth columns in one orderBy statement.",
+            "B.. Column value should be wrapped by the col() operator.",
+            "C.. Column predError should be sorted in a descending way, putting nulls last.",
+            "D.. Column predError should be sorted by desc_nulls_first() instead.",
+            "E.. Instead of orderBy, sort should be used."
+        ],
+        "answer": [
+            "C"
         ],
-        "answer": "C",
-        "explanation": "This scenario requires strict data residency, regional processing, classification, and auditable decision\n\n\n\n\ntrails, which Option C addresses using AWS-native governance services.\nRegion-specific Amazon S3 buckets enforce geographic data boundaries. Amazon S3 Object Lock\nensures immutability of stored data and logs, supporting regulatory retention and non-repudiation\nrequirements. Pre- processing data within the same Region before invoking Amazon Bedrock ensures\nthat inference and data handling do not cross continental boundaries.\nAmazon Macie provides managed, automated data classification for sensitive data types such as PII\nand financial records, fulfilling the classification requirement without custom tooling.\nAWS CloudTrail immutable logs provide comprehensive audit trails of all API calls, model invocations,\nand data access events, ensuring traceability of AI decision-making processes.\nOption A violates residency rules through cross-Region inference. Option B does not provide data\nclassification. Option D introduces high operational overhead and relies on manual compliance\nreporting.\nTherefore, Option C is the most compliant, scalable, and operationally efficient solution for regionally\ngoverned GenAI workloads."
+        "explanation": "Correct code block:\ntransactionsDf.orderBy('value', desc_nulls_last('predError'))\nColumn predError should be sorted in a descending way, putting nulls last.\nCorrect! By default, Spark sorts ascending, putting nulls first. So, the inverse sort of the default sort is\nindeed desc_nulls_last.\nInstead of orderBy, sort should be used.\nNo. DataFrame.sort() orders data per partition, it does not guarantee a global order. This is why\norderBy is the more appropriate operator here.\nColumn value should be wrapped by the col() operator.\nIncorrect. DataFrame.sort() accepts both string and Column objects.\nColumn predError should be sorted by desc_nulls_first() instead.\nWrong. Since Spark's default sort order matches asc_nulls_first(), nulls would have to come last when\ninverted.\nTwo orderBy statements with calls to the individual columns should be chained, instead of having\nboth columns in one orderBy statement.\nNo, this would just sort the DataFrame by the very last column, but would not take information from\nboth columns into account, as noted in the question.\nMore info: pyspark.sql.DataFrame.orderBy - PySpark 3.1.2 documentation,\npyspark.sql.functions.desc_nulls_last - PySpark 3.1.2 documentation, sort() vs orderBy() in Spark |\nTowards Data Science Static notebook | Dynamic notebook: See test 3"
     },
     {
-        "question": "A book publishing company wants to build a book recommendation system that uses an AI\nassistant. The AI assistant will use ML to generate a list of recommended books from the company's\nbook catalog. The system must suggest books based on conversations with customers.\nThe company stores the text of the books, customers' and editors' reviews of the books, and\nextracted book metadata in Amazon S3. The system must support low-latency responses and scale\nefficiently to handle more than 10,000 concurrent users.\nWhich solution will meet these requirements?",
+        "question": "Which of the following code blocks creates a new 6-column DataFrame by appending the\nrows of the\n6-column DataFrame yesterdayTransactionsDf to the rows of the 6-column DataFrame\ntodayTransactionsDf, ignoring that both DataFrames have different column names?",
         "options": [
-            "A.. Use Amazon Bedrock Knowledge Bases to generate embeddings. Store the embeddings as a vector\nstore in Amazon OpenSearch Service. Create an AWS Lambda function that queries the knowledge\nbase. Configure Amazon API Gateway to invoke the Lambda function when handling user requests.",
-            "B.. Use Amazon Bedrock Knowledge Bases to generate embeddings. Store the embeddings as a vector\nstore in Amazon DynamoDB. Create an AWS Lambda function that queries the knowledge base.\nConfigure Amazon API Gateway to invoke the Lambda function when handling user requests.",
-            "C.. Use Amazon SageMaker AI to deploy a pre-trained model to build a personalized recommendation\nengine for books. Deploy the model as a SageMaker AI endpoint. Invoke the model endpoint by using\nAmazon API Gateway.",
-            "D.. Create an Amazon Kendra GenAI Enterprise Edition index that uses the S3 connector to index the\nbook catalog data stored in Amazon S3. Configure built-in FAQ in the Kendra index. Develop an AWS\nLambda function that queries the Kendra index based on user conversations. Deploy Amazon API\nGateway to expose this functionality and invoke the Lambda function."
+            "A.. union(todayTransactionsDf, yesterdayTransactionsDf)",
+            "B.. todayTransactionsDf.unionByName(yesterdayTransactionsDf, allowMissingColumns=True)",
+            "C.. todayTransactionsDf.unionByName(yesterdayTransactionsDf)",
+            "D.. todayTransactionsDf.concat(yesterdayTransactionsDf)",
+            "E.. todayTransactionsDf.union(yesterdayTransactionsDf)"
         ],
-        "answer": "A",
-        "explanation": "Option A best meets the requirements because it directly implements a Retrieval Augmented\nGeneration pattern for conversational recommendations using managed Amazon Bedrock\ncapabilities and a scalable vector store. The company's source data already resides in Amazon S3,\nwhich aligns naturally with Amazon Bedrock Knowledge Bases ingestion workflows. A knowledge\nbase can ingest book text, reviews, and metadata, generate embeddings using a supported\nembedding model, and persist those vectors in a purpose- built vector backend such as Amazon\nOpenSearch Service. This enables semantic retrieval that is well suited to conversation-driven intent,\nwhere user prompts are often descriptive and do not map cleanly to keyword filters.\n\n\n\n\nThe requirement to suggest books based on conversations implies the system must interpret natural\nlanguage context and retrieve relevant passages, reviews, and metadata to ground the\nrecommendation. Knowledge Bases provide managed orchestration for embedding creation and\nretrieval, which reduces development effort compared to building custom embedding pipelines.\nOpenSearch Service provides scalable vector search and k- nearest neighbors style similarity retrieval,\nwhich supports low-latency responses when properly indexed and sized.\nFor scaling to more than 10,000 concurrent users, the API layer design in option A is a common AWS\npattern: Amazon API Gateway provides a managed front door with throttling and request handling,\nwhile AWS Lambda scales horizontally with demand and can invoke the knowledge base retrieval\noperations. This separates compute scaling from the vector store scaling and helps keep latency\npredictable under load.\nOption B is not the best choice because DynamoDB is not the standard native vector store target for\nAmazon Bedrock Knowledge Bases in this context and would introduce additional implementation\ncomplexity around vector indexing and similarity search behavior. Option C requires substantial ML\nlifecycle work, model hosting, tuning, and continuous iteration to achieve quality recommendations\nat scale. Option D provides strong enterprise search, but it focuses on retrieval and FAQs rather than\na managed RAG recommendation workflow grounded in embeddings and conversational context for\ngenerative responses."
+        "answer": [
+            "E"
+        ],
+        "explanation": "todayTransactionsDf.union(yesterdayTransactionsDf)\nCorrect. The union command appends rows of yesterdayTransactionsDf to the rows of\ntodayTransactionsDf, ignoring that both DataFrames have different column names. The resulting\nDataFrame will have the column names of DataFrame todayTransactionsDf.\ntodayTransactionsDf.unionByName(yesterdayTransactionsDf)\nNo. unionByName specifically tries to match columns in the two DataFrames by name and only\nappends values in columns with identical names across the two DataFrames. In the form presented\nabove, the command is a great fit for joining DataFrames that have exactly the same columns, but in\na different order. In this case though, the command will fail because the two DataFrames have\ndifferent columns.\ntodayTransactionsDf.unionByName(yesterdayTransactionsDf, allowMissingColumns=True) No. The\nunionByName command is described in the previous explanation. However, with the\nallowMissingColumns argument set to True, it is no longer an issue that the two DataFrames have\ndifferent column names. Any columns that do not have a match in the other DataFrame will be filled\n\n\nwith null where there is no value. In the case at hand, the resulting DataFrame will have 7 or more\ncolumns though, so it this command is not the right answer.\nunion(todayTransactionsDf, yesterdayTransactionsDf)\nNo, there is no union method in pyspark.sql.functions.\ntodayTransactionsDf.concat(yesterdayTransactionsDf)\nWrong, the DataFrame class does not have a concat method.\nMore info: pyspark.sql.DataFrame.union - PySpark 3.1.2 documentation,\npyspark.sql.DataFrame.unionByName - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 3"
     },
     {
-        "question": "A company has set up Amazon Q Developer Pro licenses for all developers at the company.\nThe company maintains a list of approved resources that developers must use when developing\napplications. The approved resources include internal libraries, proprietary algorithmic techniques,\nand sample code with approved styling.\nA new team of developers is using Amazon Q Developer to develop a new Java-based application.\nThe company must ensure that the new developer team uses the company's approved resources. The\ncompany does not want to make project-level modifications.\nWhich solution will meet these requirements?",
+        "question": "The code block displayed below contains an error. The code block should use Python\nmethod find_most_freq_letter to find the letter present most in column itemName of DataFrame\nitemsDf and return it in a new column most_frequent_letter. Find the error.\nCode block:\n1. find_most_freq_letter_udf = udf(find_most_freq_letter)\n2. itemsDf.withColumn(\"most_frequent_letter\", find_most_freq_letter(\"itemName\"))",
         "options": [
-            "A.. Create a Git repository that contains all of the approved internal libraries, algorithms, and code\nsamples.\nInclude this Git repository in the application project locally as part of the workspace. Ensure that the\ndevelopers use the workspace context to retrieve suggestions from the Git repository.",
-            "B.. In the project root folder, create a folder named amazonq/rules. Add the approved internal\nlibraries, algorithms, and code samples to the folder.",
-            "C.. Create a folder in the application project named rules. Store the guidelines and code in the folder\nfor Amazon Q Developer to reference for code suggestions.",
-            "D.. Create an Amazon Q Developer customization that includes the approved data sources. Ensure\nthat the developers use the customization to develop the application."
+            "A.. Spark is not using the UDF method correctly.",
+            "B.. The UDF method is not registered correctly, since the return type is missing.",
+            "C.. The \"itemName\" expression should be wrapped in col().",
+            "D.. UDFs do not exist in PySpark.",
+            "E.. Spark is not adding a column."
+        ],
+        "answer": [
+            "A"
         ],
-        "answer": "D",
-        "explanation": "Option D is the correct solution because Amazon Q Developer customizations are designed to\nincorporate organization-approved knowledge and coding guidance without requiring per-project\nchanges. A customization can point Amazon Q Developer to curated internal sources such as\napproved libraries, coding standards, architectural patterns, and proprietary techniques. This allows\nthe assistant's suggestions to align with company policies and preferred implementations\nconsistently across teams and repositories.\nThe key requirement is that the company does not want to make project-level modifications. Options\n28\n\n\n\n\nA, B, and C all require adding files or repositories into the project workspace, which directly violates\nthis constraint.\nThey also rely on developer behavior to \"use workspace context,\" which is harder to enforce and can\nlead to inconsistent adherence to standards.\nWith a customization, the organization centrally manages and updates approved resources. This\nreduces operational overhead because updates to libraries, patterns, or guidelines propagate\nautomatically to developers using the customization, without requiring changes to each project. This\nis especially valuable for a new team, where consistent enforcement of approved practices is\nimportant to reduce compliance risk, security issues, and inconsistent code style.\nAdditionally, customizations support governance by allowing the company to standardize how\nAmazon Q Developer responds, ensuring that suggestions reflect approved internal content rather\nthan generic public patterns.\nTherefore, Option D best satisfies the requirement for centralized enforcement of approved\nresources with minimal ongoing management and no project-level modifications."
+        "explanation": "Correct code block:\nfind_most_freq_letter_udf = udf(find_most_frequent_letter)\nitemsDf.withColumn(\"most_frequent_letter\", find_most_freq_letter_udf(\"itemName\")) Spark should\nuse the previously registered find_most_freq_letter_udf method here - but it is not doing that in the\noriginal codeblock. There, it just uses the non-UDF version of the Python method.\nNote that typically, we would have to specify a return type for udf(). Except in this case, since the\ndefault return type for udf() is a string which is what we are expecting here. If we wanted to return\nan integer variable instead, we would have to register the Python function as UDF using\nfind_most_freq_letter_udf = udf(find_most_freq_letter, IntegerType()).\nMore info: pyspark.sql.functions.udf - PySpark 3.1.1 documentation"
     },
     {
-        "question": "A company has a generative AI (GenAI) application that uses Amazon Bedrock to provide realtime responses to customer queries. The company has noticed intermittent failures with API calls to\nfoundation models (FMs) during peak traffic periods.\nThe company needs a solution to handle transient errors and provide detailed observability into FM\nperformance. The solution must prevent cascading failures during throttling events and provide\ndistributed tracing across service boundaries to identify latency contributors. The solution must also\nenable correlation of performance issues with specific FM characteristics.\nWhich solution will meet these requirements?",
+        "question": "The code block shown below should return a column that indicates through boolean\nvariables whether rows in DataFrame transactionsDf have values greater or equal to 20 and smaller\nor equal to\n30 in column storeId and have the value 2 in column productId. Choose the answer that correctly fills\nthe blanks in the code block to accomplish this.\ntransactionsDf.__1__((__2__.__3__) __4__ (__5__))",
         "options": [
-            "A.. Implement a custom retry mechanism with a fixed delay of 1 second between retries. Configure\nAmazon CloudWatch alarms to monitor the application's error rates and latency metrics.",
-            "B.. Configure the AWS SDK with standard retry mode and exponential backoff with jitter. Use AWS XRay tracing with annotations to identify and filter service components.",
-            "C.. Implement client-side caching of all FM responses. Add custom logging statements in the\napplication code to record API call durations.",
-            "D.. Configure the AWS SDK with adaptive retry mode. Use AWS CloudTrail distributed tracing to\nmonitor throttling events."
+            "A.. 1. select\n2. col(\"storeId\")\n3. between(20, 30)\n4. and\n5. col(\"productId\")==2",
+            "B.. 1. where\n2. col(\"storeId\")\n3. geq(20).leq(30)\n4. &\n5. col(\"productId\")==2",
+            "C.. 1. select\n2. \"storeId\"\n3. between(20, 30)\n4. &&\n5. col(\"productId\")==2",
+            "D.. 1. select\n2. col(\"storeId\")\n3. between(20, 30)\n4. &&\n5. col(\"productId\")=2",
+            "E.. 1. select\n2. col(\"storeId\")\n3. between(20, 30)\n4. &\n5. col(\"productId\")==2"
         ],
-        "answer": "B",
-        "explanation": "Option B best meets the combined resiliency and observability requirements because it applies AWSrecommended retry behavior for transient throttling and enables true distributed tracing across\nservice boundaries. During peak traffic, intermittent failures are commonly caused by throttling and\nother transient conditions. The AWS SDK standard retry mode provides exponential backoff with\njitter, which reduces synchronized retry storms, prevents cascading failures, and improves overall\nsystem stability. Jitter is important because it spreads retry attempts over time, reducing load\namplification during throttling events.\nFor observability, AWS X-Ray provides distributed tracing that follows a request across components\nsuch as API Gateway or load balancers, application services, and downstream calls to Amazon\nBedrock. X-Ray can identify where latency is being introduced and which downstream call is\ncontributing most to end-to-end response time. This is required to \"identify latency contributors\" and\nisolate performance issues under load.\nThe requirement also states that the company must correlate performance issues with specific FM\n29\n\n\n\n\ncharacteristics. X-Ray annotations are designed for this purpose: the application can annotate traces\nwith the model ID, inference parameters, region, or inference profile used. This enables filtering and\nanalysis (for example, comparing latency or error patterns by model, parameter set, or endpoint\nconfiguration) without building a separate telemetry system.\nOption A's fixed-delay retries increase synchronized retry behavior and do not provide distributed\ntracing.\nOption C does not prevent cascading failures and cannot provide cross-service tracing. Option D is\nincorrect because CloudTrail is an audit logging service and does not provide distributed tracing for\nrequest latency analysis.\nTherefore, Option B provides the correct combination of resilient retries and deep, model-correlated\ndistributed observability for Amazon Bedrock workloads."
+        "answer": [
+            "D"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.select((col(\"storeId\").between(20, 30)) & (col(\"productId\")==2)) Although this\nquestion may make you think that it asks for a filter or where statement, it does not. It asks explicity\nto return a column with booleans - this should point you to the select statement.\nAnother trick here is the rarely used between() method. It exists and resolves to ((storeId >= 20) AND\n(storeId\n<= 30)) in SQL. geq() and leq() do not exist.\nAnother riddle here is how to chain the two conditions. The only valid answer here is &. Operators\nlike && or and are not valid. Other boolean operators that would be valid in Spark are | and.\nStatic notebook | Dynamic notebook: See test 1"
     },
     {
-        "question": "A company is designing a canary deployment strategy for a payment processing API. The\nsystem must support automated gradual traffic shifting between multiple Amazon Bedrock models\nbased on real-time inference metrics, historical traffic patterns, and service health. The solution must\nbe able to gradually increase traffic to new model versions. The system must increase traffic if\nmetrics remain healthy and decrease traffic if the performance degrades below acceptable\nthresholds.\nThe company needs to comprehensively monitor inference latency and error rates during the\ndeployment phase. The company must also be able to halt deployments and revert to a previous\nmodel version without any manual intervention.\nWhich solution will meet these requirements?",
+        "question": "The code block displayed below contains an error. The code block should return all rows of\nDataFrame transactionsDf, but including only columns storeId and predError. Find the error.\nCode block:\nspark.collect(transactionsDf.select(\"storeId\", \"predError\"))",
         "options": [
-            "A.. Use Amazon Bedrock with provisioned throughput to host model versions. Configure an Amazon\nEventBridge rule to invoke an AWS Step Functions workflow when a new model version is released.\nConfigure the workflow to shift traffic in stages, wait for a specified time period, and invoke an AWS\nLambda function to check Amazon CloudWatch performance metrics. Configure the workflow to\nincrease traffic if metrics meet thresholds and to trigger a traffic rollback if performance metrics fall\nbelow thresholds.",
-            "B.. Use AWS Lambda functions to invoke various Amazon Bedrock model versions. Use an Amazon API\nGateway HTTP API with stage variables and weighted routing to shift traffic gradually. Use Amazon\nCloudWatch to monitor performance. Use external logic to adjust traffic and roll back if performance\nfalls below thresholds.",
-            "C.. Use Amazon SageMaker AI endpoint variants to represent multiple Amazon Bedrock model\nversions.\nUse variant weights to shift traffic. Use Amazon CloudWatch and SageMaker Model Monitor to\ntrigger rollbacks. Use EventBridge to roll back deployments if an anomaly is detected.",
-            "D.. Use Amazon OpenSearch Service to track inference logs. Configure OpenSearch Service to invoke\nan AWS Systems Manager Automation runbook to update Amazon Bedrock model endpoints to shift\ntraffic based on inference logs."
+            "A.. Instead of select, DataFrame transactionsDf needs to be filtered using the filter operator.",
+            "B.. Columns storeId and predError need to be represented as a Python list, so they need to be\nwrapped in brackets ([]).",
+            "C.. The take method should be used instead of the collect method.",
+            "D.. Instead of collect, collectAsRows needs to be called.",
+            "E.. The collect method is not a method of the SparkSession object."
+        ],
+        "answer": [
+            "E"
         ],
-        "answer": "A",
-        "explanation": "Option A is the most complete solution because it provides a fully automated canary strategy with\nstaged traffic shifts, metric-based decisioning, and automatic rollback, all using managed AWS\nservices. The requirement emphasizes automation, health-based traffic progression, and zero manual\nintervention to revert if performance degrades.\n\n\n\n\nAWS Step Functions is well suited for orchestrating controlled deployment workflows with\ndeterministic stages, waits, and conditional branches. By shifting traffic in stages and pausing for\nobservation windows, the system can evaluate real-time inference latency and error rates before\npromoting more traffic to the new model version. Amazon CloudWatch provides the necessary realtime metrics and alarms for latency and error monitoring.\nInvoking a Lambda function to evaluate CloudWatch metrics enables dynamic logic: increase traffic if\nthresholds remain healthy, reduce traffic or roll back if error rates rise or latency exceeds limits. Step\nFunctions can halt the deployment by stopping progression or triggering rollback steps immediately,\nmeeting the requirement for automated revert without human action.\nAmazon EventBridge provides reliable automation triggers when a new model version is released,\nensuring the deployment process is event-driven and repeatable.\nOption B depends on \"external logic,\" which introduces operational risk and does not guarantee\nautomatic rollback without custom systems. Option C incorrectly uses SageMaker endpoint variants\nto represent Bedrock model versions, which is not the intended integration model. Option D is overly\nindirect and operationally complex, using log pipelines and automation runbooks instead of direct\nmetric-based traffic control.\nTherefore, Option A best meets the requirements for automated gradual traffic shifting, real-time\nmonitoring, and automatic rollback for Amazon Bedrock model deployments in a canary strategy."
+        "explanation": "Correct code block:\ntransactionsDf.select(\"storeId\", \"predError\").collect()\ncollect() is a method of the DataFrame object.\nMore info: pyspark.sql.DataFrame.collect - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 2"
     },
     {
-        "question": "A financial services company needs to build a document analysis system that uses Amazon\nBedrock to process quarterly reports. The system must analyze financial data, perform sentiment\nanalysis, and validate compliance across batches of reports. Each batch contains 5 reports. Each\nreport requires multiple foundation model (FM) calls. The solution must finish the analysis within 10\nseconds for each batch. Current sequential processing takes 45 seconds for each batch.\nWhich solution will meet these requirements?",
+        "question": "Which of the following code blocks returns a DataFrame that matches the multi-column\nDataFrame itemsDf, except that integer column itemId has been converted into a string column?",
         "options": [
-            "A.. Use AWS Lambda functions with provisioned concurrency to process each analysis type\nsequentially.\nConfigure the Lambda function timeouts to 10 seconds. Configure automatic retries with exponential\nbackoff.",
-            "B.. Use AWS Step Functions with a Parallel state to invoke separate AWS Lambda functions for each\nanalysis type simultaneously. Configure Amazon Bedrock client timeouts. Use Amazon CloudWatch\nmetrics to track execution time and model inference latency.",
-            "C.. Create an Amazon SQS queue to buffer analysis requests. Deploy multiple AWS Lambda functions\nwith reserved concurrency. Configure each Lambda function to process different aspects of each\nreport sequentially and then combine the results.",
-            "D.. Deploy an Amazon ECS cluster that runs containers that process each report sequentially. Use a\nload balancer to distribute batch workloads. Configure an auto-scaling policy based on CPU\nutilization."
+            "A.. itemsDf.withColumn(\"itemId\", convert(\"itemId\", \"string\"))",
+            "B.. itemsDf.withColumn(\"itemId\", col(\"itemId\").cast(\"string\"))\n(Correct)",
+            "C.. itemsDf.select(cast(\"itemId\", \"string\"))",
+            "D.. itemsDf.withColumn(\"itemId\", col(\"itemId\").convert(\"string\"))",
+            "E.. spark.cast(itemsDf, \"itemId\", \"string\")"
         ],
-        "answer": "B",
-        "explanation": "Option B is the correct solution because it parallelizes independent foundation model inference tasks\nwhile maintaining orchestration, observability, and time-bound execution. AWS Generative AI best\npractices emphasize reducing end-to-end latency by parallelizing independent inference calls rather\nthan scaling individual calls vertically.\nIn this scenario, each report requires multiple independent analyses such as financial extraction,\n\n\n\n\nsentiment analysis, and compliance validation. These tasks do not depend on each other's output,\nmaking them ideal candidates for parallel execution. AWS Step Functions provides a Parallel state\nthat can invoke multiple AWS Lambda functions simultaneously, drastically reducing total processing\ntime compared to sequential execution.\nBy invoking Amazon Bedrock from separate Lambda functions in parallel, the system can reduce\nbatch execution time from 45 seconds to well under the 10-second requirement, assuming each\ninference call remains within acceptable latency bounds. Step Functions also provide built-in error\nhandling, retries, and state tracking, which improves reliability without increasing complexity.\nCloudWatch metrics allow teams to monitor both workflow execution time and individual model\ninference latency, enabling performance tuning and operational visibility. Configuring client-side\ntimeouts ensures that slow or failed model invocations do not block the entire batch.\nOption A still processes tasks sequentially and therefore cannot meet the strict latency requirement.\nOption C introduces queuing delays and sequential processing within each report, which increases\ntotal execution time.\nOption D relies on container-based sequential processing and adds unnecessary operational\noverhead for a workload that is event-driven and latency-sensitive.\nTherefore, Option B best meets the performance, scalability, and operational efficiency requirements\nfor high- speed batch document analysis using Amazon Bedrock."
+        "answer": [
+            "B"
+        ],
+        "explanation": "itemsDf.withColumn(\"itemId\", col(\"itemId\").cast(\"string\"))\nCorrect. You can convert the data type of a column using the cast method of the Column class. Also\nnote that you will have to use the withColumn method on itemsDf for replacing the existing itemId\ncolumn with the new version that contains strings.\nitemsDf.withColumn(\"itemId\", col(\"itemId\").convert(\"string\"))\nIncorrect. The Column object that col(\"itemId\") returns does not have a convert method.\nitemsDf.withColumn(\"itemId\", convert(\"itemId\", \"string\"))\nWrong. Spark's spark.sql.functions module does not have a convert method. The question is trying to\nmislead you by using the word \"converted\". Type conversion is also called \"type casting\". This may\nhelp you remember to look for a cast method instead of a convert method (see correct answer).\nitemsDf.select(astype(\"itemId\", \"string\"))\nFalse. While astype is a method of Column (and an alias of Column.cast), it is not a method of\npyspark.sql.functions (what the code block implies). In addition, the question asks to return a full\nDataFrame that matches the multi-column DataFrame itemsDf. Selecting just one column from\nitemsDf as in the code block would just return a single-column DataFrame.\nspark.cast(itemsDf, \"itemId\", \"string\")\nNo, the Spark session (called by spark) does not have a cast method. You can find a list of all methods\navailable for the Spark session linked in the documentation below.\nMore info:\n- pyspark.sql.Column.cast - PySpark 3.1.2 documentation\n- pyspark.sql.Column.astype - PySpark 3.1.2 documentation\n- pyspark.sql.SparkSession - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 3"
     },
     {
-        "question": "A company provides a service that helps users from around the world discover new\nrestaurants. The service has 50 million monthly active users. The company wants to implement a\nsemantic search solution across a database that contains 20 million restaurants and 200 million\nreviews. The company currently stores the data in a PostgreSQL database.\nThe solution must support complex natural language queries and return results for at least 95% of\nqueries within 500 ms. The solution must maintain data freshness for restaurant details that update\nhourly. The solution must also scale cost-effectively during peak usage periods.\nWhich solution will meet these requirements with the LEAST development effort?",
+        "question": "Which of the following statements about executors is correct?",
         "options": [
-            "A.. Migrate the restaurant data to Amazon OpenSearch Service. Implement keyword-based search\nrules that use custom analyzers and relevance tuning to find restaurants based on attributes such as\ncuisine type, feature, and location. Create Amazon API Gateway HTTP API endpoints to transform\nuser queries into structured search parameters.",
-            "B.. Migrate the restaurant data to Amazon OpenSearch Service. Use a foundation model (FM) in\nAmazon Bedrock to generate vector embeddings from restaurant descriptions, reviews, and menu\nitems. When users submit natural language queries, convert the queries to embeddings by using the\nsame FM.\nPerform k-nearest neighbors (k-NN) searches to find semantically similar results.",
-            "C.. Keep the restaurant data in PostgreSQL and implement a pgvector extension. Use a foundation\nmodel (FM) in Amazon Bedrock to generate vector embeddings from restaurant data. Store the\nvector embeddings directly in PostgreSQL. Create an AWS Lambda function to convert natural\nlanguage queries to vector representations by using the same FM. Configure the Lambda function to\nperform similarity searches within the database.",
-            "D.. Migrate the restaurant data to an Amazon Bedrock knowledge base by using a custom ingestion\npipeline. Configure the knowledge base to automatically generate embeddings from restaurant\ninformation. Use the Amazon Bedrock Retrieve API with built-in vector search capabilities to query\nthe knowledge base directly by using natural language input."
+            "A.. Executors are launched by the driver.",
+            "B.. Executors stop upon application completion by default.",
+            "C.. Each node hosts a single executor.",
+            "D.. Executors store data in memory only.",
+            "E.. An executor can serve multiple applications."
+        ],
+        "answer": [
+            "B"
         ],
-        "answer": "D",
-        "explanation": "Option D requires the least development effort because it uses a managed retrieval workflow that\nbundles the most time-consuming parts of semantic search: embedding generation, vector indexing,\nand natural language retrieval. With an Amazon Bedrock knowledge base, the application does not\nneed to implement and operate separate services to (1) generate embeddings for hundreds of\nmillions of records, (2) store and manage vectors, (3) build query-time embedding conversion logic,\nand (4) implement k-NN search orchestration.\nInstead, the knowledge base is configured to automatically create embeddings during ingestion, and\nthe application queries it using the Amazon Bedrock Retrieve API, which accepts natural language\ninput and performs the vector search as a managed capability.\nThe performance requirement (95% of queries within 500 ms) is best served by a purpose-built\nvector search backend rather than running similarity search directly inside a transactional PostgreSQL\nsystem at this scale.\nA knowledge base is designed for retrieval patterns and can be backed by scalable vector stores,\nwhich helps meet latency goals under heavy concurrency. The hourly freshness requirement maps\nnaturally to ingestion updates: the pipeline can re-ingest updated restaurant details on a schedule so\nthe knowledge base remains current without building custom re-embedding workflows in application\ncode.\nCost-effective scaling during peak periods is also easier with a managed retrieval layer because\nscaling the retrieval workload is separated from the operational database. This avoids\noverprovisioning PostgreSQL for peak semantic-search traffic and reduces the engineering effort to\ntune performance, sharding, indexing, and retry logic.\nOptions B and C can work, but they require the team to build and maintain embedding pipelines,\nquery embedding generation, vector index management, and operational scaling strategies. Option A\ndoes not provide semantic search because it relies on keyword-based matching rather than\nembeddings."
+        "explanation": "Executors stop upon application completion by default.\nCorrect. Executors only persist during the lifetime of an application.\nA notable exception to that is when Dynamic Resource Allocation is enabled (which it is not by\ndefault). With Dynamic Resource Allocation enabled, executors are terminated when they are idle,\nindependent of whether the application has been completed or not.\nAn executor can serve multiple applications.\nWrong. An executor is always specific to the application. It is terminated when the application\ncompletes (exception see above).\nEach node hosts a single executor.\nNo. Each node can host one or more executors.\nExecutors store data in memory only.\nNo. Executors can store data in memory or on disk.\nExecutors are launched by the driver.\nIncorrect. Executors are launched by the cluster manager on behalf of the driver.\nMore info: Job Scheduling - Spark 3.1.2 Documentation, How Applications are Executed on a Spark\nCluster | Anatomy of a Spark Application | InformIT, and Spark Jargon for Starters. This blog is to\nclear some of the... | by Mageswaran D | Medium"
     },
     {
-        "question": "Example Corp provides a personalized video generation service that millions of enterprise\ncustomers use.\nCustomers generate marketing videos by submitting prompts to the company's proprietary\ngenerative AI (GenAI) model. To improve output relevance and personalization, Example Corp wants\nto enhance the prompts by using customer-specific context such as product preferences, customer\nattributes, and business history.\nThe customers have strict data governance requirements. The customers must retain full ownership\nand control over their own data. The customers do not require real-time access. However, semantic\naccuracy must be high and retrieval latency must remain low to support customer experience use\ncases.\nExample Corp wants to minimize architectural complexity in its integration pattern. Example Corp\ndoes not want to deploy and manage services in each customer's environment unless necessary.\nWhich solution will meet these requirements?",
+        "question": "The code block displayed below contains an error. The code block should produce a\nDataFrame with color as the only column and three rows with color values of red, blue, and green,\nrespectively.\nFind the error.\nCode block:\n1.spark.createDataFrame([(\"red\",), (\"blue\",), (\"green\",)], \"color\")\nInstead of calling spark.createDataFrame, just DataFrame should be called.",
         "options": [
-            "A.. Ensure that each customer sets up an Amazon Q Business index that includes the customer's\ninternal data. Ensure that each customer designates Example Corp as a data accessor to allow\nExample Corp to retrieve relevant content by using a secure API to enrich prompts at runtime.",
-            "B.. Use federated search with Model Context Protocol (MCP) by deploying real-time MCP servers for\neach customer. Retrieve data in real time during prompt generation.\n33",
-            "C.. Ensure that each customer configures an Amazon Bedrock knowledge base. Allow cross-account\nquerying so Example Corp can retrieve structured data for prompt augmentation.",
-            "D.. Configure Amazon Kendra to crawl customer data sources. Share the resulting indexes across\naccounts so Example Corp can query each customer's Amazon Kendra index to retrieve augmentation\ndata."
+            "A.. The commas in the tuples with the colors should be eliminated.",
+            "B.. The colors red, blue, and green should be expressed as a simple Python list, and not a list of tuples\n.",
+            "C.. Instead of color, a data type should be specified.",
+            "D.. The \"color\" expression needs to be wrapped in brackets, so it reads [\"color\"]."
         ],
-        "answer": "A",
-        "explanation": "Option A is the correct solution because Amazon Q Business is explicitly designed to provide secure,\ngoverned access to enterprise data while preserving customer ownership and control. Each customer\nmaintains their own Amazon Q Business index, which ensures that data never leaves the customer's\ncontrol boundary unless explicitly shared through approved access mechanisms.\nBy designating Example Corp as a data accessor, customers can allow controlled, auditable access to\ntheir indexed content through secure APIs. This model satisfies strict data governance requirements,\nincluding data ownership, access transparency, and revocation capability. Customers do not need to\nexpose raw data or deploy infrastructure in Example Corp's environment.\nAmazon Q Business provides high semantic accuracy through managed indexing, ranking, and\nretrieval optimizations. Because real-time access is not required, this approach avoids the complexity\nand latency challenges of live federated retrieval while still delivering fast query performance suitable\nfor customer experience use cases.\nOption B introduces unnecessary operational complexity by requiring real-time MCP servers per\ncustomer.\nOption C requires customers to manage Amazon Bedrock knowledge bases and enable cross-account\naccess, which increases integration complexity and governance risk. Option D requires shared\nAmazon Kendra indexes across accounts, which complicates access control and data ownership\nboundaries.\nTherefore, Option A provides the cleanest, lowest-overhead architecture that meets data\ngovernance, accuracy, performance, and scalability requirements while minimizing operational\nburden for both Example Corp and its customers."
+        "answer": [
+            "D"
+        ],
+        "explanation": "Correct code block:\nspark.createDataFrame([(\"red\",), (\"blue\",), (\"green\",)], [\"color\"])\nThe createDataFrame syntax is not exactly straightforward, but luckily the documentation (linked\nbelow) provides several examples on how to use it. It also shows an example very similar to the code\nblock presented here which should help you answer this question correctly.\nMore info: pyspark.sql.SparkSession.createDataFrame - PySpark 3.1.2 documentation Static notebook\n| Dynamic notebook: See test 2"
     },
     {
-        "question": "An enterprise application uses an Amazon Bedrock foundation model (FM) to process and\nanalyze 50 to 200 pages of technical documents. Users are experiencing inconsistent responses and\nreceiving truncated outputs when processing documents that exceed the FM's context window limits\n.\nWhich solution will resolve this problem?",
+        "question": "Which of the following code blocks returns a DataFrame where columns predError and\nproductId are removed from DataFrame transactionsDf?\n\n\nSample of DataFrame transactionsDf:\n1.+-------------+---------+-----+-------+---------+----+\n2.|transactionId|predError|value|storeId|productId|f |\n3.+-------------+---------+-----+-------+---------+----+\n4.|1 |3 |4 |25 |1 |null|\n5.|2 |6 |7 |2 |2 |null|\n6.|3 |3 |null |25 |3 |null|\n7.+-------------+---------+-----+-------+---------+----+",
         "options": [
-            "A.. Configure fixed-size chunking at 4,000 tokens for each chunk with 20% overlap. Use applicationlevel logic to link multiple chunks sequentially until the FM's maximum context window of 200,000\ntokens is reached before making inference calls.",
-            "B.. Use hierarchical chunking with parent chunks of 8,000 tokens and child chunks of 2,000 tokens.\nUse Amazon Bedrock Knowledge Bases built-in retrieval to automatically select relevant parent\nchunks based on query context. Configure overlap tokens to maintain semantic continuity.",
-            "C.. Use semantic chunking with a breakpoint percentile threshold of 95% and a buffer size of 3\nsentences.\nUse the RetrieveAndGenerate API to dynamically select the most relevant chunks based on\nembedding similarity scores.",
-            "D.. Create a pre-processing AWS Lambda function that analyzes document token count by using the\n\n\n\n\nFM's tokenizer. Configure the Lambda function to split documents into equal segments that fit within\n80% of the context window. Configure the Lambda function to process each segment independently\nbefore aggregating the results."
+            "A.. transactionsDf.withColumnRemoved(\"predError\", \"productId\")",
+            "B.. transactionsDf.drop([\"predError\", \"productId\", \"associateId\"])",
+            "C.. transactionsDf.drop(\"predError\", \"productId\", \"associateId\")",
+            "D.. transactionsDf.dropColumns(\"predError\", \"productId\", \"associateId\")",
+            "E.. transactionsDf.drop(col(\"predError\", \"productId\"))"
+        ],
+        "answer": [
+            "D"
         ],
-        "answer": "C",
-        "explanation": "Option C directly addresses the root cause of truncated and inconsistent responses by using AWSrecommended semantic chunking and dynamic retrieval rather than static or sequential chunk\nprocessing.\nAmazon Bedrock documentation emphasizes that foundation models have fixed context windows\nand that sending oversized or poorly structured input can lead to truncation, loss of context, and\ndegraded output quality.\nSemantic chunking breaks documents based on meaning instead of fixed token counts. By using a\nbreakpoint percentile threshold and sentence buffers, the content remains coherent and\nsemantically complete. This approach reduces the likelihood that important concepts are split across\nchunks, which is a common cause of inconsistent summarization results.\nThe RetrieveAndGenerate API is designed specifically to handle large documents that exceed a\nmodel's context window. Instead of forcing all content into a single inference call, the API generates\nembeddings for chunks and dynamically selects only the most relevant chunks based on similarity to\nthe user query. This ensures that the FM receives only high-value context while staying within its\ncontext window limits.\nOption A is ineffective because chaining chunks sequentially does not align with how FMs process\ncontext and risks exceeding context limits or introducing irrelevant information. Option B improves\nstructure but still relies on larger parent chunks, which can lead to inefficiencies when processing\nvery large documents. Option D processes segments independently, which often causes loss of global\ncontext and inconsistent summaries.\nTherefore, Option C is the most robust, AWS-aligned solution for resolving truncation and consistency\nissues when processing large technical documents with Amazon Bedrock."
+        "explanation": "The key here is to understand that columns that are passed to DataFrame.drop() are ignored if they\ndo not exist in the DataFrame. So, passing column name associateId to transactionsDf.drop() does\nnot have any effect.\nPassing a list to transactionsDf.drop() is not valid. The documentation (link below) shows the call\nstructure as DataFrame.drop(*cols). The * means that all arguments that are passed to\nDataFrame.drop() are read as columns. However, since a list of columns, for example [\"predError\",\n\"productId\", \"associateId\"] is not a column, Spark will run into an error.\nMore info: pyspark.sql.DataFrame.drop - PySpark 3.1.1 documentation\nStatic notebook | Dynamic notebook: See test 1"
     },
     {
-        "question": "A medical company is building a generative AI (GenAI) application that uses Retrieval\nAugmented Generation (RAG) to provide evidence-based medical information. The application uses\nAmazon OpenSearch Service to retrieve vector embeddings. Users report that searches frequently\nmiss results that contain exact medical terms and acronyms and return too many semantically similar\nbut irrelevant documents. The company needs to improve retrieval quality and maintain low enduser latency, even as the document collection grows to millions of documents.\nWhich solution will meet these requirements with the LEAST operational overhead?",
+        "question": "Which of the following code blocks performs a join in which the small DataFrame\ntransactionsDf is sent to all executors where it is joined with DataFrame itemsDf on columns storeId\nand itemId, respectively?",
         "options": [
-            "A.. Configure hybrid search by combining vector similarity with keyword matching to improve\nsemantic understanding and exact term and acronym matching.",
-            "B.. Increase the dimensions of the vector embeddings from 384 to 1536. Use a post-processing AWS\nLambda function to filter out irrelevant results after retrieval.",
-            "C.. Replace OpenSearch Service with Amazon Kendra. Use query expansion to handle medical\nacronyms and terminology variants during pre-processing.",
-            "D.. Implement a two-stage retrieval architecture in which initial vector search results are re-ranked by\nan ML model hosted on Amazon SageMaker."
+            "A.. itemsDf.join(transactionsDf, itemsDf.itemId == transactionsDf.storeId, \"right_outer\")",
+            "B.. itemsDf.join(transactionsDf, itemsDf.itemId == transactionsDf.storeId, \"broadcast\")",
+            "C.. itemsDf.merge(transactionsDf, \"itemsDf.itemId == transactionsDf.storeId\", \"broadcast\")",
+            "D.. itemsDf.join(broadcast(transactionsDf), itemsDf.itemId == transactionsDf.storeId)",
+            "E.. itemsDf.join(transactionsDf, broadcast(itemsDf.itemId == transactionsDf.storeId))"
         ],
-        "answer": "A",
-        "explanation": "Option A is the correct solution because hybrid search directly addresses the core retrieval failure\nmodes while maintaining low latency and minimal operational overhead. In medical and scientific\ndomains, exact terminology, abbreviations, and acronyms (for example, drug names, procedures, or\nconditions) are critical.\nPure vector similarity search often underweights these exact matches, leading to missed results and\nexcessive semantically related but irrelevant documents.\nAmazon OpenSearch Service natively supports hybrid search, which combines keyword-based\nretrieval (such as BM25) with vector similarity search. Keyword search ensures precise matching for\nexact terms and acronyms, while vector search captures semantic meaning and contextual similarity.\nBy blending these approaches, the retrieval system improves both precision and recall without\nintroducing additional infrastructure.\nHybrid search operates within the same OpenSearch index and query path, which preserves low enduser latency even at large scale. This is especially important as the document collection grows to\nmillions of documents. Because OpenSearch handles scoring and ranking internally, no additional\norchestration layers or post-processing steps are required.\nOption B increases computational cost and latency while failing to address exact-term recall. Option C\nintroduces a new service and ingestion pipeline, increasing operational overhead and latency. Option\nD adds model hosting, re-ranking infrastructure, and complexity that is unnecessary when\nOpenSearch provides native hybrid retrieval.\nTherefore, Option A delivers the best balance of retrieval quality, scalability, latency, and operational\nsimplicity for medical RAG workloads."
+        "answer": [
+            "D"
+        ],
+        "explanation": "The issue with all answers that have \"broadcast\" as very last argument is that \"broadcast\" is not a\nvalid join type. While the entry with \"right_outer\" is a valid statement, it is not a broadcast join. The\nitem where broadcast() is wrapped around the equality condition is not valid code in Spark.\nbroadcast() needs to be wrapped around the name of the small DataFrame that should be broadcast.\nMore info: Learning Spark, 2nd Edition, Chapter 7\nStatic notebook | Dynamic notebook: See test 1\ntion and explanation?"
     },
     {
-        "question": "A financial services company is developing a Retrieval Augmented Generation (RAG)\napplication to help investment analysts query complex financial relationships across multiple\ninvestment vehicles, market sectors, and regulatory environments. The dataset contains highly\ninterconnected entities that have multi-hop relationships. Analysts must examine relationships\nholistically to provide accurate investment guidance. The application must deliver comprehensive\nanswers that capture indirect relationships between financial entities and must respond in less than 3\nseconds.\nWhich solution will meet these requirements with the LEAST operational overhead?",
+        "question": "Which of the following code blocks returns a new DataFrame with the same columns as\nDataFrame transactionsDf, except for columns predError and value which should be removed?",
         "options": [
-            "A.. Use Amazon Bedrock Knowledge Bases with GraphRAG and Amazon Neptune Analytics to store\nfinancial data. Analyze multi-hop relationships between entities and automatically identify related\ninformation across documents.",
-            "B.. Use Amazon Bedrock Knowledge Bases and an Amazon OpenSearch Service vector store to\nimplement custom relationship identification logic that uses AWS Lambda to query multiple vector\nembeddings in sequence.",
-            "C.. Use Amazon OpenSearch Serverless vector search with k-nearest neighbor (k-NN). Implement\nmanual relationship mapping in an application layer that runs on Amazon EC2 Auto Scaling.",
-            "D.. Use Amazon DynamoDB to store financial data in a custom indexing system. Use AWS Lambda to\nquery relevant records. Use Amazon SageMaker to generate responses."
+            "A.. transactionsDf.drop([\"predError\", \"value\"])",
+            "B.. transactionsDf.drop(\"predError\", \"value\")",
+            "C.. transactionsDf.drop(col(\"predError\"), col(\"value\"))",
+            "D.. transactionsDf.drop(predError, value)",
+            "E.. transactionsDf.drop(\"predError & value\")"
+        ],
+        "answer": [
+            "B"
         ],
-        "answer": "A",
-        "explanation": "Option A best satisfies the requirement to capture multi-hop, highly interconnected relationships\nwith minimal operational overhead. Traditional vector similarity search excels at finding semantically\nsimilar text but is not optimized for reasoning over explicit entity-to-entity relationships, especially\n\n\n\n\nwhen analysts need indirect, multi-hop connections (for example, fund # holding # issuer # sector #\nregulation). Graph-based retrieval is designed specifically for these kinds of relationship traversals.\nGraphRAG combines retrieval-augmented generation with graph-aware context selection. By\nrepresenting entities and their relationships in a graph store, the system can traverse multiple hops\nto assemble a holistic set of relevant facts. This improves completeness and reduces the chance that\nthe model misses indirect relationships that are essential for accurate investment guidance.\nAmazon Neptune Analytics provides a managed graph analytics environment capable of efficiently\ntraversing and analyzing complex relationship networks. When integrated with Amazon Bedrock\nKnowledge Bases, it reduces custom engineering by providing managed ingestion, retrieval, and\norchestration patterns suitable for GenAI applications. This lowers operational overhead compared to\nbuilding and maintaining custom multi- stage retrieval logic.\nMeeting the sub-3-second requirement is also more feasible with a graph-optimized engine because\nmulti-hop traversals can be executed efficiently compared to chaining multiple vector searches and\njoining results in an application layer. The managed nature of Knowledge Bases and Neptune\nAnalytics reduces maintenance, scaling, and operational burden while enabling strong performance.\nOption B and C require extensive custom logic and orchestration, increasing complexity and latency.\nOption D is not designed for graph-style multi-hop exploration and would require significant custom\nindexing and retrieval logic.\nTherefore, Option A is the most AWS-aligned and operationally efficient approach for multi-hop\nrelationship- aware RAG with strong performance."
+        "explanation": "More info: pyspark.sql.DataFrame.drop - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 2"
     },
     {
-        "question": "A bank is developing a generative AI (GenAI)-powered AI assistant that uses Amazon Bedrock\nto assist the bank's website users with account inquiries and financial guidance. The bank must\nensure that the AI assistant does not reveal any personally identifiable information (PII) in customer\ninteractions.\nThe AI assistant must not send PII in prompts to the GenAI model. The AI assistant must not respond\nto customer requests to provide investment advice. The bank must collect audit logs of all customer\ninteractions, including any images or documents that are transmitted during customer interactions.\nWhich solution will meet these requirements with the LEAST operational effort?",
+        "question": "Which of the following code blocks uses a schema fileSchema to read a parquet file at\nlocation filePath into a DataFrame?",
         "options": [
-            "A.. Use Amazon Macie to detect and redact PII in user inputs and in the model responses. Apply\nprompt engineering techniques to force the model to avoid investment advice topics. Use AWS\nCloudTrail to capture conversation logs.",
-            "B.. Use an AWS Lambda function and Amazon Comprehend to detect and redact PII. Use Amazon\nComprehend topic modeling to prevent the AI assistant from discussing investment advice topics. Set\nup custom metrics in Amazon CloudWatch to capture customer conversations.",
-            "C.. Configure Amazon Bedrock guardrails to apply a sensitive information policy to detect and filter\nPII.\nSet up a topic policy to ensure that the AI assistant avoids investment advice topics. Use the Converse\nAPI to log model invocations. Enable delivery and image logging to Amazon S3.",
-            "D.. Use regex controls to match patterns for PII. Apply prompt engineering techniques to avoid\nreturning PII or investment advice topics to customers. Enable model invocation logging, delivery\nlogging, and image logging to Amazon S3."
+            "A.. spark.read.schema(fileSchema).format(\"parquet\").load(filePath)",
+            "B.. spark.read.schema(\"fileSchema\").format(\"parquet\").load(filePath)",
+            "C.. spark.read().schema(fileSchema).parquet(filePath)",
+            "D.. spark.read().schema(fileSchema).format(parquet).load(filePath)",
+            "E.. spark.read.schema(fileSchema).open(filePath)"
         ],
-        "answer": "C",
-        "explanation": "Option C is the correct solution because Amazon Bedrock guardrails are purpose-built to enforce\n\n\n\n\ndefense-in- depth safety controls for GenAI applications with minimal operational overhead.\nGuardrails provide managed, policy-based enforcement that operates before prompts are sent to the\nfoundation model and after responses are generated, which directly satisfies the requirement that PII\nmust not be sent to the model and must not appear in outputs.\nBy configuring a sensitive information policy, the application can automatically detect and redact PII\nin user inputs and model responses without building custom preprocessing pipelines. This approach\nis more reliable and scalable than regex or prompt engineering techniques, which are brittle and\nerror-prone for sensitive data handling.\nThe topic policy capability in Amazon Bedrock guardrails allows the bank to explicitly block\ninvestment advice topics, ensuring regulatory compliance. This policy-based approach is safer and\nmore auditable than attempting to steer the model only through prompt instructions.\nUsing the Converse API enables structured, standardized interactions with the model and supports\nconsistent logging of requests and responses. Enabling delivery logging and image logging to Amazon\nS3 ensures that all customer interactions, including documents and images, are captured in a\ndurable, auditable storage layer.\nThis directly supports compliance, regulatory audits, and forensic analysis.\nOption A incorrectly relies on Amazon Macie, which is designed for data-at-rest discovery rather than\nreal- time conversational filtering. Option B introduces custom Lambda pipelines and topic modeling,\nincreasing operational complexity. Option D relies on regex and prompt engineering, which do not\nmeet financial-grade compliance standards.\nTherefore, Option C delivers the strongest security, governance, and auditability with the least\noperational effort."
+        "answer": [
+            "A"
+        ],
+        "explanation": "Pay attention here to which variables are quoted. fileSchema is a variable and thus should not be in\nquotes.\nparquet is not a variable and therefore should be in quotes.\nSparkSession.read (here referenced as spark.read) returns a DataFrameReader which all subsequent\ncalls reference - the DataFrameReader is not callable, so you should not use parentheses here.\nFinally, there is no open method in PySpark. The method name is load.\nStatic notebook | Dynamic notebook: See test 1"
     },
     {
-        "question": "A financial technology company is using Amazon Bedrock to build an assessment system for\nthe company's customer service AI assistant. The AI assistant must provide financial\nrecommendations that are factually accurate, compliant with financial regulations, and\nconversationally appropriate. The company needs to combine automated quality evaluations at scale\nwith targeted human reviews of critical interactions.\nWhat solution will meet these requirements?",
+        "question": "The code block displayed below contains an error. The code block should return the average\nof rows in column value grouped by unique storeId. Find the error.\nCode block:\ntransactionsDf.agg(\"storeId\").avg(\"value\")",
         "options": [
-            "A.. Configure a pipeline in which financial experts manually score all responses for accuracy,\ncompliance, and conversational quality. Use Amazon SageMaker notebooks to analyze results to\nidentify improvement areas.",
-            "B.. Configure Amazon Bedrock evaluations that use Anthropic Claude Sonnet as a judge model to\nassess response accuracy and appropriateness. Configure custom Amazon Bedrock guardrails to\ncheck responses for compliance with financial policies. Add Amazon Augmented AI (Amazon A2I)\nhuman reviews for flagged critical interactions.",
-            "C.. Create an Amazon Lex bot to manage customer service interactions. Configure AWS Lambda\nfunctions to check responses against a static compliance database. Configure intents that call the\nLambda functions. Add an additional intent to collect end-user reviews.",
-            "D.. Configure Amazon CloudWatch to monitor response patterns from the AI assistant. Configure\nCloudWatch alerts for potential compliance violations. Establish a team of human evaluators to\nreview flagged interactions."
+            "A.. Instead of avg(\"value\"), avg(col(\"value\")) should be used.",
+            "B.. The avg(\"value\") should be specified as a second argument to agg() instead of being appended to\nit.",
+            "C.. All column names should be wrapped in col() operators.",
+            "D.. agg should be replaced by groupBy.",
+            "E.. \"storeId\" and \"value\" should be swapped."
+        ],
+        "answer": [
+            "D"
         ],
-        "answer": "B",
-        "explanation": "Option B meets the requirement to combine scalable automated evaluation with targeted human\n\n\n\n\noversight using managed AWS GenAI capabilities. Amazon Bedrock evaluations enable systematic,\nrepeatable quality assessment across large volumes of interactions. Using an LLM-as-a-judge\napproach with a strong evaluator model such as Anthropic Claude Sonnet allows the company to\nautomatically score outputs for dimensions like factual accuracy, conversational appropriateness, and\npolicy alignment. This directly supports \"automated quality evaluations at scale\" without building\ncustom scoring models.\nHowever, financial recommendations add higher risk because regulatory compliance requires\nadditional enforcement beyond general quality scoring. Amazon Bedrock guardrails provide a\ndedicated policy enforcement layer that can block or intervene when responses violate compliance\nconstraints. Guardrails are particularly important for preventing disallowed financial guidance\npatterns and ensuring consistent behavior across deployments.\nThe requirement also calls for \"targeted human reviews of critical interactions.\" Amazon Augmented\nAI (A2I) is a managed human review service that supports routing specific items to human reviewers\nbased on rules or confidence thresholds. In this design, the system can automatically send only highrisk or policy- flagged interactions to qualified financial experts for review, keeping human effort\nfocused where it matters most while maintaining scale.\nOption A is not scalable because it requires manual review of all responses. Option C relies on static\nrules and end-user feedback, which is insufficient for regulatory compliance and factual accuracy\nassurance. Option D provides monitoring but not structured quality evaluation or policy\nenforcement.\nTherefore, Option B provides the most complete, AWS-aligned solution for scalable evaluation plus\nhuman oversight in a regulated financial context."
+        "explanation": "Static notebook | Dynamic notebook: See test 1\n(https://flrs.github.io/spark_practice_tests_code/#1/30.html ,\nhttps://bit.ly/sparkpracticeexams_import_instructions)"
     },
     {
-        "question": "A company is developing a customer communication platform that uses an AI assistant\npowered by an Amazon Bedrock foundation model (FM). The AI assistant summarizes customer\nmessages and generates initial response drafts.\nThe company wants to use Amazon Comprehend to implement layered content filtering. The layered\ncontent filtering must prevent sharing of offensive content, protect customer privacy, and detect\npotential inappropriate advice solicitation. Inappropriate advice solicitation includes requests for\nunethical practices, harmful activities, or manipulative behaviors.\nThe solution must maintain acceptable overall response times, so all pre-processing filters must finish\nbefore the content reaches the FM.\nWhich solution will meet these requirements?",
+        "question": "The code block shown below should write DataFrame transactionsDf to disk at path csvPath\n\n\nas a single CSV file, using tabs (\\t characters) as separators between columns, expressing missing\nvalues as string n/a, and omitting a header row with column names. Choose the answer that correctly\nfills the blanks in the code block to accomplish this.\ntransactionsDf.__1__.write.__2__(__3__, \" \").__4__.__5__(csvPath)",
         "options": [
-            "A.. Use parallel processing with asynchronous API calls. Use toxicity detection for offensive content.\nUse prompt safety classification for inappropriate advice solicitation. Use personally identifiable\ninformation (PII) detection without redaction.",
-            "B.. Use custom classification to build an FM that detects offensive content and inappropriate advice\nsolicitation. Apply personally identifiable information (PII) detection as a secondary filter only when\nmessages pass the custom classifier.",
-            "C.. Deploy a multi-stage process. Configure the process to use prompt safety classification first, then\ntoxicity detection on safe prompts only, and finally personally identifiable information (PII) detection\nin streaming mode. Route flagged messages through Amazon EventBridge for human review.",
-            "D.. Use toxicity detection with thresholds configured to 0.5 for all categories. Use parallel processing\nfor both prompt safety classification and personally identifiable information (PII) detection with\nentity redaction. Apply Amazon CloudWatch alarms to filter metrics."
+            "A.. 1. coalesce(1)\n2. option\n3. \"sep\"\n4. option(\"header\", True)\n5. path",
+            "B.. 1. coalesce(1)\n2. option\n3. \"colsep\"\n4. option(\"nullValue\", \"n/a\")\n5. path",
+            "C.. 1. repartition(1)\n2. option\n3. \"sep\"\n4. option(\"nullValue\", \"n/a\")\n5. csv\n(Correct)",
+            "D.. 1. csv\n2. option\n3. \"sep\"\n4. option(\"emptyValue\", \"n/a\")\n5. path\n* 1. repartition(1)\n2. mode\n3. \"sep\"\n4. mode(\"nullValue\", \"n/a\")\n5. csv"
         ],
-        "answer": "D",
-        "explanation": "Option D best satisfies all functional, performance, and governance requirements while minimizing\narchitectural complexity. The requirement explicitly states that all filtering must complete before\ncontent reaches the foundation model, which rules out asynchronous or streaming-based\napproaches that could delay enforcement.\nAmazon Comprehend supports toxicity detection, prompt safety classification, and PII detection with\nentity redaction as managed capabilities. Running these filters in parallel ensures low end-to-end\nlatency, which is essential for customer-facing communication platforms. Parallel execution avoids\nthe cumulative latency that would be introduced by sequential pipelines.\nToxicity detection identifies offensive or abusive content early. Prompt safety classification detects\nrequests for unethical, harmful, or manipulative advice, which directly addresses inappropriate\nadvice solicitation requirements. PII detection with entity redaction ensures that customer privacy is\npreserved before data is sent to the FM, preventing sensitive information from being processed or\nechoed in generated responses.\nConfiguring thresholds allows fine-grained control over sensitivity while maintaining acceptable falsepositive rates. Using CloudWatch metrics and alarms enables continuous monitoring of filtering\nbehavior and intervention rates without adding custom routing or human review pipelines that\nwould slow responses.\nOption A lacks PII redaction. Option B introduces unnecessary model-building complexity and delayed\nPII checks. Option C adds sequential latency and introduces human review routing, which violates the\nresponse- time requirement.\nTherefore, Option D provides the most robust, performant, and AWS-aligned layered content filtering\nsolution."
+        "answer": [
+            "C"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.repartition(1).write.option(\"sep\", \"\\t\").option(\"nullValue\", \"n/a\").csv(csvPath) It is\nimportant here to understand that the question specifically asks for writing the DataFrame as a single\nCSV file. This should trigger you to think about partitions. By default, every partition is written as a\nseparate file, so you need to include repatition(1) into your call. coalesce(1) works here, too!\nSecondly, the question is very much an invitation to search through the parameters in the Spark\ndocumentation that work with DataFrameWriter.csv (link below). You will also need to know that you\nneed an option() statement to apply these parameters.\nThe final concern is about the general call structure. Once you have called accessed write of your\nDataFrame, options follow and then you write the DataFrame with csv. Instead of csv(csvPath), you\ncould also use save(csvPath, format='csv') here.\nMore info: pyspark.sql.DataFrameWriter.csv - PySpark 3.1.1 documentation Static notebook |\nDynamic notebook: See test 1"
     },
     {
-        "question": "A software company is using Amazon Q Business to build an AI assistant that allows\nemployees to access company information and personal information by using natural language\nprompts. The company stores this information in an Amazon S3 bucket.\nEach department in the company has a dedicated prefix in the S3 bucket. Each object name includes\nthe S3 prefix of the department that it belongs to. Each department can belong to only a single group\nin AWS IAM Identity Center. Each employee belongs to a single department.\nThe company configures Amazon Q Business to access data stored in an S3 bucket as a data source.\nThe company needs to ensure that the AI assistant respects access controls based on the user's IAM\nIdentity Center group membership.\nWhich solution will meet this requirement with the LEAST operational overhead?",
+        "question": "Which of the following code blocks reads the parquet file stored at filePath into DataFrame\nitemsDf, using a valid schema for the sample of itemsDf shown below?\nSample of itemsDf:\n1.+------+-----------------------------+-------------------+\n2.|itemId|attributes |supplier |\n3.+------+-----------------------------+-------------------+\n4.|1 |[blue, winter, cozy] |Sports Company Inc.|\n5.|2 |[red, summer, fresh, cooling]|YetiX |\n6.|3 |[green, summer, travel] |Sports Company Inc.|\n7.+------+-----------------------------+-------------------+",
         "options": [
-            "A.. Create a JSON file named acl.json in each department folder. In each file, create access control\nentries that specify the IAM Identity Center group that should have access to that department's data.\nIndicate the location of the JSON file in the Access Control section of the data source settings.",
-            "B.. Create a single JSON file named acl.json at the top level of the S3 bucket. Add access control\nentries that map each department's S3 prefix to its corresponding IAM Identity Center group.\nIndicate the location of the JSON file in the Access Control section of the data source settings.",
-            "C.. For each IAM Identity Center group, create a separate permissions set that denies access to all\nprefixes in the S3 bucket. Add a StringNotEquals condition key to the permissions set for each group\nthat specifies the department each group is associated with. Attach the permissions sets to the\nIdentity Center groups.",
-            "D.. Create a metadata file named metadata.json at the top level of the S3 bucket. Add an\nAccessControlList object to the file that specifies the S3 path of each department's prefix. Specify the\nIAM Identity Center group that should have access to each department's prefix. Reference the file\nlocation in the data source metadata settings."
+            "A.. 1.itemsDfSchema = StructType([\n2. StructField(\"itemId\", IntegerType()),\n3. StructField(\"attributes\", StringType()),\n4. StructField(\"supplier\", StringType())])\n5.\n6.itemsDf = spark.read.schema(itemsDfSchema).parquet(filePath)",
+            "B.. 1.itemsDfSchema = StructType([\n2. StructField(\"itemId\", IntegerType),\n3. StructField(\"attributes\", ArrayType(StringType)),\n4. StructField(\"supplier\", StringType)])\n5.\n6.itemsDf = spark.read.schema(itemsDfSchema).parquet(filePath)",
+            "C.. 1.itemsDf = spark.read.schema('itemId integer, attributes <string>, supplier\nstring').parquet(filePath)",
+            "D.. 1.itemsDfSchema = StructType([\n2. StructField(\"itemId\", IntegerType()),\n3. StructField(\"attributes\", ArrayType(StringType())),\n4. StructField(\"supplier\", StringType())])\n5.\n6.itemsDf = spark.read.schema(itemsDfSchema).parquet(filePath)",
+            "E.. 1.itemsDfSchema = StructType([\n2. StructField(\"itemId\", IntegerType()),\n3. StructField(\"attributes\", ArrayType([StringType()])),\n4. StructField(\"supplier\", StringType())])\n5.\n6.itemsDf = spark.read(schema=itemsDfSchema).parquet(filePath)"
+        ],
+        "answer": [
+            "D"
         ],
-        "answer": "B",
-        "explanation": "Option B is the correct solution because Amazon Q Business natively supports access control lists\n(ACLs) for S3 data sources using a single, centralized JSON file that maps S3 prefixes to IAM Identity\nCenter groups.\nThis approach directly aligns with the company's data organization model, where each department's\ndata is stored under a distinct S3 prefix and each employee belongs to exactly one department group\n.\nUsing a single acl.json file at the bucket root minimizes operational overhead by centralizing access\ncontrol logic in one location. Administrators can update department mappings without touching\nindividual folders or changing IAM permissions, which simplifies governance and reduces the risk of\nconfiguration drift. Amazon Q Business automatically evaluates the user's IAM Identity Center group\nmembership at query time and filters accessible documents accordingly.\nOption A increases operational complexity by requiring a separate ACL file in every department\nfolder, which becomes difficult to maintain as departments or prefixes change. Option C attempts to\nenforce access using IAM permissions sets, but Amazon Q Business access control for S3 data sources\nis not designed to be managed through IAM condition logic and would significantly increase\ncomplexity. Option D introduces a custom metadata structure that is not the supported mechanism\nfor Amazon Q Business access enforcement.\nTherefore, Option B provides the cleanest, most scalable, and AWS-recommended solution for\nenforcing department-based access control with the least operational effort."
+        "explanation": "The challenge in this question comes from there being an array variable in the schema. In addition,\nyou should know how to pass a schema to the DataFrameReader that is invoked by spark.read.\nThe correct way to define an array of strings in a schema is through ArrayType(StringType()). A\nschema can be passed to the DataFrameReader by simply appending schema(structType) to the\nread() operator. Alternatively, you can also define a schema as a string. For example, for the schema\nof itemsDf, the following string would make sense: itemId integer, attributes array<string>, supplier\nstring.\n\n\nA thing to keep in mind is that in schema definitions, you always need to instantiate the types, like so:\nStringType(). Just using StringType does not work in pySpark and will fail.\nAnother concern with schemas is whether columns should be nullable, so allowed to have null values.\nIn the case at hand, this is not a concern however, since the question just asks for a\n\"valid\"\nschema. Both non-nullable and nullable column schemas would be valid here, since no null value\nappears in the DataFrame sample.\nMore info: Learning Spark, 2nd Edition, Chapter 3\nStatic notebook | Dynamic notebook: See test 3"
     },
     {
-        "question": "A company is building a generative AI (GenAI) application that processes financial reports and\nprovides summaries for analysts. The application must run two compute environments. In one\nenvironment, AWS Lambda functions must use the Python SDK to analyze reports on demand. In the\nsecond environment, Amazon EKS containers must use the JavaScript SDK to batch process multiple\nreports on a schedule. The application must maintain conversational context throughout multi-turn\ninteractions, use the same foundation model (FM) across environments, and ensure consistent\nauthentication.\nWhich solution will meet these requirements?",
+        "question": "Which of the elements in the labeled panels represent the operation performed for\nbroadcast variables?\nLarger image",
         "options": [
-            "A.. Use the Amazon Bedrock InvokeModel API with a separate authentication method for each\nenvironment. Store conversation states in Amazon DynamoDB. Use custom I/O formatting logic for\neach programming language.",
-            "B.. Use the Amazon Bedrock Converse API directly in both environments with a common\nauthentication mechanism that uses IAM roles. Store conversation states in Amazon ElastiCache.\nCreate programming language-specific wrappers for model parameters.",
-            "C.. Create a centralized Amazon API Gateway REST API endpoint that handles all model interactions\nby using the InvokeModel API. Store interaction history in application process memory in each\nLambda function or EKS container. Use environment variables to configure model parameters.",
-            "D.. Use the Amazon Bedrock Converse API and IAM roles for authentication. Pass previous messages\nin the request messages array to maintain conversational context. Use programming language-\n\n\n\n\nspecific SDKs to establish consistent API interfaces."
+            "A.. 2, 5",
+            "B.. 3",
+            "C.. 2, 3",
+            "D.. 1, 2",
+            "E.. 1, 3, 4"
         ],
-        "answer": "D",
-        "explanation": "Option D is the correct solution because the Amazon Bedrock Converse API is purpose-built for multiturn conversational interactions and is designed to work consistently across SDKs and compute\nenvironments. The Converse API standardizes how messages, roles, and context are represented,\nwhich ensures consistent behavior whether the application is running in AWS Lambda with Python or\nin Amazon EKS with JavaScript.\nBy passing previous messages in the messages array, the application explicitly maintains\nconversational context across turns without relying on external state stores. This approach is\nrecommended by AWS for conversational GenAI workflows because it avoids state synchronization\ncomplexity and ensures deterministic model behavior across environments.\nUsing IAM roles for authentication provides a single, consistent security model for both Lambda and\nEKS.\nIAM roles integrate natively with AWS SDKs, eliminating the need for custom authentication logic or\nenvironment-specific credentials. This aligns with AWS best practices for least privilege and simplifies\ngovernance.\nOption A introduces inconsistent authentication and custom formatting logic, increasing complexity.\nOption B unnecessarily introduces ElastiCache for state management, which is not required when\nusing the Converse API correctly. Option C stores state in process memory, which is unsafe and\nunreliable for serverless and containerized workloads.\nTherefore, Option D best satisfies the requirements for conversational consistency, multienvironment support, shared model usage, and consistent authentication with minimal operational\noverhead."
+        "answer": [
+            "C"
+        ],
+        "explanation": "2,3\nCorrect! Both panels 2 and 3 represent the operation performed for broadcast variables. While a\nbroadcast operation may look like panel 3, with the driver being the bottleneck, it most probably\nlooks like panel 2.\nThis is because the torrent protocol sits behind Spark's broadcast implementation. In the torrent\nprotocol, each executor will try to fetch missing broadcast variables from the driver or other nodes,\npreventing the driver from being the bottleneck.\n1,2\nWrong. While panel 2 may represent broadcasting, panel 1 shows bi-directional communication\nwhich does not occur in broadcast operations.\n3\nNo. While broadcasting may materialize like shown in panel 3, its use of the torrent protocol also\nenables communciation as shown in panel 2 (see first explanation).\n1,3,4\nNo. While panel 2 shows broadcasting, panel 1 shows bi-directional communication - not a\ncharacteristic of broadcasting. Panel 4 shows uni-directional communication, but in the wrong\ndirection.\nPanel 4 resembles more an accumulator variable than a broadcast variable.\n2,5\nIncorrect. While panel 2 shows broadcasting, panel 5 includes bi-directional communication - not a\ncharacteristic of broadcasting.\nMore info: Broadcast Join with Spark - henning.kropponline.de"
     },
     {
-        "question": "A retail company is using Amazon Bedrock to develop a customer service AI assistant.\nAnalysis shows that\n70% of customer inquiries are simple product questions that a smaller model can effectively handle.\nHowever,\n30% of inquiries are complex return policy questions that require advanced reasoning.\nThe company wants to implement a cost-effective model selection framework to automatically route\ncustomer inquiries to appropriate models based on inquiry complexity. The framework must\nmaintain high customer satisfaction and minimize response latency.\nWhich solution will meet these requirements with the LEAST implementation effort?",
+        "question": "The code block shown below should return a DataFrame with only columns from DataFrame\ntransactionsDf for which there is a corresponding transactionId in DataFrame itemsDf. DataFrame\nitemsDf is very small and much smaller than DataFrame transactionsDf. The query should be\n\n\nexecuted in an optimized way. Choose the answer that correctly fills the blanks in the code block to\naccomplish this.\n__1__.__2__(__3__, __4__, __5__)",
         "options": [
-            "A.. Create a multi-stage architecture that uses a small foundation model (FM) to classify the\ncomplexity of each inquiry. Route simple inquiries to a smaller, more cost-effective model. Route\ncomplex inquiries to a larger, more capable model. Use AWS Lambda functions to handle routing\nlogic.",
-            "B.. Use Amazon Bedrock intelligent prompt routing to automatically analyze inquiries. Route simple\nproduct inquiries to smaller models and route complex return policy inquiries to more capable larger\nmodels.",
-            "C.. Implement a single-model solution that uses an Amazon Bedrock mid-sized foundation model (FM)\nwith on-demand pricing. Include special instructions in model prompts to handle both simple and\ncomplex inquiries by using the same model.",
-            "D.. Create separate Amazon Bedrock endpoints for simple and complex inquiries. Implement a rule-\n\n\n\n\nbased routing system based on keyword detection. Use on-demand pricing for the smaller model and\nprovisioned throughput for the larger model."
+            "A.. 1. transactionsDf\n2. join\n3. broadcast(itemsDf)\n4. transactionsDf.transactionId==itemsDf.transactionId\n5. \"outer\"",
+            "B.. 1. transactionsDf\n2. join\n3. itemsDf\n4. transactionsDf.transactionId==itemsDf.transactionId\n5. \"anti\"",
+            "C.. 1. transactionsDf\n2. join\n3. broadcast(itemsDf)\n4. \"transactionId\"\n5. \"left_semi\"",
+            "D.. 1. itemsDf\n2. broadcast\n3. transactionsDf\n4. \"transactionId\"\n5. \"left_semi\"",
+            "E.. 1. itemsDf\n2. join\n3. broadcast(transactionsDf)\n4. \"transactionId\"\n5. \"left_semi\""
+        ],
+        "answer": [
+            "C"
         ],
-        "answer": "B",
-        "explanation": "Option B is the correct solution because it leverages native Amazon Bedrock intelligent prompt\nrouting, which is specifically designed to reduce cost and complexity in multi-model GenAI\narchitectures. Intelligent prompt routing automatically analyzes incoming prompts and selects the\nmost appropriate foundation model based on prompt characteristics and complexity-without\nrequiring custom classification logic or orchestration code.\nThis approach directly meets the requirement for least implementation effort. The company does not\nneed to deploy additional Lambda functions, maintain routing rules, or manage separate\nclassification stages. Routing decisions are handled by Bedrock, which simplifies architecture and\nreduces operational risk.\nBy routing the majority (70%) of simple product inquiries to smaller, lower-cost models, the company\nminimizes inference cost and latency. More complex return policy inquiries are automatically routed\nto larger models that provide better reasoning capabilities, preserving response quality and customer\nsatisfaction.\nBecause routing is handled inline by Bedrock, response latency remains low compared to multi-stage\narchitectures that require an additional classification model call before inference. This is critical for\ncustomer service scenarios where responsiveness directly impacts satisfaction.\nOption A introduces additional inference steps and custom logic. Option C increases cost by\noverusing a mid- sized model for all queries. Option D relies on brittle keyword rules and increases\noperational overhead through endpoint management.\nTherefore, Option B delivers the optimal balance of cost efficiency, performance, and simplicity for\ndynamic model selection in Amazon Bedrock."
+        "explanation": "Correct code block:\ntransactionsDf.join(broadcast(itemsDf), \"transactionId\", \"left_semi\")\nThis question is extremely difficult and exceeds the difficulty of questions in the exam by far.\nA first indication of what is asked from you here is the remark that \"the query should be executed in\nan optimized way\". You also have qualitative information about the size of itemsDf and\ntransactionsDf. Given that itemsDf is \"very small\" and that the execution should be optimized, you\nshould consider instructing Spark to perform a broadcast join, broadcasting the \"very small\"\nDataFrame itemsDf to all executors. You can explicitly suggest this to Spark via wrapping itemsDf into\na broadcast() operator. One answer option does not include this operator, so you can disregard it.\nAnother answer option wraps the broadcast() operator around transactionsDf - the bigger of the two\nDataFrames. This answer option does not make sense in the optimization context and can likewise be\ndisregarded.\nWhen thinking about the broadcast() operator, you may also remember that it is a method of\npyspark.sql.functions. One answer option, however, resolves to itemsDf.broadcast([...]). The\nDataFrame class has no broadcast() method, so this answer option can be eliminated as well.\n\n\nAll two remaining answer options resolve to transactionsDf.join([...]) in the first 2 gaps, so you will\nhave to figure out the details of the join now. You can pick between an outer and a left semi join. An\nouter join would include columns from both DataFrames, where a left semi join only includes\ncolumns from the \"left\" table, here transactionsDf, just as asked for by the question. So, the correct\nanswer is the one that uses the left_semi join."
     },
     {
-        "question": "A medical device company wants to feed reports of medical procedures that used the\ncompany's devices into an AI assistant. To protect patient privacy, the AI assistant must expose\npatient personally identifiable information (PII) only to surgeons. The AI assistant must redact PII for\nengineers. The AI assistant must reference only medical reports that are less than 3 years old.\nThe company stores reports in an Amazon S3 bucket as soon as each report is published. The\ncompany has already set up an Amazon Bedrock Knowledge Bases. The AI assistant uses Amazon\nCognito to authenticate users.\nWhich solution will meet these requirements?",
+        "question": "The code block displayed below contains an error. When the code block below has\nexecuted, it should have divided DataFrame transactionsDf into 14 parts, based on columns storeId\nand transactionDate (in this order). Find the error.\nCode block:\ntransactionsDf.coalesce(14, (\"storeId\", \"transactionDate\"))",
         "options": [
-            "A.. Enable Amazon Macie PII detection on the S3 bucket. Use an S3 trigger to invoke an AWS Lambda\nfunction that redacts PII from the reports. Configure the Lambda function to delete outdated\ndocuments and invoke knowledge base syncing.",
-            "B.. Invoke an AWS Lambda function to sync the S3 bucket and the knowledge base when a new report\nis uploaded. Use a second Lambda function with Amazon Comprehend to redact PII for engineers.\nUse S3 Lifecycle rules to remove reports older than 3 years.",
-            "C.. Set up an S3 Lifecycle configuration to remove reports that are older than 3 years. Schedule an\nAWS Lambda function to run daily syncs between the bucket and the knowledge base. When users\ninteract with the AI assistant, apply a guardrail configuration selected based on the user's Cognito\nuser group to redact PII from responses when required.",
-            "D.. Create a second knowledge base. Use Lambda and Amazon Comprehend to redact PII before\n\n\n\n\nsyncing to the second knowledge base. Route users to the appropriate knowledge base based on\nCognito group membership."
+            "A.. The parentheses around the column names need to be removed and .select() needs to be\nappended to the code block.",
+            "B.. Operator coalesce needs to be replaced by repartition, the parentheses around the column names\nneed to be removed, and .count() needs to be appended to the code block.\n(Correct)",
+            "C.. Operator coalesce needs to be replaced by repartition, the parentheses around the column names\nneed to be removed, and .select() needs to be appended to the code block.",
+            "D.. Operator coalesce needs to be replaced by repartition and the parentheses around the column\nnames need to be replaced by square brackets.",
+            "E.. Operator coalesce needs to be replaced by repartition."
         ],
-        "answer": "C",
-        "explanation": "Option C is the correct solution because it enforces privacy controls at inference time, not at\ningestion time, which is required when different user roles require different visibility into the same\nunderlying data.\nUsing an S3 Lifecycle configuration ensures that documents older than 3 years are automatically\nremoved, guaranteeing that the knowledge base references only compliant, recent medical reports.\nScheduling Lambda- based syncs keeps the knowledge base aligned with the bucket contents without\nintroducing complex per- upload orchestration.\nThe most important requirement is role-based PII exposure. Amazon Bedrock guardrails support\ndynamic application at inference time, allowing the system to select a guardrail configuration based\non the authenticated user's Amazon Cognito group. Surgeons can receive full responses, while\nengineers receive responses with PII masked-without duplicating data or maintaining multiple\nknowledge bases.\nThis approach preserves a single source of truth for medical reports while enforcing privacy through\nresponse- level controls. It also maintains full auditability of access and redaction behavior.\nOption A permanently removes PII and violates surgeon access requirements. Option B redacts data\ninconsistently and couples privacy logic to ingestion. Option D doubles storage, increases cost, and\nintroduces data drift risk.\nTherefore, Option C best meets privacy, compliance, scalability, and operational efficiency\nrequirements."
+        "answer": [
+            "B"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.repartition(14, \"storeId\", \"transactionDate\").count()\nSince we do not know how many partitions DataFrame transactionsDf has, we cannot safely use\ncoalesce, since it would not make any change if the current number of partitions is smaller than 14.\nSo, we need to use repartition.\nIn the Spark documentation, the call structure for repartition is shown like this:\nDataFrame.repartition(numPartitions, *cols). The * operator means that any argument after\nnumPartitions will be interpreted as column. Therefore, the brackets need to be removed.\nFinally, the question specifies that after the execution the DataFrame should be divided. So, indirectly\nthis question is asking us to append an action to the code block. Since .select() is a transformation.\nthe only possible choice here is .count().\nMore info: pyspark.sql.DataFrame.repartition - PySpark 3.1.1 documentation Static notebook |\nDynamic notebook: See test 1"
     },
     {
-        "question": "A publishing company is developing a chat assistant that uses a containerized large language\nmodel (LLM) that runs on Amazon SageMaker AI. The architecture consists of an Amazon API\nGateway REST API that routes user requests to an AWS Lambda function. The Lambda function\ninvokes a SageMaker AI real-time endpoint that hosts the LLM.\nUsers report uneven response times. Analytics show that a high number of chats are abandoned after\n2 seconds of waiting for the first token. The company wants a solution to ensure that p95 latency is\nunder 800 ms for interactive requests to the chat assistant.\nWhich combination of solutions will meet this requirement? (Select TWO.)",
+        "question": "The code block displayed below contains an error. The code block should trigger Spark to\ncache DataFrame transactionsDf in executor memory where available, writing to disk where\ninsufficient executor memory is available, in a fault-tolerant way. Find the error.\nCode block:\ntransactionsDf.persist(StorageLevel.MEMORY_AND_DISK)",
         "options": [
-            "A.. Enable model preload upon container startup. Implement dynamic batching to process multiple\nuser requests together in a single inference pass.",
-            "B.. Select a larger GPU instance type for the SageMaker AI endpoint. Set the minimum number of\ninstances to 0. Continue to perform per-request processing. Lazily load model weights on the first\nrequest.",
-            "C.. Switch to a multi-model endpoint. Use lazy loading without request batching.",
-            "D.. Set the minimum number of instances to greater than 0. Enable response streaming.",
-            "E.. Switch to Amazon SageMaker Asynchronous Inference for all requests. Store requests in an\nAmazon S3 bucket. Set the minimum number of instances to 0."
+            "A.. Caching is not supported in Spark, data are always recomputed.",
+            "B.. Data caching capabilities can be accessed through the spark object, but not through the\nDataFrame API.",
+            "C.. The storage level is inappropriate for fault-tolerant storage.",
+            "D.. The code block uses the wrong operator for caching.",
+            "E.. The DataFrameWriter needs to be invoked."
+        ],
+        "answer": [
+            "C"
         ],
-        "answer": "AD",
-        "explanation": "The correct answers are A and D because they directly reduce time-to-first-token and stabilize p95\nlatency for interactive, real-time chat workloads hosted on Amazon SageMaker AI real-time\n\n\n\n\nendpoints.\nOption D addresses the biggest driver of uneven latency: cold starts and scale-to-zero behavior. By\nsetting the minimum number of instances to greater than 0, the endpoint always has warm capacity\nand loaded runtime resources, eliminating the first-request penalty that causes users to wait multiple\nseconds. Enabling response streaming improves perceived latency by returning the first tokens as\nsoon as they are generated rather than waiting for the complete response. This directly targets the\nabandonment problem described (users leaving after waiting for the first token).\nOption A further improves p95 latency and throughput by removing model loading overhead during\ninference and improving GPU utilization. Preloading model weights during container startup ensures\nthe model is ready before traffic arrives and avoids unpredictable on-demand weight loading.\nDynamic batching increases efficiency by grouping compatible requests into a single inference pass,\nreducing per-request overhead and improving GPU saturation. When tuned properly for interactive\nworkloads, batching can reduce tail latency while preserving responsiveness by enforcing small batch\nwindows.\nOption B makes latency worse because setting minimum instances to 0 and lazily loading weights\nguarantees cold-start delays and unpredictable first-token performance. Option C similarly increases\ncold-start behavior through lazy loading and offers no batching benefits. Option E is designed for\nnon-interactive workloads and introduces queueing and storage latency, which conflicts with the 800\nms p95 requirement for interactive chat.\nTherefore, A and D are the best combination to achieve consistently low p95 latency and fast firsttoken streaming for a SageMaker-hosted chat assistant."
+        "explanation": "The storage level is inappropriate for fault-tolerant storage.\nCorrect. Typically, when thinking about fault tolerance and storage levels, you would want to store\nredundant copies of the dataset. This can be achieved by using a storage level such as\nStorageLevel.MEMORY_AND_DISK_2.\nThe code block uses the wrong command for caching.\nWrong. In this case, DataFrame.persist() needs to be used, since this operator supports passing a\nstorage level.\nDataFrame.cache() does not support passing a storage level.\nCaching is not supported in Spark, data are always recomputed.\nIncorrect. Caching is an important component of Spark, since it can help to accelerate Spark\nprograms to great extent. Caching is often a good idea for datasets that need to be accessed\nrepeatedly.\nData caching capabilities can be accessed through the spark object, but not through the DataFrame\nAPI.\nNo. Caching is either accessed through DataFrame.cache() or DataFrame.persist().\nThe DataFrameWriter needs to be invoked.\nWrong. The DataFrameWriter can be accessed via DataFrame.write and is used to write data to\nexternal data stores, mostly on disk. Here, we find keywords such as \"cache\" and \"executor memory\"\nthat point us away from using external data stores. We aim to save data to memory to accelerate the\nreading process, since reading from disk is comparatively slower. The DataFrameWriter does not\nwrite to memory, so we cannot use it here.\nMore info: Best practices for caching in Spark SQL | by David Vrba | Towards Data Science"
     },
     {
-        "question": "A company is building an AI advisory application by using Amazon Bedrock. The application\nwill provide recommendations to customers. The company needs the application to explain its\nreasoning process and cite specific sources for data. The application must retrieve information from\ncompany data sources and show step- by-step reasoning for recommendations. The application must\nalso link data claims to source documents and maintain response latency under 3 seconds.\nWhich solution will meet these requirements with the LEAST operational overhead?",
+        "question": "Which of the following code blocks reads in the parquet file stored at location filePath, given\nthat all columns in the parquet file contain only whole numbers and are stored in the most\nappropriate format for this kind of data?",
         "options": [
-            "A.. Use Amazon Bedrock Knowledge Bases with source attribution enabled. Use the Anthropic Claude\nMessages API with RAG to set high-relevance thresholds for source documents. Store reasoning and\ncitations in Amazon S3 for auditing purposes.",
-            "B.. Use Amazon Bedrock with Anthropic Claude models and extended thinking. Configure a 4,000token thinking budget. Store reasoning traces and citations in Amazon DynamoDB for auditing\npurposes.",
-            "C.. Configure Amazon SageMaker AI with a custom Anthropic Claude model. Use the model's\nreasoning parameter and AWS Lambda to process responses. Add source citations from a separate\nAmazon RDS database.",
-            "D.. Use Amazon Bedrock with Anthropic Claude models and chain-of-thought reasoning. Configure\ncustom retrieval tracking with the Amazon Bedrock Knowledge Bases API. Use Amazon CloudWatch\nto monitor response latency metrics."
+            "A.. 1.spark.read.schema(\n2. StructType(\n3. StructField(\"transactionId\", IntegerType(), True),\n4. StructField(\"predError\", IntegerType(), True)\n5. )).load(filePath)",
+            "B.. 1.spark.read.schema([\n2. StructField(\"transactionId\", NumberType(), True),\n3. StructField(\"predError\", IntegerType(), True)\n4. ]).load(filePath)",
+            "C.. 1.spark.read.schema(\n2. StructType([\n3. StructField(\"transactionId\", StringType(), True),\n4. StructField(\"predError\", IntegerType(), True)]\n5. )).parquet(filePath)",
+            "D.. 1.spark.read.schema(\n2. StructType([\n3. StructField(\"transactionId\", IntegerType(), True),\n4. StructField(\"predError\", IntegerType(), True)]\n5. )).format(\"parquet\").load(filePath)",
+            "E.. 1.spark.read.schema([\n2. StructField(\"transactionId\", IntegerType(), True),\n3. StructField(\"predError\", IntegerType(), True)\n4. ]).load(filePath, format=\"parquet\")"
         ],
-        "answer": "A",
-        "explanation": "Option A is the best solution because it natively delivers retrieval grounding, source attribution, and\nlow operational overhead through Amazon Bedrock Knowledge Bases. The key requirements are:\nretrieve from company data sources, cite sources, link claims to source documents, and keep latency\n\n\n\n\nunder 3 seconds.\nKnowledge Bases are a managed RAG capability that handles document ingestion, chunking,\nembeddings, retrieval, and assembly of context for model generation. This eliminates the need to\nbuild and maintain custom retrieval infrastructure.\nSource attribution is crucial: the application must \"link data claims to source documents.\" When\nsource attribution is enabled, the RAG pipeline can return references to the underlying documents\nand segments used for generation. This enables traceable citations that can be surfaced to end users\nand used for internal auditing.\nUsing the Anthropic Claude Messages API (or equivalent conversational interface) with RAG allows\nthe application to generate recommendations grounded in retrieved context while keeping responses\nconversational. Setting relevance thresholds helps reduce noisy retrieval, which supports both\naccuracy and latency targets by limiting the context passed to the model.\nStoring reasoning and citations in Amazon S3 supports audit and retention needs with minimal\noperational burden. While the prompt may request step-by-step reasoning, AWS best practice is to\nproduce user-facing explanations that are faithful and attributable without exposing internal\nreasoning traces unnecessarily. With source-grounded outputs, the system can provide concise\nrationale tied to citations while maintaining fast response times.\nOption B emphasizes extended thinking, which increases latency and does not ensure source linkage.\nOption C adds significant operational overhead through custom model hosting and separate citation\nsystems. Option D requires more custom tracking work than A while not improving retrieval\nattribution beyond what Knowledge Bases already provide.\nTherefore, Option A best meets the requirements with the least operational overhead."
+        "answer": [
+            "D"
+        ],
+        "explanation": "The schema passed into schema should be of type StructType or a string, so all entries in which a list\nis passed are incorrect.\nIn addition, since all numbers are whole numbers, the IntegerType() data type is the correct option\nhere.\nNumberType() is not a valid data type and StringType() would fail, since the parquet file is stored in\nthe \"most appropriate format for this kind of data\", meaning that it is most likely an IntegerType, and\nSpark does not convert data types if a schema is provided.\nAlso note that StructType accepts only a single argument (a list of StructFields). So, passing multiple\narguments is invalid.\nFinally, Spark needs to know which format the file is in. However, all of the options listed are valid\nhere, since Spark assumes parquet as a default when no file format is specifically passed.\nMore info: pyspark.sql.DataFrameReader.schema - PySpark 3.1.2 documentation and StructType\n- PySpark 3.1.2 documentation"
     },
     {
-        "question": "A company is using AWS Lambda and REST APIs to build a reasoning agent to automate\nsupport workflows.\nThe system must preserve memory across interactions, share relevant agent state, and support\nevent-driven invocation and synchronous invocation. The system must also enforce access control\nand session-based permissions.\nWhich combination of steps provides the MOST scalable solution? (Select TWO.)",
+        "question": "Which of the following code blocks generally causes a great amount of network traffic?",
         "options": [
-            "A.. Use Amazon Bedrock AgentCore to manage memory and session-aware reasoning. Deploy the\nagent with built-in identity support, event handling, and observability.",
-            "B.. Register the Lambda functions and REST APIs as actions by using Amazon API Gateway and\nAmazon EventBridge. Enable Amazon Bedrock AgentCore to invoke the Lambda functions and REST\nAPIs without custom orchestration code.",
-            "C.. Use Amazon Bedrock Agents for reasoning and conversation management. Use AWS Step\nFunctions and Amazon SQS for orchestration. Store agent state in Amazon DynamoDB.",
-            "D.. Deploy the reasoning logic as a container on Amazon ECS behind API Gateway. Use Amazon\nAurora to store memory and identity data.",
-            "E.. Build a custom RAG pipeline by using Amazon Kendra and Amazon Bedrock. Use AWS Lambda to\norchestrate tool invocations. Store agent state in Amazon S3."
+            "A.. DataFrame.select()",
+            "B.. DataFrame.coalesce()",
+            "C.. DataFrame.collect()",
+            "D.. DataFrame.rdd.map()",
+            "E.. DataFrame.count()"
+        ],
+        "answer": [
+            "C"
         ],
-        "answer": "AB",
-        "explanation": "The combination of Options A and B provides the most scalable and AWS-native architecture for\nbuilding reasoning agents with persistent memory, session awareness, secure access control, and\nflexible invocation models.\n\n\n\n\nAmazon Bedrock AgentCore is purpose-built to manage agent memory, session context, and identityaware reasoning across interactions. It eliminates the need for developers to manually store and\nretrieve agent state, manage session lifecycles, or implement custom memory layers. AgentCore\nnatively supports both synchronous requests and event-driven execution, making it ideal for support\nworkflow automation.\nOption B complements AgentCore by enabling seamless tool invocation. By registering AWS Lambda\nfunctions and REST APIs as agent actions through API Gateway and EventBridge, the agent can invoke\ntools reactively or synchronously without custom orchestration code. EventBridge enables eventdriven execution, while API Gateway supports synchronous request-response patterns.\nThis combination provides built-in security, observability, and scaling, while avoiding the operational\nburden of managing queues, databases, or custom workflow engines.\nOption C introduces unnecessary orchestration complexity. Option D increases infrastructure\nmanagement and cost. Option E stores agent state in S3, which is not suitable for low-latency,\nsession-based reasoning.\nTherefore, A and B together deliver the most scalable, secure, and low-overhead solution for\nproduction- grade reasoning agents on AWS."
+        "explanation": "DataFrame.collect() sends all data in a DataFrame from executors to the driver, so this generally\ncauses a great amount of network traffic in comparison to the other options listed.\nDataFrame.coalesce() just reduces the number of partitions and generally aims to reduce network\ntraffic in comparison to a full shuffle.\nDataFrame.select() is evaluated lazily and, unless followed by an action, does not cause significant\nnetwork traffic.\nDataFrame.rdd.map() is evaluated lazily, it does therefore not cause great amounts of network\ntraffic.\nDataFrame.count() is an action. While it does cause some network traffic, for the same DataFrame,\ncollecting all data in the driver would generally be considered to cause a greater amount of network\ntraffic."
     },
     {
-        "question": "A company uses an AI assistant application to summarize the company's website content and\nprovide information to customers. The company plans to use Amazon Bedrock to give the application\naccess to a foundation model (FM).\nThe company needs to deploy the AI assistant application to a development environment and a\nproduction environment. The solution must integrate the environments with the FM. The company\nwants to test the effectiveness of various FMs in each environment. The solution must provide\nproduct owners with the ability to easily switch between FMs for testing purposes in each\nenvironment.\nWhich solution will meet these requirements?",
+        "question": "Which of the following code blocks creates a new DataFrame with 3 columns, productId,\nhighest, and lowest, that shows the biggest and smallest values of column value per value in column\nproductId from DataFrame transactionsDf?\nSample of DataFrame transactionsDf:\n1.+-------------+---------+-----+-------+---------+----+\n2.|transactionId|predError|value|storeId|productId| f|\n3.+-------------+---------+-----+-------+---------+----+\n4.| 1| 3| 4| 25| 1|null|\n5.| 2| 6| 7| 2| 2|null|\n6.| 3| 3| null| 25| 3|null|\n7.| 4| null| null| 3| 2|null|\n8.| 5| null| null| null| 2|null|\n9.| 6| 3| 2| 25| 2|null|\n10.+-------------+---------+-----+-------+---------+----+",
         "options": [
-            "A.. Create one AWS CDK application. Create multiple pipelines in AWS CodePipeline. Configure each\npipeline to have its own settings for each FM. Configure the application to invoke the Amazon\nBedrock FMs by using the aws_bedrock.ProvisionedModel.fromProvisionedModelArn() method.",
-            "B.. Create a separate AWS CDK application for each environment. Configure the applications to invoke\nthe Amazon Bedrock FMs by using the aws_bedrock.FoundationModel.fromFoundationModelId()\nmethod. Create a separate pipeline in AWS CodePipeline for each environment.",
-            "C.. Create one AWS CDK application. Configure the application to invoke the Amazon Bedrock FMs by\nusing the aws_bedrock.FoundationModel.fromFoundationModelId() method. Create a pipeline in\nAWS CodePipeline that has a deployment stage for each environment that uses AWS CodeBuild\ndeploy actions.",
-            "D.. Create one AWS CDK application for the production environment. Configure the application to\ninvoke the Amazon Bedrock FMs by using the\naws_bedrock.ProvisionedModel.fromProvisionedModelArn() method. Create a pipeline in AWS\nCodePipeline. Configure the pipeline to deploy to the production environment by using an AWS\nCodeBuild deploy action. For the development environment, manually recreate the resources by\n\n\n\n\nreferring to the production application code."
+            "A.. transactionsDf.max('value').min('value')",
+            "B.. transactionsDf.agg(max('value').alias('highest'), min('value').alias('lowest'))",
+            "C.. transactionsDf.groupby(col(productId)).agg(max(col(value)).alias(\"highest\"),\nmin(col(value)).alias(\"lowest\"))",
+            "D.. transactionsDf.groupby('productId').agg(max('value').alias('highest'), min('value').alias('lowest'))",
+            "E.. transactionsDf.groupby(\"productId\").agg({\"highest\": max(\"value\"), \"lowest\": min(\"value\")})"
         ],
-        "answer": "C",
-        "explanation": "Option C best satisfies the requirement for flexible FM testing across environments while minimizing\noperational complexity and aligning with AWS-recommended deployment practices. Amazon Bedrock\nsupports invoking on-demand foundation models through the FoundationModel abstraction, which\nallows applications to dynamically reference different models without requiring dedicated\nprovisioned capacity. This is ideal for experimentation and A/B testing in both development and\nproduction environments.\nUsing a single AWS CDK application ensures infrastructure consistency and reduces duplication.\nEnvironment-specific configuration, such as selecting different foundation model IDs, can be\nexternalized through parameters, context variables, or environment-specific configuration files. This\nallows product owners to easily switch between FMs in each environment without modifying\napplication logic.\nA single AWS CodePipeline with distinct deployment stages for development and production is an\nAWS best practice for multi-environment deployments. It enforces consistent build and deployment\nsteps while still allowing environment-level customization. AWS CodeBuild deploy actions enable\nautomated, repeatable deployments, reducing manual errors and improving governance.\nOption A increases complexity by introducing multiple pipelines and relies on provisioned models,\nwhich are not necessary for FM evaluation and experimentation. Provisioned throughput is better\nsuited for predictable, high-volume production workloads rather than frequent model switching.\nOption B creates unnecessary operational overhead by duplicating CDK applications and pipelines,\nmaking long-term maintenance more difficult.\nOption D directly conflicts with infrastructure-as-code best practices by manually recreating\ndevelopment resources, which increases configuration drift and reduces reliability.\nTherefore, Option C provides the most flexible, scalable, and AWS-aligned solution for testing and\nswitching foundation models across development and production environments."
+        "answer": [
+            "D"
+        ],
+        "explanation": "transactionsDf.groupby('productId').agg(max('value').alias('highest'), min('value').alias('lowest'))\nCorrect. groupby and aggregate is a common pattern to investigate aggregated values of groups.\ntransactionsDf.groupby(\"productId\").agg({\"highest\": max(\"value\"), \"lowest\": min(\"value\")}) Wrong.\nWhile DataFrame.agg() accepts dictionaries, the syntax of the dictionary in this code block is wrong.\nIf you use a dictionary, the syntax should be like {\"value\": \"max\"}, so using the column name as the\nkey and the aggregating function as value.\ntransactionsDf.agg(max('value').alias('highest'), min('value').alias('lowest')) Incorrect. While this is\nvalid Spark syntax, it does not achieve what the question asks for. The question specifically asks for\nvalues to be aggregated per value in column productId - this column is not considered here. Instead,\nthe max() and min() values are calculated as if the entire DataFrame was a group.\ntransactionsDf.max('value').min('value')\nWrong. There is no DataFrame.max() method in Spark, so this command will fail.\ntransactionsDf.groupby(col(productId)).agg(max(col(value)).alias(\"highest\"),\nmin(col(value)).alias(\"lowest\")) No. While this may work if the column names are expressed as\nstrings, this will not work as is. Python will interpret the column names as variables and, as a result,\npySpark will not understand which columns you want to aggregate.\nMore info: pyspark.sql.DataFrame.agg - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 3"
     },
     {
-        "question": "A financial services company is building a customer support application that retrieves\nrelevant financial regulation documents from a database based on semantic similarity to user\nqueries. The application must integrate with Amazon Bedrock to generate responses. The application\nmust search documents in English, Spanish, and Portuguese. The application must filter documents\nby metadata such as publication date, regulatory agency, and document type.\nThe database stores approximately 10 million document embeddings. To minimize operational\noverhead, the company wants a solution that minimizes management and maintenance effort while\nproviding low-latency responses for real-time customer interactions.\nWhich solution will meet these requirements?",
+        "question": "Which of the following describes the conversion of a computational query into an execution\nplan in Spark?",
         "options": [
-            "A.. Use Amazon OpenSearch Serverless to provide vector search capabilities and metadata filtering.\nIntegrate with Amazon Bedrock Knowledge Bases to enable Retrieval Augmented Generation (RAG)\nusing an Anthropic Claude foundation model.",
-            "B.. Deploy an Amazon Aurora PostgreSQL database with the pgvector extension. Store embeddings\nand metadata in tables. Use SQL queries for similarity search and send results to Amazon Bedrock for\nresponse generation.",
-            "C.. Use Amazon S3 Vectors to configure a vector index and non-filterable metadata fields. Integrate S3\nVectors with Amazon Bedrock for RAG.",
-            "D.. Set up an Amazon Neptune Analytics database with a vector index. Use graph-based retrieval and\n49\n\n\n\n\nAmazon Bedrock for response generation."
+            "A.. Spark uses the catalog to resolve the optimized logical plan.",
+            "B.. The catalog assigns specific resources to the optimized memory plan.",
+            "C.. The executed physical plan depends on a cost optimization from a previous stage.",
+            "D.. Depending on whether DataFrame API or SQL API are used, the physical plan may differ.",
+            "E.. The catalog assigns specific resources to the physical plan."
+        ],
+        "answer": [
+            "C"
         ],
-        "answer": "A",
-        "explanation": "Option A is the optimal solution because it provides scalable semantic search, rich metadata filtering,\nand tight integration with Amazon Bedrock while minimizing operational overhead. Amazon\nOpenSearch Serverless is designed for high-volume, low-latency search workloads and removes the\nneed to manage clusters, capacity planning, or scaling policies.\nWith support for vector search and structured metadata filtering, OpenSearch Serverless enables\nefficient similarity search across 10 million embeddings while applying constraints such as language,\npublication date, regulatory agency, and document type. This is critical for financial services use cases\nwhere relevance and compliance depend on precise filtering.\nIntegrating OpenSearch Serverless with Amazon Bedrock Knowledge Bases enables a fully managed\nRAG workflow. The knowledge base handles embedding generation, retrieval, and context assembly,\nwhile Amazon Bedrock generates responses using a foundation model. This significantly reduces\ncustom glue code and operational complexity.\nMultilingual support is handled at the embedding and retrieval layer, allowing documents in English,\nSpanish, and Portuguese to be searched semantically without language-specific query logic.\nOpenSearch's distributed architecture ensures consistent low-latency responses for real-time\ncustomer interactions.\nOption B increases operational overhead by requiring database tuning and scaling for vector\nworkloads.\nOption C does not support advanced metadata filtering, which is a key requirement. Option D\nintroduces unnecessary complexity and is not optimized for large-scale semantic document retrieval.\nTherefore, Option A best meets the requirements for performance, scalability, multilingual support,\nand minimal management effort in an Amazon Bedrock-based RAG application."
+        "explanation": "The executed physical plan depends on a cost optimization from a previous stage.\nCorrect! Spark considers multiple physical plans on which it performs a cost analysis and selects the\nfinal physical plan in accordance with the lowest-cost outcome of that analysis. That final physical\nplan is then executed by Spark.\nSpark uses the catalog to resolve the optimized logical plan.\nNo. Spark uses the catalog to resolve the unresolved logical plan, but not the optimized logical plan.\nOnce the unresolved logical plan is resolved, it is then optimized using the Catalyst Optimizer.\nThe optimized logical plan is the input for physical planning.\nThe catalog assigns specific resources to the physical plan.\nNo. The catalog stores metadata, such as a list of names of columns, data types, functions, and\ndatabases.\nSpark consults the catalog for resolving the references in a logical plan at the beginning of the\nconversion of the query into an execution plan. The result is then an optimized logical plan.\nDepending on whether DataFrame API or SQL API are used, the physical plan may differ.\nWrong - the physical plan is independent of which API was used. And this is one of the great strengths\nof Spark!\nThe catalog assigns specific resources to the optimized memory plan.\nThere is no specific \"memory plan\" on the journey of a Spark computation.\nMore info: Spark's Logical and Physical plans ... When, Why, How and Beyond. | by Laurent Leturgez |\ndatalex | Medium"
     },
     {
-        "question": "A financial services company is developing a customer service AI assistant by using Amazon\nBedrock. The AI assistant must not discuss investment advice with users. The AI assistant must block\nharmful content, mask personally identifiable information (PII), and maintain audit trails for\ncompliance reporting. The AI assistant must apply content filtering to both user inputs and model\nresponses based on content sensitivity.\nThe company requires an Amazon Bedrock guardrail configuration that will effectively enforce\npolicies with minimal false positives. The solution must provide multiple handling strategies for\nmultiple types of sensitive content.\nWhich solution will meet these requirements?",
+        "question": "Which of the elements that are labeled with a circle and a number contain an error or are\nmisrepresented?",
         "options": [
-            "A.. Configure a single guardrail and set content filters to high for all categories. Set up denied topics\nfor investment advice and include sample phrases to block. Set up sensitive information filters that\napply the block action for all PII entities. Apply the guardrail to all model inference calls.",
-            "B.. Configure multiple guardrails by using tiered policies. Create one guardrail and set content filters\nto high. Configure the guardrail to block PII for public interactions. Configure a second guardrail and\nset content filters to medium. Configure the second guardrail to mask PII for internal use. Configure\nmultiple topic-specific guardrails to block investment advice and set up contextual grounding checks.",
-            "C.. Configure a guardrail and set content filters to medium for harmful content. Set up denied topics\nfor investment advice and include clear definitions and sample phrases to block. Configure sensitive\ninformation filters to mask PII in responses and to block financial information in inputs. Enable both\n\n\n\n\ninput and output evaluations that use custom blocked messages for audits.",
-            "D.. Create a separate guardrail for each use case. Create one guardrail that applies a harmful content\nfilter.Create a guardrail to apply topic filters for investment advice. Create a guardrail to apply\nsensitive information filters to block PII. Use AWS Step Functions to chain the guardrails sequentially."
+            "A.. 1, 10",
+            "B.. 1, 8",
+            "C.. 10",
+            "D.. 7, 9, 10",
+            "E.. 1, 4, 6, 9"
         ],
-        "answer": "C",
-        "explanation": "Option C is the correct solution because it uses a single, well-tuned Amazon Bedrock guardrail that\napplies different actions to different content types, which is the recommended approach for\nminimizing false positives while enforcing strong policy controls.\nSetting content filters to medium rather than high reduces overblocking of benign customer\nconversations while still preventing harmful content. Amazon Bedrock guardrails are designed to\nbalance precision and recall, and medium sensitivity is commonly recommended for customer-facing\nfinancial services use cases.\nDenied topics explicitly prevent the assistant from discussing investment advice, which is a regulatory\nrequirement. Including definitions and sample phrases improves detection accuracy and reduces\nambiguity.\nSensitive information filters support different actions per context. Masking PII in responses preserves\nconversational usefulness for legitimate customer support while preventing exposure of sensitive\ndata.\nBlocking sensitive financial information in inputs prevents downstream processing of disallowed\ncontent before it reaches the foundation model.\nCritically, enabling both input and output evaluation ensures that guardrails are applied consistently\nat every stage of interaction. Custom blocked messages and audit logging provide clear compliance\nevidence for regulators and internal audits.\nOption A causes excessive false positives by blocking all PII outright. Option B introduces unnecessary\ncomplexity and is not how Bedrock guardrails are intended to be applied. Option D uses\norchestration logic that Bedrock guardrails already handle natively.\nTherefore, Option C best satisfies enforcement, flexibility, auditability, and accuracy requirements."
+        "answer": [
+            "B"
+        ],
+        "explanation": "1: Correct - This should just read \"API\" or \"DataFrame API\". The DataFrame is not part of the SQL API.\nTo make a DataFrame accessible via SQL, you first need to create a DataFrame view. That view can\nthen be accessed via SQL.\n4: Although \"K_38_INU\" looks odd, it is a completely valid name for a DataFrame column.\n6: No, StringType is a correct type.\n7: Although a StringType may not be the most efficient way to store a phone number, there is\nnothing fundamentally wrong with using this type here.\n8: Correct - TreeType is not a type that Spark supports.\n9: No, Spark DataFrames support ArrayType variables. In this case, the variable would represent a\nsequence of elements with type LongType, which is also a valid type for Spark DataFrames.\n\n\n10: There is nothing wrong with this row.\nMore info: Data Types - Spark 3.1.1 Documentation (https://bit.ly/3aAPKJT)"
     },
     {
-        "question": "A pharmaceutical company is developing a Retrieval Augmented Generation (RAG)\napplication that uses an Amazon Bedrock knowledge base. The knowledge base uses Amazon\nOpenSearch Service as a data source for more than 25 million scientific papers. Users report that the\napplication produces inconsistent answers that cite irrelevant sections of papers when queries span\nmethodology, results, and discussion sections of the papers.\nThe company needs to improve the knowledge base to preserve semantic context across related\nparagraphs on the scale of the entire corpus of data.\nWhich solution will meet these requirements?",
+        "question": "The code block displayed below contains an error. The code block should display the\nschema of DataFrame transactionsDf. Find the error.\nCode block:\ntransactionsDf.rdd.printSchema",
         "options": [
-            "A.. Configure the knowledge base to use fixed-size chunking. Set a 300-token maximum chunk size\nand a\n10% overlap between chunks. Use an appropriate Amazon Bedrock embedding model.",
-            "B.. Configure the knowledge base to use hierarchical chunking. Use parent chunks that contain 1,000\ntokens and child chunks that contain 200 tokens. Set a 50-token overlap between chunks.",
-            "C.. Configure the knowledge base to use semantic chunking. Use a buffer size of 1 and a breakpoint\npercentile threshold of 85% to determine chunk boundaries based on content meaning.",
-            "D.. Configure the knowledge base not to use chunking. Manually split each document into separate\n\n\n\n\nfiles before ingestion. Apply post-processing reranking during retrieval."
+            "A.. There is no way to print a schema directly in Spark, since the schema can be printed easily through\nusing print(transactionsDf.columns), so that should be used instead.",
+            "B.. The code block should be wrapped into a print() operation.",
+            "C.. printSchema is only accessible through the spark session, so the code block should be rewritten as\nspark.printSchema(transactionsDf).",
+            "D.. printSchema is a method and should be written as printSchema(). It is also not callable through\ntransactionsDf.rdd, but should be called directly from transactionsDf.\n(Correct)",
+            "E.. printSchema is a not a method of transactionsDf.rdd. Instead, the schema should be printed via\ntransactionsDf.print_schema()."
+        ],
+        "answer": [
+            "D"
         ],
-        "answer": "B",
-        "explanation": "Option B is the best solution because hierarchical chunking is specifically designed to preserve\nbroader semantic context while still enabling precise retrieval at paragraph or sub-paragraph\ngranularity. The problem described-answers citing irrelevant sections when a query spans multiple\npaper sections-often occurs when chunks are either too small (losing cross-paragraph context) or too\n\"flat\" (retrieving isolated snippets without their surrounding rationale).\nIn a scientific paper, related information is frequently distributed across methodology, results, and\ndiscussion.\nFlat, fixed-size chunking (Option A) can split these logically connected ideas into separate chunks,\ncausing retrieval to surface fragments that match a term but not the full intent. Semantic chunking\n(Option C) improves boundary placement, but it does not inherently provide a multi-resolution\nstructure that helps preserve section-level continuity at massive scale.\nHierarchical chunking solves this by creating parent chunks (larger context windows) that capture\nbroader section context and child chunks (smaller units) that retain retrieval precision. When the\nretriever identifies relevant child chunks, it can also bring in the associated parent context so the\nfoundation model sees the surrounding methodological or discussion framing. The defined overlaps\nfurther reduce the risk that key transitions or references are split across chunks.\nThis approach is well suited for a corpus of 25 million papers because it improves relevance without\nrequiring a custom reranking model or a manual preprocessing pipeline. It remains operationally\nefficient because it is configured at the knowledge base level rather than implemented through\ncustom code per document.\nOption D introduces high operational complexity and inconsistent document handling at scale.\nTherefore, Option B best meets the requirement to preserve semantic context across related\nparagraphs and improve citation relevance across scientific paper sections."
+        "explanation": "Correct code block:\ntransactionsDf.printSchema()\nThis is more of a knowledge question that you should just memorize or look up in the provided\ndocumentation during the exam. You can get more info about DataFrame.printSchema() in the\ndocumentation (link below). However - it is a plain simple method without any arguments.\nOne answer points to an alternative of printing the schema: You could also use\nprint(transactionsDf.schema).\nThis will give you readable, but not nicely formatted, description of the schema.\nMore info: pyspark.sql.DataFrame.printSchema - PySpark 3.1.1 documentation Static notebook |\nDynamic notebook: See test 1"
     },
     {
-        "question": "A financial services company is developing a generative AI (GenAI) application that serves\nboth premium customers and standard customers. The application uses AWS Lambda functions\nbehind an Amazon API Gateway REST API to process requests. The company needs to dynamically\nswitch between AI models based on which customer tier each user belongs to. The company also\nwants to perform A/B testing for new features without redeploying code. The company needs to\nvalidate model parameters like temperature and maximum token limits before applying changes.\nWhich solution will meet these requirements with the LEAST operational overhead?",
+        "question": "Which of the following is a problem with using accumulators?",
         "options": [
-            "A.. Create AWS Systems Manager Parameter Store parameters for each configuration. Use Lambda\nfunctions to poll for parameter updates. Use Amazon EventBridge events to trigger redeployments\nwhen configurations change.",
-            "B.. Store model configurations in Amazon DynamoDB tables. Optimize access patterns to retrieve\nconfigurations according to customer tier. Configure Lambda functions to query DynamoDB at the\nbeginning of each request to determine which model to use.",
-            "C.. Use AWS AppConfig to manage model configurations. Use feature flags to perform A/B testing.\nDefine JSON schema validation rules for model parameters. Configure Lambda functions to retrieve\nconfigurations by using the AWS AppConfig Agent.",
-            "D.. Create an Amazon ElastiCache (Redis OSS) cluster to store model configurations. Set short TTL\nvalues. Run custom validation logic in Lambda functions. Use Amazon CloudWatch metrics to monitor\n\n\n\n\nconfiguration usage."
+            "A.. Only unnamed accumulators can be inspected in the Spark UI.",
+            "B.. Only numeric values can be used in accumulators.",
+            "C.. Accumulator values can only be read by the driver, but not by executors.",
+            "D.. Accumulators do not obey lazy evaluation.",
+            "E.. Accumulators are difficult to use for debugging because they will only be updated once,\nindependent if a task has to be re-run due to hardware failure."
         ],
-        "answer": "C",
-        "explanation": "Option C is the correct solution because AWS AppConfig is purpose-built to manage dynamic\napplication configurations with low latency, strong validation, and minimal operational overhead,\nwhich directly matches the company's requirements.\nAWS AppConfig enables the company to centrally manage model selection logic, inference\nparameters, and customer-tier routing rules without redeploying Lambda functions. By using feature\nflags, the company can easily perform A/B testing of new models or prompt strategies by gradually\nrolling out changes to a subset of users or customer tiers. This allows experimentation and controlled\nreleases without code changes.\nAppConfig also supports JSON schema validation, which is critical for validating parameters such as\ntemperature, maximum token limits, and other model-specific settings before they are applied. This\nprevents invalid or unsafe configurations from being deployed and reduces the risk of runtime errors\nor degraded model behavior in production.\nUsing the AWS AppConfig Agent allows Lambda functions to retrieve configurations efficiently with\nbuilt-in caching and polling mechanisms, minimizing latency and avoiding excessive calls to\nconfiguration services.\nThis approach scales well for high-throughput, low-latency applications such as GenAI APIs behind\nAmazon API Gateway.\nOption A introduces unnecessary redeployment logic and polling complexity. Option B requires\nbuilding and maintaining custom configuration access patterns in DynamoDB and does not natively\nsupport feature flags or schema validation. Option D adds operational overhead by requiring\nElastiCache cluster management and custom validation logic.\nTherefore, Option C provides the most scalable, flexible, and low-maintenance solution for dynamic\nmodel switching, A/B testing, and safe configuration management in a GenAI application."
+        "answer": [
+            "C"
+        ],
+        "explanation": "Accumulator values can only be read by the driver, but not by executors.\nCorrect. So, for example, you cannot use an accumulator variable for coordinating workloads\nbetween executors. The typical, canonical, use case of an accumulator value is to report data, for\nexample for debugging purposes, back to the driver. For example, if you wanted to count values that\nmatch a specific condition in a UDF for debugging purposes, an accumulator provides a good way to\ndo that.\n\n\nOnly numeric values can be used in accumulators.\nNo. While pySpark's Accumulator only supports numeric values (think int and float), you can define\naccumulators for custom types via the AccumulatorParam interface (documentation linked below).\nAccumulators do not obey lazy evaluation.\nIncorrect - accumulators do obey lazy evaluation. This has implications in practice: When an\naccumulator is encapsulated in a transformation, that accumulator will not be modified until a\nsubsequent action is run.\nAccumulators are difficult to use for debugging because they will only be updated once, independent\nif a task has to be re-run due to hardware failure.\nWrong. A concern with accumulators is in fact that under certain conditions they can run for each\ntask more than once. For example, if a hardware failure occurs during a task after an accumulator\nvariable has been increased but before a task has finished and Spark launches the task on a different\nworker in response to the failure, already executed accumulator variable increases will be repeated.\nOnly unnamed accumulators can be inspected in the Spark UI.\nNo. Currently, in PySpark, no accumulators can be inspected in the Spark UI. In the Scala interface of\nSpark, only named accumulators can be inspected in the Spark UI.\nMore info: Aggregating Results with Spark Accumulators | Sparkour, RDD Programming Guide - Spark\n3.1.2 Documentation, pyspark.Accumulator - PySpark 3.1.2 documentation, and\npyspark.AccumulatorParam - PySpark 3.1.2 documentation"
     },
     {
-        "question": "A company is building a serverless application that uses AWS Lambda functions to help\nstudents around the world summarize notes. The application uses Anthropic Claude through Amazon\nBedrock. The company observes that most of the traffic occurs during evenings in each time zone.\nUsers report experiencing throttling errors during peak usage times in their time zones.\nThe company needs to resolve the throttling issues by ensuring continuous operation of the\napplication. The solution must maintain application performance quality and must not require a fixed\nhourly cost during low traffic periods.\nWhich solution will meet these requirements?",
+        "question": "Which of the following code blocks returns a new DataFrame in which column attributes of\nDataFrame itemsDf is renamed to feature0 and column supplier to feature1?",
         "options": [
-            "A.. Create custom Amazon CloudWatch metrics to monitor model errors. Set provisioned throughput\nto a value that is safely higher than the peak traffic observed.",
-            "B.. Create custom Amazon CloudWatch metrics to monitor model errors. Set up a failover mechanism\nto redirect invocations to a backup AWS Region when the errors exceed a specified threshold.\n54",
-            "C.. Enable invocation logging in Amazon Bedrock. Monitor key metrics such as Invocations,\nInputTokenCount, OutputTokenCount, and InvocationThrottles. Distribute traffic across cross-Region\ninference endpoints.",
-            "D.. Enable invocation logging in Amazon Bedrock. Monitor InvocationLatency, InvocationClientErrors,\nand InvocationServerErrors metrics. Distribute traffic across multiple versions of the same model."
+            "A.. itemsDf.withColumnRenamed(attributes, feature0).withColumnRenamed(supplier, feature1)",
+            "B.. 1.itemsDf.withColumnRenamed(\"attributes\", \"feature0\")\n2.itemsDf.withColumnRenamed(\"supplier\", \"feature1\")",
+            "C.. itemsDf.withColumnRenamed(col(\"attributes\"), col(\"feature0\"), col(\"supplier\"), col(\"feature1\"))",
+            "D.. itemsDf.withColumnRenamed(\"attributes\", \"feature0\").withColumnRenamed(\"supplier\",\n\"feature1\")",
+            "E.. itemsDf.withColumn(\"attributes\", \"feature0\").withColumn(\"supplier\", \"feature1\")"
+        ],
+        "answer": [
+            "D"
         ],
-        "answer": "C",
-        "explanation": "Option C is the correct solution because it resolves throttling while preserving performance and\navoiding fixed costs during low-traffic periods. Amazon Bedrock supports on-demand inference with\nusage-based pricing, making it well suited for applications with time-zone-dependent traffic spikes.\nThrottling during peak hours typically occurs when inference requests exceed available regional\ncapacity.\nCross-Region inference allows Amazon Bedrock to automatically distribute requests across multiple\nAWS Regions, reducing contention and preventing throttling without requiring reserved or\nprovisioned capacity.\nThis approach ensures continuous operation while maintaining low latency for users in different\ngeographic locations.\nInvocation logging and native metrics such as InvocationThrottles, InputTokenCount, and\nOutputTokenCount provide visibility into usage patterns and capacity constraints. Monitoring these\nmetrics enables teams to validate that traffic distribution is working as intended and that\nperformance remains consistent during peak periods.\nOption A introduces fixed hourly costs by relying on provisioned throughput, which directly violates\nthe requirement to avoid unnecessary spend during low-traffic periods. Option B introduces regional\nfailover complexity and reactive behavior instead of proactive load distribution. Option D does not\naddress the root cause of throttling, as distributing traffic across model versions within the same\nRegion does not increase available capacity.\nTherefore, Option C best aligns with AWS Generative AI best practices for scalable, cost-efficient,\nglobal serverless applications."
+        "explanation": "itemsDf.withColumnRenamed(\"attributes\", \"feature0\").withColumnRenamed(\"supplier\", \"feature1\")\nCorrect! Spark's DataFrame.withColumnRenamed syntax makes it relatively easy to change the name\nof a column.\nitemsDf.withColumnRenamed(attributes, feature0).withColumnRenamed(supplier, feature1)\nIncorrect. In this code block, the Python interpreter will try to use attributes and the other column\nnames as variables. Needless to say, they are undefined, and as a result the block will not run.\nitemsDf.withColumnRenamed(col(\"attributes\"), col(\"feature0\"), col(\"supplier\"), col(\"feature1\"))\nWrong. The DataFrame.withColumnRenamed() operator takes exactly two string arguments. So, in\nthis answer both using col() and using four arguments is wrong.\nitemsDf.withColumnRenamed(\"attributes\", \"feature0\")\nitemsDf.withColumnRenamed(\"supplier\", \"feature1\")\nNo. In this answer, the returned DataFrame will only have column supplier be renamed, since the\nresult of the first line is not written back to itemsDf.\nitemsDf.withColumn(\"attributes\", \"feature0\").withColumn(\"supplier\", \"feature1\") Incorrect. While\nwithColumn works for adding and naming new columns, you cannot use it to rename existing\n\n\ncolumns.\nMore info: pyspark.sql.DataFrame.withColumnRenamed - PySpark 3.1.2 documentation Static\nnotebook | Dynamic notebook: See test 3"
     },
     {
-        "question": "A financial services company wants to develop an Amazon Bedrock application that gives\nanalysts the ability to query quarterly earnings reports and financial statements. The financial\ndocuments are typically 5-100 pages long and contain both tabular data and text. The application\nmust provide contextually accurate responses that preserve the relationship between financial\nmetrics and their explanatory text. To support accurate and scalable retrieval, the application must\nincorporate document segmentation and context management strategies.\nWhich solution will meet these requirements?",
+        "question": "The code block displayed below contains at least one error. The code block should return a\nDataFrame with only one column, result. That column should include all values in column value from\nDataFrame transactionsDf raised to the power of 5, and a null value for rows in which there is no\nvalue in column value. Find the error(s).\nCode block:\n1.from pyspark.sql.functions import udf\n2.from pyspark.sql import types as T\n3.\n4.transactionsDf.createOrReplaceTempView('transactions')\n5.\n6.def pow_5(x):\n7. return x**5\n8.\n9.spark.udf.register(pow_5, 'power_5_udf', T.LongType())\n10.spark.sql('SELECT power_5_udf(value) FROM transactions')",
         "options": [
-            "A.. Use a direct model invocation approach that uses Anthropic Claude to process each financial\ndocument as a single input. Use fine-tuned prompts that instruct the model to parse tables and text\nseparately.",
-            "B.. Use Amazon Bedrock Knowledge Bases to create a Retrieval Augmented Generation (RAG)\napplication that retrieves relevant information from contextually chunked sections of financial\ndocuments. Segment documents based on their structural layout. Include citations that reference the\noriginal source materials.",
-            "C.. Deploy an Amazon Bedrock agent that has an action group that calls custom AWS Lambda\nfunctions to analyze financial documents. Configure the Lambda functions to perform fixed-size\n\n\n\n\nchunking when a user submits a query about financial metrics.",
-            "D.. Create one specialized Amazon Bedrock application that is optimized for structured data. Create a\nsecond application that is optimized for unstructured data. Configure each application to use a\ntailored chunking strategy that is suited to the application's content type. Implement logic to link\nqueries to the appropriate sources."
+            "A.. The pow_5 method is unable to handle empty values in column value and the name of the column\nin the returned DataFrame is not result.",
+            "B.. The returned DataFrame includes multiple columns instead of just one column.",
+            "C.. The pow_5 method is unable to handle empty values in column value, the name of the column in\nthe returned DataFrame is not result, and the SparkSession cannot access the transactionsDf\nDataFrame.",
+            "D.. The pow_5 method is unable to handle empty values in column value, the name of the column in\nthe returned DataFrame is not result, and Spark driver does not call the UDF function appropriately.",
+            "E.. The pow_5 method is unable to handle empty values in column value, the UDF function is not\nregistered properly with the Spark driver, and the name of the column in the returned DataFrame is\nnot result."
         ],
-        "answer": "B",
-        "explanation": "Option B best satisfies the requirements because it directly applies Retrieval Augmented Generation\nprinciples using managed Amazon Bedrock Knowledge Bases, which are designed to handle large,\ncomplex documents while preserving contextual relationships. Financial reports often interleave\ntables with explanatory narrative, and accurate analysis depends on keeping those elements logically\nconnected. By segmenting documents based on their structural layout-for example, sections,\nsubsections, tables, and surrounding commentary-the knowledge base can retrieve semantically\nrelevant chunks that maintain this relationship during inference.\nAmazon Bedrock Knowledge Bases support contextual chunking strategies that go beyond simple\nfixed-size segmentation. This is critical for financial documents, where a metric in a table may be\nexplained in adjacent paragraphs or footnotes. Context-aware chunking ensures that retrieved\ncontent includes both the numeric data and its interpretation, enabling the foundation model to\ngenerate accurate, grounded responses. Including citations further improves analyst trust and\nauditability by allowing users to trace answers back to specific source sections, which is a common\nrequirement in financial environments.\nScalability is another key requirement. Knowledge Bases manage embedding generation, indexing,\nand retrieval orchestration as a managed service, which allows the solution to scale across large\ndocument collections without requiring custom infrastructure or model hosting. This approach also\nsupports efficient updates as new quarterly reports are added, ensuring the retrieval layer remains\ncurrent.\nOption A does not scale well because processing entire 5-100 page documents in a single prompt\nincreases token usage, latency, and cost while risking context truncation. Option C relies on fixed-size\nchunking triggered at query time, which often breaks semantic relationships in structured financial\ncontent. Option D introduces unnecessary architectural complexity by splitting structured and\nunstructured data into separate applications, increasing operational overhead without providing\nbetter contextual retrieval than a unified RAG approach."
+        "answer": [
+            "D"
+        ],
+        "explanation": "Correct code block:\nfrom pyspark.sql.functions import udf\nfrom pyspark.sql import types as T\ntransactionsDf.createOrReplaceTempView('transactions')\ndef pow_5(x):\nif x:\nreturn x**5\nreturn x\nspark.udf.register('power_5_udf', pow_5, T.LongType())\nspark.sql('SELECT power_5_udf(value) AS result FROM transactions')\nHere it is important to understand how the pow_5 method handles empty values. In the wrong code\nblock above, the pow_5 method is unable to handle empty values and will throw an error, since\nPython's ** operator cannot deal with any null value Spark passes into method pow_5.\n\n\nThe order of arguments for registering the UDF function with Spark via spark.udf.register matters. In\nthe code snippet in the question, the arguments for the SQL method name and the actual Python\nfunction are switched. You can read more about the arguments of spark.udf.register and see some\nexamples of its usage in the documentation (link below).\nFinally, you should recognize that in the original code block, an expression to rename column created\nthrough the UDF function is missing. The renaming is done by SQL's AS result argument.\nOmitting that argument, you end up with the column name power_5_udf(value) and not result.\nMore info: pyspark.sql.functions.udf - PySpark 3.1.1 documentation"
     },
     {
-        "question": "A company is planning to deploy multiple generative AI (GenAI) applications to five\nindependent business units that operate in multiple countries in Europe and the Americas. Each\napplication uses Amazon Bedrock Retrieval Augmented Generation (RAG) patterns with business\nunit-specific knowledge bases that store terabytes of unstructured data.\nThe company must establish well-architected, standardized components for security controls,\nobservability practices, and deployment patterns across all the GenAI applications. The components\nmust be reusable, versioned, and governed consistently.\nWhich solution will meet these requirements?",
+        "question": "Which of the following code blocks reads in the JSON file stored at filePath as a DataFrame?",
         "options": [
-            "A.. Configure Amazon API Gateway REST API endpoints for the GenAI applications. Deploy common\nsecurity, observability, and RAG patterns based on the AWS Well-Architected Generative AI Lens in\nstandardized AWS CloudFormation templates. Use CloudFormation Guard after deployment to\nvalidate policy compliance in each business unit.",
-            "B.. Create standardized AWS CloudFormation templates to implement security, observability, and\n56\n\n\n\n\nRAG patterns based on the AWS Well-Architected Generative AI Lens. Establish a centralized\nrepository for version control. Integrate a CI/CD pipeline with CloudFormation Guard to enforce\nconsistent and repeatable deployments across business units.",
-            "C.. Use AWS Service Catalog to define standardized portfolios and versioned products for each\nbusiness unit. Use the portfolios to enforce security, observability, and RAG patterns based on the\nAWS Well- Architected Generative AI Lens. Require business units to use the Service Catalog console\nto deploy resources.",
-            "D.. Document security controls, observability requirements, and RAG patterns based on the AWS\nWell- Architected Generative AI Lens in a shared design document. Use Amazon Macie to enforce\ndeployment. Delegate implementation responsibility to each business unit."
+            "A.. spark.read.json(filePath)",
+            "B.. spark.read.path(filePath, source=\"json\")",
+            "C.. spark.read().path(filePath)",
+            "D.. spark.read().json(filePath)",
+            "E.. spark.read.path(filePath)"
+        ],
+        "answer": [
+            "A"
         ],
-        "answer": "B",
-        "explanation": "Option B best meets the requirement for reusable, versioned, and consistently governed components\nacross multiple business units because it implements \"platform-level standardization\" through\ninfrastructure as code plus automated compliance enforcement before deployment. Standardized\nCloudFormation templates provide reusable building blocks for security controls (identity, networking\nboundaries, encryption), observability practices (metrics, logs, traces), and RAG deployment patterns\n(knowledge base integration, ingestion pipelines, retrieval controls). This aligns with AWS guidance to\noperationalize well-architected patterns through repeatable templates rather than ad hoc\nimplementations.\nA centralized repository enables version control, change review, and governance of templates across\nall five business units. This satisfies the \"versioned\" and \"reusable\" requirements and provides a\nsingle source of truth for approved architectures. Integrating a CI/CD pipeline ensures that\ndeployments are consistent and automated, reducing drift between business units and Regions.\nCloudFormation Guard is most effective when used as a preventive control in the pipeline, not only\nafter deployment. By running Guard rules during build or pre-deploy stages, the organization can\nenforce mandatory security and observability configurations and block noncompliant changes before\nthey reach production. This supports consistent governance while still enabling business units to\ndeploy quickly.\nOption A performs compliance validation after deployment, which allows policy violations to be\ndeployed first and remediated later. Option C provides governed provisioning but requiring consolebased deployment reduces automation and can slow standardized CI/CD adoption; it also adds an\nadditional governance layer that is not required to meet the stated needs. Option D is not\nenforceable and does not provide reusable, versioned, governed components.\nTherefore, Option B provides the strongest, most scalable, and most consistently governed approach\nfor standardized GenAI deployments across business units."
+        "explanation": "spark.read.json(filePath)\nCorrect. spark.read accesses Spark's DataFrameReader. Then, Spark identifies the file type to be read\nas JSON type by passing filePath into the DataFrameReader.json() method.\nspark.read.path(filePath)\nIncorrect. Spark's DataFrameReader does not have a path method. A universal way to read in files is\nprovided by the DataFrameReader.load() method (link below).\nspark.read.path(filePath, source=\"json\")\nWrong. A DataFrameReader.path() method does not exist (see above).\nspark.read().json(filePath)\nIncorrect. spark.read is a way to access Spark's DataFrameReader. However, the DataFrameReader is\nnot callable, so calling it via spark.read() will fail.\nspark.read().path(filePath)\nNo, Spark's DataFrameReader is not callable (see above).\nMore info: pyspark.sql.DataFrameReader.json - PySpark 3.1.2 documentation,\npyspark.sql.DataFrameReader.load - PySpark 3.1.2 documentation Static notebook | Dynamic\nnotebook: See test 3"
     },
     {
-        "question": "A company uses AWS Lambda functions to build an AI agent solution. A GenAI developer\nmust set up a Model Context Protocol (MCP) server that accesses user information. The GenAI\ndeveloper must also configure the AI agent to use the new MCP server. The GenAI developer must\nensure that only authorized users can access the MCP server.\nWhich solution will meet these requirements?",
+        "question": "Which of the following describes characteristics of the Spark driver?",
         "options": [
-            "A.. Use a Lambda function to host the MCP server. Grant the AI agent Lambda functions permission to\ninvoke the Lambda function that hosts the MCP server. Configure the AI agent's MCP client to invoke\nthe MCP server asynchronously.",
-            "B.. Use a Lambda function to host the MCP server. Grant the AI agent Lambda functions permission to\ninvoke the Lambda function that hosts the MCP server. Configure the AI agent to use the STDIO\ntransport with the MCP server.",
-            "C.. Use a Lambda function to host the MCP server. Create an Amazon API Gateway HTTP API that\nproxies requests to the Lambda function. Configure the AI agent solution to use the Streamable HTTP\ntransport to make requests through the HTTP API. Use Amazon Cognito to enforce OAuth 2.1.",
-            "D.. Use a Lambda layer to host the MCP server. Add the Lambda layer to the AI agent Lambda\nfunctions.Configure the agentic AI solution to use the STDIO transport to send requests to the MCP\nserver. In the AI agent's MCP configuration, specify the Lambda layer ARN as the command. Specify\nthe user credentials as environment variables."
+            "A.. The Spark driver requests the transformation of operations into DAG computations from the\nworker nodes.",
+            "B.. If set in the Spark configuration, Spark scales the Spark driver horizontally to improve parallel\nprocessing performance.",
+            "C.. The Spark driver processes partitions in an optimized, distributed fashion.",
+            "D.. In a non-interactive Spark application, the Spark driver automatically creates the SparkSession\nobject.",
+            "E.. The Spark driver's responsibility includes scheduling queries for execution on worker nodes."
         ],
-        "answer": "C",
-        "explanation": "Option C is the correct solution because it provides a secure, scalable, and standards-compliant way\nto expose an MCP server to an AI agent while enforcing strong user authorization. The Model Context\nProtocol supports HTTP-based transports for remote MCP servers, making Streamable HTTP the\nappropriate choice when the server is hosted as a managed service rather than a local process.\nHosting the MCP server in AWS Lambda enables automatic scaling and cost-efficient execution. By\nplacing Amazon API Gateway in front of the Lambda function, the company creates a secure,\nmanaged HTTP endpoint that the AI agent can invoke reliably. This architecture cleanly separates\ntransport, authentication, and business logic, which aligns with AWS serverless best practices.\nUsing Amazon Cognito to enforce OAuth 2.1 ensures that only authenticated and authorized users\ncan access the MCP server. This satisfies security and compliance requirements when the MCP server\nhandles sensitive user information. Cognito integrates natively with API Gateway, removing the need\nfor custom authentication logic and reducing operational overhead.\nOption A lacks user-level authorization controls. Option B and Option D rely on STDIO transport,\nwhich is intended for local or tightly coupled processes and is not suitable for distributed, serverless\narchitectures.\nOption D also introduces security risks by handling credentials through environment variables.\nTherefore, Option C best meets the requirements for secure access control, scalability, and correct\nMCP integration in an AWS-based AI agent architecture."
+        "answer": [
+            "D"
+        ],
+        "explanation": "The Spark driver requests the transformation of operations into DAG computations from the worker\nnodes.\nNo, the Spark driver transforms operations into DAG computations itself.\nIf set in the Spark configuration, Spark scales the Spark driver horizontally to improve parallel\nprocessing performance.\nNo. There is always a single driver per application, but one or more executors.\nThe Spark driver processes partitions in an optimized, distributed fashion.\nNo, this is what executors do.\nIn a non-interactive Spark application, the Spark driver automatically creates the SparkSession object.\nWrong. In a non-interactive Spark application, you need to create the SparkSession object. In an\ninteractive Spark shell, the Spark driver instantiates the object for you."
     },
     {
-        "question": "A company has a customer service application that uses Amazon Bedrock to generate\npersonalized responses to customer inquiries. The company needs to establish a quality assurance\nprocess to evaluate prompt effectiveness and model configurations across updates. The process must\nautomatically compare outputs from multiple prompt templates, detect response quality issues,\nprovide quantitative metrics, and allow human reviewers to give feedback on responses. The process\nmust prevent configurations that do not meet a predefined quality threshold from being deployed.\nWhich solution will meet these requirements?",
+        "question": "Which of the following code blocks saves DataFrame transactionsDf in location\n/FileStore/transactions.csv as a CSV file and throws an error if a file already exists in the location?",
         "options": [
-            "A.. Create an AWS Lambda function that sends sample customer inquiries to multiple Amazon\nBedrock model configurations and stores responses in Amazon S3. Use Amazon QuickSight to\nvisualize response patterns. Manually review outputs daily. Use AWS CodePipeline to deploy\nconfigurations that meet the quality threshold.",
-            "B.. Use Amazon Bedrock evaluation jobs to compare model outputs by using custom prompt datasets\n.\nConfigure AWS CodePipeline to run the evaluation jobs when prompt templates change. Configure\n\n\n\n\nCodePipeline to deploy only configurations that exceed the predefined quality threshold.",
-            "C.. Set up Amazon CloudWatch alarms to monitor response latency and error rates from Amazon\nBedrock.\nUse Amazon EventBridge rules to notify teams when thresholds are exceeded. Configure a manual\napproval workflow in AWS Systems Manager.",
-            "D.. Use AWS Lambda functions to create an automated testing framework that samples production\ntraffic and routes duplicate requests to the updated model version. Use Amazon Comprehend\nsentiment analysis to compare results. Block deployment if sentiment scores decrease."
+            "A.. transactionsDf.write.save(\"/FileStore/transactions.csv\")",
+            "B.. transactionsDf.write.format(\"csv\").mode(\"error\").path(\"/FileStore/transactions.csv\")",
+            "C.. transactionsDf.write.format(\"csv\").mode(\"ignore\").path(\"/FileStore/transactions.csv\")",
+            "D.. transactionsDf.write(\"csv\").mode(\"error\").save(\"/FileStore/transactions.csv\")",
+            "E.. transactionsDf.write.format(\"csv\").mode(\"error\").save(\"/FileStore/transactions.csv\")"
+        ],
+        "answer": [
+            "E"
         ],
-        "answer": "B",
-        "explanation": "Option B is the correct solution because Amazon Bedrock evaluation jobs are purpose-built to assess\nprompt effectiveness, model behavior, and response quality in a repeatable and automated manner.\nEvaluation jobs support both quantitative metrics and LLM-based judgment, making them suitable\nfor detecting subtle response quality regressions that simple sentiment or latency metrics cannot\ncapture.\nBy using custom prompt datasets, the company can consistently test multiple prompt templates and\nmodel configurations against the same inputs. This enables accurate comparison across updates and\neliminates variability introduced by live traffic sampling. Amazon Bedrock evaluation jobs also\nsupport structured scoring outputs, which can be used to enforce objective quality thresholds.\nIntegrating evaluation jobs directly into AWS CodePipeline ensures that quality checks are\nautomatically triggered whenever prompt templates or configurations change. This creates a gated\ndeployment workflow in which only configurations that meet or exceed the predefined quality\nthreshold are promoted. This directly satisfies the requirement to prevent low-quality configurations\nfrom being deployed.\nHuman reviewers can be incorporated by reviewing evaluation results and scores produced by the\njobs, enabling informed feedback without manual data collection. Option A and D rely on custom\nframeworks and indirect quality signals, increasing complexity and reducing reliability. Option C\nfocuses on operational health rather than response quality.\nTherefore, Option B provides the most robust, scalable, and AWS-aligned quality assurance process\nfor Amazon Bedrock-based applications."
+        "explanation": "Static notebook | Dynamic notebook: See test 1\n(https://flrs.github.io/spark_practice_tests_code/#1/28.html ,\nhttps://bit.ly/sparkpracticeexams_import_instructions)"
     },
     {
-        "question": "A company is building a legal research AI assistant that uses Amazon Bedrock with an\nAnthropic Claude foundation model (FM). The AI assistant must retrieve highly relevant case law\ndocuments to augment the FM's responses. The AI assistant must identify semantic relationships\nbetween legal concepts, specific legal terminology, and citations. The AI assistant must perform\nquickly and return precise results.\nWhich solution will meet these requirements?",
+        "question": "The code block displayed below contains an error. The code block should return a\nDataFrame where all entries in column supplier contain the letter combination et in this order. Find\nthe error.\nCode block:\nitemsDf.filter(Column('supplier').isin('et'))",
         "options": [
-            "A.. Configure an Amazon Bedrock knowledge base to use a default vector search configuration. Use\nAmazon Bedrock to expand queries to improve retrieval for legal documents based on specific\nterminology and citations.",
-            "B.. Use Amazon OpenSearch Service to deploy a hybrid search architecture that combines vector\nsearch with keyword search. Apply an Amazon Bedrock reranker model to optimize result relevance.",
-            "C.. Enable the Amazon Kendra query suggestion feature for end users. Use Amazon Bedrock to\nperform post-processing of search results to identify semantic similarity in the documents and to\nproduce precise results.",
-            "D.. Use Amazon OpenSearch Service with vector search and Amazon Bedrock Titan Embeddings to\nindex and search legal documents. Use custom AWS Lambda functions to merge results with\nkeyword-based filters that are stored in an Amazon RDS database."
+            "A.. The Column operator should be replaced by the col operator and instead of isin, contains should\nbe used.",
+            "B.. The expression inside the filter parenthesis is malformed and should be replaced by isin('et',\n'supplier').",
+            "C.. Instead of isin, it should be checked whether column supplier contains the letters et, so isin should\nbe replaced with contains. In addition, the column should be accessed using col['supplier'].",
+            "D.. The expression only returns a single column and filter should be replaced by select."
         ],
-        "answer": "B",
-        "explanation": "Option B is the correct solution because legal research workloads require both semantic\nunderstanding and exact lexical precision, especially for statutes, citations, and domain-specific\nterminology. A hybrid search architecture directly addresses this need by combining vector similarity\nsearch with traditional keyword-based retrieval.\nVector search alone is often insufficient for legal research because exact phrases, citation formats,\nand jurisdiction-specific terms must be matched precisely. Keyword search ensures high recall and\nprecision for citations and legal terms, while vector search captures deeper semantic relationships\nbetween legal concepts, precedents, and arguments. Amazon OpenSearch Service natively supports\nhybrid search, enabling efficient scoring and ranking without external orchestration.\nApplying an Amazon Bedrock reranker model further improves relevance by reordering retrieved\ndocuments based on deeper contextual understanding. Reranking is especially valuable in legal\nresearch because multiple documents may appear relevant, but only a subset truly addresses the\nuser's legal question. The reranker optimizes final results before they are passed to the Anthropic\nClaude FM, improving answer accuracy and reducing hallucinations.\nOption A relies on default vector search, which does not reliably handle citations and exact\nterminology.\nOption C focuses on query suggestions and post-processing rather than retrieval quality. Option D\nintroduces unnecessary operational complexity by merging results across multiple systems.\nTherefore, Option B best meets the requirements for precision, performance, and semantic\nunderstanding in a legal research AI assistant."
+        "answer": [
+            "B"
+        ],
+        "explanation": "Correct code block:\nitemsDf.filter(col('supplier').contains('et'))\nA mixup can easily happen here between isin and contains. Since we want to check whether a colum\nn\n\"contains\" the values et, this is the operator we should use here. Note that both methods are\nmethods of Spark's Column object. See below for documentation links.\n\n\nA specific Column object can be accessed through the col() method and not the Column() method or\nthrough col[], which is an essential thing to know here. In PySpark, Column references a generic\ncolumn object. To use it for queries, you need to link the generic column object to a specific\nDataFrame. This can be achieved, for example, through the col() method.\nMore info:\n- isin documentation: pyspark.sql.Column.isin - PySpark 3.1.1 documentation\n- contains documentation: pyspark.sql.Column.contains - PySpark 3.1.1 documentation Stati\nc notebook | Dynamic notebook: See test 1"
     },
     {
-        "question": "A financial services company is creating a Retrieval Augmented Generation (RAG) application\nthat uses Amazon Bedrock to generate summaries of market activities. The application relies on a\nvector database that stores a small proprietary dataset with a low index count. The application must\nperform similarity searches.\nThe Amazon Bedrock model's responses must maximize accuracy and maintain high performance.\nThe company needs to configure the vector database and integrate it with the application.\nWhich solution will meet these requirements?",
+        "question": "The code block displayed below contains an error. The code block should write DataFrame\ntransactionsDf as a parquet file to location filePath after partitioning it on column storeId. Find the\nerror.\nCode block:\ntransactionsDf.write.partitionOn(\"storeId\").parquet(filePath)",
         "options": [
-            "A.. Launch an Amazon MemoryDB cluster and configure the index by using the Flat algorithm.\nConfigure a horizontal scaling policy based on performance metrics.",
-            "B.. Launch an Amazon MemoryDB cluster and configure the index by using the Hierarchical Navigable\nSmall World (HNSW) algorithm. Configure a vertical scaling policy based on performance metrics.",
-            "C.. Launch an Amazon Aurora PostgreSQL cluster and configure the index by using the Inverted File\nwith Flat Compression (IVFFlat) algorithm. Configure the instance class to scale to a larger size when\nthe load increases.",
-            "D.. Launch an Amazon DocumentDB cluster that has an IVFFlat index and a high probe value.\nConfigure connections to the cluster as a replica set. Distribute reads to replica instances."
+            "A.. The partitioning column as well as the file path should be passed to the write() method of\nDataFrame transactionsDf directly and not as appended commands as in the code block.",
+            "B.. The partitionOn method should be called before the write method.",
+            "C.. The operator should use the mode() option to configure the DataFrameWriter so that it replaces\nany existing files at location filePath.",
+            "D.. Column storeId should be wrapped in a col() operator.",
+            "E.. No method partitionOn() exists for the DataFrame class, partitionBy() should be used instead."
+        ],
+        "answer": [
+            "E"
         ],
-        "answer": "B",
-        "explanation": "Option B is the optimal solution because it maximizes similarity search accuracy and performance for\n\n\n\n\na small, proprietary dataset while maintaining low operational complexity. Amazon MemoryDB is a\nfully managed, in- memory database that provides microsecond-level latency, making it ideal for real\n-time RAG workloads that require fast vector similarity searches.\nFor small datasets with low index counts, the Hierarchical Navigable Small World (HNSW) algorithm is\nrecommended by AWS for its high recall and accuracy. Unlike approximate methods optimized for\nmassive datasets, HNSW excels at returning the most semantically relevant vectors with minimal loss\nof precision, which directly improves the quality of responses generated by the Amazon Bedrock\nfoundation model.\nVertical scaling in MemoryDB is sufficient for this use case because the dataset size is limited. Scaling\nup instance size provides increased memory and compute capacity without the complexity of\nmanaging distributed indexes or sharding strategies. This simplifies operations while maintaining\npredictable performance.\nOption A's Flat algorithm is computationally expensive and inefficient at scale, even for moderate\nquery volumes. Option C introduces higher latency and operational overhead by using a relational\ndatabase not optimized for in-memory vector search. Option D is unsuitable because Amazon\nDocumentDB is not designed for high-performance vector similarity workloads and introduces\nunnecessary replica management complexity.\nTherefore, Option B best meets the requirements for accuracy, performance, and efficient\nintegration with an Amazon Bedrock-based RAG application."
+        "explanation": "No method partitionOn() exists for the DataFrame class, partitionBy() should be used instead.\nCorrect! Find out more about partitionBy() in the documentation (linked below).\nThe operator should use the mode() option to configure the DataFrameWriter so that it replaces any\nexisting files at location filePath.\nNo. There is no information about whether files should be overwritten in the question.\nThe partitioning column as well as the file path should be passed to the write() method of DataFrame\ntransactionsDf directly and not as appended commands as in the code block.\nIncorrect. To write a DataFrame to disk, you need to work with a DataFrameWriter object which you\nget access to through the DataFrame.writer property - no parentheses involved.\nColumn storeId should be wrapped in a col() operator.\nNo, this is not necessary - the problem is in the partitionOn command (see above).\nThe partitionOn method should be called before the write method.\nWrong. First of all partitionOn is not a valid method of DataFrame. However, even assuming\npartitionOn would be replaced by partitionBy (which is a valid method), this method is a method of\nDataFrameWriter and not of DataFrame. So, you would always have to first call DataFrame.write to\nget access to the DataFrameWriter object and afterwards call partitionBy.\nMore info: pyspark.sql.DataFrameWriter.partitionBy - PySpark 3.1.2 documentation Static notebook |\nDynamic notebook: See test 3"
     },
     {
-        "question": "A medical company uses Amazon Bedrock to power a clinical documentation summarization\nsystem. The system produces inconsistent summaries when handling complex clinical documents.\nThe system performed well on simple clinical documents.\nThe company needs a solution that diagnoses inconsistencies, compares prompt performance against\nestablished metrics, and maintains historical records of prompt versions.\nWhich solution will meet these requirements?",
+        "question": "The code block shown below should convert up to 5 rows in DataFrame transactionsDf that\nhave the value 25 in column storeId into a Python list. Choose the answer that correctly fills the\nblanks in the code block to accomplish this.\nCode block:\n\n\ntransactionsDf.__1__(__2__).__3__(__4__)",
         "options": [
-            "A.. Create multiple prompt variants by using Prompt management in Amazon Bedrock. Manually test\nthe prompts with simple clinical documents. Deploy the highest performing version by using the\nAmazon Bedrock console.",
-            "B.. Implement version control for prompts in a code repository with a test suite that contains complex\nclinical documents and quantifiable evaluation metrics. Use an automated testing framework to\ncompare prompt versions and document performance patterns.",
-            "C.. Deploy each new prompt version to separate Amazon Bedrock API endpoints. Split production\ntraffic between the endpoints. Configure Amazon CloudWatch to capture response metrics and user\nfeedback for automatic version selection.",
-            "D.. Create a custom prompt evaluation flow in Amazon Bedrock Flows that applies the same clinical\ndocument inputs to different prompt variants. Use Amazon Comprehend Medical to analyze and\nscore the factual accuracy of each version."
+            "A.. 1. filter\n2. \"storeId\"==25\n3. collect\n4. 5",
+            "B.. 1. filter\n2. col(\"storeId\")==25\n3. toLocalIterator\n4. 5",
+            "C.. 1. select\n2. storeId==25\n3. head\n4. 5",
+            "D.. 1. filter\n2. col(\"storeId\")==25\n3. take\n4. 5",
+            "E.. 1. filter\n2. col(\"storeId\")==25\n3. collect\n4. 5"
         ],
-        "answer": "B",
-        "explanation": "Option B best meets the requirements because it provides systematic diagnosis, measurable\ncomparison, and historical traceability of prompt performance. By placing prompts under version\ncontrol and testing them against complex clinical documents, the company can consistently\nreproduce issues, track regressions, and compare prompt behavior using quantifiable metrics such as\nfactual accuracy, completeness, and consistency.\n\n\n\n\nAutomated testing ensures scalability and repeatability, while version history preserves prompt\nevolution over time.\nOption A lacks objective metrics and does not address complex documents. Option C focuses on live\ntraffic experimentation but does not inherently diagnose prompt inconsistencies or preserve detailed\nhistorical evaluations. Option D adds medical entity analysis but introduces unnecessary service\ncoupling and does not provide robust prompt version history or automated comparative\nbenchmarking. Therefore, Option B is the most complete and disciplined solution."
+        "answer": [
+            "D"
+        ],
+        "explanation": "The correct code block is:\ntransactionsDf.filter(col(\"storeId\")==25).take(5)\nAny of the options with collect will not work because collect does not take any arguments, and in\nboth cases the argument 5 is given.\nThe option with toLocalIterator will not work because the only argument to toLocalIterator is\nprefetchPartitions which is a boolean, so passing 5 here does not make sense.\nThe option using head will not work because the expression passed to select is not proper syntax. It\nwould work if the expression would be col(\"storeId\")==25.\nStatic notebook | Dynamic notebook: See test 1\n(https://flrs.github.io/spark_practice_tests_code/#1/24.html ,\nhttps://bit.ly/sparkpracticeexams_import_instructions)"
     },
     {
-        "question": "A company is using Amazon Bedrock and Anthropic Claude 3 Haiku to develop an AI assistant.\nThe AI assistant normally processes 10,000 requests each hour but experiences surges of up to\n30,000 requests each hour during peak usage periods. The AI assistant must respond within 2\nseconds while operating across multiple AWS Regions.\nThe company observes that during peak usage periods, the AI assistant experiences throughput\nbottlenecks that cause increased latency and occasional request timeouts. The company must resolve\nthe performance issues.\nWhich solution will meet this requirement?",
+        "question": "Which of the following code blocks returns a one-column DataFrame of all values in column\nsupplier of DataFrame itemsDf that do not contain the letter X? In the DataFrame, every value should\nonly be listed once.\nSample of DataFrame itemsDf:\n1.+------+--------------------+--------------------+-------------------+\n2.|itemId| itemName| attributes| supplier|\n3.+------+--------------------+--------------------+-------------------+\n4.| 1|Thick Coat for Wa...|[blue, winter, cozy]|Sports Company Inc.|\n5.| 2|Elegant Outdoors ...|[red, summer, fre...| YetiX|\n6.| 3| Outdoors Backpack|[green, summer, t...|Sports Company Inc.|\n7.+------+--------------------+--------------------+-------------------+",
         "options": [
-            "A.. Purchase provisioned throughput and sufficient model units (MUs) in a single Region. Configure\nthe application to retry failed requests with exponential backoff.",
-            "B.. Implement token batching to reduce API overhead. Use cross-Region inference profiles to\nautomatically distribute traffic across available Regions.",
-            "C.. Set up auto scaling AWS Lambda functions in each Region. Implement client-side round-robin\nrequest distribution. Purchase one model unit (MU) of provisioned throughput as a backup.",
-            "D.. Implement batch inference for all requests by using Amazon S3 buckets across multiple Regions.\nUse Amazon SQS to set up an asynchronous retrieval process."
+            "A.. itemsDf.filter(col(supplier).not_contains('X')).select(supplier).distinct()",
+            "B.. itemsDf.select(~col('supplier').contains('X')).distinct()",
+            "C.. itemsDf.filter(not(col('supplier').contains('X'))).select('supplier').unique()",
+            "D.. itemsDf.filter(~col('supplier').contains('X')).select('supplier').distinct()",
+            "E.. itemsDf.filter(!col('supplier').contains('X')).select(col('supplier')).unique()"
+        ],
+        "answer": [
+            "D"
         ],
-        "answer": "B",
-        "explanation": "Option B is the correct solution because it directly addresses both throughput bottlenecks and\nlatency requirements using native Amazon Bedrock performance optimization features that are\ndesigned for real-time, high-volume generative AI workloads.\nAmazon Bedrock supports cross-Region inference profiles, which allow applications to transparently\nroute inference requests across multiple AWS Regions. During peak usage periods, traffic is\nautomatically distributed to Regions with available capacity, reducing throttling, request queuing,\nand timeout risks. This approach aligns with AWS guidance for building highly available, low-latency\nGenAI applications that must scale elastically across geographic boundaries.\nToken batching further improves efficiency by combining multiple inference requests into a single\nmodel invocation where applicable. AWS Generative AI documentation highlights batching as a key\noptimization technique to reduce per-request overhead, improve throughput, and better utilize\nmodel capacity. This is especially effective for lightweight, low-latency models such as Claude 3\nHaiku, which are designed for fast responses and high request volumes.\nOption A does not meet the requirement because purchasing provisioned throughput in a single\nRegion creates a regional bottleneck and does not address multi-Region availability or traffic spikes\nbeyond reserved capacity. Retries increase load and latency rather than resolving the root cause.\nOption C improves application-layer scaling but does not solve model-side throughput limits. Clientside round-robin routing lacks awareness of real-time model capacity and can still send traffic to\nsaturated Regions.\nOption D is unsuitable because batch inference with asynchronous retrieval is designed for offline or\n62\n\n\n\n\nnon- interactive workloads. It cannot meet a strict 2-second response time requirement for an\ninteractive AI assistant.\nTherefore, Option B provides the most effective and AWS-aligned solution to achieve low latency,\nglobal scalability, and high throughput during peak usage periods."
+        "explanation": "Output of correct code block:\n+-------------------+\n| supplier|\n+-------------------+\n|Sports Company Inc.|\n+-------------------+\nKey to managing this question is understand which operator to use to do the opposite of an\noperation\n- the ~ (not) operator. In addition, you should know that there is no unique() method.\nStatic notebook | Dynamic notebook: See test 1"
     },
     {
-        "question": "A company is developing a customer support application that uses Amazon Bedrock\nfoundation models (FMs) to provide real-time AI assistance to the company's employees. The\napplication must display AI- generated responses character by character as the responses are\ngenerated. The application needs to support thousands of concurrent users with minimal latency.\nThe responses typically take 15 to 45 seconds to finish.\nWhich solution will meet these requirements?",
+        "question": "Which of the following is one of the big performance advantages that Spark has over\nHadoop?",
         "options": [
-            "A.. Configure an Amazon API Gateway WebSocket API with an AWS Lambda integration. Configure\nthe WebSocket API to invoke the Amazon Bedrock InvokeModelWithResponseStream API and stream\npartial responses through WebSocket connections.",
-            "B.. Configure an Amazon API Gateway REST API with an AWS Lambda integration. Configure the REST\nAPI to invoke the Amazon Bedrock standard InvokeModel API and implement frontend client-side\npolling every 100 ms for complete response chunks.",
-            "C.. Implement direct frontend client connections to Amazon Bedrock by using IAM user credentials\nand the InvokeModelWithResponseStream API without any intermediate gateway or proxy layer.",
-            "D.. Configure an Amazon API Gateway HTTP API with an AWS Lambda integration. Configure the HTTP\nAPI to cache complete responses in an Amazon DynamoDB table and serve the responses through\nmultiple paginated GET requests to frontend clients."
+            "A.. Spark achieves great performance by storing data in the DAG format, whereas Hadoop can only\nuse parquet files.",
+            "B.. Spark achieves higher resiliency for queries since, different from Hadoop, it can be deployed on\nKubernetes.",
+            "C.. Spark achieves great performance by storing data and performing computation in memory,\nwhereas large jobs in Hadoop require a large amount of relatively slow disk I/O operations.",
+            "D.. Spark achieves great performance by storing data in the HDFS format, whereas Hadoop can only\nuse parquet files.",
+            "E.. Spark achieves performance gains for developers by extending Hadoop's DataFrames with a user-\nfriendly API."
         ],
-        "answer": "A",
-        "explanation": "This requirement explicitly calls for character-by-character streaming, long-running responses, low\nlatency, and massive concurrency, which aligns directly with Amazon Bedrock streaming inference\npatterns.\nAmazon Bedrock provides the InvokeModelWithResponseStream API specifically for streaming partial\nmodel outputs as tokens are generated. This enables near-instant feedback to users instead of\nwaiting for the full response to complete, which is essential when responses last up to 45 seconds.\nAmazon API Gateway WebSocket APIs are purpose-built for bidirectional, low-latency, serverinitiated communication, allowing the backend to push characters or tokens to clients in real time.\nThis eliminates inefficient polling and supports thousands of concurrent open connections.\nAWS Lambda integrates natively with WebSocket APIs and scales automatically with connection\nvolume, enabling a fully managed, serverless architecture. This approach maintains security,\ncentralized authentication, throttling, and observability while avoiding direct client access to Bedrock\nAPIs.\nOption B introduces polling latency and unnecessary API overhead and does not provide true\nstreaming.\nOption C violates AWS security best practices by exposing Bedrock directly to clients and does not\nscale securely. Option D only serves completed responses and cannot meet the real-time streaming\nrequirement.\nTherefore, Option A is the only solution that fully satisfies streaming behavior, concurrency, latency,\nand managed-service constraints."
+        "answer": [
+            "C"
+        ],
+        "explanation": "Spark achieves great performance by storing data in the DAG format, whereas Hadoop can only use\nparquet files.\nWrong, there is no \"DAG format\". DAG stands for \"directed acyclic graph\". The DAG is a means of\nrepresenting computational steps in Spark. However, it is true that Hadoop does not use a DAG.\nThe introduction of the DAG in Spark was a result of the limitation of Hadoop's map reduce\nframework in which data had to be written to and read from disk continuously.\nGraph DAG in Apache Spark - DataFlair\nSpark achieves great performance by storing data in the HDFS format, whereas Hadoop can only use\nparquet files.\nNo. Spark can certainly store data in HDFS (as well as other formats), but this is not a key\nperformance advantage over Hadoop. Hadoop can use multiple file formats, not only parquet.\nSpark achieves higher resiliency for queries since, different from Hadoop, it can be deployed on\nKubernetes.\n\n\nNo, resiliency is not asked for in the question. The question is about performance improvements.\nBoth Hadoop and Spark can be deployed on Kubernetes.\nSpark achieves performance gains for developers by extending Hadoop's DataFrames with a user-\nfriendly API.\nNo. DataFrames are a concept in Spark, but not in Hadoop."
     },
     {
-        "question": "A media company is launching a platform that allows thousands of users every hour to upload\n63\n\n\n\n\nimages and text content. The platform uses Amazon Bedrock to process the uploaded content to\ngenerate creative compositions.\nThe company needs a solution to ensure that the platform does not process or produce inappropriate\ncontent.\nThe platform must not expose personally identifiable information (PII) in the compositions. The\nsolution must integrate with the company's existing Amazon S3 storage workflow.\nWhich solution will meet these requirements with the LEAST infrastructure management overhead?",
+        "question": "The code block shown below should return a two-column DataFrame with columns\ntransactionId and supplier, with combined information from DataFrames itemsDf and transactionsDf.\nThe code block should merge rows in which column productId of DataFrame transactionsDf matches\nthe value of column itemId in DataFrame itemsDf, but only where column storeId of DataFrame\ntransactionsDf does not match column itemId of DataFrame itemsDf. Choose the answer that\ncorrectly fills the blanks in the code block to accomplish this.\nCode block:\ntransactionsDf.__1__(itemsDf, __2__).__3__(__4__)",
         "options": [
-            "A.. Enable the Enhanced Monitoring tool. Use an Amazon CloudWatch alarm to filter traffic to the\nplatform. Use Amazon Comprehend PII detection to pre-process the data. Create a CloudWatch\nalarm to monitor for Amazon Comprehend PII detection events. Create an AWS Step Functions\nworkflow that includes an Amazon Rekognition image moderation step.",
-            "B.. Use an Amazon API Gateway HTTP API with request validation templates to screen content before\nstoring the uploaded content in Amazon S3. Use Amazon SageMaker AI to build custom content\nmoderation models that process content before sending the processed content to Amazon Bedrock.",
-            "C.. Create an Amazon Cognito user pool that uses pre-authentication AWS Lambda functions to run\ncontent moderation checks. Use Amazon Textract to filter text content and Amazon Rekognition to\nfilter image content before allowing users to upload content to the platform.",
-            "D.. Create an AWS Step Functions workflow that uses built-in Amazon Bedrock guardrails to filter\ncontent. Use Amazon Comprehend PII detection to pre-process the content. Use Amazon Rekognition\nimage moderation."
+            "A.. 1. join\n2. transactionsDf.productId==itemsDf.itemId, how=\"inner\"\n3. select\n4. \"transactionId\", \"supplier\"",
+            "B.. 1. select\n2. \"transactionId\", \"supplier\"\n3. join\n4. [transactionsDf.storeId!=itemsDf.itemId, transactionsDf.productId==itemsDf.itemId]",
+            "C.. 1. join\n2. [transactionsDf.productId==itemsDf.itemId, transactionsDf.storeId!=itemsDf.itemId]\n3. select\n4. \"transactionId\", \"supplier\"",
+            "D.. 1. filter\n2. \"transactionId\", \"supplier\"\n3. join\n4. \"transactionsDf.storeId!=itemsDf.itemId, transactionsDf.productId==itemsDf.itemId\"",
+            "E.. 1. join\n2. transactionsDf.productId==itemsDf.itemId, transactionsDf.storeId!=itemsDf.itemId\n3. filter\n4. \"transactionId\", \"supplier\""
+        ],
+        "answer": [
+            "C"
         ],
-        "answer": "D",
-        "explanation": "Option D is the correct solution because it relies primarily on managed, purpose-built AWS services\nand minimizes custom infrastructure and model management. Amazon Bedrock guardrails provide\nnative, configurable content safety controls that can block or redact disallowed content before or\nafter model inference. This directly ensures that the platform does not process or produce\ninappropriate outputs while maintaining low operational overhead.\nUsing Amazon Comprehend PII detection as a preprocessing step integrates cleanly with an Amazon\nS3- based ingestion workflow. Comprehend is a fully managed service that detects and optionally\nredacts PII in text without requiring custom models or pipelines. This ensures that sensitive\ninformation is removed before content is passed to Amazon Bedrock for generation.\nAmazon Rekognition image moderation is purpose-built for detecting unsafe or inappropriate visual\ncontent and integrates naturally into Step Functions workflows. Step Functions provides\norchestration without requiring servers or long-running infrastructure, allowing the company to\nintegrate text and image moderation steps in a clear, auditable pipeline.\nOption A introduces redundant monitoring logic and alarms that do not directly enforce content\nsafety. Option B requires building and maintaining custom SageMaker models, increasing complexity\nand operational burden. Option C applies moderation at authentication time and uses services like\nTextract that are not designed for content moderation, increasing latency and management\noverhead.\nTherefore, Option D best satisfies content safety, PII protection, S3 integration, and minimal\ninfrastructure management requirements."
+        "explanation": "This question is pretty complex and, in its complexity, is probably above what you would encounter in\nthe exam. However, reading the question carefully, you can use your logic skills to weed out the\nwrong answers here.\nFirst, you should examine the join statement which is common to all answers. The first argument of\nthe join() operator (documentation linked below) is the DataFrame to be joined with. Where join is in\ngap 3, the first argument of gap 4 should therefore be another DataFrame. For none of the questions\nwhere join is in the third gap, this is the case. So you can immediately discard two answers.\nFor all other answers, join is in gap 1, followed by .(itemsDf, according to the code block. Given how\nthe join() operator is called, there are now three remaining candidates.\n\n\nLooking further at the join() statement, the second argument (on=) expects \"a string for the join\ncolumn name, a list of column names, a join expression (Column), or a list of Columns\", according to\nthe documentation. As one answer option includes a list of join expressions\n(transactionsDf.productId==itemsDf.itemId, transactionsDf.storeId!=itemsDf.itemId) which is\nunsupported according to the documentation, we can discard that answer, leaving us with two\nremaining candidates.\nBoth candidates have valid syntax, but only one of them fulfills the condition in the question \"only\nwhere column storeId of DataFrame transactionsDf does not match column itemId of DataFrame\nitemsDf\". So, this one remaining answer option has to be the correct one!\nAs you can see, although sometimes overwhelming at first, even more complex questions can be\nfigured out by rigorously applying the knowledge you can gain from the documentation during the\nexam.\nMore info: pyspark.sql.DataFrame.join - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 3"
     },
     {
-        "question": "An ecommerce company is developing a generative AI (GenAI) solution that uses Amazon\nBedrock with Anthropic Claude to recommend products to customers. Customers report that some\n\n\n\n\nrecommended products are not available for sale or are not relevant. Customers also report long\nresponse times for some recommendations.\nThe company confirms that most customer interactions are unique and that the solution\nrecommends products not present in the product catalog.\nWhich solution will meet this requirement?",
+        "question": "Which of the following code blocks returns a single-row DataFrame that only has a column\ncorr which shows the Pearson correlation coefficient between columns predError and value in\nDataFrame transactionsDf?",
         "options": [
-            "A.. Increase grounding within Amazon Bedrock Guardrails. Enable automated reasoning checks. Set\nup provisioned throughput.",
-            "B.. Use prompt engineering to restrict model responses to relevant products. Use streaming inference\nto reduce perceived latency.",
-            "C.. Create an Amazon Bedrock Knowledge Bases and implement Retrieval Augmented Generation\n(RAG).\nSet the PerformanceConfigLatency parameter to optimized.",
-            "D.. Store product catalog data in Amazon OpenSearch Service. Validate model recommendations\nagainst the catalog. Use Amazon DynamoDB for response caching."
+            "A.. transactionsDf.select(corr([\"predError\", \"value\"]).alias(\"corr\")).first()",
+            "B.. transactionsDf.select(corr(col(\"predError\"), col(\"value\")).alias(\"corr\")).first()",
+            "C.. transactionsDf.select(corr(predError, value).alias(\"corr\"))",
+            "D.. transactionsDf.select(corr(col(\"predError\"), col(\"value\")).alias(\"corr\")) (Correct)",
+            "E.. transactionsDf.select(corr(\"predError\", \"value\"))"
         ],
-        "answer": "C",
-        "explanation": "Option C is the correct solution because it directly addresses both correctness and performance\nissues by grounding the model's responses in authoritative product data using Retrieval Augmented\nGeneration.\nAmazon Bedrock Knowledge Bases are designed to connect foundation models to trusted enterprise\ndata sources, ensuring that generated responses are constrained to known, validated content.\nBy ingesting the product catalog into a knowledge base, the GenAI application retrieves only products\nthat actually exist in the catalog. This prevents hallucinated or unavailable recommendations, which\nis a common issue when models rely solely on prompt instructions without retrieval grounding. RAG\nensures that the model's output is based on retrieved facts rather than learned generalizations.\nSetting the PerformanceConfigLatency parameter to optimized enables Bedrock to prioritize lowerlatency retrieval and inference paths, improving responsiveness for real-time recommendation\nscenarios. This directly addresses the reported performance issues without requiring provisioned\nthroughput or caching strategies that are ineffective for mostly unique interactions.\nOption A improves safety and latency predictability but does not ensure recommendations are\nlimited to valid products. Option B relies on prompt constraints, which are not sufficient to prevent\nhallucinations. Option D introduces additional validation and caching layers but increases complexity\nand does not improve generation relevance.\nTherefore, Option C best resolves both relevance and latency challenges using AWS-native, lowmaintenance GenAI integration patterns."
+        "answer": [
+            "D"
+        ],
+        "explanation": "In difficulty, this question is above what you can expect from the exam. What this question NO:\nwants to teach you, however, is to pay attention to the useful details included in the documentation.\npyspark.sql.corr is not a very common method, but it deals with Spark's data structure in an\ninteresting way.\nThe command takes two columns over multiple rows and returns a single row - similar to an\naggregation function. When examining the documentation (linked below), you will find this code\nexample:\na = range(20)\nb = [2 * x for x in range(20)]\ndf = spark.createDataFrame(zip(a, b), [\"a\", \"b\"])\ndf.agg(corr(\"a\", \"b\").alias('c')).collect()\n[Row(c=1.0)]\nSee how corr just returns a single row? Once you understand this, you should be suspicious about\nanswers that include first(), since there is no need to just select a single row. A reason to eliminate\nthose answers is that DataFrame.first() returns an object of type Row, but not DataFrame, as\nrequested in the question.\ntransactionsDf.select(corr(col(\"predError\"), col(\"value\")).alias(\"corr\")) Correct! After calculating the\nPearson correlation coefficient, the resulting column is correctly renamed to corr.\ntransactionsDf.select(corr(predError, value).alias(\"corr\"))\nNo. In this answer, Python will interpret column names predError and value as variable names.\ntransactionsDf.select(corr(col(\"predError\"), col(\"value\")).alias(\"corr\")).first() Incorrect. first() returns a\n\n\nrow, not a DataFrame (see above and linked documentation below).\ntransactionsDf.select(corr(\"predError\", \"value\"))\nWrong. Whie this statement returns a DataFrame in the desired shape, the column will have the\nname corr(predError, value) and not corr.\ntransactionsDf.select(corr([\"predError\", \"value\"]).alias(\"corr\")).first() False. In addition to first()\nreturning a row, this code block also uses the wrong call structure for command corr which takes two\narguments (the two columns to correlate).\nMore info:\n- pyspark.sql.functions.corr - PySpark 3.1.2 documentation\n- pyspark.sql.DataFrame.first - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 3"
     },
     {
-        "question": "A financial services company needs to pre-process unstructured data such as customer\ntranscripts, financial reports, and documentation. The company stores the unstructured data in\nAmazon S3 to support an Amazon Bedrock application.\nThe company must validate data quality, create auditable metadata, monitor data metrics, and\ncustomize text chunking to optimize foundation model (FM) performance.\nWhich solution will meet these requirements with the LEAST development effort?",
+        "question": "Which of the following code blocks reads in parquet file /FileStore/imports.parquet as a\nDataFrame?",
         "options": [
-            "A.. Use Amazon SageMaker Data Wrangler to create a data flow. Configure Amazon CloudWatch\nmetrics and alarms to monitor data quality. Use a custom AWS Lambda function to pre-process the\ndata. Load processed data into Amazon Bedrock.",
-            "B.. Set up an AWS Glue crawler to catalog data sources. Create AWS Glue ETL jobs to run custom\ntransformation scripts. Use AWS Glue Data Quality to validate and monitor data quality. Load\nprocessed data into Amazon Bedrock.",
-            "C.. Use Amazon Comprehend to extract entities. Create an AWS Lambda function to chunk text. Run\nAmazon Athena to query and validate data quality. Load processed data into Amazon Bedrock.",
-            "D.. Create an AWS Step Functions workflow to orchestrate data pre-processing tasks. Run custom\ncode on Amazon EC2 instances. Use Amazon SageMaker Model Monitor to monitor data quality.\nLoad processed data into Amazon Bedrock."
+            "A.. spark.mode(\"parquet\").read(\"/FileStore/imports.parquet\")",
+            "B.. spark.read.path(\"/FileStore/imports.parquet\", source=\"parquet\")",
+            "C.. spark.read().parquet(\"/FileStore/imports.parquet\")",
+            "D.. spark.read.parquet(\"/FileStore/imports.parquet\")",
+            "E.. spark.read().format('parquet').open(\"/FileStore/imports.parquet\")"
+        ],
+        "answer": [
+            "D"
         ],
-        "answer": "B",
-        "explanation": "Option B is the most appropriate solution because it uses AWS-native, purpose-built data engineering\nand governance services to address data quality validation, metadata creation, monitoring, and\ntransformation with minimal custom development. AWS Glue is designed specifically for large-scale\ndata preparation and integrates seamlessly with Amazon S3, making it ideal for preprocessing\nunstructured datasets for downstream GenAI applications.\nAWS Glue crawlers automatically infer schemas and populate the AWS Glue Data Catalog, creating\nauditable, queryable metadata for all datasets. This satisfies the requirement for traceability and\ngovernance, which is especially critical in financial services environments. Glue ETL jobs allow teams\nto implement customizable transformation logic, including text normalization and chunking strategies\noptimized for foundation model context windows.\nAWS Glue Data Quality provides built-in rulesets for validating completeness, accuracy, and\nconsistency. It also publishes quality metrics that can be monitored over time, meeting the\nrequirement for ongoing data quality monitoring without building custom validation frameworks.\nBecause AWS Glue is fully managed, it eliminates the need to manage infrastructure, scaling, or\norchestration. This significantly reduces development and operational effort compared to custom\nLambda pipelines or EC2-based processing. The processed and validated data can then be safely\ningested into Amazon Bedrock workflows or knowledge bases.\nOption A and C require custom logic for validation, monitoring, and chunking, increasing\ndevelopment complexity. Option D introduces unnecessary infrastructure management and services\nnot optimized for data preprocessing.\nTherefore, Option B best meets the requirements while minimizing development effort and aligning\nwith AWS Generative AI data preparation best practices."
+        "explanation": "Static notebook | Dynamic notebook: See test 1\n(https://flrs.github.io/spark_practice_tests_code/#1/23.html ,\nhttps://bit.ly/sparkpracticeexams_import_instructions)"
     },
     {
-        "question": "A medical company is creating a generative AI (GenAI) system by using Amazon Bedrock. The\nsystem processes data from various sources and must maintain end-to-end data lineage. The system\nmust also use real- time personally identifiable information (PII) filtering and audit trails to\nautomatically report compliance.\nWhich solution will meet these requirements?",
+        "question": "The code block shown below should return a copy of DataFrame transactionsDf with an\nadded column cos.\nThis column should have the values in column value converted to degrees and having the cosine of\nthose converted values taken, rounded to two decimals. Choose the answer that correctly fills the\nblanks in the code block to accomplish this.\nCode block:\ntransactionsDf.__1__(__2__, round(__3__(__4__(__5__)),2))",
         "options": [
-            "A.. Use AWS Glue Data Catalog to register all data sources and track lineage. Use Amazon Bedrock\nGuardrails PII filters. Enable AWS CloudTrail logging for all Amazon Bedrock API calls with Amazon S3\nintegration. Use Amazon Macie to scan stored data for sensitive information and publish findings to\nAmazon CloudWatch Logs. Create CloudWatch dashboards to visualize the findings and generate\nautomated compliance reports.",
-            "B.. Use AWS Config to track data source configurations and changes. Use AWS WAF with custom rules\nto filter PII at the application layer before Amazon Bedrock processes the data. Configure Amazon\n\n\n\n\nEventBridge to capture and route audit events to Amazon S3. Use Amazon Comprehend Medical with\nscheduled AWS Lambda functions to analyze stored outputs for compliance violations.",
-            "C.. Use AWS DataSync to replicate data sources to track lineage. Configure Amazon Macie to scan\nAmazon Bedrock outputs for sensitive information. Use AWS Systems Manager Session Manager to\nlog user interactions. Deploy Amazon Textract with AWS Step Functions workflows to identify and\nredact PII from generated reports.",
-            "D.. Configure Amazon Athena to query data sources to analyze and report on data lineage. Use\nAmazon CloudWatch custom metrics to monitor PII exposure in Amazon Bedrock responses and\nestablish AWS X-Ray tracing to generate an audit trail. Use an Amazon Rekognition Custom Labels\nmodel to detect sensitive information in the data that Amazon Bedrock processes."
+            "A.. 1. withColumn\n2. col(\"cos\")\n3. cos\n4. degrees\n5. transactionsDf.value",
+            "B.. 1. withColumnRenamed\n2. \"cos\"\n3. cos\n4. degrees\n5. \"transactionsDf.value\"",
+            "C.. 1. withColumn\n2. \"cos\"\n3. cos\n\n\n4. degrees\n5. transactionsDf.value",
+            "D.. 1. withColumn\n2. col(\"cos\")\n3. cos\n4. degrees\n5. col(\"value\")\nE\n. 1. withColumn\n2. \"cos\"\n3. degrees\n4. cos\n5. col(\"value\")"
         ],
-        "answer": "A",
-        "explanation": "Option A is the most comprehensive and architecturally aligned solution for meeting end-to-end data\nlineage, real-time PII filtering, and automated compliance reporting requirements in a medical GenAI\nsystem built on Amazon Bedrock. Each requirement maps directly to a managed AWS service that is\npurpose-built for governance, security, and compliance.\nAWS Glue Data Catalog is designed to register datasets across multiple sources and maintain\nmetadata that supports lineage tracking. By cataloging all inputs that flow into the Bedrock-based\nsystem, the organization can trace how data moves from ingestion through processing and storage,\nwhich is essential for regulatory audits in healthcare environments.\nFor real-time PII filtering, Amazon Bedrock Guardrails provide native PII detection and filtering during\nmodel inference. Guardrails operate inline with model invocation, ensuring sensitive information is\nblocked or redacted before responses are returned to users. This satisfies the requirement for realtime protection rather than post-processing analysis.\nAWS CloudTrail delivers a complete audit trail of all Amazon Bedrock API calls, including InvokeModel\nrequests and configuration changes. Storing these logs in Amazon S3 enables long-term retention and\nsupports compliance audits. CloudTrail ensures traceability of who accessed the system, when, and\nhow it was used.\nTo strengthen compliance monitoring, Amazon Macie continuously scans stored data for sensitive\ninformation and automatically classifies findings. Publishing Macie findings to Amazon CloudWatch\nLogs and visualizing them through dashboards enables near-real-time visibility into compliance\nposture and supports automated reporting workflows.\nThe other options fall short. Option B performs PII filtering at the application edge rather than at\ninference time and relies on scheduled analysis instead of real-time enforcement. Option C focuses\non replication and document processing rather than inline GenAI governance. Option D uses services\nthat are not designed for PII detection in text-based GenAI workflows and lacks native lineage\ntracking.\nTherefore, A best fulfills all stated requirements using AWS-recommended governance and security\ncapabilities."
+        "answer": [
+            "C"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.withColumn(\"cos\", round(cos(degrees(transactionsDf.value)),2)) This question is\nespecially confusing because col, \"cos\" are so similar. Similar-looking answer options can also appear\nin the exam and, just like in this question, you need to pay attention to the details to identify what\nthe correct answer option is.\nThe first answer option to throw out is the one that starts with withColumnRenamed: The question\nNO:\nspeaks specifically of adding a column. The withColumnRenamed operator only renames an existing\ncolumn, however, so you cannot use it here.\nNext, you will have to decide what should be in gap 2, the first argument of\ntransactionsDf.withColumn().\nLooking at the documentation (linked below), you can find out that the first argument of withColumn\nactually needs to be a string with the name of the column to be added. So, any answer that includes\ncol(\"cos\") as the option for gap 2 can be disregarded.\nThis leaves you with two possible answers. The real difference between these two answers is where\nthe cos and degree methods are, either in gaps 3 and 4, or vice-versa. From the question you can find\nout that the new column should have \"the values in column value converted to degrees and having\nthe cosine of those converted values taken\". This prescribes you a clear order of operations: First,\nyou convert values from column value to degrees and then you take the cosine of those values. So,\nthe inner parenthesis (gap 4) should contain the degree method and then, logically, gap 3 holds the\ncos method. This leaves you with just one possible correct answer.\nMore info: pyspark.sql.DataFrame.withColumn - PySpark 3.1.2 documentation Static notebook |\nDynamic notebook: See test 3"
     },
     {
-        "question": "A hotel company wants to enhance a legacy Java-based property management system (PMS)\nby adding AI capabilities. The company wants to use Amazon Bedrock Knowledge Bases to provide\nstaff with room availability information and hotel-specific details. The solution must maintain\nseparate access controls for each hotel that the company manages. The solution must provide room\navailability information in near real time and must maintain consistent performance during peak\nusage periods.\n67\n\n\n\n\nWhich solution will meet these requirements?",
+        "question": "The code block displayed below contains an error. The code block should configure Spark to\nsplit data in 20 parts when exchanging data between executors for joins or aggregations. Find the\nerror.\nCode block:\nspark.conf.set(spark.sql.shuffle.partitions, 20)",
         "options": [
-            "A.. Deploy a single Amazon Bedrock knowledge base that contains combined data for all hotels.\nConfigure AWS Lambda functions to synchronize data from each hotel's PMS database through direct\nAPI connections. Implement AWS CloudTrail logging with hotel-specific filters to audit access logs for\neach hotel's data.",
-            "B.. Create an Amazon EventBridge rule for each hotel that is invoked by changes to the PMS database\n.\nConfigure the rule to send updates to a centralized Amazon Bedrock knowledge base in a\nmanagement AWS account. Configure resource-based policies to enforce hotel-specific access\ncontrols.",
-            "C.. Implement one Amazon Bedrock knowledge base for each hotel in a multi-account structure. Use\ndirect data ingestion to provide near real-time room availability information. Schedule regular\nsynchronization for less critical information.",
-            "D.. Build a centralized Amazon Bedrock Agents solution that uses multiple knowledge bases.\nImplement AWS IAM Identity Center with hotel-specific permission sets to control staff access."
+            "A.. The code block uses the wrong command for setting an option.",
+            "B.. The code block sets the wrong option.",
+            "C.. The code block expresses the option incorrectly.",
+            "D.. The code block sets the incorrect number of parts.",
+            "E.. The code block is missing a parameter."
+        ],
+        "answer": [
+            "C"
         ],
-        "answer": "C",
-        "explanation": "Option C best meets the requirements by aligning with AWS best practices for data isolation, access\ncontrol, and scalable GenAI retrieval. Implementing a separate Amazon Bedrock knowledge base for\neach hotel ensures strict separation of data and permissions. This approach naturally enforces hotellevel access control without requiring complex policy logic or post-query filtering.\nA multi-account structure further strengthens security and governance by isolating each hotel's data\nplane.\nAWS recommends account-level isolation for workloads with strong tenancy or compliance\nboundaries. Hotel staff can be granted access only to their hotel's account and corresponding\nknowledge base, eliminating the risk of cross-hotel data exposure.\nDirect data ingestion into each knowledge base enables near real-time updates for critical data such\nas room availability. For information that does not change frequently, scheduled synchronization\nreduces ingestion cost while maintaining accuracy. This hybrid ingestion model balances freshness\nand operational efficiency.\nBecause Amazon Bedrock Knowledge Bases are fully managed, performance remains consistent\nduring peak usage periods without the company managing indexing, scaling, or retrieval\ninfrastructure. Each knowledge base scales independently, preventing noisy-neighbor issues that\ncould arise in a centralized design.\nOption A and B rely on a centralized knowledge base, which increases policy complexity and\nintroduces risk of misconfigured access controls. Option D adds unnecessary orchestration\ncomplexity and does not inherently solve real-time data freshness requirements.\nTherefore, Option C provides the most secure, scalable, and operationally efficient solution for\nenhancing the PMS with Amazon Bedrock Knowledge Bases."
+        "explanation": "Correct code block:\nspark.conf.set(\"spark.sql.shuffle.partitions\", 20)\nThe code block expresses the option incorrectly.\nCorrect! The option should be expressed as a string.\nThe code block sets the wrong option.\nNo, spark.sql.shuffle.partitions is the correct option for the use case in the question.\nThe code block sets the incorrect number of parts.\nWrong, the code block correctly states 20 parts.\nThe code block uses the wrong command for setting an option.\nNo, in PySpark spark.conf.set() is the correct command for setting an option.\nThe code block is missing a parameter.\nIncorrect, spark.conf.set() takes two parameters.\nMore info: Configuration - Spark 3.1.2 Documentation"
     },
     {
-        "question": "An ecommerce company operates a global product recommendation system that needs to\nswitch between multiple foundation models (FMs) in Amazon Bedrock based on regulations, cost\noptimization, and performance requirements. The company must apply custom controls based on\nproprietary business logic, including dynamic cost thresholds, AWS Region-specific compliance rules,\nand real-time A/B testing across multiple FMs. The system must be able to switch between FMs\n\n\n\n\nwithout deploying new code. The system must route user requests based on complex rules including\nuser tier, transaction value, regulatory zone, and real-time cost metrics that change hourly and\nrequire immediate propagation across thousands of concurrent requests.\nWhich solution will meet these requirements?",
+        "question": "Which of the following code blocks reads all CSV files in directory filePath into a single\nDataFrame, with column names defined in the CSV file headers?\nContent of directory filePath:\n1._SUCCESS\n2._committed_2754546451699747124\n3._started_2754546451699747124\n4.part-00000-tid-2754546451699747124-10eb85bf-8d91-4dd0-b60b-2f3c02eeecaa-298-1-\nc000.csv.gz\n5.part-00001-tid-2754546451699747124-10eb85bf-8d91-4dd0-b60b-2f3c02eeecaa-299-1-\nc000.csv.gz\n6.part-00002-tid-2754546451699747124-10eb85bf-8d91-4dd0-b60b-2f3c02eeecaa-300-1-\nc000.csv.gz\n7.part-00003-tid-2754546451699747124-10eb85bf-8d91-4dd0-b60b-2f3c02eeecaa-301-1-\nc000.csv.gz spark.option(\"header\",True).csv(filePath)",
         "options": [
-            "A.. Deploy an AWS Lambda function that uses environment variables to store routing rules and\nAmazon Bedrock FM IDs. Use the Lambda console to update the environment variables when\nbusiness requirements change. Configure an Amazon API Gateway REST API to read request\nparameters to make routing decisions.",
-            "B.. Deploy Amazon API Gateway REST API request transformation templates to implement routing\nlogic based on request attributes. Store Amazon Bedrock FM endpoints as REST API stage variables.\nUpdate the variables when the system switches between models.",
-            "C.. Configure an AWS Lambda function to fetch routing configuration from the AWS AppConfig Agent\nfor each user request. Run business logic in the Lambda function to select the appropriate FM for\neach request. Expose the FM through a single Amazon API Gateway REST API endpoint.",
-            "D.. Use AWS Lambda authorizers for an Amazon API Gateway REST API to evaluate routing rules that\nare stored in AWS AppConfig. Return authorization contexts based on business logic. Route requests\nto model-specific Lambda functions for each Amazon Bedrock FM."
+            "A.. spark.read.format(\"csv\").option(\"header\",True).option(\"compression\",\"zip\").load(filePath)",
+            "B.. spark.read().option(\"header\",True).load(filePath)",
+            "C.. spark.read.format(\"csv\").option(\"header\",True).load(filePath)",
+            "D.. spark.read.load(filePath)"
         ],
-        "answer": "C",
-        "explanation": "Option C best satisfies the requirement to change routing decisions without redeploying code while\nsupporting complex, frequently changing business logic at scale. AWS AppConfig is designed for\ncentrally managing dynamic configuration (feature flags, rules, thresholds, and policy parameters)\nand deploying changes safely. It supports controlled deployments, validation, and rapid propagation\nof updated configuration values, which aligns with \"real-time cost metrics that change hourly\" and\nthe need for \"immediate propagation across thousands of concurrent requests.\" In this design, the\nLambda function becomes the policy decision point. For each request, it evaluates user attributes\n(tier, transaction value), context (regulatory zone, Region), and live cost/performance thresholds\nstored in AppConfig to determine which Amazon Bedrock FM to invoke. Because the routing rules\nand FM identifiers are delivered as configuration, the company can switch models, adjust A/B testing\nweights, or update compliance routing rules by deploying new AppConfig configuration versions\nrather than pushing new application code. This reduces operational risk and accelerates iteration.\nExposing a single API Gateway endpoint also minimizes client complexity and keeps routing logic\nserver- side, which is important when rules change frequently. Lambda can cache configuration\nbetween invocations (within the execution environment) to reduce repeated fetch overhead while\nstill picking up changes quickly, enabling both low latency and rapid rule rollout under high\nconcurrency.\nOption A relies on Lambda environment variables, which are not intended for frequent real-time\nupdates and typically require function configuration updates that are slower and operationally\nbrittle. Option B uses mapping templates and stage variables, which are limited for complex rule\nevaluation and safe rollout patterns. Option D misuses authorizers for business routing, adds extra\nlatency and complexity, and complicates observability and error handling by splitting decisioning\nfrom execution."
+        "answer": [
+            "C"
+        ],
+        "explanation": "The files in directory filePath are partitions of a DataFrame that have been exported using gzip\ncompression.\nSpark automatically recognizes this situation and imports the CSV files as separate partitions into a\nsingle DataFrame. It is, however, necessary to specify that Spark should load the file headers in the\nCSV with the header option, which is set to False by default."
     },
     {
-        "question": "A healthcare company is developing a document management system that stores medical\nresearch papers in an Amazon S3 bucket. The company needs a comprehensive metadata framework\n\n\n\n\nto improve search precision for a GenAI application. The metadata must include document\ntimestamps, author information, and research domain classifications.\nThe solution must maintain a consistent metadata structure across all uploaded documents and allow\nfoundation models (FMs) to understand document context without accessing full content.\nWhich solution will meet these requirements?",
+        "question": "Which of the following is the deepest level in Spark's execution hierarchy?",
         "options": [
-            "A.. Store document timestamps in Amazon S3 system metadata. Use S3 object tags for domain\nclassification. Implement custom user-defined metadata to store author information.",
-            "B.. Set up S3 Object Lock with legal holds to track document timestamps. Use S3 object tags for\nauthor information. Implement S3 access points for domain classification.",
-            "C.. Use S3 Inventory reports to track timestamps. Create S3 access points for domain classification.\nStore author information in S3 Storage Lens dashboards.",
-            "D.. Use custom user-defined metadata to store author information. Use S3 Object Lock retention\nperiods for timestamps. Use S3 Event Notifications for domain classification."
+            "A.. Job",
+            "B.. Task",
+            "C.. Executor",
+            "D.. Slot",
+            "E.. Stage"
+        ],
+        "answer": [
+            "B"
         ],
-        "answer": "A",
-        "explanation": "Option A is the correct solution because it uses native Amazon S3 metadata mechanisms to create a\nconsistent, queryable, and model-friendly metadata framework with minimal complexity. S3 system\nmetadata automatically records object creation and modification timestamps, providing reliable and\nconsistent temporal context without additional processing.\nCustom user-defined metadata is the appropriate mechanism for storing structured attributes such\nas author information. These key-value pairs are stored directly with the object, remain consistent\nacross uploads, and can be accessed programmatically by downstream indexing or retrieval systems\nused by GenAI applications.\nS3 object tags are ideal for domain classification because they are designed for lightweight\ncategorization, filtering, and access control. Tags can be standardized across the organization to\nensure consistent research domain labeling and can be consumed by search indexes or knowledge\nbase ingestion pipelines without requiring access to the full document body.\nTogether, system metadata, user-defined metadata, and object tags provide a clean separation of\nconcerns:\ntimestamps for temporal context, metadata for authorship, and tags for classification. This structure\nallows foundation models to reason about document context (such as recency, domain relevance,\nand authorship) based on metadata alone, improving retrieval precision and reducing unnecessary\ntoken usage.\nOptions B, C, and D misuse features like Object Lock, access points, Storage Lens, or event\nnotifications for purposes they were not designed for, adding complexity without improving\nmetadata quality or model understanding.\nTherefore, Option A best satisfies the metadata consistency, context enrichment, and low-overhead\nrequirements for GenAI-driven document analysis."
+        "explanation": "The hierarchy is, from top to bottom: Job, Stage, Task.\nExecutors and slots facilitate the execution of tasks, but they are not directly part of the hierarchy.\nExecutors are launched by the driver on worker nodes for the purpose of running a specific Spark\napplication. Slots help Spark parallelize work. An executor can have multiple slots which enable it to\nprocess multiple tasks in parallel."
     },
     {
-        "question": "A company is designing an API for a generative AI (GenAI) application that uses a foundation\nmodel (FM) that is hosted on a managed model service. The API must stream responses to reduce\nlatency, enforce token limits to manage compute resource usage, and implement retry logic to\nhandle model timeouts and partial responses.\nWhich solution will meet these requirements with the LEAST operational overhead?",
+        "question": "The code block shown below should return a DataFrame with columns transactionsId,\npredError, value, and f from DataFrame transactionsDf. Choose the answer that correctly fills the\nblanks in the code block to accomplish this.\ntransactionsDf.__1__(__2__)",
         "options": [
-            "A.. Integrate an Amazon API Gateway HTTP API with an AWS Lambda function to invoke Amazon\n\n\n\n\nBedrock. Use Lambda response streaming to stream responses. Enforce token limits within the\nLambda function. Implement retry logic for model timeouts by using Lambda and API Gateway\ntimeout configurations.",
-            "B.. Connect an Amazon API Gateway HTTP API directly to Amazon Bedrock. Simulate streaming by\nusing client-side polling. Enforce token limits on the frontend. Configure retry behavior by using API\nGateway integration settings.",
-            "C.. Connect an Amazon API Gateway WebSocket API to an Amazon ECS service that hosts a\ncontainerized inference server. Stream responses by using the WebSocket protocol. Enforce token\nlimits within Amazon ECS. Handle model timeouts by using ECS task lifecycle hooks and restart\npolicies.",
-            "D.. Integrate an Amazon API Gateway REST API with an AWS Lambda function that invokes Amazon\nBedrock. Use Lambda response streaming to stream responses. Enforce token limits within the\nLambda function. Implement retry logic by using Lambda and API Gateway timeout configurations."
+            "A.. 1. filter\n2. \"transactionId\", \"predError\", \"value\", \"f\"",
+            "B.. 1. select\n2. \"transactionId, predError, value, f\"",
+            "C.. 1. select\n2. [\"transactionId\", \"predError\", \"value\", \"f\"]",
+            "D.. 1. where\n2. col(\"transactionId\"), col(\"predError\"), col(\"value\"), col(\"f\")",
+            "E.. 1. select\n2. col([\"transactionId\", \"predError\", \"value\", \"f\"])"
         ],
-        "answer": "A",
-        "explanation": "Option A is the best solution because it satisfies streaming, token control, and retry requirements\nwhile keeping operational overhead low by using fully managed, serverless AWS services. Amazon\nAPI Gateway HTTP APIs provide a lightweight, cost-effective front door for APIs and integrate cleanly\nwith AWS Lambda for request processing and security controls.\nAWS Lambda response streaming allows the API to begin returning content to the client as soon as\npartial model output is available, reducing perceived latency and improving user experience for long\nresponses.\nUsing Lambda as the integration layer also provides a centralized place to enforce token-aware\nrequest handling, such as rejecting oversized requests, truncating optional context, or applying\nconsistent limits across users and tenants to manage compute usage.\nRetry logic is best handled in the client or integration layer for transient failures such as timeouts and\nthrottling. Lambda can implement controlled retries with exponential backoff and jitter, while API\nGateway timeouts help bound request lifetimes and prevent hung connections from consuming\nresources indefinitely.\nBecause the model service is managed, the company avoids infrastructure management and focuses\nonly on request shaping, safety, and resiliency behavior.\nOption B is not suitable because client-side polling is not true streaming, front-end token\nenforcement is insecure and inconsistent, and API Gateway does not provide model-aware retry\nbehavior on its own. Option C introduces container hosting and scaling complexity, which increases\noperational overhead compared to serverless. Option D can work, but REST APIs are generally\nheavier than HTTP APIs for this pattern and do not reduce overhead compared to Option A.\nTherefore, Option A provides the required streaming and resiliency capabilities with the least\ninfrastructure management effort."
+        "answer": [
+            "C"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.select([\"transactionId\", \"predError\", \"value\", \"f\"])\nThe DataFrame.select returns specific columns from the DataFrame and accepts a list as its only\nargument.\nThus, this is the correct choice here. The option using col([\"transactionId\", \"predError\",\n\"value\", \"f\"]) is invalid, since inside col(), one can only pass a single column name, not a list. Likewise,\nall columns being specified in a single string like \"transactionId, predError, value, f\" is not valid syntax\n.\nfilter and where filter rows based on conditions, they do not control which columns to return.\nStatic notebook | Dynamic notebook: See test 2"
     },
     {
-        "question": "A company is creating a workflow to review customer-facing communications before the\ncompany sends the communications. The company uses a pre-defined message template to generate\nthe communications and stores the communications in an Amazon S3 bucket. The workflow needs to\ncapture a specific portion from the template and send it to an Amazon Bedrock model. The workflow\nmust store model responses back to the original S3 bucket.\nWhich solution will meet these requirements?",
+        "question": "The code block shown below should read all files with the file ending .png in directory path\ninto Spark.\nChoose the answer that correctly fills the blanks in the code block to accomplish this.\nspark.__1__.__2__(__3__).option(__4__, \"*.png\").__5__(path)",
         "options": [
-            "A.. Create a flow in Amazon Bedrock Flows. Configure S3 action nodes at the beginning and end of the\nflow to retrieve and store the communications and the model responses. In the middle of the flow,\nconfigure an expression to parse each communication. Configure an agent step to send the parsed\ninput to the model for review.",
-            "B.. Create an AWS Step Functions Express workflow state machine. Use an Amazon S3 integration\nGetObject step to retrieve the original communications. Use an intrinsic function Pass step to parse\nthe communications and to pass the results to an Amazon Bedrock InvokeModel step. Configure an\nAmazon S3 integration PutObject step to store the model responses back to the S3 bucket.",
-            "C.. Create an Amazon Bedrock agent that has an action group. Configure instructions to define how\nthe agent should parse the communications. Configure the action group to retrieve the\ncommunications from the S3 bucket, invoke the Amazon Bedrock model, and store the model\nresponses back to the S3 bucket.",
-            "D.. Create an Amazon Bedrock agent that has a single action group. Configure three AWS Lambda\nfunctions in the action group. Configure the functions to retrieve the communications from the S3\nbucket, parse the communications and invoke the Amazon Bedrock model, and store the model\nresponses back to the S3 bucket."
+            "A.. 1. read()\n2. format\n3. \"binaryFile\"\n4. \"recursiveFileLookup\"\n5. load",
+            "B.. 1. read\n2. format\n3. \"binaryFile\"\n4. \"pathGlobFilter\"\n5. load",
+            "C.. 1. read\n2. format\n3. binaryFile\n4. pathGlobFilter\n5. load",
+            "D.. 1. open\n2. format\n3. \"image\"\n4. \"fileType\"\n5. open",
+            "E.. 1. open\n2. as\n3. \"binaryFile\"\n4. \"pathGlobFilter\"\n5. load"
+        ],
+        "answer": [
+            "B"
         ],
-        "answer": "A",
-        "explanation": "Option A is the correct answer because Amazon Bedrock Flows is purpose-built to orchestrate\ngenerative AI workflows that combine data access, deterministic transformations, and model\ninvocation with minimal operational overhead. The requirements explicitly state that the workflow\nmust retrieve content from Amazon S3, extract a specific portion of a predefined template, send that\nportion to an Amazon Bedrock model, and store the model's response back into the same S3 bucket.\nAmazon Bedrock Flows natively supports all of these steps.\nBy configuring S3 action nodes at the beginning and end of the flow, the workflow can retrieve the\noriginal communications and persist the reviewed output without custom code. The expression step\nallows deterministic parsing of a specific portion of the template, which is essential when only part of\nthe message should be reviewed. This avoids relying on generative logic for parsing, which would be\nless predictable and harder to audit. The agent step is then used specifically for the review task,\nwhere the foundation model evaluates or modifies the extracted content.\nOption B uses AWS Step Functions, which can achieve similar outcomes but requires more explicit\norchestration logic and does not provide GenAI-native constructs such as expressions and agent steps\nin a single managed experience. Options C and D rely on Amazon Bedrock agents and AWS Lambda\nfunctions to handle parsing and data movement, which increases complexity, operational overhead,\nand maintenance burden.\nBecause Amazon Bedrock Flows directly integrates S3 actions, parsing expressions, and model review\nsteps in a single managed workflow, Option A best meets the requirements with the least\ndevelopment and operational effort."
+        "explanation": "Correct code block:\nspark.read.format(\"binaryFile\").option(\"recursiveFileLookup\", \"*.png\").load(path) Spark can deal\nwith binary files, like images. Using the binaryFile format specification in the SparkSession's read API\nis the way to read in those files. Remember that, to access the read API, you need to start the\ncommand with spark.read. The pathGlobFilter option is a great way to filter files by name (and\nending). Finally, the path can be specified using the load operator - the open operator shown in one of\nthe answers does not exist."
     },
     {
-        "question": "A healthcare company is developing an application to process medical queries. The\napplication must answer complex queries with high accuracy by reducing semantic dilution. The\napplication must refer to domain- specific terminology in medical documents to reduce ambiguity in\nmedical terminology. The application must be able to respond to 1,000 queries each minute with\nresponse times less than 2 seconds.\nWhich solution will meet these requirements with the LEAST operational overhead?",
+        "question": "Which of the following code blocks applies the Python function to_limit on column\npredError in table transactionsDf, returning a DataFrame with columns transactionId and result?",
         "options": [
-            "A.. Use Amazon API Gateway to route incoming queries to an Amazon Bedrock agent. Configure the\nagent to use an Anthropic Claude model to decompose queries and an Amazon Titan model to\nexpand queries. Create an Amazon Bedrock knowledge base to store the reference medical\ndocuments.",
-            "B.. Configure an Amazon Bedrock knowledge base to store the reference medical documents. Enable\nquery decomposition in the knowledge base. Configure an Amazon Bedrock flow that uses a\nfoundation model and the knowledge base to support the application.",
-            "C.. Use Amazon SageMaker AI to host custom ML models for both query decomposition and query\nexpansion. Configure Amazon Bedrock knowledge bases to store the reference medical documents.\nEncrypt the documents in the knowledge base.",
-            "D.. Create an Amazon Bedrock agent to orchestrate multiple AWS Lambda functions to decompose\nqueries. Create an Amazon Bedrock knowledge base to store the reference medical documents. Use\nthe agent's built-in knowledge base capabilities. Add deep research and reasoning capabilities to the\nagent to reduce ambiguity in the medical terminology."
+            "A.. 1.spark.udf.register(\"LIMIT_FCN\", to_limit)\n2.spark.sql(\"SELECT transactionId, LIMIT_FCN(predError) AS result FROM transactionsDf\") (Correct)",
+            "B.. 1.spark.udf.register(\"LIMIT_FCN\", to_limit)\n2.spark.sql(\"SELECT transactionId, LIMIT_FCN(predError) FROM transactionsDf AS result\")",
+            "C.. 1.spark.udf.register(\"LIMIT_FCN\", to_limit)\n2.spark.sql(\"SELECT transactionId, to_limit(predError) AS result FROM transactionsDf\")\nspark.sql(\"SELECT transactionId, udf(to_limit(predError)) AS result FROM transactionsDf\")",
+            "D.. 1.spark.udf.register(to_limit, \"LIMIT_FCN\")\n\n\n2.spark.sql(\"SELECT transactionId, LIMIT_FCN(predError) AS result FROM transactionsDf\")"
         ],
-        "answer": "B",
-        "explanation": "Option B provides the least operational overhead because it keeps the solution primarily inside\nmanaged Amazon Bedrock capabilities, minimizing custom orchestration code and infrastructure to\noperate. The core requirements are domain grounding, reduced semantic dilution for complex\nquestions, and consistent low- latency responses at high request volume. A Bedrock knowledge base\nis purpose-built for Retrieval Augmented Generation by ingesting domain documents, chunking\ncontent, generating embeddings, and retrieving the most relevant passages at runtime. This directly\naddresses the need to reference domain-specific medical terminology from authoritative documents\nto reduce ambiguity and improve factual accuracy.\nReducing semantic dilution typically requires improving the retrieval query so that the retriever\nfocuses on the most relevant concepts, especially for long or multi-intent questions. Enabling query\ndecomposition allows the system to break a complex medical query into smaller, more targeted subqueries. This increases retrieval precision and recall for each sub-question, which helps the model\ngenerate a more accurate synthesized response grounded in the retrieved medical context.\nAmazon Bedrock Flows provide a managed way to orchestrate multi-step generative AI workflows,\nsuch as preprocessing the input, performing retrieval against the knowledge base, invoking a\nfoundation model, and formatting the final response. Because flows are managed, the company\navoids maintaining custom state machines, multiple Lambda functions, or bespoke routing logic. This\nreduces operational overhead while still supporting repeatable, observable execution.\nCompared with the alternatives, option A introduces an agent plus API Gateway routing and multiple\nmodel choices, increasing configuration and runtime complexity. Option C requires hosting and\nscaling custom models on SageMaker AI, which adds significant operational burden and latency risk.\nOption D relies on multiple Lambda functions orchestrated by an agent, which adds more moving\nparts and increases cold-start and integration overhead. Option B most directly meets the\nrequirements with the smallest operational footprint."
+        "answer": [
+            "A"
+        ],
+        "explanation": "spark.udf.register(\"LIMIT_FCN\", to_limit)\nspark.sql(\"SELECT transactionId, LIMIT_FCN(predError) AS result FROM transactionsDf\") Correct!\nFirst, you have to register to_limit as UDF to use it in a sql statement. Then, you can use it under the\nLIMIT_FCN name, correctly naming the resulting column result.\nspark.udf.register(to_limit, \"LIMIT_FCN\")\nspark.sql(\"SELECT transactionId, LIMIT_FCN(predError) AS result FROM transactionsDf\") No. In this\nanswer, the arguments to spark.udf.register are flipped.\nspark.udf.register(\"LIMIT_FCN\", to_limit)\nspark.sql(\"SELECT transactionId, to_limit(predError) AS result FROM transactionsDf\") Wrong, this\nanswer does not use the registered LIMIT_FCN in the sql statement, but tries to access the to_limit\nmethod directly. This will fail, since Spark cannot access it.\nspark.sql(\"SELECT transactionId, udf(to_limit(predError)) AS result FROM transactionsDf\") Incorrect,\nthere is no udf method in Spark's SQL.\nspark.udf.register(\"LIMIT_FCN\", to_limit)\nspark.sql(\"SELECT transactionId, LIMIT_FCN(predError) FROM transactionsDf AS result\") False. In this\nanswer, the column that results from applying the UDF is not correctly renamed to result.\nStatic notebook | Dynamic notebook: See test 3"
     },
     {
-        "question": "A company deploys multiple Amazon Bedrock-based generative AI (GenAI) applications across\nmultiple business units for customer service, content generation, and document analysis. Some\napplications show unpredictable token consumption patterns. The company requires a\ncomprehensive observability solution that provides real-time visibility into token usage patterns\n\n\n\n\nacross multiple models. The observability solution must support custom dashboards for multiple\nstakeholder groups and provide alerting capabilities for token consumption across all the foundation\nmodels that the company's applications use.\nWhich combination of solutions will meet these requirements with the LEAST operational overhead?\n(Select TWO.)",
+        "question": "Which of the following describes the role of tasks in the Spark execution hierarchy?",
         "options": [
-            "A.. Use Amazon CloudWatch metrics as data sources to create custom Amazon QuickSight\ndashboards that show token usage trends and usage patterns across FMs.",
-            "B.. Use CloudWatch Logs Insights to analyze Amazon Bedrock invocation logs for token consumption\npatterns and usage attribution by application. Create custom queries to identify high-usage\nscenarios.\nAdd log widgets to dashboards to enable continuous monitoring.",
-            "C.. Create custom Amazon CloudWatch dashboards that combine native Amazon Bedrock token and\ninvocation CloudWatch metrics. Set up CloudWatch alarms to monitor token usage thresholds.",
-            "D.. Create dashboards that show token usage trends and patterns across the company's FMs by using\nan Amazon Bedrock zero-ETL integration with Amazon Managed Grafana.",
-            "E.. Implement Amazon EventBridge rules to capture Amazon Bedrock model invocation events. Route\ntoken usage data to Amazon OpenSearch Serverless by using Amazon Data Firehose. Use OpenSearch\ndashboards to analyze usage patterns."
+            "A.. Tasks are the smallest element in the execution hierarchy.",
+            "B.. Within one task, the slots are the unit of work done for each partition of the data.",
+            "C.. Tasks are the second-smallest element in the execution hierarchy.",
+            "D.. Stages with narrow dependencies can be grouped into one task.",
+            "E.. Tasks with wide dependencies can be grouped into one stage."
+        ],
+        "answer": [
+            "A"
         ],
-        "answer": "CD",
-        "explanation": "The combination of Options C and D delivers comprehensive, real-time observability for Amazon\nBedrock workloads with the least operational overhead by relying on native integrations and\nmanaged services.\nAmazon Bedrock publishes built-in CloudWatch metrics for model invocations and token usage.\nOption C leverages these native metrics directly, allowing teams to build centralized CloudWatch\ndashboards without additional data pipelines or custom processing. CloudWatch alarms provide\nthreshold-based alerting for token consumption, enabling proactive cost and usage control across all\nfoundation models. This approach aligns with AWS guidance to use native service metrics whenever\npossible to reduce operational complexity.\nOption D complements CloudWatch by enabling advanced, stakeholder-specific visualizations\nthrough Amazon Managed Grafana. The zero-ETL integration allows Bedrock and CloudWatch metrics\nto be visualized directly in Grafana without building ingestion pipelines or managing storage layers.\nGrafana dashboards are particularly well suited for serving different audiences, such as engineering,\nfinance, and product teams, each with customized views of token usage and trends.\nOption A introduces unnecessary complexity by adding a business intelligence layer that is better\nsuited for historical analytics than real-time operational monitoring. Option B is useful for deep log\nanalysis but requires query maintenance and does not provide efficient real-time dashboards at\nscale. Option E involves multiple services and custom data flows, significantly increasing operational\noverhead compared to native metric- based observability.\nBy combining CloudWatch dashboards and alarms with Managed Grafana's zero-ETL visualization\ncapabilities, the company achieves real-time visibility, flexible dashboards, and automated alerting\nacross all Amazon Bedrock foundation models with minimal operational effort."
+        "explanation": "Stages with narrow dependencies can be grouped into one task.\nWrong, tasks with narrow dependencies can be grouped into one stage.\nTasks with wide dependencies can be grouped into one stage.\nWrong, since a wide transformation causes a shuffle which always marks the boundary of a stage. So,\nyou cannot bundle multiple tasks that have wide dependencies into a stage.\nTasks are the second-smallest element in the execution hierarchy.\nNo, they are the smallest element in the execution hierarchy.\nWithin one task, the slots are the unit of work done for each partition of the data.\nNo, tasks are the unit of work done per partition. Slots help Spark parallelize work. An executor can\nhave multiple slots which enable it to process multiple tasks in parallel."
     },
     {
-        "question": "A company uses Amazon Bedrock to implement a Retrieval Augmented Generation (RAG)based system to serve medical information to users. The company needs to compare multiple\nchunking strategies, evaluate the generation quality of two foundation models (FMs), and enforce\nquality thresholds for deployment.\nWhich Amazon Bedrock evaluation configuration will meet these requirements?",
+        "question": "Which of the following code blocks returns a DataFrame that has all columns of DataFrame\ntransactionsDf and an additional column predErrorSquared which is the squared value of column\npredError in DataFrame transactionsDf?",
         "options": [
-            "A.. Create a retrieve-only evaluation job that uses a supported version of Anthropic Claude Sonnet as\nthe evaluator model. Configure metrics for context relevance and context coverage. Define\n\n\n\n\ndeployment thresholds in a separate CI/CD pipeline.",
-            "B.. Create a retrieve-and-generate evaluation job that uses custom precision-at-k metrics and an LLMas-a- judge metric with a scale of 1-5. Include each chunking strategy in the evaluation dataset. Use a\nsupported version of Anthropic Claude Sonnet to evaluate responses from both FMs.",
-            "C.. Create a separate evaluation job for each chunking strategy and FM combination. Use Amazon\nBedrock built-in metrics for correctness and completeness. Manually review scores before\ndeployment approval.",
-            "D.. Set up a pipeline that uses multiple retrieve-only evaluation jobs to assess retrieval quality. Create\nseparate evaluation jobs for both FMs that use Amazon Nova Pro as the LLM-as-a-judge\nmodel.Evaluate based on faithfulness and citation precision metrics."
+            "A.. transactionsDf.withColumn(\"predError\", pow(col(\"predErrorSquared\"), 2))",
+            "B.. transactionsDf.withColumnRenamed(\"predErrorSquared\", pow(predError, 2))",
+            "C.. transactionsDf.withColumn(\"predErrorSquared\", pow(col(\"predError\"), lit(2)))",
+            "D.. transactionsDf.withColumn(\"predErrorSquared\", pow(predError, lit(2)))",
+            "E.. transactionsDf.withColumn(\"predErrorSquared\", \"predError\"**2)"
         ],
-        "answer": "B",
-        "explanation": "Option B is the correct evaluation configuration because it enables end-to-end assessment of both\nretrieval and generation quality while supporting direct comparison of chunking strategies and\nfoundation models.\nAmazon Bedrock evaluation jobs are designed to support RAG workflows by evaluating how well\nretrieved context supports accurate and high-quality model outputs.\nA retrieve-and-generate evaluation job evaluates the complete RAG pipeline, not just retrieval. This is\nessential for medical information use cases, where both the relevance of retrieved content and the\ncorrectness of generated responses directly impact user safety and trust. Including multiple chunking\nstrategies in the evaluation dataset allows side-by-side comparison under identical prompts and\nconditions.\nCustom precision-at-k metrics measure how effectively the retrieval component surfaces relevant\nchunks, while an LLM-as-a-judge metric provides qualitative scoring of generated responses. Using a\nnumeric scale enables consistent, repeatable evaluation and supports automated quality gates.\nAmazon Bedrock supports LLM-based evaluators to score dimensions such as accuracy,\ncompleteness, and relevance.\nUsing the same evaluator model to assess outputs from both FMs ensures consistent scoring and\neliminates evaluator bias. This configuration allows the company to define quantitative thresholds\nthat must be met before deployment, enabling automated promotion through CI/CD pipelines.\nOption A evaluates retrieval only and cannot assess generation quality. Option C introduces manual\nreview, which does not scale and delays deployment. Option D separates retrieval and generation\nevaluation, making it harder to correlate chunking strategies with final output quality.\nTherefore, Option B best meets the requirements for systematic evaluation, comparison, and quality\nenforcement in an Amazon Bedrock-based RAG system."
+        "answer": [
+            "C"
+        ],
+        "explanation": "While only one of these code blocks works, the DataFrame API is pretty flexible when it comes to\naccepting columns into the pow() method. The following code blocks would also work:\ntransactionsDf.withColumn(\"predErrorSquared\", pow(\"predError\", 2))\ntransactionsDf.withColumn(\"predErrorSquared\", pow(\"predError\", lit(2))) Static notebook | Dynamic\nnotebook: See test 1 (https://flrs.github.io/spark_practice_tests_code/#1/26.html ,\nhttps://bit.ly/sparkpracticeexams_import_instructions)"
     },
     {
-        "question": "A finance company is developing an AI assistant to help clients plan investments and manage\ntheir portfolios.\nThe company identifies several high-risk conversation patterns such as requests for specific stock\nrecommendations or guaranteed returns. High-risk conversation patterns could lead to regulatory\nviolations if the company cannot implement appropriate controls.\nThe company must ensure that the AI assistant does not provide inappropriate financial advice,\ngenerate content about competitors, or make claims that are not factually grounded in the\ncompany's approved financial guidance. The company wants to use Amazon Bedrock Guardrails to\nimplement a solution.\nWhich combination of steps will meet these requirements? (Select THREE)\n76",
+        "question": "Which of the following code blocks can be used to save DataFrame transactionsDf to\nmemory only, recalculating partitions that do not fit in memory when they are needed?",
         "options": [
-            "A.. Add the high-risk conversation patterns to a denied topics guardrail.",
-            "B.. Configure a content filter guardrail to filter prompts that contain the high-risk conversation\npatterns.",
-            "C.. Configure a content filter guardrail to filter prompts that contain competitor names.",
-            "D.. Add the names of competitors as custom word filters. Set the input and output actions to block.",
-            "E.. Set a low grounding score threshold.",
-            "F.. Set a high grounding score threshold."
+            "A.. from pyspark import StorageLevel\ntransactionsDf.cache(StorageLevel.MEMORY_ONLY)",
+            "B.. transactionsDf.cache()",
+            "C.. transactionsDf.storage_level('MEMORY_ONLY')",
+            "D.. transactionsDf.persist()",
+            "E.. transactionsDf.clear_persist()",
+            "F.. from pyspark import StorageLevel\ntransactionsDf.persist(StorageLevel.MEMORY_ONLY)"
+        ],
+        "answer": [
+            "F"
         ],
-        "answer": "ADF",
-        "explanation": "The correct combination is A, D, and F because these guardrail features directly map to the stated\nfinancial compliance and governance requirements.\nOption A is required because denied topics guardrails are explicitly designed to block entire\ncategories of requests, such as requests for guaranteed returns or specific stock recommendations.\nThese are regulatory- sensitive scenarios where partial filtering is insufficient and full blocking is\nrequired to prevent violations.\nOption D is correct because custom word filters are the appropriate guardrail mechanism to block\nreferences to specific competitor names. Content filters are category-based (such as hate, sexual, or\nviolence-related content) and are not suitable for blocking organization-specific competitor\nreferences. Custom word filters allow precise blocking at both input and output stages.\nOption F is required because a high grounding score threshold enforces that model outputs must be\nstrongly supported by approved source material. This prevents the AI assistant from making\nspeculative or unfounded claims that are not aligned with the company's approved financial\nguidance, which is critical in regulated financial environments.\nOption B is incorrect because content filters do not target domain-specific financial advice patterns.\nOption C is incorrect for the same reason-competitor names are not a content filter category. Option\nE would weaken factual grounding and increase hallucination risk.\nTherefore, A, D, and F together provide topic blocking, competitor exclusion, and factual grounding\nenforcement."
+        "explanation": "from pyspark import StorageLevel transactionsDf.persist(StorageLevel.MEMORY_ONLY) Correct. Note\nthat the storage level MEMORY_ONLY means that all partitions that do not fit into memory will be\nrecomputed when they are needed.\ntransactionsDf.cache()\nThis is wrong because the default storage level of DataFrame.cache() is MEMORY_AND_DISK,\nmeaning that partitions that do not fit into memory are stored on disk.\ntransactionsDf.persist()\nThis is wrong because the default storage level of DataFrame.persist() is MEMORY_AND_DISK.\ntransactionsDf.clear_persist()\nIncorrect, since clear_persist() is not a method of DataFrame.\ntransactionsDf.storage_level('MEMORY_ONLY')\nWrong. storage_level is not a method of DataFrame.\nMore info: RDD Programming Guide - Spark 3.0.0 Documentation, pyspark.sql.DataFrame.persist\n- PySpark\n3.0.0 documentation (https://bit.ly/3sxHLVC , https://bit.ly/3j2N6B9)"
     },
     {
-        "question": "An ecommerce company operates a global product recommendation system that needs to\nswitch between multiple foundation models (FM) in Amazon Bedrock based on regulations, cost\noptimization, and performance requirements. The company must apply custom controls based on\nproprietary business logic, including dynamic cost thresholds, AWS Region-specific compliance rules,\nand real-time A/B testing across multiple FMs.\nThe system must be able to switch between FMs without deploying new code. The system must\nroute user requests based on complex rules including user tier, transaction value, regulatory zone,\nand real-time cost metrics that change hourly and require immediate propagation across thousands\nof concurrent requests.\nWhich solution will meet these requirements?",
+        "question": "The code block shown below should add column transactionDateForm to DataFrame\ntransactionsDf. The column should express the unix-format timestamps in column transactionDate as\nstring type like Apr 26 (Sunday). Choose the answer that correctly fills the blanks in the code block to\naccomplish this.\ntransactionsDf.__1__(__2__, from_unixtime(__3__, __4__))",
         "options": [
-            "A.. Deploy an AWS Lambda function that uses environment variables to store routing rules and\nAmazon Bedrock FM IDs. Use the Lambda console to update the environment variables when\nbusiness requirements change. Configure an Amazon API Gateway REST API to read request\nparameters to make routing decisions.",
-            "B.. Deploy Amazon API Gateway REST API request transformation templates to implement routing\nlogic based on request attributes. Store Amazon Bedrock FM endpoints as REST API stage variables.\n77\n\n\n\n\nUpdate the variables when the system switches between models.",
-            "C.. Configure an AWS Lambda function to fetch routing configurations from the AWS AppConfig Agent\nfor each user request. Run business logic in the Lambda function to select the appropriate FM for\neach request. Expose the FM through a single Amazon API Gateway REST API endpoint.",
-            "D.. Use AWS Lambda authorizers for an Amazon API Gateway REST API to evaluate routing rules that\nare stored in AWS AppConfig. Return authorization contexts based on business logic. Route requests\nto model-specific Lambda functions for each Amazon Bedrock FM."
+            "A.. 1. withColumn\n2. \"transactionDateForm\"\n3. \"MMM d (EEEE)\"\n4. \"transactionDate\"",
+            "B.. 1. select\n2. \"transactionDate\"\n3. \"transactionDateForm\"\n4. \"MMM d (EEEE)\"",
+            "C.. 1. withColumn\n2. \"transactionDateForm\"\n3. \"transactionDate\"\n4. \"MMM d (EEEE)\"",
+            "D.. 1. withColumn\n2. \"transactionDateForm\"\n3. \"transactionDate\"\n4. \"MM d (EEE)\"",
+            "E.. 1. withColumnRenamed\n2. \"transactionDate\"\n3. \"transactionDateForm\"\n4. \"MM d (EEE)\""
         ],
-        "answer": "C",
-        "explanation": "Option C is the correct solution because AWS AppConfig is designed for real-time, validated, centrally\nmanaged configuration changes with safe rollout, immediate propagation, and rollback supportexactly matching the company's requirements.\nBy storing routing rules, cost thresholds, regulatory constraints, and A/B testing logic in AWS\nAppConfig, the company can switch between Amazon Bedrock foundation models without\nredeploying Lambda code.\nAppConfig supports feature flags, dynamic configuration updates, JSON schema validation, and\nstaged rollouts, which are essential for safely managing complex and frequently changing routing\nlogic.\nUsing the AWS AppConfig Agent, Lambda functions can retrieve cached configurations efficiently,\nensuring low latency even under thousands of concurrent requests. This approach allows the Lambda\nfunction to apply proprietary business logic-such as user tier, transaction value, Region compliance,\nand real-time cost metrics-before selecting the appropriate FM.\nOption A is operationally fragile because environment variable changes require function restarts and\ndo not support validation or controlled rollouts. Option B is too limited for complex, dynamic logic\nand is difficult to maintain at scale. Option D misuses Lambda authorizers, which are intended for\nauthentication and authorization, not high-frequency dynamic routing decisions.\nTherefore, Option C provides the most scalable, flexible, and low-overhead architecture for dynamic,\nregulation-aware FM routing in a global GenAI system."
+        "answer": [
+            "C"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf.withColumn(\"transactionDateForm\", from_unixtime(\"transactionDate\", \"MMM d\n(EEEE)\")) The question specifically asks about \"adding\" a column. In the context of all presented\nanswers, DataFrame.withColumn() is the correct command for this. In theory, DataFrame.select()\ncould also be used for this purpose, if all existing columns are selected and a new one is added.\nDataFrame.withColumnRenamed() is not the appropriate command, since it can only rename existing\ncolumns, but cannot add a new column or change the value of a column.\nOnce DataFrame.withColumn() is chosen, you can read in the documentation (see below) that the\nfirst input argument to the method should be the column name of the new column.\nThe final difficulty is the date format. The question indicates that the date format Apr 26 (Sunday) is\ndesired. The answers give \"MMM d (EEEE)\" and \"MM d (EEE)\" as options. It can be hard to know the\ndetails of the date format that is used in Spark. Specifically, knowing the differences between MMM\nand MM is probably not something you deal with every day. But, there is an easy way to remember\nthe difference: M (one letter) is usually the shortest form: 4 for April. MM includes padding: 04 for\nApril. MMM (three letters) is the three-letter month abbreviation: Apr for April. And MMMM is the\nlongest possible form: April. Knowing this four-letter sequence helps you select the correct option\nhere.\nMore info: pyspark.sql.DataFrame.withColumn - PySpark 3.1.2 documentation Static notebook |\nDynamic notebook: See test 3"
     },
     {
-        "question": "A bank is building a generative AI (GenAI) application that uses Amazon Bedrock to assess\nloan applications by using scanned financial documents. The application must extract structured data\nfrom the documents. The application must redact personally identifiable information (PII) before\ninference. The application must use foundation models (FMs) to generate approvals. The application\nmust route low-confidence document extraction results to human reviewers who are within the\nsame AWS Region as the loan applicant.\nThe company must ensure that the application complies with strict Regional data residency and\nauditability requirements. The application must be able to scale to handle 25,000 applications each\nday and provide 99.9% availability.\nWhich combination of solutions will meet these requirements? (Select THREE.)",
+        "question": "Which of the following code blocks creates a new DataFrame with two columns season and\nwind_speed_ms where column season is of data type string and column wind_speed_ms is of data\ntype double?",
         "options": [
-            "A.. Deploy Amazon Textract and Amazon Augmented AI within the same Region to extract relevant\ndata from the scanned documents. Route low-confidence pages to human reviewers.",
-            "B.. Use AWS Lambda functions to detect and redact PII from submitted documents before inference.\nApply Amazon Bedrock guardrails to prevent inappropriate or unauthorized content in model\noutputs.\nConfigure Region-specific IAM roles to enforce data residency requirements and to control access to\n\n\n\n\nthe extracted data.",
-            "C.. Use Amazon Kendra and Amazon OpenSearch Service to extract field-level values semantically\nfrom the uploaded documents before inference.",
-            "D.. Store uploaded documents in Amazon S3 and apply object metadata. Configure IAM policies to\nstore original documents within the same Region as each applicant. Enable object tagging for future\naudits.",
-            "E.. Use AWS Glue Data Quality to validate the structured document data. Use AWS Step Functions to\norchestrate a review workflow that includes a prompt engineering step that transforms validated\ndata into optimized prompts before invoking Amazon Bedrock to assess loan applications.",
-            "F.. Use Amazon SageMaker Clarify to generate fairness and bias reports based on model scoring\ndecisions that Amazon Bedrock makes."
+            "A.. spark.DataFrame({\"season\": [\"winter\",\"summer\"], \"wind_speed_ms\": [4.5, 7.5]})",
+            "B.. spark.createDataFrame([(\"summer\", 4.5), (\"winter\", 7.5)], [\"season\", \"wind_speed_ms\"])",
+            "C.. 1. from pyspark.sql import types as T\n2. spark.createDataFrame(((\"summer\", 4.5), (\"winter\", 7.5)), T.StructType([T.StructField(\"season\",\nT.CharType()), T.StructField(\"season\", T.DoubleType())]))",
+            "D.. spark.newDataFrame([(\"summer\", 4.5), (\"winter\", 7.5)], [\"season\", \"wind_speed_ms\"])",
+            "E.. spark.createDataFrame({\"season\": [\"winter\",\"summer\"], \"wind_speed_ms\": [4.5, 7.5]})"
+        ],
+        "answer": [
+            "B"
         ],
-        "answer": "ABD",
-        "explanation": "The correct combination is A, B, and D because these three options collectively satisfy the mandatory\nrequirements for structured extraction, PII redaction before inference, regional human review, data\nresidency, auditability, and high-scale availability with managed AWS services.\nOption A is essential because Amazon Textract is the AWS-managed service designed to extract\nstructured data from scanned documents such as forms, tables, and financial statements. Textract\nprovides confidence scores, and Amazon Augmented AI (A2I) is purpose-built to route lowconfidence extractions to human reviewers. Deploying Textract and A2I within the same Region\nensures that the human review loop remains regionally constrained, meeting strict data residency\nrequirements for applicants.\nOption B satisfies the requirement to redact PII before inference by using AWS Lambda\npreprocessing. It also adds Amazon Bedrock guardrails to enforce safety controls on model outputs.\nRegion-specific IAM roles ensure that only authorized principals in the correct Region can access the\nextracted data and invoke downstream services, strengthening residency enforcement and\nauditability.\nOption D ensures that source documents are stored in Amazon S3 in the same Region as the\napplicant. Object metadata and tagging provide an auditable trail, supporting compliance reporting\nand traceability. S3 also provides the durability and availability needed to support 99.9% application\navailability as part of a well- architected pipeline.\nOption C is not the correct approach for structured extraction from scans. Option E adds useful\nquality validation but is not strictly required to meet the stated requirements compared to A, B, and\nD. Option F is unrelated to the extraction/redaction/residency workflow requirements.\nTherefore, A, B, and D are the best three choices to meet all stated requirements with minimal\noperational overhead."
+        "explanation": "spark.createDataFrame([(\"summer\", 4.5), (\"winter\", 7.5)], [\"season\", \"wind_speed_ms\"]) Correct.\nThis command uses the Spark Session's createDataFrame method to create a new DataFrame. Notice\nhow rows, columns, and column names are passed in here: The rows are specified as a Python list.\nEvery entry in the list is a new row. Columns are specified as Python tuples (for example (\"summer\",\n4.5)). Every column is one entry in the tuple.\nThe column names are specified as the second argument to createDataFrame(). The documentation\n(link below) shows that \"when schema is a list of column names, the type of each column will be\ninferred from data\" (the first argument). Since values 4.5 and 7.5 are both float variables, Spark will\ncorrectly infer the double type for column wind_speed_ms. Given that all values in column\n\"season\" contain only strings, Spark will cast the column appropriately as string.\nFind out more about SparkSession.createDataFrame() via the link below.\nspark.newDataFrame([(\"summer\", 4.5), (\"winter\", 7.5)], [\"season\", \"wind_speed_ms\"]) No, the\nSparkSession does not have a newDataFrame method.\nfrom pyspark.sql import types as T\nspark.createDataFrame(((\"summer\", 4.5), (\"winter\", 7.5)), T.StructType([T.StructField(\"season\",\nT.CharType()), T.StructField(\"season\", T.DoubleType())]))\nNo. pyspark.sql.types does not have a CharType type. See link below for available data types in Spark.\nspark.createDataFrame({\"season\": [\"winter\",\"summer\"], \"wind_speed_ms\": [4.5, 7.5]}) No, this is not\ncorrect Spark syntax. If you have considered this option to be correct, you may have some experience\nwith Python's pandas package, in which this would be correct syntax. To create a Spark DataFrame\nfrom a Pandas DataFrame, you can simply use spark.createDataFrame(pandasDf) where pandasDf is\nthe Pandas DataFrame.\nFind out more about Spark syntax options using the examples in the documentation for\nSparkSession.createDataFrame linked below.\nspark.DataFrame({\"season\": [\"winter\",\"summer\"], \"wind_speed_ms\": [4.5, 7.5]}) No, the Spark\nSession (indicated by spark in the code above) does not have a DataFrame method.\nMore info: pyspark.sql.SparkSession.createDataFrame - PySpark 3.1.1 documentation and Data Types\n- Spark 3.1.2 Documentation Static notebook | Dynamic notebook: See test 1"
     },
     {
-        "question": "An elevator service company has developed an AI assistant application by using Amazon\nBedrock. The application generates elevator maintenance recommendations to support the\ncompany's elevator technicians.\nThe company uses Amazon Kinesis Data Streams to collect the elevator sensor data.\nNew regulatory rules require that a human technician must review all AI-generated\nrecommendations. The company needs to establish human oversight workflows to review and\napprove AI recommendations. The company must store all human technician review decisions for\naudit purposes.\nWhich solution will meet these requirements?\n79",
+        "question": "Which of the following describes Spark's standalone deployment mode?",
         "options": [
-            "A.. Create a custom approval workflow by using AWS Lambda functions and Amazon SQS queues for\nhuman review of AI recommendations. Store all review decisions in Amazon DynamoDB for audit\npurposes.",
-            "B.. Create an AWS Step Functions workflow that has a human approval step that uses the\nwaitForTaskToken API to pause execution. After a human technician completes a review, use an AWS\nLambda function to call the SendTaskSuccess API with the approval decision. Store all review\ndecisions in Amazon DynamoDB.",
-            "C.. Create an AWS Glue workflow that has a human approval step. After the human technician review,\nintegrate the application with an AWS Lambda function that calls the SendTaskSuccess API. Store all\nhuman technician review decisions in Amazon DynamoDB.",
-            "D.. Configure Amazon EventBridge rules with custom event patterns to route AI recommendations to\nhuman technicians for review. Create AWS Glue jobs to process human technician approval\nqueues.Use Amazon ElastiCache to cache all human technician review decisions."
+            "A.. Standalone mode uses a single JVM to run Spark driver and executor processes.",
+            "B.. Standalone mode means that the cluster does not contain the driver.",
+            "C.. Standalone mode is how Spark runs on YARN and Mesos clusters.",
+            "D.. Standalone mode uses only a single executor per worker per application.",
+            "E.. Standalone mode is a viable solution for clusters that run multiple frameworks, not only Spark."
         ],
-        "answer": "B",
-        "explanation": "AWS Step Functions provides native support for human-in-the-loop workflows, making it the best fit\nfor regulatory oversight requirements. The waitForTaskToken integration pattern is explicitly\ndesigned to pause a workflow until an external actor-such as a human reviewer-completes a task.\nIn this architecture, AI-generated recommendations are sent to a human technician for review. The\nworkflow pauses execution using a task token. Once the technician approves or rejects the\nrecommendation, an AWS Lambda function calls SendTaskSuccess or SendTaskFailure, allowing the\nworkflow to continue deterministically.\nThis approach ensures full auditability, as Step Functions records every state transition, timestamp,\nand execution path. Storing review outcomes in Amazon DynamoDB provides durable, queryable\naudit records required for regulatory compliance.\nOption A requires custom orchestration and lacks native workflow state management. Option C\nincorrectly uses AWS Glue, which is not designed for approval workflows. Option D uses caching\ninstead of durable audit storage and introduces unnecessary complexity.\nTherefore, Option B is the AWS-recommended, lowest-risk, and most auditable solution for\nmandatory human review of AI outputs."
+        "answer": [
+            "D"
+        ],
+        "explanation": "Standalone mode uses only a single executor per worker per application.\nThis is correct and a limitation of Spark's standalone mode.\nStandalone mode is a viable solution for clusters that run multiple frameworks.\nIncorrect. A limitation of standalone mode is that Apache Spark must be the only framework running\non the cluster. If you would want to run multiple frameworks on the same cluster in parallel, for\nexample Apache Spark and Apache Flink, you would consider the YARN deployment mode.\nStandalone mode uses a single JVM to run Spark driver and executor processes.\nNo, this is what local mode does.\nStandalone mode is how Spark runs on YARN and Mesos clusters.\nNo. YARN and Mesos modes are two deployment modes that are different from standalone mode.\nThese modes allow Spark to run alongside other frameworks on a cluster. When Spark is run in\nstandalone mode, only the Spark framework can run on the cluster.\nStandalone mode means that the cluster does not contain the driver.\nIncorrect, the cluster does not contain the driver in client mode, but in standalone mode the driver\nruns on a node in the cluster.\nMore info: Learning Spark, 2nd Edition, Chapter 1"
     },
     {
-        "question": "An ecommerce company is developing a generative AI application that uses Amazon Bedrock\nwith Anthropic Claude to recommend products to customers. Customers report that some\nrecommended products are not available for sale on the website or are not relevant to the customer.\nCustomers also report that the solution takes a long time to generate some recommendations.\nThe company investigates the issues and finds that most interactions between customers and the\nproduct recommendation solution are unique. The company confirms that the solution recommends\nproducts that are not in the company's product catalog. The company must resolve these issues.\nWhich solution will meet this requirement?",
+        "question": "Which of the following describes a shuffle?",
         "options": [
-            "A.. Increase grounding within Amazon Bedrock Guardrails. Enable Automated Reasoning checks. Set\nup provisioned throughput.",
-            "B.. Use prompt engineering to restrict the model responses to relevant products. Use streaming\ntechniques such as the InvokeModelWithResponseStream action to reduce perceived latency for the\ncustomers.",
-            "C.. Create an Amazon Bedrock knowledge base. Implement Retrieval Augmented Generation RAG. Set\n80\n\n\n\n\nthe PerformanceConfigLatency parameter to optimized.",
-            "D.. Store product catalog data in Amazon OpenSearch Service. Validate the model's product\nrecommendations against the product catalog. Use Amazon DynamoDB to implement response\ncaching."
+            "A.. A shuffle is a process that is executed during a broadcast hash join.",
+            "B.. A shuffle is a process that compares data across executors.",
+            "C.. A shuffle is a process that compares data across partitions.",
+            "D.. A shuffle is a Spark operation that results from DataFrame.coalesce().",
+            "E.. A shuffle is a process that allocates partitions to executors."
+        ],
+        "answer": [
+            "C"
         ],
-        "answer": "C",
-        "explanation": "Option C best addresses both core problems: hallucinated recommendations that do not exist in the\ncatalog and slow response times, while keeping operational overhead low. The most direct way to\nprevent the model from recommending unavailable products is to ground generation on\nauthoritative product catalog data at inference time. An Amazon Bedrock knowledge base is designed\nfor this pattern by ingesting domain data, chunking content, creating embeddings, and retrieving the\nmost relevant catalog entries when a user asks for recommendations. Implementing Retrieval\nAugmented Generation ensures the foundation model receives only approved, catalog-backed\ncontext and can cite or base its output on those retrieved items. This sharply reduces the likelihood\nof inventing products, because the response is conditioned on retrieved catalog records rather than\nrelying on the model's parametric memory.\nThe requirement also notes that most interactions are unique. That makes response caching far less\neffective, because there are fewer repeated prompts to benefit from cached outputs. Instead,\nimproving the retrieval and model invocation path is the better optimization. Using the\nPerformanceConfigLatency parameter set to optimized prioritizes lower latency behavior for model\ninference, helping meet faster recommendation generation without requiring the company to build\nand operate additional infrastructure.\nThe other options do not solve the root cause as reliably. Prompt engineering and streaming can\nimprove perceived latency, but they do not guarantee catalog-only recommendations because the\nmodel can still hallucinate items. Guardrails can help detect or block certain undesired outputs, but\nwithout consistent catalog grounding they do not ensure every recommendation is derived from the\ncompany's product data. Building a custom OpenSearch validation and caching layer increases\noperational complexity, and caching is misaligned with predominantly unique interactions."
+        "explanation": "A shuffle is a Spark operation that results from DataFrame.coalesce().\nNo. DataFrame.coalesce() does not result in a shuffle.\nA shuffle is a process that allocates partitions to executors.\nThis is incorrect.\nA shuffle is a process that is executed during a broadcast hash join.\nNo, broadcast hash joins avoid shuffles and yield performance benefits if at least one of the two\ntables is small in size (<= 10 MB by default). Broadcast hash joins can avoid shuffles because instead\nof exchanging partitions between executors, they broadcast a small table to all executors that then\nperform the rest of the join operation locally.\nA shuffle is a process that compares data across executors.\nNo, in a shuffle, data is compared across partitions, and not executors.\nMore info: Spark Repartition & Coalesce - Explained (https://bit.ly/32KF7zS)"
     },
     {
-        "question": "A financial services company is developing a real-time generative AI (GenAI) assistant to\nsupport human call center agents. The GenAI assistant must transcribe live customer speech, analyze\ncontext, and provide incremental suggestions to call center agents while a customer is still speaking.\nTo preserve responsiveness, the GenAI assistant must maintain end-to-end latency under 1 second\nfrom speech to initial response display.\nThe architecture must use only managed AWS services and must support bidirectional streaming to\nensure that call center agents receive updates in real time.\nWhich solution will meet these requirements?",
+        "question": "Which of the following code blocks reads JSON file imports.json into a DataFrame?",
         "options": [
-            "A.. Use Amazon Transcribe streaming to transcribe calls. Pass the text to Amazon Comprehend for\nsentiment analysis. Feed the results to Anthropic Claude on Amazon Bedrock by using the\nInvokeModel API. Store results in Amazon DynamoDB. Use a WebSocket API to display the results.",
-            "B.. Use Amazon Transcribe streaming with partial results enabled to deliver fragments of transcribed\ntext before customers finish speaking. Forward text fragments to Amazon Bedrock by using the\nInvokeModelWithResponseStream API. Stream responses to call center agents through an Amazon\nAPI Gateway WebSocket API.",
-            "C.. Use Amazon Transcribe batch processing to convert calls to text. Pass complete transcripts to\n\n\n\n\nAnthropic Claude on Amazon Bedrock by using the ConverseStream API. Return responses through\nan Amazon Lex chatbot interface.",
-            "D.. Use the Amazon Transcribe streaming API with an AWS Lambda function to transcribe each audio\nsegment. Call the Amazon Titan Embeddings model on Amazon Bedrock by using the InvokeModel\nAPI. Publish results to Amazon SNS."
+            "A.. spark.read().mode(\"json\").path(\"/FileStore/imports.json\")",
+            "B.. spark.read.format(\"json\").path(\"/FileStore/imports.json\")",
+            "C.. spark.read(\"json\", \"/FileStore/imports.json\")",
+            "D.. spark.read.json(\"/FileStore/imports.json\")",
+            "E.. spark.read().json(\"/FileStore/imports.json\")"
         ],
-        "answer": "B",
-        "explanation": "Option B is the only solution that satisfies all strict real-time, streaming, and latency requirements.\nAmazon Transcribe streaming with partial results allows transcription fragments to be delivered\nbefore the speaker finishes a sentence. This significantly reduces perceived latency and enables\ndownstream processing to begin immediately, which is essential for maintaining sub-1-second endto-end response times.\nUsing Amazon Bedrock's InvokeModelWithResponseStream API enables token-level or chunk-level\nstreaming responses from the foundation model. This allows the GenAI assistant to begin delivering\nsuggestions to call center agents incrementally instead of waiting for a full model response. This\nstreaming inference capability is critical for interactive, real-time agent assistance use cases.\nAmazon API Gateway WebSocket APIs provide fully managed, bidirectional communication between\nbackend services and agent dashboards. This ensures that updates flow continuously to agents as\nnew transcription fragments and model outputs become available, preserving real-time\nresponsiveness without requiring custom socket infrastructure.\nOption A introduces additional synchronous processing layers and storage writes that increase\nlatency. Option C uses batch transcription and post-call processing, which cannot meet real-time\nrequirements. Option D uses embeddings and asynchronous messaging, which are not suitable for\nlive incremental suggestions and bidirectional streaming.\nTherefore, Option B best aligns with AWS real-time GenAI architecture patterns by combining\nstreaming transcription, streaming model inference, and managed bidirectional communication while\nmaintaining low latency and operational simplicity."
+        "answer": [
+            "D"
+        ],
+        "explanation": "Static notebook | Dynamic notebook: See test 1\n(https://flrs.github.io/spark_practice_tests_code/#1/25.html ,\nhttps://bit.ly/sparkpracticeexams_import_instructions)"
     },
     {
-        "question": "A company runs a Retrieval Augmented Generation (RAG) application that uses Amazon\nBedrock Knowledge Bases to perform regulatory compliance queries. The application uses the\nRetrieveAndGenerateStream API. The application retrieves relevant documents from a knowledge\nbase that contains more than 50,000 regulatory documents, legal precedents, and policy updates.\nThe RAG application is producing suboptimal responses because the initial retrieval often returns\nsemantically similar but contextually irrelevant documents. The poor responses are causing model\nhallucinations and incorrect regulatory guidance. The company needs to improve the performance of\nthe RAG application so it returns more relevant documents.\nWhich solution will meet this requirement with the LEAST operational overhead?",
+        "question": "The code block displayed below contains an error. The code block is intended to return all\ncolumns of DataFrame transactionsDf except for columns predError, productId, and value. Find the\nerror.\nExcerpt of DataFrame transactionsDf:\ntransactionsDf.select(~col(\"predError\"), ~col(\"productId\"), ~col(\"value\"))",
         "options": [
-            "A.. Deploy an Amazon SageMaker endpoint to run a fine-tuned ranking model. Use an Amazon API\nGateway REST API to route requests. Configure the application to make requests through the REST\nAPI to rerank the results.",
-            "B.. Use Amazon Comprehend to classify documents and apply relevance scores. Integrate the RAG\napplication's reranking process with Amazon Textract to run document analysis. Use Amazon\nNeptune to perform graph-based relevance calculations.",
-            "C.. Implement a retrieval pipeline that uses the Amazon Bedrock Knowledge Bases Retrieve API to\nperform initial document retrieval. Call the Amazon Bedrock Rerank API to rerank the results. Invoke\n\n\n\n\nthe InvokeModelWithResponseStream operation to generate responses.",
-            "D.. Use the latest Amazon reranker model through the reranking configuration within Amazon\nBedrock Knowledge Bases. Use the model to improve document relevance scoring and to reorder\nresults based on contextual assessments."
+            "A.. The select operator should be replaced by the drop operator and the arguments to the drop\noperator should be column names predError, productId and value wrapped in the col operator so\nthey should be expressed like drop(col(predError), col(productId), col(value)).",
+            "B.. The select operator should be replaced with the deselect operator.",
+            "C.. The column names in the select operator should not be strings and wrapped in the col operator, so\nthey should be expressed like select(~col(predError), ~col(productId), ~col(value)).",
+            "D.. The select operator should be replaced by the drop operator.",
+            "E.. The select operator should be replaced by the drop operator and the arguments to the drop\noperator should be column names predError, productId and value as strings.\n(Correct)"
+        ],
+        "answer": [
+            "E"
         ],
-        "answer": "D",
-        "explanation": "Option D is the correct solution because Amazon Bedrock Knowledge Bases natively support\nreranking by using Amazon-managed reranker models, which are specifically designed to improve\ncontextual relevance after the initial vector retrieval step. This approach directly addresses the root\ncause of the issue: semantically similar but contextually irrelevant documents being passed to the\nfoundation model.\nBy enabling the reranking configuration within Amazon Bedrock Knowledge Bases, the application\ncan automatically reorder retrieved documents based on deeper contextual understanding, such as\nregulatory scope, legal applicability, and semantic intent. This significantly improves retrieval\nprecision, which reduces hallucinations and improves the factual accuracy of generated regulatory\nguidance.\nOption D requires no additional infrastructure, no custom orchestration logic, and no separate model\nhosting.\nThe reranking is fully managed by Amazon Bedrock and integrates seamlessly with the existing\nRetrieveAndGenerateStream workflow. This makes it the lowest operational overhead solution.\nOption A introduces operational complexity by requiring a custom SageMaker endpoint, API Gateway\nrouting, and model lifecycle management. Option B combines multiple unrelated services and\nintroduces significant complexity without being purpose-built for RAG relevance ranking. Option C\nimproves relevance but requires explicitly calling the Rerank API and modifying the application\npipeline, which increases operational and integration effort compared to built-in reranking.\nTherefore, Option D provides the most efficient, scalable, and AWS-recommended method to\nimprove RAG retrieval quality while minimizing operational burden."
+        "explanation": "Correct code block:\ntransactionsDf.drop(\"predError\", \"productId\", \"value\")\nStatic notebook | Dynamic notebook: See test 1"
     },
     {
-        "question": "A healthcare company uses Amazon Bedrock to deploy an application that generates\nsummaries of clinical documents. The application experiences inconsistent response quality with\noccasional factual hallucinations.\nMonthly costs exceed the company's projections by 40%. A GenAI developer must implement a near\nreal- time monitoring solution to detect hallucinations, identify abnormal token consumption, and\nprovide early warnings of cost anomalies. The solution must require minimal custom development\nwork and maintenance overhead.\nWhich solution will meet these requirements?",
+        "question": "The code block displayed below contains an error. The code block should return a new\nDataFrame that only contains rows from DataFrame transactionsDf in which the value in column\npredError is at least 5. Find the error.\nCode block:\ntransactionsDf.where(\"col(predError) >= 5\")",
         "options": [
-            "A.. Configure Amazon CloudWatch alarms to monitor InputTokenCount and OutputTokenCount\nmetrics to detect anomalies. Store model invocation logs in an Amazon S3 bucket. Use AWS Glue and\nAmazon Athena to identify potential hallucinations.",
-            "B.. Run Amazon Bedrock evaluation jobs that use LLM-based judgments to detect hallucinations.\nConfigure Amazon CloudWatch to track token usage. Create an AWS Lambda function to process\nCloudWatch metrics. Configure the Lambda function to send usage pattern notifications.",
-            "C.. Configure Amazon Bedrock to store model invocation logs in an Amazon S3 bucket. Enable text\noutput logging. Configure Amazon Bedrock guardrails to run contextual grounding checks to detect\nhallucinations. Create Amazon CloudWatch anomaly detection alarms for token usage metrics.",
-            "D.. Use AWS CloudTrail to log all Amazon Bedrock API calls. Create a custom dashboard in Amazon\nQuickSight to visualize token usage patterns. Use Amazon SageMaker Model Monitor to detect\nquality drift in generated summaries."
+            "A.. The argument to the where method should be \"predError >= 5\".",
+            "B.. Instead of where(), filter() should be used.",
+            "C.. The expression returns the original DataFrame transactionsDf and not a new DataFrame. To avoid\nthis, the code block should be transactionsDf.toNewDataFrame().where(\"col(predError) >= 5\").",
+            "D.. The argument to the where method cannot be a string.",
+            "E.. Instead of >=, the SQL operator GEQ should be used."
         ],
-        "answer": "C",
-        "explanation": "Option C is the correct solution because it provides near real-time monitoring, hallucination\ndetection, and cost anomaly awareness using built-in Amazon Bedrock and Amazon CloudWatch\ncapabilities, with minimal custom development.\nBy configuring Amazon Bedrock invocation logging with text output logging, the company captures\ndetailed prompt and response data for auditing and analysis without building custom logging\npipelines. This data is stored in Amazon S3, providing durable storage for compliance and\nretrospective investigation.\nUsing Amazon Bedrock guardrails with contextual grounding checks allows the application to\nautomatically detect hallucinations by verifying whether generated summaries are grounded in the\nprovided clinical documents. This is the AWS-recommended approach for hallucination detection in\nRAG and summarization workloads and avoids the need to maintain custom evaluation models or\npipelines.\nCreating Amazon CloudWatch anomaly detection alarms for InputTokenCount and\nOutputTokenCount metrics enables automatic detection of abnormal token usage patterns that often\ncorrelate with runaway prompts, inefficient summarization, or prompt injection attempts. Anomaly\ndetection adapts dynamically to usage trends, making it more effective than static thresholds for\nearly cost warnings.\nOption A introduces batch analytics with Glue and Athena, which is not near real time and increases\noperational overhead. Option B requires managing evaluation jobs and Lambda-based notification\nlogic.\nOption D focuses on infrastructure-level monitoring and offline dashboards rather than near realtime GenAI quality and cost signals.\nTherefore, Option C best meets the requirements with the least operational effort and maintenance\noverhead."
+        "answer": [
+            "A"
+        ],
+        "explanation": "The argument to the where method cannot be a string.\nIt can be a string, no problem here.\nInstead of where(), filter() should be used.\nNo, that does not matter. In PySpark, where() and filter() are equivalent.\nInstead of >=, the SQL operator GEQ should be used.\n\n\nIncorrect.\nThe expression returns the original DataFrame transactionsDf and not a new DataFrame. To avoid\nthis, the code block should be transactionsDf.toNewDataFrame().where(\"col(predError) >= 5\").\nNo, Spark returns a new DataFrame.\nStatic notebook | Dynamic notebook: See test 1\n(https://flrs.github.io/spark_practice_tests_code/#1/27.html ,\nhttps://bit.ly/sparkpracticeexams_import_instructions)"
     },
     {
-        "question": "A company wants to select a new FM for its AI assistant. A GenAI developer needs to\ngenerate evaluation reports to help a data scientist assess the quality and safety of various\nfoundation models FMs. The data scientist provides the GenAI developer with sample prompts for\nevaluation. The GenAI developer wants to use Amazon Bedrock to automate report generation and\nevaluation.\nWhich solution will meet this requirement?",
+        "question": "Which of the following statements about reducing out-of-memory errors is incorrect?",
         "options": [
-            "A.. Combine the sample prompts into a single JSON document. Create an Amazon Bedrock knowledge\nbase with the document. Write a prompt that asks the FM to generate a response to each sample\nprompt.\nUse the RetrieveAndGenerate API to generate a report for each model.",
-            "B.. Combine the sample prompts into a single JSONL document. Store the document in an Amazon S3\nbucket. Create an Amazon Bedrock evaluation job that uses a judge model. Specify the S3 location as\ninput and a different S3 location as output. Run an evaluation job for each FM and select the FM as\nthe generator.",
-            "C.. Combine the sample prompts into a single JSONL document. Store the document in an Amazon S3\n\n\n\n\nbucket. Create an Amazon Bedrock evaluation job that uses a judge model. Specify the S3 location as\ninput and Amazon QuickSight as output. Run an evaluation job for each FM and select the FM as the\nevaluator.",
-            "D.. Combine the sample prompts into a single JSON document. Create an Amazon Bedrock knowledge\nbase from the document. Create an Amazon Bedrock evaluation job that uses the retrieval and\nresponse generation evaluation type. Specify an Amazon S3 bucket as the output. Run an evaluation\njob for each FM."
+            "A.. Concatenating multiple string columns into a single column may guard against out-of-memory\nerrors.",
+            "B.. Reducing partition size can help against out-of-memory errors.",
+            "C.. Limiting the amount of data being automatically broadcast in joins can help against out-of-\nmemory errors.",
+            "D.. Setting a limit on the maximum size of serialized data returned to the driver may help prevent out-\nof-memory errors.",
+            "E.. Decreasing the number of cores available to each executor can help against out-of-memory errors."
+        ],
+        "answer": [
+            "A"
         ],
-        "answer": "B",
-        "explanation": "Option B is correct because it uses the managed evaluation capability in Amazon Bedrock that is\nintended specifically for comparing foundation models using a consistent prompt set and producing\nstructured results with minimal custom tooling. In a Bedrock evaluation workflow, you provide an\ninput dataset of prompts, typically in JSON Lines format so each line represents one evaluation\nrecord. Storing the JSONL file in Amazon S3 allows Bedrock to read the dataset at scale and write\nstandardized evaluation outputs back to S3 for downstream analysis, sharing, and retention.\nThe key requirement is to assess both quality and safety across multiple models. A Bedrock\nevaluation job can use a judge model to score the generated outputs against defined criteria. This\napproach supports repeatable, apples-to-apples comparisons because the same judge model and\nscoring rubric can be applied to every candidate foundation model. The candidate models are\nconfigured as generators, meaning each evaluation job run uses one selected FM to produce answers\nfor the same prompt set, and the judge model evaluates those answers. That matches the\nrequirement to generate evaluation reports that help a data scientist select the best FM.\nOption A does not use Bedrock evaluation jobs, and a knowledge base plus RetrieveAndGenerate is a\nRAG pattern, not an evaluation framework. It would produce responses but not standardized scoring\nand reporting suitable for model selection. Option C is incorrect because Bedrock evaluation outputs\nare delivered to S3, not directly to a BI destination, and selecting the candidate FM as the evaluator\nconflicts with the intended pattern of using a stable judge model. Option D misuses knowledge bases\nand retrieval evaluation types when the requirement is prompt-based model assessment rather than\nevaluating retrieval quality."
+        "explanation": "Concatenating multiple string columns into a single column may guard against out-of-memory errors.\nExactly, this is an incorrect answer! Concatenating any string columns does not reduce the size of the\ndata, it just structures it a different way. This does little to how Spark processes the data and\ndefinitely does not reduce out-of-memory errors.\nReducing partition size can help against out-of-memory errors.\nNo, this is not incorrect. Reducing partition size is a viable way to aid against out-of-memory errors,\nsince executors need to load partitions into memory before processing them. If the executor does\nnot have enough memory available to do that, it will throw an out-of-memory error. Decreasing\npartition size can therefore be very helpful for preventing that.\nDecreasing the number of cores available to each executor can help against out-of-memory errors.\nNo, this is not incorrect. To process a partition, this partition needs to be loaded into the memory of\nan executor. If you imagine that every core in every executor processes a partition, potentially in\nparallel with other executors, you can imagine that memory on the machine hosting the executors\nfills up quite quickly. So, memory usage of executors is a concern, especially when multiple partitions\nare processed at the same time. To strike a balance between performance and memory usage,\ndecreasing the number of cores may help against out-of-memory errors.\nSetting a limit on the maximum size of serialized data returned to the driver may help prevent out-of-\nmemory errors.\nNo, this is not incorrect. When using commands like collect() that trigger the transmission of\npotentially large amounts of data from the cluster to the driver, the driver may experience out-of-\nmemory errors. One strategy to avoid this is to be careful about using commands like collect() that\nsend back large amounts of data to the driver. Another strategy is setting the parameter\nspark.driver.maxResultSize. If data to be transmitted to the driver exceeds the threshold specified by\nthe parameter, Spark will abort the job and therefore prevent an out-of-memory error.\nLimiting the amount of data being automatically broadcast in joins can help against out-of-memory\nerrors.\nWrong, this is not incorrect. As part of Spark's internal optimization, Spark may choose to speed up\n\n\noperations by broadcasting (usually relatively small) tables to executors. This broadcast is happening\nfrom the driver, so all the broadcast tables are loaded into the driver first. If these tables are\nrelatively big, or multiple mid-size tables are being broadcast, this may lead to an out-of- memory\nerror. The maximum table size for which Spark will consider broadcasting is set by the\nspark.sql.autoBroadcastJoinThreshold parameter.\nMore info: Configuration - Spark 3.1.2 Documentation and Spark OOM Error - Closeup. Does th\ne following look familiar when... | by Amit Singh Rathore | The Startup | Medium"
     },
     {
-        "question": "A company is implementing a serverless inference API by using AWS Lambda. The API will\ndynamically invoke multiple AI models hosted on Amazon Bedrock. The company needs to design a\nsolution that can switch between model providers without modifying or redeploying Lambda code in\nreal time. The design must include safe rollout of configuration changes and validation and rollback\ncapabilities.\nWhich solution will meet these requirements?",
+        "question": "The code block displayed below contains an error. The code block below is intended to add\na column itemNameElements to DataFrame itemsDf that includes an array of all words in column\nitemName. Find the error.\nSample of DataFrame itemsDf:\n1.+------+----------------------------------+-------------------+\n2.|itemId|itemName |supplier |\n3.+------+----------------------------------+-------------------+\n4.|1 |Thick Coat for Walking in the Snow|Sports Company Inc.|\n5.|2 |Elegant Outdoors Summer Dress |YetiX |\n6.|3 |Outdoors Backpack |Sports Company Inc.|\n7.+------+----------------------------------+-------------------+\nCode block:\nitemsDf.withColumnRenamed(\"itemNameElements\", split(\"itemName\"))\nitemsDf.withColumnRenamed(\"itemNameElements\", split(\"itemName\"))",
         "options": [
-            "A.. Store the active model provider in AWS Systems Manager Parameter Store. Configure a Lambda\nfunction to read the parameter at runtime to determine which model to invoke.",
-            "B.. Store the active model provider in AWS AppConfig. Configure a Lambda function to read the\nconfiguration at runtime to determine which model to invoke.",
-            "C.. Configure an Amazon API Gateway REST API to route requests to separate Lambda functions.\nHardcode each Lambda function to a specific model provider. Switch the integration target manually.",
-            "D.. Store the active model provider in a JSON file hosted on Amazon S3. Use AWS AppConfig to\nreference the S3 file as a hosted configuration source. Configure a Lambda function to read the file\nthrough AppConfig at runtime to determine which model to invoke."
+            "A.. All column names need to be wrapped in the col() operator.",
+            "B.. Operator withColumnRenamed needs to be replaced with operator withColumn and a second\nargument\n\",\" needs to be passed to the split method.",
+            "C.. Operator withColumnRenamed needs to be replaced with operator withColumn and the split\nmethod needs to be replaced by the splitString method.",
+            "D.. Operator withColumnRenamed needs to be replaced with operator withColumn and a second\nargument \"\n\" needs to be passed to the split method.",
+            "E.. The expressions \"itemNameElements\" and split(\"itemName\") need to be swapped."
         ],
-        "answer": "B",
-        "explanation": "Option B is the correct solution because AWS AppConfig is specifically designed to support dynamic\nconfiguration management with safe rollout, validation, and rollback, which are explicit requirements\nin the scenario.\nBy storing the active model provider configuration in AWS AppConfig, the company can switch\nbetween Amazon Bedrock model providers in real time without redeploying Lambda code. AppConfig\nsupports deployment strategies such as canary releases, linear rollouts, and immediate deployments,\nallowing safe and controlled changes. If a configuration causes issues, AppConfig supports automatic\nrollback, reducing operational risk.\nAWS AppConfig also supports schema validation, ensuring that configuration values such as model\nidentifiers, provider names, or inference parameters are valid before being applied. This prevents\nmisconfiguration from impacting production workloads.\nOption A uses Parameter Store, which lacks native rollout strategies, validation, and automated\nrollback, making it unsuitable for safe real-time switching. Option C requires manual routing changes\nand code coupling, increasing operational overhead and deployment risk. Option D introduces\nunnecessary complexity by hosting configuration files in Amazon S3 when AppConfig already\nsupports native hosted configurations.\nTherefore, Option B provides the most robust, scalable, and low-maintenance solution for dynamic\nmodel switching in a serverless Amazon Bedrock inference architecture."
+        "answer": [
+            "D"
+        ],
+        "explanation": "Correct code block:\nitemsDf.withColumn(\"itemNameElements\", split(\"itemName\",\" \"))\nOutput of code block:\n+------+----------------------------------+-------------------+------------------------------------------+\n|itemId|itemName |supplier |itemNameElements |\n+------+----------------------------------+-------------------+------------------------------------------+\n|1 |Thick Coat for Walking in the Snow|Sports Company Inc.|[Thick, Coat, for, Walking, in, the,\nSnow]|\n|2 |Elegant Outdoors Summer Dress |YetiX |[Elegant, Outdoors, Summer, Dress] |\n|3 |Outdoors Backpack |Sports Company Inc.|[Outdoors, Backpack] |\n+------+----------------------------------+-------------------+------------------------------------------+ The key to solving\n\n\nthis question is that the split method definitely needs a second argument here (also look at the link to\nthe documentation below). Given the values in column itemName in DataFrame itemsDf, this should\nbe a space character \" \". This is the character we need to split the words in the column.\nMore info: pyspark.sql.functions.split - PySpark 3.1.1 documentation\nStatic notebook | Dynamic notebook: See test 1"
     },
     {
-        "question": "A university recently digitized a collection of archival documents, academic journals, and\nmanuscripts. The university stores the digital files in an AWS Lake Formation data lake.\nThe university hires a GenAI developer to build a solution to allow users to search the digital files by\nusing text queries. The solution must return journal abstracts that are semantically similar to a user's\nquery. Users must be able to search the digitized collection based on text and metadata that is\nassociated with the journal abstracts. The metadata of the digitized files does not contain keywords.\nThe solution must match similar abstracts to one another based on the similarity of their text. The\ndata lake contains fewer than 1 million files.\nWhich solution will meet these requirements with the LEAST operational overhead?",
+        "question": "Which of the following describes how Spark achieves fault tolerance?",
         "options": [
-            "A.. Use Amazon Titan Embeddings in Amazon Bedrock to create vector representations of the\ndigitized files. Store embeddings in the OpenSearch Neural plugin for Amazon OpenSearch Service.",
-            "B.. Use Amazon Comprehend to extract topics from the digitized files. Store the topics and file\nmetadata in an Amazon Aurora PostgreSQL database. Query the abstract metadata against the data\nin the Aurora database.",
-            "C.. Use Amazon SageMaker AI to deploy a sentence-transformer model. Use the model to create\nvector representations of the digitized files. Store embeddings in an Amazon Aurora PostgreSQL\ndatabase that has the pgvector extension.",
-            "D.. Use Amazon Titan Embeddings in Amazon Bedrock to create vector representations of the\ndigitized files. Store embeddings in an Amazon Aurora PostgreSQL Serverless database that has the\npgvector extension."
+            "A.. Spark helps fast recovery of data in case of a worker fault by providing the MEMORY_AND_DISK\nstorage level option.",
+            "B.. If an executor on a worker node fails while calculating an RDD, that RDD can be recomputed by\nanother executor using the lineage.",
+            "C.. Spark builds a fault-tolerant layer on top of the legacy RDD data system, which by itself is not fault\ntolerant.",
+            "D.. Due to the mutability of DataFrames after transformations, Spark reproduces them using\nobserved lineage in case of worker node failure.",
+            "E.. Spark is only fault-tolerant if this feature is specifically enabled via the\nspark.fault_recovery.enabled property."
+        ],
+        "answer": [
+            "B"
         ],
-        "answer": "D",
-        "explanation": "Option D is the best choice because it delivers true semantic search with the smallest operational\nfootprint by combining a fully managed embedding service with an automatically scaling vector-\n\n\n\n\ncapable database. The university's requirement is explicitly semantic: the metadata has no keywords,\nand the system must match abstracts based on similarity of meaning. This is a direct fit for an\nembeddings-based approach, where each abstract is converted into a vector representation and\nsearched using vector similarity. Amazon Titan Embeddings in Amazon Bedrock provides a managed\nway to generate these vectors without hosting or maintaining an ML model, eliminating the\noperational work of model provisioning, patching, scaling, and lifecycle management.\nFor storage and retrieval, Amazon Aurora PostgreSQL Serverless with the pgvector extension\nsupports vector storage and similarity search while minimizing infrastructure operations. Aurora\nServerless reduces capacity planning and scaling tasks because it can automatically adjust to changes\nin workload, which is valuable for a university search application with variable usage patterns. With\nfewer than 1 million files, a PostgreSQL-based vector store is commonly operationally simpler than\nrunning a dedicated search cluster, while still meeting the requirement to query using both textderived similarity and associated metadata filters stored alongside the vectors.\nOption A can also enable vector search, but operating an OpenSearch domain typically introduces\nadditional concerns such as domain sizing, shard strategy, cluster scaling, and performance tuning for\nk-NN workloads.\nOption C increases operational overhead the most because it requires deploying and operating a\nsentence- transformer model endpoint in SageMaker AI, including scaling, monitoring, and model\nmanagement. Option B does not meet the semantic similarity requirement reliably because topic\nextraction is not equivalent to embedding-based semantic matching, especially when the metadata\nlacks keywords and the system must compare abstracts by meaning.\nTherefore, D best satisfies semantic search needs with the least operational overhead."
+        "explanation": "Due to the mutability of DataFrames after transformations, Spark reproduces them using observed\nlineage in case of worker node failure.\nWrong - Between transformations, DataFrames are immutable. Given that Spark also records the\nlineage, Spark can reproduce any DataFrame in case of failure. These two aspects are the key to\nunderstanding fault tolerance in Spark.\nSpark builds a fault-tolerant layer on top of the legacy RDD data system, which by itself is not fault\ntolerant.\nWrong. RDD stands for Resilient Distributed Dataset and it is at the core of Spark and not a \"legacy\nsystem\".\nIt is fault-tolerant by design.\nSpark helps fast recovery of data in case of a worker fault by providing the MEMORY_AND_DISK\nstorage level option.\nThis is not true. For supporting recovery in case of worker failures, Spark provides \"_2\", \"_3\", and so\non, storage level options, for example MEMORY_AND_DISK_2. These storage levels are specifically\ndesigned to keep duplicates of the data on multiple nodes. This saves time in case of a worker fault,\nsince a copy of the data can be used immediately, vs. having to recompute it first.\nSpark is only fault-tolerant if this feature is specifically enabled via the spark.fault_recovery.enabled\nproperty.\nNo, Spark is fault-tolerant by design."
     },
     {
-        "question": "A financial services company uses an AI application to process financial documents by using\nAmazon Bedrock. During business hours, the application handles approximately 10,000 requests each\nhour, which requires consistent throughput.\nThe company uses the CreateProvisionedModelThroughput API to purchase provisioned throughput.\nAmazon CloudWatch metrics show that the provisioned capacity is unused while on-demand\nrequests are being throttled. The company finds the following code in the application:\nresponse = bedrock_runtime.invoke_model(\nmodelId=\"anthropic.claude-v2\",\nbody=json.dumps(payload)\n)\nThe company needs the application to use the provisioned throughput and to resolve the throttling\nissues.\nWhich solution will meet these requirements?",
+        "question": "The code block shown below should return a new 2-column DataFrame that shows one\nattribute from column attributes per row next to the associated itemName, for all suppliers in\ncolumn supplier whose name includes Sports. Choose the answer that correctly fills the blanks in the\ncode block to accomplish this.\nSample of DataFrame itemsDf:\n1.+------+----------------------------------+-----------------------------+-------------------+\n\n\n2.|itemId|itemName |attributes |supplier |\n3.+------+----------------------------------+-----------------------------+-------------------+\n4.|1 |Thick Coat for Walking in the Snow|[blue, winter, cozy] |Sports Company Inc.|\n5.|2 |Elegant Outdoors Summer Dress |[red, summer, fresh, cooling]|YetiX |\n6.|3 |Outdoors Backpack |[green, summer, travel] |Sports Company Inc.|\n7.+------+----------------------------------+-----------------------------+-------------------+ Code block:\nitemsDf.__1__(__2__).select(__3__, __4__)",
         "options": [
-            "A.. Increase the number of model units (MUs) in the provisioned throughput configuration.",
-            "B.. Replace the model ID parameter with the ARN of the provisioned model that the\nCreateProvisionedModelThroughput API returns.",
-            "C.. Add exponential backoff retry logic to handle throttling exceptions during peak hours.",
-            "D.. Modify the application to use the invokeModelWithResponseStream API instead of the\ninvokeModel API."
+            "A.. 1. filter\n2. col(\"supplier\").isin(\"Sports\")\n3. \"itemName\"\n4. explode(col(\"attributes\"))",
+            "B.. 1. where\n2. col(\"supplier\").contains(\"Sports\")\n3. \"itemName\"\n4. \"attributes\"",
+            "C.. 1. where\n2. col(supplier).contains(\"Sports\")\n3. explode(attributes)\n4. itemName",
+            "D.. 1. where\n2. \"Sports\".isin(col(\"Supplier\"))\n3. \"itemName\"\n4. array_explode(\"attributes\")",
+            "E.. 1. filter\n2. col(\"supplier\").contains(\"Sports\")\n3. \"itemName\"\n4. explode(\"attributes\")"
         ],
-        "answer": "B",
-        "explanation": "Option B is the correct solution because Amazon Bedrock provisioned throughput is only used when\nthe application explicitly invokes the provisioned model ARN, not the base foundation model ID. In\n87\n\n\n\n\nthe provided code, the application is calling the standard model identifier (anthropic.claude-v2),\nwhich routes requests to on-demand capacity instead of the purchased provisioned throughput.\nWhen the CreateProvisionedModelThroughput API is used, Amazon Bedrock returns a provisioned\nmodel ARN that represents the reserved capacity. Applications must reference this ARN in the\nmodelId parameter when invoking the model. If the base model ID is used instead, Bedrock treats the\nrequest as on-demand traffic, which explains why CloudWatch metrics show unused provisioned\ncapacity alongside throttled on- demand requests.\nOption A would increase capacity but would not fix the root cause because the application is not\nusing the provisioned resource at all. Option C adds resiliency but does not ensure usage of\nprovisioned throughput and would still incur throttling. Option D changes the response delivery\nmechanism but does not affect capacity routing.\nTherefore, Option B directly resolves the throttling issue by correctly routing traffic to the reserved\ncapacity and ensures that the company benefits from the provisioned throughput it has purchased."
+        "answer": [
+            "E"
+        ],
+        "explanation": "Output of correct code block:\n+----------------------------------+------+\n|itemName |col |\n+----------------------------------+------+\n|Thick Coat for Walking in the Snow|blue |\n|Thick Coat for Walking in the Snow|winter|\n|Thick Coat for Walking in the Snow|cozy |\n|Outdoors Backpack |green |\n|Outdoors Backpack |summer|\n|Outdoors Backpack |travel|\n+----------------------------------+------+\nThe key to solving this question is knowing about Spark's explode operator. Using this operator, you\ncan extract values from arrays into single rows. The following guidance steps through the answers\nsystematically from the first to the last gap. Note that there are many ways to solving the gap\nquestions and filtering out wrong answers, you do not always have to start filtering out from the first\ngap, but can also exclude some answers based on obvious problems you see with them.\nThe answers to the first gap present you with two options: filter and where. These two are actually\n\n\nsynonyms in PySpark, so using either of those is fine. The answer options to this gap therefore do not\nhelp us in selecting the right answer.\nThe second gap is more interesting. One answer option includes \"Sports\".isin(col(\"Supplier\")). This\nconstruct does not work, since Python's string does not have an isin method. Another option contains\ncol(supplier). Here, Python will try to interpret supplier as a variable. We have not set this variable, so\nthis is not a viable answer. Then, you are left with answers options that include col\n(\"supplier\").contains(\"Sports\") and col(\"supplier\").isin(\"Sports\"). The question states that we are\nlooking for suppliers whose name includes Sports, so we have to go for the contains operator here.\nWe would use the isin operator if we wanted to filter out for supplier names that match any entries\nin a list of supplier names.\nFinally, we are left with two answers that fill the third gap both with \"itemName\" and the fourth gap\neither with explode(\"attributes\") or \"attributes\". While both are correct Spark syntax, only explode\n(\"attributes\") will help us achieve our goal. Specifically, the question asks for one attribute from\ncolumn attributes per row - this is what the explode() operator does.\nOne answer option also includes array_explode() which is not a valid operator in PySpark.\nMore info: pyspark.sql.functions.explode - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 3"
     },
     {
-        "question": "A company developed a multimodal content analysis application by using Amazon Bedrock.\nThe application routes different content types (text, images, and code) to specialized foundation\nmodels (FMs).\nThe application needs to handle multiple types of routing decisions. Simple routing based on file\nextension must have minimal latency. Complex routing based on content semantics requires analysis\nbefore FM selection. The application must provide detailed history and support fallback options when\nprimary FMs fail.\nWhich solution will meet these requirements?",
+        "question": "Which of the following DataFrame methods is classified as a transformation?",
         "options": [
-            "A.. Configure AWS Lambda functions that call Amazon Bedrock FMs for all routing logic. Use\nconditional statements to determine the appropriate FM based on content type and semantics.",
-            "B.. Create a hybrid solution. Handle simple routing based on file extensions in application code.\nHandle complex content-based routing by using an AWS Step Functions state machine with JSONata\nfor content analysis and the InvokeModel API for specialized FMs.",
-            "C.. Deploy separate AWS Step Functions workflows for each content type with routing logic in AWS\nLambda functions. Use Amazon EventBridge to coordinate between workflows when fallback to\nalternate FMs is required.",
-            "D.. Use Amazon SQS with different SQS queues for each content type. Configure AWS Lambda\nconsumers that analyze content and invoke appropriate FMs based on message attributes by using\nAmazon Bedrock with an AWS SDK."
+            "A.. DataFrame.count()",
+            "B.. DataFrame.show()",
+            "C.. DataFrame.select()",
+            "D.. DataFrame.foreach()",
+            "E.. DataFrame.first()"
+        ],
+        "answer": [
+            "C"
         ],
-        "answer": "B",
-        "explanation": "Option B is the most appropriate solution because it directly aligns with AWS-recommended\narchitectural patterns for building scalable, observable, and resilient generative AI applications on\nAmazon Bedrock. The requirements clearly distinguish between simple and complex routing\ndecisions, and this option addresses both in an optimal way.\nSimple routing based on file extension is latency sensitive. Handling this logic directly in the\napplication code avoids unnecessary orchestration, state transitions, and service calls. This approach\nensures that straightforward requests, such as routing images to vision-capable foundation models or\ntext files to language models, are processed with minimal overhead and maximum performance.\nFor complex routing based on content semantics, AWS Step Functions is specifically designed for\nmulti-step workflows that require analysis, branching logic, and error handling. Semantic routing\n\n\n\n\noften requires inspecting meaning, intent, or structure before selecting the appropriate foundation\nmodel. Step Functions enables this by orchestrating analysis steps and applying conditional logic to\ndetermine the correct model to invoke using the Amazon Bedrock InvokeModel API.\nA key requirement is detailed execution history. Step Functions provides built-in execution tracing,\nincluding state inputs, outputs, and error details, which is essential for auditing, debugging, and\ncompliance.\nAdditionally, Step Functions supports native retry and catch mechanisms, allowing the workflow to\nautomatically fall back to alternate foundation models if a primary model invocation fails. This\ndirectly satisfies the fallback requirement without introducing excessive custom code.\nThe other options lack one or more critical capabilities. Lambda-only logic lacks deep observability\nand structured fallback handling, SQS introduces additional latency and limited workflow visibility,\nand multiple coordinated workflows increase architectural complexity without added benefit."
+        "explanation": "DataFrame.select()\nCorrect, DataFrame.select() is a transformation. When the command is executed, it is evaluated lazily\nand returns an RDD when it is triggered by an action.\nDataFrame.foreach()\nIncorrect, DataFrame.foreach() is not a transformation, but an action. The intention of foreach() is to\napply code to each element of a DataFrame to update accumulator variables or write the elements to\nexternal storage. The process does not return an RDD - it is an action!\nDataFrame.first()\nWrong. As an action, DataFrame.first() executed immediately and returns the first row of a\nDataFrame.\nDataFrame.count()\nIncorrect. DataFrame.count() is an action and returns the number of rows in a DataFrame.\nDataFrame.show()\nNo, DataFrame.show() is an action and displays the DataFrame upon execution of the command."
     },
     {
-        "question": "A company uses AWS Lake Formation to set up a data lake that contains databases and tables\nfor multiple business units across multiple AWS Regions. The company wants to use a foundation\nmodel (FM) through Amazon Bedrock to perform fraud detection. The FM must ingest sensitive\nfinancial data from the data lake.\nThe data includes some customer personally identifiable information (PII).\nThe company must design an access control solution that prevents PII from appearing in a production\nenvironment. The FM must access only authorized data subsets that have PII redacted from specific\ndata columns. The company must capture audit trails for all data access.\nWhich solution will meet these requirements?",
+        "question": "Which of the following statements about RDDs is incorrect?",
         "options": [
-            "A.. Create a separate dataset in a separate Amazon S3 bucket for each business unit and Region\ncombination. Configure S3 bucket policies to control access based on IAM roles that are assigned to\nFM training instances. Use S3 access logs to track data access.",
-            "B.. Configure the FM to authenticate by using AWS Identity and Access Management roles and Lake\nFormation permissions based on LF-Tag expressions. Define business units and Regions as LF-Tags\nthat are assigned to databases and tables. Use AWS CloudTrail to collect comprehensive audit trails\nof data access.",
-            "C.. Use direct IAM principal grants on specific databases and tables in Lake Formation. Create a\ncustom application layer that logs access requests and further filters sensitive columns before\nsending data to the FM.",
-            "D.. Configure the FM to request temporary credentials from AWS Security Token Service. Access the\ndata by using presigned S3 URLs that are generated by an API that applies business unit and Regional\nfilters. Use AWS CloudTrail to collect comprehensive audit trails of data access."
+            "A.. An RDD consists of a single partition.",
+            "B.. The high-level DataFrame API is built on top of the low-level RDD API.",
+            "C.. RDDs are immutable.",
+            "D.. RDD stands for Resilient Distributed Dataset.",
+            "E.. RDDs are great for precisely instructing Spark on how to do a query."
         ],
-        "answer": "B",
-        "explanation": "Option B is the correct solution because it uses native AWS governance, access control, and auditing\ncapabilities to protect PII while enabling controlled FM access to authorized data subsets. AWS Lake\nFormation is designed specifically to manage fine-grained permissions for data lakes, including\ncolumn-level access control, which is critical when handling sensitive financial and PII data.\nLF-Tags allow data administrators to define scalable, attribute-based access control policies. By\ntagging databases, tables, and columns with business unit and Region metadata, the company can\nenforce policies that ensure the foundation model only accesses approved datasets with PII-redacted\ncolumns. This eliminates the risk of sensitive data leaking into production inference workflows.\n\n\n\n\nIAM role-based authentication ensures that the FM accesses data using least-privilege credentials.\nThis integrates cleanly with Amazon Bedrock, which supports IAM-based authorization for service-toservice access. AWS CloudTrail provides immutable audit logs for all access attempts, satisfying\ncompliance and regulatory requirements.\nOption A introduces unnecessary data duplication and weak governance controls. Option C relies on\ncustom application logic, increasing operational risk and complexity. Option D bypasses Lake\nFormation's fine- grained controls and relies on presigned URLs, which reduces governance visibility\nand control.\nTherefore, Option B best meets the requirements for security, compliance, scalability, and\nauditability when integrating Amazon Bedrock with a Lake Formation-governed data lake."
+        "answer": [
+            "A"
+        ],
+        "explanation": "An RDD consists of a single partition.\nQuite the opposite: Spark partitions RDDs and distributes the partitions across multiple nodes."
     },
     {
-        "question": "An ecommerce company is building an internal platform to develop generative AI applications\nby using Amazon Bedrock foundation models (FMs). Developers need to select models based on\nevaluations that are aligned to ecommerce use cases. The platform must display accuracy metrics for\ntext generation and summarization in dashboards. The company has custom ecommerce datasets to\nuse as standardized evaluation inputs.\nWhich combination of steps will meet these requirements with the LEAST operational overhead?\n(Select TWO.)",
+        "question": "Which of the following describes properties of a shuffle?",
         "options": [
-            "A.. Import the datasets to an Amazon S3 bucket. Provide appropriate IAM permissions and crossorigin resource sharing (CORS) permissions to give the evaluation jobs access to the datasets.",
-            "B.. Import the datasets to an Amazon S3 bucket. Provide appropriate IAM permissions and a VPC\nendpoint configuration to give the evaluation jobs access to the datasets.",
-            "C.. Configure an AWS Lambda function to create model evaluation jobs on a schedule in the Amazon\nBedrock console. Provide the URI of the S3 bucket that contains the datasets as an input. Configure\nthe evaluation jobs to measure the real world knowledge (RWK) score for text generation and\nBERTScore for summarization. Configure a second Lambda function to check the status of the jobs\nand publish custom logs to Amazon CloudWatch. Create a custom Amazon CloudWatch Logs Insights\ndashboard.",
-            "D.. Use Amazon SageMaker Clarify on a schedule to create model evaluation jobs. Use open source\nframeworks to create and run standardized evaluations. Publish results to Amazon CloudWatch\nnamespaces. Use an AWS Lambda function to check the status of the jobs and publish custom logs to\nAmazon CloudWatch. Create a custom Amazon CloudWatch Logs Insights dashboard.",
-            "E.. Run an Amazon SageMaker AI notebook job on a schedule by using the fmvelos or ragas\nframework to run evaluations that use the datasets in the S3 bucket. Write Python code in the\nnotebook that makes direct InvokeModel API calls to the FMs and processes their responses for\nevaluation. Publish job status and results to Amazon CloudWatch Logs to measure the real world\nknowledge (RWK) score for text generation and toxicity for summarization as metrics for accuracy.\nCreate a custom CloudWatch Logs Insights dashboard."
+            "A.. Operations involving shuffles are never evaluated lazily.",
+            "B.. Shuffles involve only single partitions.",
+            "C.. Shuffles belong to a class known as \"full transformations\".",
+            "D.. A shuffle is one of many actions in Spark.",
+            "E.. In a shuffle, Spark writes data to disk."
+        ],
+        "answer": [
+            "E"
         ],
-        "answer": "BC",
-        "explanation": "The least operational overhead approach is to use managed Amazon Bedrock model evaluation\nworkflows with datasets stored in Amazon S3, and then publish results into Amazon CloudWatch for\ndashboards. That is exactly what options B and C combine.\nStep B correctly places standardized evaluation inputs in Amazon S3 and focuses on granting the\nevaluation workflow the right permissions to read those datasets. In practice, the key requirement is\n90\n\n\n\n\ncontrolled access to the S3 objects used as evaluation datasets. Establishing IAM permissions and\nprivate access patterns (such as using VPC connectivity patterns where applicable to the\norganization's networking posture) is aligned with enterprise requirements and avoids building\ncustom storage or data distribution systems for evaluators.\nStep C then operationalizes the evaluation lifecycle with minimal infrastructure: a scheduled AWS\nLambda function starts evaluation jobs using the S3 dataset location, and a second Lambda function\nchecks job status and pushes results and operational signals to CloudWatch. This meets the platform\nrequirement to surface accuracy metrics in dashboards because CloudWatch metrics/logs can be\nvisualized in dashboards and queried through CloudWatch Logs Insights. It also supports continuous,\nstandardized comparisons across models without requiring developers to run ad-hoc experiments.\nThe alternatives introduce more operational burden. D and E rely on Amazon SageMaker-based\ntooling, notebook jobs, and open source evaluation frameworks, which require more environment\nmanagement, dependency control, scaling considerations, and maintenance over time. A includes\nCORS, which is primarily a browser-access concern and does not address how Bedrock-managed\nevaluation jobs securely access S3 in the typical service-to-service pattern.\nTherefore, B + C achieves standardized model evaluation, automated scheduling, and dashboardready observability with the smallest operations footprint."
+        "explanation": "In a shuffle, Spark writes data to disk.\nCorrect! Spark's architecture dictates that intermediate results during a shuffle are written to disk.\nA shuffle is one of many actions in Spark.\nIncorrect. A shuffle is a transformation, but not an action.\nShuffles involve only single partitions.\nNo, shuffles involve multiple partitions. During a shuffle, Spark generates output partitions from\nmultiple input partitions.\nOperations involving shuffles are never evaluated lazily.\nWrong. A shuffle is a costly operation and Spark will evaluate it as lazily as other transformations.\nThis is, until a subsequent action triggers its evaluation.\nShuffles belong to a class known as \"full transformations\".\nNot quite. Shuffles belong to a class known as \"wide transformations\". \"Full transformation\" is not a\nrelevant term in Spark.\nMore info: Spark - The Definitive Guide, Chapter 2 and Spark: disk I/O on stage boundaries\nexplanation - Stack Overflow"
     },
     {
-        "question": "A wildlife conservation agency operates zoos globally. The agency uses various sensors,\ntrackers, and audiovisual recorders to monitor animal behavior. The agency wants to launch a\ngenerative AI (GenAI) assistant that can ingest multimodal data to study animal behavior.\nThe GenAI assistant must support natural language queries, avoid speculative behavioral\ninterpretations, and maintain audit logs for ethical research audits.\nWhich solution will meet these requirements?",
+        "question": "Which of the following statements about Spark's DataFrames is incorrect?",
         "options": [
-            "A.. Ingest raw videos into Amazon Rekognition to detect animal postures and expressions. Use\nAmazon Data Firehose to stream sensor and GPS data into Amazon S3. Prompt an Amazon Bedrock\nFM using basic templates stored in AWS Systems Manager Parameter Store. Use IAM for access\ncontrol. Use AWS CloudTrail for audit logging.",
-            "B.. Use Amazon SageMaker Processing and Amazon Transcribe to pre-process multimodal data. Ingest\ncurated summaries into an Amazon Bedrock Knowledge Bases. Apply Amazon Bedrock guardrails to\nrestrict speculative outputs. Use AWS AppConfig to manage prompt templates. Use AWS CloudTrail\nto log research activity for audits.",
-            "C.. Use Amazon OpenSearch Serverless to index behavioral logs and telemetry. Use Amazon\nComprehend to extract entities. Use Amazon Bedrock to answer questions over indexed data. Use\nIAM for access control and CloudTrail for audit logging.",
-            "D.. Configure Amazon O Business to federate data across Amazon S3, Amazon Kinesis, and Amazon\nSageMaker Feature Store. Use EventBridge for ingestion orchestration. Use custom AWS Lambda\nfunctions to filter LLM outputs for ethical compliance."
+            "A.. Spark's DataFrames are immutable.",
+            "B.. Spark's DataFrames are equal to Python's DataFrames.",
+            "C.. Data in DataFrames is organized into named columns.",
+            "D.. RDDs are at the core of DataFrames.",
+            "E.. The data in DataFrames may be split into multiple chunks."
         ],
-        "answer": "B",
-        "explanation": "Option B best meets the multimodal, ethical, and auditability requirements using managed AWS\nservices designed for research-grade GenAI systems. Multimodal data such as audio, video, sensor\ntelemetry, and tracking data must be curated and summarized before being consumed by a\nfoundation model. Amazon SageMaker Processing and Amazon Transcribe provide scalable, managed\npreprocessing for audiovisual and textual data.\n\n\n\n\nBy ingesting summarized, validated observations into Amazon Bedrock Knowledge Bases, the GenAI\nassistant can answer natural language queries using grounded, evidence-based context instead of\nraw sensor signals. This significantly reduces the risk of speculative or anthropomorphic\ninterpretations.\nAmazon Bedrock guardrails are critical for preventing speculative behavioral claims, enforcing\nscientific and ethical constraints at inference time. Guardrails provide a validated, auditable safety\nlayer that custom Lambda-based filters cannot reliably replicate.\nAWS AppConfig enables controlled prompt management and change governance, ensuring that\nresearch prompts remain consistent and reviewable. AWS CloudTrail captures all access, query, and\nconfiguration changes, supporting ethical research audits and regulatory reviews.\nOption A lacks grounding and speculative safeguards. Option C focuses on text analytics and does not\nproperly handle multimodal reasoning or safety enforcement. Option D relies heavily on custom logic\nand introduces unnecessary operational risk.\nTherefore, Option B provides the most robust, ethical, and auditable GenAI architecture for wildlife\nbehavior research."
+        "answer": [
+            "B"
+        ],
+        "explanation": "Spark's DataFrames are equal to Python's or R's DataFrames.\nNo, they are not equal. They are only similar. A major difference between Spark and Python is that\nSpark's DataFrames are distributed, whereby Python's are not."
     },
     {
-        "question": "A financial services company is developing a customer service AI assistant application that\nuses a foundation model (FM) in Amazon Bedrock. The application must provide transparent\nresponses by documenting reasoning and by citing sources that are used for Retrieval Augmented\nGeneration (RAG). The application must capture comprehensive audit trails for all responses to users.\nThe application must be able to serve up to\n10,000 concurrent users and must respond to each customer inquiry within 2 seconds.\nWhich solution will meet these requirements with the LEAST operational overhead?",
+        "question": "Which of the following code blocks returns approximately 1000 rows, some of them\npotentially being duplicates, from the 2000-row DataFrame transactionsDf that only has unique\n\n\nrows?",
         "options": [
-            "A.. Enable tracing for Amazon Bedrock Agents. Configure structured prompts that direct the FM to\nprovide evidence presentations. Integrate Amazon Bedrock Knowledge Bases with data sources to\nenable RAG.\nConfigure the application to reference and cite authoritative content. Deploy the application in a\nMulti- AZ architecture. Use Amazon API Gateway and AWS Lambda functions to scale the application.\nUse Amazon CloudFront to provide low-latency delivery.",
-            "B.. Enable tracing for Amazon Bedrock agents. Integrate a custom RAG pipeline with Amazon\nOpenSearch Service to retrieve and cite sources. Configure structured prompts to present retrieved\nevidence. Deploy the application behind an Amazon API Gateway REST API. Use AWS Lambda\nfunctions and Amazon CloudFront to scale the application and to provide low latency. Store logs in\nAmazon S3 and use AWS CloudTrail to capture audit trails.",
-            "C.. Use Amazon CloudWatch to monitor latency and error rates. Embed model prompts directly in the\napplication backend to cite sources. Store application interactions with users in Amazon RDS for\naudits.",
-            "D.. Store generated responses and supporting evidence in an Amazon S3 bucket. Enable versioning on\nthe bucket for audits. Use AWS Glue to catalog retrieved documents. Process the retrieved\ndocuments in Amazon Athena to generate periodic compliance reports."
+            "A.. transactionsDf.sample(True, 0.5)",
+            "B.. transactionsDf.take(1000).distinct()",
+            "C.. transactionsDf.sample(False, 0.5)",
+            "D.. transactionsDf.take(1000)",
+            "E.. transactionsDf.sample(True, 0.5, force=True)"
+        ],
+        "answer": [
+            "A"
         ],
-        "answer": "A",
-        "explanation": "Option A is the correct solution because it relies on native Amazon Bedrock capabilities to deliver\ntransparency, auditability, scalability, and low latency with minimal operational overhead. Amazon\nBedrock Knowledge Bases provide a fully managed Retrieval Augmented Generation (RAG)\n\n\n\n\nimplementation that automatically handles document ingestion, embedding, retrieval, and source\nattribution, enabling the application to cite authoritative content without building custom pipelines.\nEnabling tracing for Amazon Bedrock Agents provides end-to-end visibility into agent reasoning steps,\ntool usage, and model interactions. This satisfies the requirement for comprehensive audit trails and\nsupports regulatory review in financial services environments. Structured prompts further ensure\nthat responses explicitly present reasoning and supporting evidence in a controlled, auditable format.\nUsing Amazon API Gateway and AWS Lambda allows the application to scale automatically to\nthousands of concurrent users without capacity planning. These services are designed for bursty\nworkloads and can easily support the stated requirement of up to 10,000 concurrent users. Amazon\nCloudFront reduces latency by caching and accelerating content delivery, helping the application\nmeet the strict 2-second response-time requirement.\nOption B introduces a custom RAG pipeline with OpenSearch, increasing operational complexity and\nmaintenance effort. Option C lacks native RAG integration and does not provide transparent\nreasoning or citation management. Option D focuses on offline compliance reporting rather than\nreal-time transparency and low-latency responses.\nTherefore, Option A best meets all requirements while minimizing infrastructure and operational\noverhead."
+        "explanation": "To solve this question, you need to know that DataFrame.sample() is not guaranteed to return the\nexact fraction of the number of rows specified as an argument. Furthermore, since duplicates may be\nreturned, you should understand that the operator's withReplacement argument should be set to\nTrue. A force= argument for the operator does not exist.\nWhile the take argument returns an exact number of rows, it will just take the first specified number\nof rows (1000 in this question) from the DataFrame. Since the DataFrame does not include duplicate\nrows, there is no potential of any of those returned rows being duplicates when using take(), so the\ncorrect answer cannot involve take().\nMore info: pyspark.sql.DataFrame.sample - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 2"
     },
     {
-        "question": "A company is using Amazon Bedrock to develop a customer support AI assistant. The AI\nassistant must respond to customer questions about their accounts. The AI assistant must not expose\npersonal information in responses. The company must comply with data residency policies by\nensuring that all processing occurs within the same AWS Region where each customer is located.\nThe company wants to evaluate how effective the AI assistant is at preventing the exposure of\npersonal information before the company makes the AI assistant available to customers.\nWhich solution will meet these requirements?",
+        "question": "The code block displayed below contains an error. The code block should read the csv file\nlocated at path data/transactions.csv into DataFrame transactionsDf, using the first row as column\nheader and casting the columns in the most appropriate type. Find the error.\nFirst 3 rows of transactions.csv:\n1.transactionId;storeId;productId;name\n2.1;23;12;green grass\n3.2;35;31;yellow sun\n4.3;23;12;green grass\nCode block:\ntransactionsDf = spark.read.load(\"data/transactions.csv\", sep=\";\", format=\"csv\", header=True)",
         "options": [
-            "A.. Configure a cross-Region Amazon Bedrock guardrail to apply sensitive information filters. Set the\nguardrail to detect mode during development and testing. Switch to block mode for production\ndeployment.",
-            "B.. Configure an Amazon Bedrock guardrail to apply sensitive information filters. Set the guardrail to\nmask mode during development and testing. Switch to block mode for production deployment.\nDeploy a copy of the guardrail to each Region where the company operates.",
-            "C.. Configure an Amazon Bedrock guardrail to apply content and topic filters. Set the guardrail to\ndetect mode during development, testing, and production. Disable invocation logging for the Amazon\nBedrock model.",
-            "D.. Configure a cross-Region Amazon Bedrock guardrail to apply a set of content and word filters. Set\nthe guardrail to detect mode during development and testing. Switch to mask mode for production\ndeployment."
+            "A.. The DataFrameReader is not accessed correctly.",
+            "B.. The transaction is evaluated lazily, so no file will be read.",
+            "C.. Spark is unable to understand the file type.",
+            "D.. The code block is unable to capture all columns.",
+            "E.. The resulting DataFrame will not have the appropriate schema."
         ],
-        "answer": "B",
-        "explanation": "Option B best meets all stated requirements by correctly combining PII protection, evaluation before\nlaunch\n, and data residency compliance using Amazon Bedrock Guardrails. Amazon Bedrock guardrails\nprovide native sensitive information filtering that operates inline during model invocation, making\nthem well suited for preventing personal data exposure in customer-facing AI assistants.\nThe requirement to evaluate how effective the AI assistant is at preventing exposure before release is\n\n\n\n\nbest addressed by using mask mode during development and testing. Mask mode allows responses\nto be generated while automatically redacting detected personal information, making it easy for\ndevelopers and reviewers to see where and how PII would have appeared. This provides concrete\nvalidation that the guardrail rules are correctly configured without fully blocking responses, which is\nideal for quality assurance and pre- production evaluation.\nFor production, switching the guardrail to block mode ensures that responses containing personal\ninformation are fully prevented from being returned to users. This offers the strongest protection\nand aligns with compliance expectations for customer account data. Block mode is appropriate once\nconfidence in the guardrail configuration has been established during testing.\nThe data residency requirement is addressed by deploying a copy of the guardrail in each AWS\nRegion where the application operates. Amazon Bedrock guardrails are Region-specific resources,\nand using Region- local guardrails ensures that inference, filtering, and enforcement all occur within\nthe same Region as the customer data. This avoids cross-Region processing and helps the company\ncomply with regulatory and contractual data residency policies.\nOption A and D incorrectly rely on cross-Region guardrails, which can violate data residency\nconstraints.\nOption C focuses on topic filtering rather than sensitive information filtering and keeps detect mode\nenabled in production, which does not actively prevent PII exposure. Therefore, B is the only option\nthat fully satisfies safety, compliance, and evaluation requirements."
+        "answer": [
+            "E"
+        ],
+        "explanation": "Correct code block:\ntransactionsDf = spark.read.load(\"data/transactions.csv\", sep=\";\", format=\"csv\", header=True,\ninferSchema=True) By default, Spark does not infer the schema of the CSV (since this usually takes\nsome time). So, you need to add the inferSchema=True option to the code block.\nMore info: pyspark.sql.DataFrameReader.csv - PySpark 3.1.2 documentation"
     },
     {
-        "question": "A company is building a generative AI (GenAI) application that produces content based on a\nvariety of internal and external data sources. The company wants to ensure that the generated\noutput is fully traceable.\nThe application must support data source registration and enable metadata tagging to attribute\ncontent to its original source. The application must also maintain audit logs of data access and usage\nthroughout the pipeline.\nWhich solution will meet these requirements?",
+        "question": "Which of the following code blocks displays the 10 rows with the smallest values of column\nvalue in DataFrame transactionsDf in a nicely formatted way?",
         "options": [
-            "A.. Use AWS Lake Formation to catalog data sources and control access. Apply metadata tags directly\nin Amazon S3. Use AWS CloudTrail to monitor API activity.",
-            "B.. Use AWS Glue Data Catalog to register and tag data sources. Use Amazon CloudWatch Logs to\nmonitor access patterns and application behavior.",
-            "C.. Store data in Amazon S3 and use object tagging for attribution. Use AWS Glue Data Catalog to\nmanage schema information. Use AWS CloudTrail to log access to S3 buckets.",
-            "D.. Use AWS Glue Data Catalog to register all data sources. Apply metadata tags to attribute data\nsources.Use AWS CloudTrail to log access and activity across services."
+            "A.. transactionsDf.sort(asc(value)).show(10)",
+            "B.. transactionsDf.sort(col(\"value\")).show(10)",
+            "C.. transactionsDf.sort(col(\"value\").desc()).head()",
+            "D.. transactionsDf.sort(col(\"value\").asc()).print(10)",
+            "E.. transactionsDf.orderBy(\"value\").asc().show(10)"
+        ],
+        "answer": [
+            "B"
         ],
-        "answer": "D",
-        "explanation": "Option D is the correct solution because it directly satisfies all three core requirements: data source\nregistration, metadata-based attribution, and end-to-end audit logging, while remaining serviceagnostic and scalable across internal and external data sources.\nThe AWS Glue Data Catalog is the AWS-native service for registering datasets and managing\nmetadata centrally. It supports structured registration of diverse data sources and enables consistent\ntagging that can be used to attribute generated content back to its original source. This is essential\nfor GenAI applications that combine multiple datasets and must provide traceability for outputs.\nMetadata tags applied within the Glue Data Catalog ensure a consistent attribution framework that\ndownstream systems-such as Retrieval Augmented Generation (RAG) pipelines or evaluation\n94\n\n\n\n\nsystems-can reference without embedding attribution logic directly in application code. This\nimproves maintainability and governance.\nAWS CloudTrail provides immutable audit logs of API activity across AWS services, including data\naccess, metadata changes, and pipeline interactions. CloudTrail logs are critical for compliance and\nregulatory review because they capture who accessed which data, when, and through which service.\nThis satisfies the requirement to maintain audit logs \"throughout the pipeline,\" not just at storage or\napplication layers.\nOption A introduces Lake Formation, which is primarily intended for fine-grained data lake\npermissions and is not required solely for traceability. Option B relies on CloudWatch Logs, which\ndoes not provide authoritative audit logging across services. Option C limits audit scope to S3 access\nand does not register or govern all data sources comprehensively.\nTherefore, Option D provides the most complete and least intrusive solution for traceable, auditable\nGenAI data pipelines."
+        "explanation": "show() is the correct method to look for here, since the question specifically asks for displaying the\nrows in a nicely formatted way. Here is the output of show (only a few rows shown):\n+-------------+---------+-----+-------+---------+----+---------------+\n|transactionId|predError|value|storeId|productId| f|transactionDate|\n+-------------+---------+-----+-------+---------+----+---------------+\n| 3| 3| 1| 25| 3|null| 1585824821|\n| 5| null| 2| null| 2|null| 1575285427|\n| 4| null| 3| 3| 2|null| 1583244275|\n+-------------+---------+-----+-------+---------+----+---------------+\nWith regards to the sorting, specifically in ascending order since the smallest values should be shown\nfirst, the following expressions are valid:\n- transactionsDf.sort(col(\"value\")) (\"ascending\" is the default sort direction in the sort method)\n- transactionsDf.sort(asc(col(\"value\")))\n- transactionsDf.sort(asc(\"value\"))\n- transactionsDf.sort(transactionsDf.value.asc())\n- transactionsDf.sort(transactionsDf.value)\nAlso, orderBy is just an alias of sort, so all of these expressions work equally well using orderBy.\nStatic notebook | Dynamic notebook: See test 1"
     },
     {
-        "question": "A retail company has a generative AI (GenAI) product recommendation application that uses\nAmazon Bedrock. The application suggests products to customers based on browsing history and\ndemographics. The company needs to implement fairness evaluation across multiple demographic\ngroups to detect and measure bias in recommendations between two prompt approaches. The\ncompany wants to collect and monitor fairness metrics in real time. The company must receive an\nalert if the fairness metrics show a discrepancy of more than 15% between demographic groups. The\ncompany must receive weekly reports that compare the performance of the two prompt approaches.\nWhich solution will meet these requirements with the LEAST custom development effort?",
+        "question": "Which is the highest level in Spark's execution hierarchy?",
         "options": [
-            "A.. Configure an Amazon CloudWatch dashboard to display default metrics from Amazon Bedrock API\ncalls. Create custom metrics based on model outputs. Set up Amazon EventBridge rules to invoke\nAWS Lambda functions that perform post-processing analysis on model responses and publish\ncustom fairness metrics.",
-            "B.. Create the two prompt variants in Amazon Bedrock Prompt Management. Use Amazon Bedrock\nFlows to deploy the prompt variants with defined traffic allocation. Configure Amazon Bedrock\nguardrails to monitor demographic fairness. Set up Amazon CloudWatch alarms on the\nGuardrailContentSource dimension by using InvocationsIntervened metrics to detect\nrecommendation discrepancy threshold violations.",
-            "C.. Set up Amazon SageMaker Clarify to analyze model outputs. Publish fairness metrics to Amazon\nCloudWatch. Create CloudWatch composite alarms that combine SageMaker Clarify bias metrics with\nAmazon Bedrock latency metrics.",
-            "D.. Create an Amazon Bedrock model evaluation job to compare fairness between the two prompt\nvariants.Enable model invocation logging in Amazon CloudWatch. Set up CloudWatch alarms for\nInvocationsIntervened metrics with a dimension for each demographic group."
+            "A.. Task",
+            "B.. Executor",
+            "C.. Slot",
+            "D.. Job",
+            "E.. Stage"
         ],
-        "answer": "B",
-        "explanation": "Option B best satisfies the requirements with the least custom development effort by using native\nAmazon Bedrock capabilities for prompt experimentation, traffic management, fairness monitoring,\nand alerting.\nAmazon Bedrock Prompt Management allows teams to define and manage multiple prompt variants\nwithout code changes, making it ideal for comparing recommendation strategies across demographic\ngroups.\n\n\n\n\nAmazon Bedrock Flows enables controlled traffic allocation between prompt variants, which supports\nreal- time A/B testing. This allows the company to collect live fairness metrics under production\nconditions instead of relying on offline analysis. Because Flows are fully managed, they eliminate the\nneed for custom routing or experimentation frameworks.\nAmazon Bedrock guardrails provide built-in monitoring and intervention mechanisms. When\nconfigured for fairness-related checks, guardrails can detect policy violations and surface metrics\nsuch as InvocationsIntervened, which indicate when outputs are modified or blocked due to rule\nenforcement. These metrics integrate directly with Amazon CloudWatch, enabling real-time\ndashboards and threshold-based alarms. Setting an alarm at a 15% discrepancy threshold satisfies\nthe alerting requirement with minimal configuration.\nWeekly reporting can be generated from CloudWatch metrics using scheduled exports or dashboards\nwithout building custom analytics pipelines. Option A requires significant custom post-processing\nlogic. Option C introduces an additional service with higher operational overhead and is not\noptimized for real-time monitoring. Option D focuses on offline evaluation jobs and does not provide\ncontinuous real-time fairness monitoring.\nTherefore, Option B provides the most AWS-native, scalable, and low-effort solution for fairness\nevaluation and monitoring."
+        "answer": [
+            "D"
+        ]
     },
     {
-        "question": "Company configures a landing zone in AWS Control Tower. The company handles sensitive\ndata that must remain within the European Union. The company must use only the eu-central-1\nRegion. The company uses Service Control Policies (SCPs) to enforce data residency policies. GenAI\ndevelopers at the company are assigned IAM roles that have full permissions for Amazon Bedrock.\nThe company must ensure that GenAI developers can use the Amazon Nova Pro model through\nAmazon Bedrock only by using cross-Region inference (CRI) and only in eu-central-1. The company\nenables model access for the GenAI developer IAM roles in Amazon Bedrock. However, when a GenAI\ndeveloper attempts to invoke the model through the Amazon Bedrock Chat/Text playground, the\nGenAI developer receives the following error:\nUser arn:aws:sts:123456789012:assumed-role/AssumedDevRole/DevUserName\nAction: bedrock:InvokeModelWithResponseStream\nOn resource(s): arn:aws:bedrock:eu-west-3::foundation-model/amazon.nova-pro-v1:0 Context: a\nservice control policy explicitly denies the action The company needs a solution to resolve the error.\nThe solution must retain the company's existing governance controls and must provide precise access\ncontrol. The solution must comply with the company's existing data residency policies.\nWhich combination of solutions will meet these requirements? (Select TWO.)",
+        "question": "The code block displayed below contains an error. The code block should configure Spark so\nthat DataFrames up to a size of 20 MB will be broadcast to all worker nodes when performing a join.\nFind the error.\nCode block:",
         "options": [
-            "A.. Add an AdministratorAccess policy to the GenAI developer IAM role",
-            "B.. Extend the existing SCPs to enable CRI for the eu.amazon.nova-pro-v1:0 inference profile",
-            "C.. Enable Amazon Bedrock model access for Amazon Nova Pro in the eu-west-3 Region",
-            "D.. Validate that the GenAI developer IAM roles have permissions to invoke Amazon Nova Pro\nthrough the eu.amazon.nova-pro-v1:0 inference profile on all European Union AWS Regions that can\nserve the model",
-            "E.. Extend the existing SCP to enable CRI for the eu-* inference profile"
+            "A.. spark.conf.set(\"spark.sql.autoBroadcastJoinThreshold\", 20)",
+            "B.. Spark will only broadcast DataFrames that are much smaller than the default value.",
+            "C.. The correct option to write configurations is through spark.config and not spark.conf.",
+            "D.. Spark will only apply the limit to threshold joins and not to other joins.",
+            "E.. The passed limit has the wrong variable type.",
+            "F.. The command is evaluated lazily and needs to be followed by an action."
         ],
-        "answer": "BE",
-        "explanation": "This error occurs because SCPs override IAM permissions, and the SCP currently blocks Bedrock\ninference calls that resolve to eu-west-3, even though the company intends to use cross-Region\n\n\n\n\ninference (CRI) from eu- central-1.\nAmazon Nova Pro is not hosted in eu-central-1, so when invoked, Amazon Bedrock transparently\nroutes the request to a supporting Region (such as eu-west-3) through CRI inference profiles.\nHowever, SCPs that restrict Regions or specific Bedrock resources will block this routing unless\nexplicitly allowed.\nOption B is required because the SCP must explicitly allow the eu.amazon.nova-pro-v1:0 inference\nprofile, which is the Bedrock abstraction that enables CRI while preserving data residency guarantees.\nWithout this, Bedrock cannot legally route the request.\nOption E is also required to allow EU-scoped inference profiles rather than individual Regions. This\npreserves precise governance while allowing Bedrock-managed CRI routing within the EU boundary,\nensuring no data leaves Europe.\nOption A violates least-privilege and does not override SCPs. Option C breaks data residency by\nenabling direct eu-west-3 access. Option D does not resolve the SCP denial.\nTherefore, Options B and E are the only combination that resolves the error while preserving\ngovernance and EU-only data residency."
+        "answer": [
+            "B"
+        ],
+        "explanation": "This is question is hard. Let's assess the different answers one-by-one.\nSpark will only broadcast DataFrames that are much smaller than the default value.\nThis is correct. The default value is 10 MB (10485760 bytes). Since the configuration for\nspark.sql.autoBroadcastJoinThreshold expects a number in bytes (and not megabytes), the code\nblock sets the limits to merely 20 bytes, instead of the requested 20 * 1024 * 1024 (= 20971520)\nbytes.\nThe command is evaluated lazily and needs to be followed by an action.\nNo, this command is evaluated right away!\nSpark will only apply the limit to threshold joins and not to other joins.\nThere are no \"threshold joins\", so this option does not make any sense.\nThe correct option to write configurations is through spark.config and not spark.conf.\nNo, it is indeed spark.conf!\nThe passed limit has the wrong variable type.\nThe configuration expects the number of bytes, a number, as an input. So, the 20 provided in the\ncode block is fine."
     },
     {
-        "question": "A financial services company is deploying a generative AI (GenAI) application that uses\nAmazon Bedrock to assist customer service representatives to provide personalized investment\nadvice to customers. The company must implement a comprehensive governance solution that\nfollows responsible AI practices and meets regulatory requirements.\n\n\n\n\nThe solution must detect and prevent hallucinations in recommendations. The solution must have\nsafety controls for customer interactions. The solution must also monitor model behavior drift in real\ntime and maintain audit trails of all prompt-response pairs for regulatory review. The company must\ndeploy the solution within 60 days. The solution must integrate with the company's existing\ncompliance dashboard and respond to customers within 200 ms.\nWhich solution will meet these requirements with the LEAST operational overhead?",
+        "question": "Which of the following code blocks returns a DataFrame with approximately 1,000 rows\nfrom the 10,000-row DataFrame itemsDf, without any duplicates, returning the same rows even if\nthe code block is run twice?",
         "options": [
-            "A.. Configure Amazon Bedrock guardrails to apply custom content filters and toxicity detection. Use\nAmazon Bedrock Model Evaluation to detect hallucinations. Store prompt-response pairs in Amazon\nDynamoDB to capture audit trails and set a TTL. Integrate Amazon CloudWatch custom metrics with\nthe existing compliance dashboard.",
-            "B.. Deploy Amazon Bedrock and use AWS PrivateLink to access the application securely. Use AWS\nLambda functions to implement custom prompt validation. Store prompt-response pairs in an\nAmazon S3 bucket and configure S3 Lifecycle policies. Create custom Amazon CloudWatch\ndashboards to monitor model performance metrics.",
-            "C.. Use Amazon Bedrock Agents and Amazon Bedrock Knowledge Bases to ground responses. Use\nAmazon Bedrock Guardrails to enforce content safety. Use Amazon OpenSearch Service to store and\nindex prompt-response pairs. Integrate OpenSearch Service with Amazon QuickSight to create\ncompliance reports and to detect model behavior drift.",
-            "D.. Use Amazon SageMaker Model Monitor to detect model behavior drift. Use AWS WAF to filter\ncontent. Store customer interactions in an encrypted Amazon RDS database. Use Amazon API\nGateway to create custom HTTP APIs to integrate with the compliance dashboard."
+            "A.. itemsDf.sampleBy(\"row\", fractions={0: 0.1}, seed=82371)",
+            "B.. itemsDf.sample(fraction=0.1, seed=87238)",
+            "C.. itemsDf.sample(fraction=1000, seed=98263)",
+            "D.. itemsDf.sample(withReplacement=True, fraction=0.1, seed=23536)",
+            "E.. itemsDf.sample(fraction=0.1)"
+        ],
+        "answer": [
+            "B"
         ],
-        "answer": "A",
-        "explanation": "Option A is the correct solution because it uses native Amazon Bedrock governance and evaluation\ncapabilities to meet regulatory, performance, and deployment timeline requirements with the least\noperational overhead.\nAmazon Bedrock guardrails provide built-in safety controls that enforce responsible AI policies\ndirectly during inference. Custom content filters and toxicity detection protect customer interactions\nand prevent disallowed investment guidance patterns without requiring custom application logic.\nGuardrails operate inline and are optimized for low latency, which helps meet the strict 200 ms\nresponse-time requirement.\nHallucination detection is addressed through Amazon Bedrock Model Evaluation, which supports\nautomated evaluation at scale using LLM-as-a-judge techniques. This enables the company to detect\nfactual inaccuracies and policy violations systematically, without building custom evaluation pipelines\nor requiring extensive human review. Evaluation outputs can be surfaced as metrics.\nStoring all prompt-response pairs in Amazon DynamoDB provides a low-latency, highly scalable audit\nstore that aligns with financial regulatory requirements. Using TTL enforces data retention policies\nautomatically, reducing compliance risk and storage overhead.\nAmazon CloudWatch custom metrics integrate seamlessly with existing compliance dashboards,\nallowing near-real-time monitoring of safety interventions, hallucination rates, and drift indicators.\nCloudWatch anomaly detection can be applied to these metrics to surface behavior changes quickly.\nOption B relies on custom Lambda logic and S3-based auditing, increasing latency and operational\ncomplexity. Option C introduces additional services that increase setup time and may exceed the 60day deployment window. Option D uses non-Bedrock-native monitoring and adds unnecessary\ninfrastructure layers.\n\n\n\n\nTherefore, Option A provides the most complete, compliant, and low-overhead governance solution\nfor a regulated GenAI financial services application."
+        "explanation": "itemsDf.sample(fraction=0.1, seed=87238)\nCorrect. If itemsDf has 10,000 rows, this code block returns about 1,000, since DataFrame.sample() is\nnever guaranteed to return an exact amount of rows. To ensure you are not returning duplicates, you\nshould leave the withReplacement parameter at False, which is the default. Since the question\nspecifies that the same rows should be returned even if the code block is run twice, you need to\nspecify a seed. The number passed in the seed does not matter as long as it is an integer.\nitemsDf.sample(withReplacement=True, fraction=0.1, seed=23536)\nIncorrect. While this code block fulfills almost all requirements, it may return duplicates. This is\nbecause withReplacement is set to True.\nHere is how to understand what replacement means: Imagine you have a bucket of 10,000 numbered\nballs and you need to take 1,000 balls at random from the bucket (similar to the problem in the\nquestion). Now, if you would take those balls with replacement, you would take a ball, note its\nnumber, and put it back into the bucket, meaning the next time you take a ball from the bucket there\nwould be a chance you could take the exact same ball again. If you took the balls without\nreplacement, you would leave the ball outside the bucket and not put it back in as you take the next\n999 balls.\nitemsDf.sample(fraction=1000, seed=98263)\nWrong. The fraction parameter needs to have a value between 0 and 1. In this case, it should be 0.1,\nsince\n\n\n1,000/10,000 = 0.1.\nitemsDf.sampleBy(\"row\", fractions={0: 0.1}, seed=82371)\nNo, DataFrame.sampleBy() is meant for stratified sampling. This means that based on the values in a\ncolumn in a DataFrame, you can draw a certain fraction of rows containing those values from the\nDataFrame (more details linked below). In the scenario at hand, sampleBy is not the right operator to\nuse because you do not have any information about any column that the sampling should depend on.\nitemsDf.sample(fraction=0.1)\nIncorrect. This code block checks all the boxes except that it does not ensure that when you run it a\nsecond time, the exact same rows will be returned. In order to achieve this, you would have to\nspecify a seed.\nMore info:\n- pyspark.sql.DataFrame.sample - PySpark 3.1.2 documentation\n- pyspark.sql.DataFrame.sampleBy - PySpark 3.1.2 documentation\n- Types of Samplings in PySpark 3. The explanations of the sampling... | by Pinar Ersoy | Towards Data\nScience"
     },
     {
-        "question": "A company is using Amazon Bedrock to build a customer-facing AI assistant that handles\nsensitive customer inquiries. The company must use defense-in-depth safety controls to block\nsophisticated prompt injection attacks. The company must keep audit logs of all safety interventions.\nThe AI assistant must have cross- Region failover capabilities.\nWhich solution will meet these requirements?",
+        "question": "Which of the following statements about DAGs is correct?",
         "options": [
-            "A.. Configure Amazon Bedrock guardrails with content filters set to high to protect against prompt\ninjection attacks. Use a guardrail profile to implement cross-Region guardrail inference. Use Amazon\nCloudWatch Logs with custom metrics to capture detailed guardrail intervention events.",
-            "B.. Configure Amazon Bedrock guardrails with content filters set to high. Use AWS WAF to block\nsuspicious inputs. Use AWS CloudTrail to log API calls.",
-            "C.. Deploy Amazon Comprehend custom classifiers to detect prompt injection attacks. Use Amazon\nAPI Gateway request validation. Use CloudWatch Logs to capture intervention events.",
-            "D.. Configure Amazon Bedrock guardrails with custom content filters and word filters set to\nhigh.Configure cross-Region guardrail replication for failover. Store logs in AWS CloudTrail for\ncompliance auditing."
+            "A.. DAGs help direct how Spark executors process tasks, but are a limitation to the proper execution\nof a query when an executor fails.",
+            "B.. DAG stands for \"Directing Acyclic Graph\".",
+            "C.. Spark strategically hides DAGs from developers, since the high degree of automation in Spark\nmeans that developers never need to consider DAG layouts.",
+            "D.. In contrast to transformations, DAGs are never lazily executed.",
+            "E.. DAGs can be decomposed into tasks that are executed in parallel."
         ],
-        "answer": "A",
-        "explanation": "Option A provides the most complete, AWS-native defense-in-depth solution for protecting against\nprompt injection attacks while meeting audit and resiliency requirements. Amazon Bedrock\nguardrails are designed specifically to enforce safety policies on both user inputs and model outputs,\nincluding protections against prompt injection and jailbreak attempts.\nSetting content filters to high increases sensitivity to malicious or manipulative inputs. Guardrail\nprofiles allow the same guardrail configuration to be applied consistently across multiple Regions,\nenabling cross- Region inference and failover without configuration drift. This directly satisfies the\nrequirement for regional resilience.\nAmazon CloudWatch Logs captures detailed guardrail intervention events, including when content is\nblocked, modified, or flagged. Custom metrics derived from these logs enable fine-grained auditing,\nalerting, and reporting on safety enforcement actions. This provides a more detailed audit trail of\nsafety interventions than API-level logs alone.\nOption B adds WAF protection but lacks detailed guardrail intervention logging. Option C introduces\nadditional services and custom logic that increase complexity and may miss model-specific injection\npatterns.\nOption D references replication concepts that are not aligned with Bedrock guardrail operational\nmodels and relies on word filters, which are insufficient against sophisticated prompt injection\ntechniques.\nTherefore, Option A best meets the requirements for layered protection, auditability, and crossRegion resilience using managed Amazon Bedrock safety controls."
+        "answer": [
+            "E"
+        ],
+        "explanation": "DAG stands for \"Directing Acyclic Graph\".\nNo, DAG stands for \"Directed Acyclic Graph\".\nSpark strategically hides DAGs from developers, since the high degree of automation in Spark means\nthat developers never need to consider DAG layouts.\nNo, quite the opposite. You can access DAGs through the Spark UI and they can be of great help\nwhen optimizing queries manually.\nIn contrast to transformations, DAGs are never lazily executed.\nDAGs represent the execution plan in Spark and as such are lazily executed when the driver requests\nthe data processed in the DAG."
     },
     {
-        "question": "A company is using Amazon Bedrock to develop an AI-powered application that uses a\nfoundation model that supports cross-Region inference and provisioned throughput. The application\nmust serve users in Europe and North America with consistently low latency. The application must\ncomply with data residency regulations that require European user data to remain within Europe-\n\n\n\n\nbased AWS Regions.\nDuring testing, the application experiences service degradation when Regional traffic spikes reach\nservice quotas. The company needs a solution that maintains application resilience and minimizes\noperational complexity.\nWhich solution will meet these requirements?",
+        "question": "The code block displayed below contains an error. The code block should count the number\nof rows that have a predError of either 3 or 6. Find the error.\nCode block:\ntransactionsDf.filter(col('predError').in([3, 6])).count()",
         "options": [
-            "A.. Deploy separate Amazon Bedrock instances in North American and European Regions. Use a\ncustom routing layer that directs traffic based on user location. Configure Amazon CloudWatch\nalarms to monitor Regional service usage. Use Amazon SNS to send email alerts to the company\nwhen usage approaches specified thresholds.",
-            "B.. Use Amazon Bedrock cross-Region inference profiles by specifying geographical codes in profile\nIDs when the application calls the InvokeModel API. Configure separate Amazon API Gateway HTTP\nAPIs to direct European and North American users to the appropriate Regional endpoints.",
-            "C.. Deploy a multi-Region Amazon API Gateway HTTP API and AWS Lambda functions that implement\nretry logic to handle throttling. Configure the Lambda functions to call the foundation model in the\nnearest secondary Region when the application reaches service quotas in the primary Region. Use\nintelligent routing to ensure compliance with data residency requirements.",
-            "D.. Configure provisioned throughput for Amazon Bedrock in multiple Regions. Implement failover\nlogic in the application code to switch between Regions when throttling occurs. Use AWS Global\nAccelerator to route traffic to the appropriate endpoints based on user location."
+            "A.. The number of rows cannot be determined with the count() operator.",
+            "B.. Instead of filter, the select method should be used.",
+            "C.. The method used on column predError is incorrect.",
+            "D.. Instead of a list, the values need to be passed as single arguments to the in operator.",
+            "E.. Numbers 3 and 6 need to be passed as string variables."
+        ],
+        "answer": [
+            "C"
         ],
-        "answer": "B",
-        "explanation": "Option B best meets the latency, resilience, and data residency requirements while keeping\noperational complexity low by using built-in Amazon Bedrock cross-Region inference behavior\nthrough inference profiles. Cross-Region inference profiles are designed to provide higher availability\nand better traffic absorption when a single Region experiences throttling, transient capacity\nconstraints, or quota-related degradation. By selecting the appropriate geography-scoped inference\nprofile (for example, a Europe-scoped profile for European users and a North America-scoped profile\nfor North American users), the application can keep inference traffic within the required geographic\nboundary. This directly supports EU data residency needs because European requests can be served\nonly by Europe-based Regions while still benefiting from multi-Region resilience inside Europe.\nThe question also highlights degradation when Regional traffic spikes hit quotas. Cross-Region\ninference profiles help mitigate these conditions by allowing Bedrock to serve requests from another\nRegion within the same geography, improving continuity during spikes without requiring the\ncompany to implement custom retry-and-failover logic across Regions. This reduces development\nand operational burden compared to building and maintaining a bespoke routing and fallback\nsystem.\nUsing separate Amazon API Gateway HTTP APIs to direct European and North American users to the\ncorrect endpoints simplifies request routing and provides a clean boundary for compliance controls,\nlogging, and monitoring. It also allows each geography to scale independently and maintain\nconsistently low latency by keeping users close to the entry point and the Bedrock geography they\nmust use.\nOption A requires custom routing and manual operational monitoring and does not inherently solve\nquota- driven degradation. Option C adds significant complexity by embedding throttling retries and\ncross-Region selection logic in Lambda while still needing careful controls to prevent cross-border\nrouting mistakes. Option D introduces the highest operational complexity and can inadvertently\n\n\n\n\nviolate residency if failover crosses geographies unless additional safeguards are implemented."
+        "explanation": "Correct code block:\ntransactionsDf.filter(col('predError').isin([3, 6])).count()\nThe isin method is the correct one to use here - the in method does not exist for the Column object.\nMore info: pyspark.sql.Column.isin - PySpark 3.1.2 documentation"
     },
     {
-        "question": "A company is building a video analysis platform on AWS. The platform will analyze a large\nvideo archive by using Amazon Rekognition and Amazon Bedrock. The platform must comply with\npredefined privacy standards. The platform must also use secure model I/O, control foundation\nmodel (FM) access patterns, and provide an audit of who accessed what and when.\nWhich solution will meet these requirements?",
+        "question": "Which of the following code blocks shuffles DataFrame transactionsDf, which has 8\npartitions, so that it has\n10 partitions?",
         "options": [
-            "A.. Configure VPC endpoints for Amazon Bedrock model API calls. Implement Amazon Bedrock\nguardrails to filter harmful or unauthorized content in prompts and responses. Use Amazon Bedrock\ntrace events to track all agent and model invocations for auditing purposes. Export the traces to\nAmazon CloudWatch Logs as an audit record of model usage. Store all prompts and outputs in\nAmazon S3 with server-side encryption with AWS KMS keys (SSE-KMS).",
-            "B.. Define access control by using IAM with attribute-based access control (ABAC) to map\ndepartments to specific permissions. Configure VPC endpoints for Amazon Bedrock model API calls.\nUse IAM condition keys to enforce specific GuardrailIdentifier and ModelId values. Configure AWS\nCloudTrail to capture management and data events for S3 objects and KMS key usage activities.\nEnable S3 server access logging to record detailed file-level interactions with the video archives. Send\nall CloudTrail logs to AWS CloudTrail Lake. Set up Amazon CloudWatch alarms to detect and alert on\nunexpected activity from Amazon Bedrock, Amazon Rekognition, and AWS KMS.",
-            "C.. Restrict access to services by using VPC endpoint policies. Use AWS Config to track resource\nchanges and compliance with security rules. Use server-side encryption with AWS KMS keys (SSEKMS) to encrypt data at rest. Store the model's I/O in separate Amazon S3 buckets. Enable S3 server\naccess logging to track file-level interactions.",
-            "D.. Configure AWS CloudTrail Insights to analyze API call patterns across accounts and detect\nanomalous activity in Amazon Bedrock, Amazon Rekognition, Amazon S3, and AWS KMS. Deploy\nAmazon Macie to scan and classify the video archive. Use server-side encryption with AWS KMS keys\n(SSE- KMS) to encrypt all stored data. Configure CloudTrail to capture KMS API usage events for audit\npurposes. Configure Amazon EventBridge rules to process CloudTrail Insights anomalies and Macie\nfindings. Use CloudWatch alarms to trigger automated notifications and security responses when\npotential security issues are detected."
+            "A.. transactionsDf.repartition(transactionsDf.getNumPartitions()+2)",
+            "B.. transactionsDf.repartition(transactionsDf.rdd.getNumPartitions()+2)",
+            "C.. transactionsDf.coalesce(10)",
+            "D.. transactionsDf.coalesce(transactionsDf.getNumPartitions()+2)",
+            "E.. transactionsDf.repartition(transactionsDf._partitions+2)"
         ],
-        "answer": "B",
-        "explanation": "Option B is the correct solution because it delivers end-to-end governance, security, and auditability\nacross Amazon Bedrock, Amazon Rekognition, and the underlying data layer while meeting strict\nprivacy and compliance requirements.\nUsing IAM attribute-based access control (ABAC) allows the company to control access to foundation\nmodels and data based on department, role, or workload attributes rather than static permissions.\nThis is critical for controlling FM access patterns at scale. Enforcing specific ModelId and\nGuardrailIdentifier values with IAM condition keys ensures that only approved models and guardrails\nare used, which directly supports secure model I/O and governance requirements.\nConfiguring VPC endpoints for Amazon Bedrock ensures that all model invocations remain on private\nAWS network paths, reducing data exfiltration risk and supporting privacy standards. AWS CloudTrail\ncaptures both management and data events, providing a definitive audit trail of who accessed which\nresources and when. Sending logs to CloudTrail Lake enables centralized, long-term, queryable\nauditing across services.\n101\n\n\n\n\nAmazon S3 server access logging adds file-level visibility into video archive access, which is essential\nfor compliance and forensic analysis. Amazon CloudWatch alarms provide near real-time detection of\nanomalous or unauthorized activity across Amazon Bedrock, Amazon Rekognition, and AWS KMS.\nOption A focuses primarily on model-level tracing but lacks comprehensive IAM governance and S3\naccess auditing. Option C provides partial controls but lacks identity-aware auditing and model\ngovernance. Option D focuses on anomaly detection and classification but does not explicitly control\nFM access patterns.\nTherefore, Option B best satisfies all stated requirements in a unified, auditable, and security-first\narchitecture."
+        "answer": [
+            "B"
+        ],
+        "explanation": "transactionsDf.repartition(transactionsDf.rdd.getNumPartitions()+2)\nCorrect. The repartition operator is the correct one for increasing the number of partitions. calling\ngetNumPartitions() on DataFrame.rdd returns the current number of partitions.\ntransactionsDf.coalesce(10)\nNo, after this command transactionsDf will continue to only have 8 partitions. This is because\ncoalesce() can only decreast the amount of partitions, but not increase it.\ntransactionsDf.repartition(transactionsDf.getNumPartitions()+2)\nIncorrect, there is no getNumPartitions() method for the DataFrame class.\ntransactionsDf.coalesce(transactionsDf.getNumPartitions()+2)\nWrong, coalesce() can only be used for reducing the number of partitions and there is no\ngetNumPartitions() method for the DataFrame class.\ntransactionsDf.repartition(transactionsDf._partitions+2)\nNo, DataFrame has no _partitions attribute. You can find out the current number of partitions of a\nDataFrame with the DataFrame.rdd.getNumPartitions() method.\nMore info: pyspark.sql.DataFrame.repartition - PySpark 3.1.2 documentation,\npyspark.RDD.getNumPartitions - PySpark 3.1.2 documentation Static notebook | Dynamic notebook:\nSee test 3"
     },
     {
-        "question": "A GenAI developer is evaluating Amazon Bedrock foundation models (FMs) to enhance a\nEurope-based company's internal business application. The company has a multi-account landing\nzone in AWS Control Tower. The company uses Service Control Policies (SCPs) to allow its accounts to\nuse only the eu-north-1 and eu-west-1 Regions. All customer data must remain in private networks\nwithin the approved AWS Regions.\nThe GenAI developer selects an FM based on analysis and testing and hosts the model in the eucentral-1 Region and the eu-west-3 Region. The GenAI developer must enable access to the FM for\nthe company's employees. The GenAI developer must ensure that requests to the FM are private and\nremain within the same Regions as the FM.\nWhich solution will meet these requirements?",
+        "question": "Which of the following code blocks selects all rows from DataFrame transactionsDf in which\ncolumn productId is zero or smaller or equal to 3?",
         "options": [
-            "A.. Deploy an AWS Lambda function that is exposed by a private Amazon API Gateway REST API to a\nVPC in eu-north-1. Create a VPC endpoint for the selected FM in eu-central-1 and eu-west-3. Extend\nexisting SCPs to allow employees to use the FM. Integrate the REST API with the business application.",
-            "B.. Deploy the FM on Amazon EC2 instances in eu-north-1. Deploy a private Amazon API Gateway\nREST API in front of the EC2 instances. Configure an Amazon Bedrock VPC endpoint. Integrate the\nREST API with the business application.",
-            "C.. Configure the FM to use cross-Region inference through a Europe-scoped endpoint. Configure an\nAmazon Bedrock VPC endpoint. Extend existing SCPs to allow employees to use the FM through\ninference profiles in Europe-based Regions where the FM is available. Use an inference profile to\nintegrate Amazon Bedrock with the business application.",
-            "D.. Deploy the FM in Amazon SageMaker in eu-north-1. Configure a SageMaker VPC endpoint. Extend\nexisting SCPs to allow employees to use the SageMaker endpoint. Integrate the FM in SageMaker\nwith the business application."
+            "A.. transactionsDf.filter(productId==3 or productId<1)",
+            "B.. transactionsDf.filter((col(\"productId\")==3) or (col(\"productId\")<1))",
+            "C.. transactionsDf.filter(col(\"productId\")==3 | col(\"productId\")<1)",
+            "D.. transactionsDf.where(\"productId\"=3).or(\"productId\"<1))",
+            "E.. transactionsDf.filter((col(\"productId\")==3) | (col(\"productId\")<1))"
+        ],
+        "answer": [
+            "E"
         ],
-        "answer": "C",
-        "explanation": "Option C is the correct solution because it uses Amazon Bedrock cross-Region inference profiles,\nwhich are explicitly designed to support regional data residency, private connectivity, and resilience\nwith minimal operational overhead.\nBy using a Europe-scoped inference profile, the application ensures that all inference requests are\nrouted only within European Regions where the FM is deployed, such as eu-central-1 and eu-west-3.\nThis satisfies data residency requirements while still providing resilience and load distribution across\nRegions.\nConfiguring an Amazon Bedrock VPC endpoint ensures that all traffic remains on the AWS private\nnetwork.\nNo public endpoints are used, which aligns with the company's private networking requirements.\n\n\n\n\nExtending existing SCPs to allow inference profile usage ensures that employees can access the FM\nonly in approved Regions, maintaining governance across the Control Tower environment.\nOptions A and B introduce unnecessary custom routing layers and EC2 management. Option D moves\naway from Amazon Bedrock entirely and increases operational complexity.\nTherefore, Option C is the only solution that satisfies private access, regional confinement,\ngovernance controls, and low operational overhead."
+        "explanation": "This question targets your knowledge about how to chain filtering conditions. Each filtering condition\n\n\nshould be in parentheses. The correct operator for \"or\" is the pipe character (|) and not the word or.\nAnother operator of concern is the equality operator. For the purpose of comparison, equality is\nexpressed as two equal signs (==).\nStatic notebook | Dynamic notebook: See test 2"
     },
     {
-        "question": "An ecommerce company is using Amazon Bedrock to build a generative AI (GenAI)\napplication. The application uses AWS Step Functions to orchestrate a multi-agent workflow to\nproduce detailed product descriptions. The workflow consists of three sequential states: a\ndescription generator, a technical specifications validator, and a brand voice consistency checker.\nEach state produces intermediate reasoning traces and outputs that are passed to the next state. The\napplication uses an Amazon S3 bucket for process storage and to store outputs.\nDuring testing, the company discovers that outputs between Step Functions states frequently exceed\nthe 256 KB quota and cause workflow failures. A GenAI Developer needs to revise the application\narchitecture to efficiently handle the Step Functions 256 KB quota and maintain workflow\nobservability. The revised architecture must preserve the existing multi-agent reasoning and acting\n(ReAct) pattern.\nWhich solution will meet these requirements with the LEAST operational overhead?",
+        "question": "Which of the following code blocks silently writes DataFrame itemsDf in avro format to\nlocation fileLocation if a file does not yet exist at that location?",
         "options": [
-            "A.. Store intermediate outputs in Amazon DynamoDB. Pass only references between states. Create a\nMap state that retrieves the complete data from DynamoDB when required for each agent's\nprocessing step.",
-            "B.. Configure an Amazon Bedrock integration to use the S3 bucket URI in the input parameters for\nlarge outputs. Use the ResultPath and ResultSelector fields to route S3 references between the agent\nsteps while maintaining the sequential validation workflow.",
-            "C.. Use AWS Lambda functions to compress outputs to less than 256 KB before each agent state.\nConfigure each agent task to decompress outputs before processing and to compress results before\npassing them to the next state.",
-            "D.. Configure a separate Step Functions state machine to handle each agent's processing. Use\nAmazon EventBridge to coordinate the execution flow between state machines. Use S3 references\nfor the outputs as event data."
+            "A.. itemsDf.write.avro(fileLocation)",
+            "B.. itemsDf.write.format(\"avro\").mode(\"ignore\").save(fileLocation)",
+            "C.. itemsDf.write.format(\"avro\").mode(\"errorifexists\").save(fileLocation)",
+            "D.. itemsDf.save.format(\"avro\").mode(\"ignore\").write(fileLocation)",
+            "E.. spark.DataFrameWriter(itemsDf).format(\"avro\").write(fileLocation)"
         ],
-        "answer": "B",
-        "explanation": "Option B is the best solution because it directly addresses the Step Functions 256 KB state payload\nquota by externalizing large intermediate artifacts to Amazon S3 and passing only lightweight\nreferences (URIs/keys) between states. This is a standard AWS pattern for workflows that produce\nlarge intermediate results, and it avoids introducing additional databases, compression logic, or\ncross-state-machine coordination that increases operational overhead.\nIn a multi-agent ReAct workflow, intermediate reasoning traces can be verbose and grow quickly as\neach agent produces chain-of-thought style artifacts, structured outputs, and supporting evidence.\nStep Functions is designed to orchestrate state transitions and pass JSON payloads, but large\npayloads should be stored outside the state machine and referenced by pointer values. Using\nAmazon S3 for intermediate outputs is operationally efficient because the application already uses S3\nfor storage, and S3 provides durable, low-cost storage with simple access patterns.\nResultPath and ResultSelector allow each state to store or reshape results so that only the required\n\n\n\n\nreference fields (such as s3Uri, object key, metadata, trace IDs) are forwarded to subsequent states.\nThis preserves observability because the workflow can still log trace references, correlate steps with\nS3 objects, and store structured metadata for debugging. It also preserves the sequential validation\ndesign, keeping the existing ReAct pattern intact while preventing failures due to oversized payloads.\nOption A adds additional services and read/write patterns that increase operational complexity.\nOption C introduces custom compression/decompression logic that is fragile, adds latency, and\ncomplicates troubleshooting. Option D increases orchestration overhead by splitting workflows and\ncoordinating with events, which makes debugging harder and increases failure modes.\nTherefore, Option B meets the payload limit requirement while keeping the architecture simple and\nobservable."
+        "answer": [
+            "A"
+        ],
+        "explanation": "The trick in this question is knowing the \"modes\" of the DataFrameWriter. Mode ignore will ignore if\na file already exists and not replace that file, but also not throw an error. Mode errorifexists will\nthrow an error, and is the default mode of the DataFrameWriter. The question NO:\nexplicitly calls for the DataFrame to be \"silently\" written if it does not exist, so you need to specify\nmode(\"ignore\") here to avoid having Spark communicate any error to you if the file already exists.\nThe `overwrite' mode would not be right here, since, although it would be silent, it would overwrite\nthe already-existing file. This is not what the question asks for.\nIt is worth noting that the option starting with spark.DataFrameWriter(itemsDf) cannot work, since\nspark references the SparkSession object, but that object does not provide the DataFrameWriter.\nAs you can see in the documentation (below), DataFrameWriter is part of PySpark's SQL API, but not\nof its SparkSession API.\nMore info:\nDataFrameWriter: pyspark.sql.DataFrameWriter.save - PySpark 3.1.1 documentation SparkSession\nAPI: Spark SQL - PySpark 3.1.1 documentation Static notebook | Dynamic notebook: See test 1"
     },
     {
-        "question": "A legal research company has a Retrieval Augmented Generation (RAG) application that\nuses Amazon Bedrock and Amazon OpenSearch Service. The application stores 768-dimensional\nvector embeddings for 15 million legal documents, including statutes, court rulings, and case\nsummaries.\nThe company's current chunking strategy segments text into fixed-length blocks of 500 tokens. The\ncurrent chunking strategy often splits contextually linked information such as legal arguments, court\nopinions, or statute references across separate chunks. Researchers report that generated outputs\nfrequently omit key context or cite outdated legal information.\nRecent application logs show a 40% increase in response times. The p95 latency metric exceeds 2\nseconds.\nThe company expects storage needs for the application to grow from 90 GB to 360 GB within a year.\nThe company needs a solution to improve retrieval relevance and system performance at scale.\nWhich solution will meet these requirements?",
+        "question": "Which of the following describes the role of the cluster manager?",
         "options": [
-            "A.. Increase the embedding vector dimensionality from 768 to 4,096 without changing the existing\nchunking or pre-processing strategy.",
-            "B.. Replace dynamic retrieval with static, pre-written summaries that are stored in Amazon S3. Use\nAmazon CloudFront to serve the summaries to reduce compute demand and improve predictability.",
-            "C.. Update the chunking strategy to use semantic boundaries such as complete legal arguments,\nclauses, or sections rather than fixed token limits. Regenerate vector embeddings to align with the\nnew chunk structure.",
-            "D.. Migrate from OpenSearch Service to Amazon DynamoDB. Implement keyword-based indexes to\nenable faster lookups for legal concepts."
+            "A.. The cluster manager schedules tasks on the cluster in client mode.",
+            "B.. The cluster manager schedules tasks on the cluster in local mode.",
+            "C.. The cluster manager allocates resources to Spark applications and maintains the executor\nprocesses in client mode.",
+            "D.. The cluster manager allocates resources to Spark applications and maintains the executor\nprocesses in remote mode.",
+            "E.. The cluster manager allocates resources to the DataFrame manager."
+        ],
+        "answer": [
+            "C"
         ],
-        "answer": "C",
-        "explanation": "Option C directly addresses both retrieval relevance and performance scalability. Fixed token\nchunking breaks semantic continuity in legal texts, causing incomplete context retrieval and degraded\nresponse quality. By switching to semantic chunking-based on legal arguments, clauses, or sectionsthe application preserves contextual integrity, improving retrieval accuracy and reducing\nhallucinations.\nRegenerating embeddings aligned with the new chunk structure also improves vector search\nefficiency, reducing unnecessary comparisons and helping control latency as the dataset scales.\nOption A increases cost and latency without fixing the core issue. Option B removes dynamic\nreasoning, which defeats the purpose of a legal RAG system. Option D discards vector semantics\nentirely and is unsuitable for nuanced legal research. Therefore, Option C is the correct and scalable\nsolution.\n104"
+        "explanation": "The cluster manager allocates resources to Spark applications and maintains the executor processes\nin client mode.\nCorrect. In cluster mode, the cluster manager is located on a node other than the client machine.\nFrom there it starts and ends executor processes on the cluster nodes as required by the Spark\napplication running on the Spark driver.\nThe cluster manager allocates resources to Spark applications and maintains the executor processes\n\n\nin remote mode.\nWrong, there is no \"remote\" execution mode in Spark. Available execution modes are local, client,\nand cluster.\nThe cluster manager allocates resources to the DataFrame manager\nWrong, there is no \"DataFrame manager\" in Spark.\nThe cluster manager schedules tasks on the cluster in client mode.\nNo, in client mode, the Spark driver schedules tasks on the cluster - not the cluster manager.\nThe cluster manager schedules tasks on the cluster in local mode.\nWrong: In local mode, there is no \"cluster\". The Spark application is running on a single machine, not\non a cluster of machines."
     },
     {
-        "question": "A financial services company uses an AI application to process financial documents by using\nAmazon Bedrock. During business hours, the application handles approximately 10,000 requests each\nhour, which requires consistent throughput.\nThe company uses the CreateProvisionedModelThroughput API to purchase provisioned throughput.\nAmazon CloudWatch metrics show that the provisioned capacity is unused while on-demand\nrequests are being throttled. The company finds the following code in the application:\npython\nresponse = bedrock_runtime.invoke_model(modelId=\"anthropic.claude-v2\",\nbody=json.dumps(payload)) The company needs the application to use the provisioned throughput\nand to resolve the throttling issues.\nWhich solution will meet these requirements?",
+        "question": "Which of the following code blocks writes DataFrame itemsDf to disk at storage location\nfilePath, making sure to substitute any existing data at that location?",
         "options": [
-            "A.. Increase the number of model units (MUs) in the provisioned throughput configuration.",
-            "B.. Replace the model ID parameter with the ARN of the provisioned model that the\nCreateProvisionedModelThroughput API returns.",
-            "C.. Add exponential backoff retry logic to handle throttling exceptions during peak hours.",
-            "D.. Modify the application to use the InvokeModelWithResponseStream API instead of the\nInvokeModel API."
+            "A.. itemsDf.write.mode(\"overwrite\").parquet(filePath)",
+            "B.. itemsDf.write.option(\"parquet\").mode(\"overwrite\").path(filePath)",
+            "C.. itemsDf.write(filePath, mode=\"overwrite\")",
+            "D.. itemsDf.write.mode(\"overwrite\").path(filePath)",
+            "E.. itemsDf.write().parquet(filePath, mode=\"overwrite\")"
         ],
-        "answer": "B",
-        "explanation": "Option B is correct because the application is currently invoking the base foundation model identifier,\nwhich routes traffic to the on-demand capacity pool rather than the company's purchased\nprovisioned throughput. In Amazon Bedrock, provisioned throughput is attached to a specific\nprovisioned resource created through the provisioned throughput APIs. To consume that reserved\ncapacity, inference requests must target the provisioned resource identifier that represents the\npurchased throughput, not the generic model identifier used for on-demand inference.\nThe code snippet uses modelId=\"anthropic.claude-v2\". This value selects the on-demand endpoint\nfor that model. As a result, requests are subject to on-demand quotas and throttling behavior, while\nthe provisioned throughput remains idle. This directly explains the CloudWatch observation:\nprovisioned capacity metrics show unused capacity because no traffic is being directed to the\nprovisioned resource, and the on-demand path is throttling because it is exceeding the applicable ondemand limits during peak volume.\nReplacing the modelId value with the provisioned throughput ARN returned by the\nCreateProvisionedModelThroughput workflow ensures the runtime invocation is routed to the\nreserved capacity. Once traffic is directed correctly, the purchased model units provide the consistent\nthroughput required for predictable performance during business hours, which is exactly why\nprovisioned throughput is used.\nOption A could increase capacity, but it does not fix the core issue that the application is not using\nthe provisioned resource at all. Option C can reduce the impact of throttling temporarily, but it adds\nlatency and does not guarantee consistent throughput; it also still wastes the provisioned capacity.\nOption D changes the response delivery mechanism, but throttling is a capacity routing and quota\nissue, not a streaming API issue."
+        "answer": [
+            "A"
+        ],
+        "explanation": "itemsDf.write.mode(\"overwrite\").parquet(filePath)\nCorrect! itemsDf.write returns a pyspark.sql.DataFrameWriter instance whose overwriting behavior\ncan be modified via the mode setting or by passing mode=\"overwrite\" to the parquet() command.\nAlthough the parquet format is not prescribed for solving this question, parquet() is a valid operator\nto initiate Spark to write the data to disk.\nitemsDf.write.mode(\"overwrite\").path(filePath)\nNo. A pyspark.sql.DataFrameWriter instance does not have a path() method.\nitemsDf.write.option(\"parquet\").mode(\"overwrite\").path(filePath)\nIncorrect, see above. In addition, a file format cannot be passed via the option() method.\nitemsDf.write(filePath, mode=\"overwrite\")\nWrong. Unfortunately, this is too simple. You need to obtain access to a DataFrameWriter for the\nDataFrame through calling itemsDf.write upon which you can apply further methods to control how\nSpark data should be written to disk. You cannot, however, pass arguments to itemsDf.write directly.\nitemsDf.write().parquet(filePath, mode=\"overwrite\")\nFalse. See above.\nMore info: pyspark.sql.DataFrameWriter.parquet - PySpark 3.1.2 documentation Static notebook |\nDynamic notebook: See test 3"
     },
     {
-        "question": "A company is developing a generative AI (GenAI) application that uses Amazon Bedrock\nfoundation models.\nThe application has several custom tool integrations. The application has experienced unexpected\n105\n\n\n\n\ntoken consumption surges despite consistent user traffic.\nThe company needs a solution that uses Amazon Bedrock model invocation logging to monitor\nInputTokenCount and OutputTokenCount metrics. The solution must detect unusual patterns in tool\nusage and identify which specific tool integrations cause abnormal token consumption. The solution\nmust also automatically adjust thresholds as traffic patterns change.\nWhich solution will meet these requirements?",
+        "question": "The code block shown below should add a column itemNameBetweenSeparators to\nDataFrame itemsDf. The column should contain arrays of maximum 4 strings. The arrays should be\ncomposed of the values in column itemsDf which are separated at - or whitespace characters. Choose\nthe answer that correctly fills the blanks in the code block to accomplish this.\nSample of DataFrame itemsDf:\n1.+------+----------------------------------+-------------------+\n2.|itemId|itemName |supplier |\n3.+------+----------------------------------+-------------------+\n\n\n4.|1 |Thick Coat for Walking in the Snow|Sports Company Inc.|\n5.|2 |Elegant Outdoors Summer Dress |YetiX |\n6.|3 |Outdoors Backpack |Sports Company Inc.|\n7.+------+----------------------------------+-------------------+\nCode block:\nitemsDf.__1__(__2__, __3__(__4__, \"[\\s\\-]\", __5__))",
         "options": [
-            "A.. Use Amazon CloudWatch Logs to capture model invocation logs. Create CloudWatch dashboards\nfor token metrics. Configure static CloudWatch alarms with fixed thresholds for each tool integration.",
-            "B.. Store model invocation logs in Amazon S3. Use AWS Glue and Amazon Athena to analyze token\nusage trends.",
-            "C.. Use Amazon CloudWatch Logs to capture model invocation logs. Create CloudWatch metric filters\nto extract tool-specific invocation patterns. Apply CloudWatch anomaly detection alarms that\nautomatically adjust baselines for each tool's token metrics.",
-            "D.. Store model invocation logs in an Amazon S3 bucket. Use AWS Lambda to process logs in real\ntime.Manually update CloudWatch alarm thresholds based on trends identified by the Lambda\nfunction."
+            "A.. 1. withColumn\n2. \"itemNameBetweenSeparators\"\n3. split\n4. \"itemName\"\n5. 4\n(Correct)",
+            "B.. 1. withColumnRenamed\n2. \"itemNameBetweenSeparators\"\n3. split\n4. \"itemName\"\n5. 4",
+            "C.. 1. withColumnRenamed\n2. \"itemName\"\n3. split\n4. \"itemNameBetweenSeparators\"\n5. 4",
+            "D.. 1. withColumn\n2. \"itemNameBetweenSeparators\"\n3. split\n4. \"itemName\"\n5. 5",
+            "E.. 1. withColumn\n2. itemNameBetweenSeparators\n3. str_split\n4. \"itemName\"\n5. 5"
+        ],
+        "answer": [
+            "A"
         ],
-        "answer": "C",
-        "explanation": "Option C best meets the requirements by combining native Amazon Bedrock logging with adaptive\nmonitoring and minimal operational overhead. Amazon Bedrock model invocation logging can be\nsent directly to CloudWatch Logs, where detailed fields such as InputTokenCount,\nOutputTokenCount, and tool invocation metadata are captured for each request.\nCloudWatch metric filters allow extraction of structured metrics from logs, including tool-specific\ntoken consumption patterns. By defining filters per tool integration, the company can isolate which\ntools are responsible for increased token usage without building custom log-processing pipelines.\nCloudWatch anomaly detection provides automatic baseline modeling and dynamic thresholds based\non historical traffic patterns. Unlike static alarms, anomaly detection adapts as usage evolves, making\nit ideal for applications with changing workloads or seasonal usage patterns. This directly satisfies the\nrequirement to automatically adjust thresholds as traffic patterns change.\nWhen abnormal token consumption occurs, anomaly detection alarms trigger immediately, enabling\nrapid investigation and remediation. Because this solution uses fully managed AWS services without\ncustom analytics jobs or manual threshold tuning, it significantly reduces operational effort.\nOption A fails to adapt to changing patterns. Option B introduces batch analysis and delayed insights.\nOption D requires manual intervention and custom code, increasing maintenance burden.\nTherefore, Option C provides the most scalable, adaptive, and low-maintenance solution for\nmonitoring and controlling token consumption in Amazon Bedrock-based applications."
+        "explanation": "This question deals with the parameters of Spark's split operator for strings.\nTo solve this question, you first need to understand the difference between DataFrame.withColumn()\nand DataFrame.withColumnRenamed(). The correct option here is DataFrame.withColumn() since,\naccording to the question, we want to add a column and not rename an existing column. This leaves\nyou with only 3 answers to consider.\nThe second gap should be filled with the name of the new column to be added to the DataFrame.\nOne of the remaining answers states the column name as itemNameBetweenSeparators, while the\nother two state it as \"itemNameBetweenSeparators\". The correct option here is\n\"itemNameBetweenSeparators\", since the other option would let Python try to interpret\nitemNameBetweenSeparators as the name of a variable, which we have not defined. This leaves you\nwith 2 answers to consider.\nThe decision boils down to how to fill gap 5. Either with 4 or with 5. The question asks for arrays of\n\n\nmaximum four strings. The code in gap 5 relates to the limit parameter of Spark's split operator (see\ndocumentation linked below). The documentation states that \"the resulting array's length will not be\nmore than limit\", meaning that we should pick the answer option with 4 as the code in the fifth gap\nhere.\nOn a side note: One answer option includes a function str_split. This function does not exist in\npySpark.\nMore info: pyspark.sql.functions.split - PySpark 3.1.2 documentation\nStatic notebook | Dynamic notebook: See test 3"
     },
     {
-        "question": "A company is developing a generative AI (GenAI) application that analyzes customer service\ncalls in real time and generates suggested responses for human customer service agents. The\napplication must process\n500,000 concurrent calls during peak hours with less than 200 ms end-to-end latency for each\nsuggestion. The company uses existing architecture to transcribe customer call audio streams. The\napplication must not exceed a predefined monthly compute budget and must maintain auto scaling\ncapabilities.\nWhich solution will meet these requirements?",
+        "question": "Which of the following are valid execution modes?",
         "options": [
-            "A.. Deploy a large, complex reasoning model on Amazon Bedrock. Purchase provisioned throughput\nand optimize for batch processing.",
-            "B.. Deploy a low-latency, real-time optimized model on Amazon Bedrock. Purchase provisioned\nthroughput and set up automatic scaling policies.",
-            "C.. Deploy a large language model (LLM) on an Amazon SageMaker real-time endpoint that uses\ndedicated GPU instances.",
-            "D.. Deploy a mid-sized language model on an Amazon SageMaker serverless endpoint that is\noptimized for batch processing."
+            "A.. Kubernetes, Local, Client",
+            "B.. Client, Cluster, Local",
+            "C.. Server, Standalone, Client",
+            "D.. Cluster, Server, Local",
+            "E.. Standalone, Client, Cluster"
         ],
-        "answer": "B",
-        "explanation": "Option B is the correct solution because it aligns with AWS guidance for building high-throughput,\nultra-low- latency GenAI applications while maintaining predictable costs and automatic scaling.\nAmazon Bedrock provides access to foundation models that are specifically optimized for real-time\ninference use cases, including conversational and recommendation-style workloads that require\nresponses within milliseconds.\nLow-latency models in Amazon Bedrock are designed to handle very high request rates with minimal\nper- request overhead. Purchasing provisioned throughput ensures that sufficient model capacity is\nreserved to handle peak loads, eliminating cold starts and reducing request queuing during traffic\nsurges. This is critical when supporting up to 500,000 concurrent calls with strict latency\nrequirements.\nAutomatic scaling policies allow the application to dynamically adjust capacity based on demand,\nensuring cost efficiency during off-peak hours while maintaining performance during peak usage. This\ndirectly supports the requirement to stay within a predefined monthly compute budget.\nOption A fails because batch processing and complex reasoning models introduce higher latency and\nare not suitable for real-time suggestions. Option C introduces significantly higher operational and\ncost overhead due to dedicated GPU instances and manual scaling responsibilities. Option D is\noptimized for batch workloads and cannot meet the sub-200 ms latency requirement.\nTherefore, Option B provides the best balance of performance, scalability, cost control, and\noperational simplicity using AWS-native GenAI services."
+        "answer": [
+            "B"
+        ],
+        "explanation": "This is a tricky question to get right, since it is easy to confuse execution modes and deployment\nmodes. Even in literature, both terms are sometimes used interchangeably.\nThere are only 3 valid execution modes in Spark: Client, cluster, and local execution modes. Execution\nmodes do not refer to specific frameworks, but to where infrastructure is located with respect to\neach other.\nIn client mode, the driver sits on a machine outside the cluster. In cluster mode, the driver sits on a\nmachine inside the cluster. Finally, in local mode, all Spark infrastructure is started in a single JVM\n(Java Virtual Machine) in a single computer which then also includes the driver.\nDeployment modes often refer to ways that Spark can be deployed in cluster mode and how it uses\nspecific frameworks outside Spark. Valid deployment modes are standalone, Apache YARN, Apache\nMesos and Kubernetes.\nClient, Cluster, Local\nCorrect, all of these are the valid execution modes in Spark.\nStandalone, Client, Cluster\nNo, standalone is not a valid execution mode. It is a valid deployment mode, though.\nKubernetes, Local, Client\nNo, Kubernetes is a deployment mode, but not an execution mode.\nCluster, Server, Local\nNo, Server is not an execution mode.\nServer, Standalone, Client\nNo, standalone and server are not execution modes.\nMore info: Apache Spark Internals - Learning Journal"
     },
     {
-        "question": "A company is using Amazon Bedrock to develop an AI-powered application that uses a\nfoundation model (FM) that supports cross-Region inference and provisioned throughput. The\napplication must serve users in Europe and North America with consistently low latency. The\napplication must comply with data residency regulations that require European user data to remain\nwithin Europe-based AWS Regions.\nDuring testing, the application experiences service degradation when Regional traffic spikes reach\nservice quotas. The company needs a solution that maintains application resilience and minimizes\noperational complexity.\nWhich solution will meet these requirements?",
+        "question": "Which of the following code blocks shows the structure of a DataFrame in a tree-like way,\ncontaining both column names and types?",
         "options": [
-            "A.. Deploy separate Amazon Bedrock instances in North American and European Regions. Use a\ncustom routing layer that directs traffic based on user location. Configure Amazon CloudWatch\nalarms to monitor Regional service usage. Use Amazon SNS to send email alerts when usage\napproaches thresholds.",
-            "B.. Use Amazon Bedrock cross-Region inference profiles by specifying geographical codes in profile\nIDs when calling the InvokeModel API. Configure separate Amazon API Gateway HTTP APIs to direct\n\n\n\n\nEuropean and North American users to the appropriate Regional endpoints.",
-            "C.. Deploy a multi-Region Amazon API Gateway HTTP API and AWS Lambda functions that implement\nretry logic to handle throttling. Configure the Lambda functions to call the FM in the nearest\nsecondary Region when quotas are reached.",
-            "D.. Configure provisioned throughput for Amazon Bedrock in multiple Regions. Implement failover\nlogic in application code to switch Regions when throttling occurs. Use AWS Global Accelerator to\nroute traffic based on user location."
+            "A.. 1.print(itemsDf.columns)\n2.print(itemsDf.types)",
+            "B.. itemsDf.printSchema()",
+            "C.. spark.schema(itemsDf)",
+            "D.. itemsDf.rdd.printSchema()",
+            "E.. itemsDf.print.schema()"
         ],
-        "answer": "B",
-        "explanation": "Option B is the most appropriate solution because it directly uses Amazon Bedrock cross-Region\ninference profiles, which are designed to provide resilience and load distribution while respecting\ndata residency boundaries. Cross-Region inference profiles allow applications to distribute inference\nrequests across multiple Regions within a defined geographic boundary, such as Europe or North\nAmerica, without requiring custom failover logic.\nBy specifying geographical codes in the inference profile ID, the application ensures that European\nuser data is processed only within Europe-based Regions, satisfying regulatory requirements. At the\nsame time, Bedrock automatically routes requests to healthy Regions within that geography when\ntraffic spikes or service quotas are reached, improving availability and maintaining low latency.\nUsing separate Amazon API Gateway HTTP APIs for Europe and North America provides a clean,\nsimple routing layer that directs users to the appropriate regional inference profile. This avoids\ncomplex custom routing or retry logic in application code and minimizes operational overhead.\nOption A relies on custom routing and manual monitoring, which increases complexity and does not\nprovide automatic resilience. Option C introduces custom retry and fallback logic that risks violating\ndata residency requirements if misconfigured. Option D requires significant application-level failover\nlogic and adds operational burden with Global Accelerator configuration.\nTherefore, Option B best meets the requirements for low latency, data residency compliance,\nresilience during traffic spikes, and minimal operational complexity."
+        "answer": [
+            "B"
+        ],
+        "explanation": "itemsDf.printSchema()\nCorrect! Here is an example of what itemsDf.printSchema() shows, you can see the tree-like structure\ncontaining both column names and types:\nroot\n|-- itemId: integer (nullable = true)\n|-- attributes: array (nullable = true)\n| |-- element: string (containsNull = true)\n|-- supplier: string (nullable = true)\nitemsDf.rdd.printSchema()\nNo, the DataFrame's underlying RDD does not have a printSchema() method.\nspark.schema(itemsDf)\nIncorrect, there is no spark.schema command.\nprint(itemsDf.columns)\nprint(itemsDf.dtypes)\nWrong. While the output of this code blocks contains both column names and column types, the\ninformation is not arranges in a tree-like way.\nitemsDf.print.schema()\nNo, DataFrame does not have a print method.\nStatic notebook | Dynamic notebook: See test 3"
     },
     {
-        "question": "A financial services company uses multiple foundation models (FMs) through Amazon\nBedrock for its generative AI (GenAI) applications. To comply with a new regulation for GenAI use\nwith sensitive financial data, the company needs a token management solution.\nThe token management solution must proactively alert when applications approach model-specific\ntoken limits. The solution must also process more than 5,000 requests each minute and maintain\ntoken usage metrics to allocate costs across business units.\nWhich solution will meet these requirements?",
+        "question": "Which of the following code blocks returns all unique values of column storeId in DataFrame\ntransactionsDf?",
         "options": [
-            "A.. Develop model-specific tokenizers in an AWS Lambda function. Configure the Lambda function to\nestimate token usage before sending requests to Amazon Bedrock. Configure the Lambda function to\npublish metrics to Amazon CloudWatch and trigger alarms when requests approach thresholds. Store\ndetailed token usage in Amazon DynamoDB to report costs.",
-            "B.. Implement Amazon Bedrock Guardrails with token quota policies. Capture metrics on rejected\nrequests.\nConfigure Amazon EventBridge rules to trigger notifications based on Amazon Bedrock Guardrails\nmetrics. Use Amazon CloudWatch dashboards to visualize token usage trends across models.",
-            "C.. Deploy an Amazon SQS dead-letter queue for failed requests. Configure an AWS Lambda function\nto analyze token-related failures. Use Amazon CloudWatch Logs Insights to generate reports on token\n\n\n\n\nusage patterns based on error logs from Amazon Bedrock API responses.",
-            "D.. Use Amazon API Gateway to create a proxy for all Amazon Bedrock API calls. Configure request\nthrottling based on custom usage plans with predefined token quotas. Configure API Gateway to\nreject requests that will exceed token limits."
+            "A.. transactionsDf[\"storeId\"].distinct()",
+            "B.. transactionsDf.select(\"storeId\").distinct()\n(Correct)",
+            "C.. transactionsDf.filter(\"storeId\").distinct()",
+            "D.. transactionsDf.select(col(\"storeId\").distinct())",
+            "E.. transactionsDf.distinct(\"storeId\")"
+        ],
+        "answer": [
+            "B"
         ],
-        "answer": "A",
-        "explanation": "Option A is the correct solution because it provides proactive, model-aware token management with\nfine- grained visibility and alerting, which is required for regulated financial workloads. Amazon\nBedrock currently exposes token usage metrics after invocation, but it does not natively enforce\nproactive, model-specific token limits across multiple applications or business units.\nBy implementing model-specific tokenizers in AWS Lambda, the company can estimate input and\noutput token usage before sending requests to Amazon Bedrock. This enables early detection of\nrequests that are approaching or exceeding model limits and allows the application to block,\ntruncate, or reroute requests proactively rather than reacting to failures.\nPublishing token usage metrics to Amazon CloudWatch enables real-time monitoring and alerting at\nscale, easily supporting more than 5,000 requests per minute. Storing detailed token usage data in\nAmazon DynamoDB allows the company to attribute usage and costs to specific applications, teams,\nor business units-an essential requirement for regulatory reporting and internal chargeback.\nOption B is incorrect because Amazon Bedrock Guardrails do not currently provide token quota\nenforcement or proactive token alerts. Option C is reactive and only analyzes failures after they\noccur. Option D throttles requests but cannot enforce token-based limits or provide per-model cost\nattribution.\nTherefore, Option A best satisfies proactive alerting, scalability, compliance reporting, and cost\nallocation requirements with acceptable operational effort."
+        "explanation": "distinct() is a method of a DataFrame. Knowing this, or recognizing this from the documentation, is\nthe key to solving this question.\nMore info: pyspark.sql.DataFrame.distinct - PySpark 3.1.2 documentation Static notebook | Dynamic\nnotebook: See test 2"
     }
 ];

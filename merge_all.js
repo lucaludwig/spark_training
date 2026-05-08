@@ -1,67 +1,61 @@
 const fs = require('fs');
 
-function parseQuestionsJs(filePath) {
-    if (!fs.existsSync(filePath)) return [];
-    const content = fs.readFileSync(filePath, 'utf8');
-    const match = content.match(/const quizData = ([\s\S]*]);/);
-    if (match && match[1]) {
-        try {
-            return JSON.parse(match[1]);
-        } catch (e) {
-            console.error("Error parsing existing questions.js JSON:", e);
-            return [];
-        }
-    }
-    return [];
-}
-
 function normalizeText(text) {
     if (!text) return "";
     return text.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function parseAnswerToArray(answerStr) {
+    // Convert "C,E" or "CE" or "A" to ["C","E"] or ["A"]
+    return answerStr.replace(/,/g, '').split('');
 }
 
 function parseTextFile(filePath) {
     let content = fs.readFileSync(filePath, 'utf8');
     content = content.replace(/IT Certification Guaranteed, The Easy Way!/g, '');
     content = content.replace(/Page \d+/g, '');
-    // Remove form feed characters first
     content = content.replace(/\f/g, '\n');
-    // Remove standalone page numbers (lines with only 1-3 digits surrounded by blank lines)
+    // Remove standalone page numbers
     content = content.replace(/\n\n\d{1,3}\n\n/g, '\n\n');
     content = content.replace(/^\d{1,3}\n\n/g, '');
     content = content.replace(/\n\n\d{1,3}$/g, '');
-    
+
     content = content.replace(/QUESTION NO:\s*\d+/g, '###SPLIT###');
     content = content.replace(/NO\.\d+/g, '###SPLIT###');
 
     const parts = content.split('###SPLIT###');
     const rawQuestions = parts.slice(1);
-    
+
     const questions = [];
 
     rawQuestions.forEach((raw, idx) => {
         let text = raw.trim();
         if (!text) return;
+        // Remove leading "X of Y." lines (e.g. "12 of 55.")
+        text = text.replace(/^\d+ of \d+\.\s*/g, '');
 
-        const answerMatch = text.match(/Answer:\s*([A-Z,]+)/);
-        let answer = answerMatch ? answerMatch[1].trim() : null;
+        const answerMatch = text.match(/Answer:\s*([A-Z][A-Z,]*)/);
+        let answer = answerMatch ? parseAnswerToArray(answerMatch[1].trim()) : null;
 
-        if (!answer) return; 
+        if (!answer) return;
 
         let explanation = null;
-        const explanationMatch = text.match(/Explanation:\s*([\s\S]*?)$/);
+        // Match both "Explanation:" and "Explanation\n" (no colon)
+        const explanationMatch = text.match(/Explanation:?\s*([\s\S]*?)$/);
         if (explanationMatch) {
             explanation = explanationMatch[1].trim();
             text = text.substring(0, explanationMatch.index).trim();
         }
 
-        text = text.replace(/Answer:\s*[A-Z,]+.*/, '').trim();
+        text = text.replace(/Answer:\s*[A-Z][A-Z,]*.*/, '').trim();
+        // Remove "Options:" label if present
+        text = text.replace(/\nOptions:\s*$/g, '').trim();
 
         let questionText = "";
         let options = [];
         const optionMarkers = ['A.', 'B.', 'C.', 'D.', 'E.', 'F.'];
         let firstOptionIndex = -1;
-        
+
         const matchesA = [...text.matchAll(/(^|\n|\s)A\.\s/g)];
         for (const match of matchesA) {
             const idxMatch = match.index + match[0].indexOf('A');
@@ -75,9 +69,8 @@ function parseTextFile(filePath) {
             questionText = text.substring(0, firstOptionIndex).trim();
             const optionsBlock = text.substring(firstOptionIndex).trim();
             const labelIndices = {};
-            
+
             const findLabel = (block, label, startFrom) => {
-                // Fix: escape label dot and use \\s for whitespace
                 const regex = new RegExp(`(^|\\n|\\s)${label.replace('.', '\\.')}\\s`);
                 const match = block.substring(startFrom).match(regex);
                 if (match) {
@@ -91,24 +84,18 @@ function parseTextFile(filePath) {
                 const idxMatch = findLabel(optionsBlock, label, lastIdx);
                 if (idxMatch !== -1) {
                     labelIndices[label] = idxMatch;
-                    lastIdx = idxMatch; 
+                    lastIdx = idxMatch;
                 }
             }
 
             const sortedLabels = Object.keys(labelIndices).sort();
-            
-            // DEBUG OPTION PARSING FOR FIRST QUESTION
-            if (idx === 0) {
-                console.log(`[DEBUG] First Q Options Block:\n${optionsBlock.substring(0, 100)}...`);
-                console.log(`[DEBUG] Found Labels: ${sortedLabels.join(', ')}`);
-            }
 
             for (let i = 0; i < sortedLabels.length; i++) {
                 const label = sortedLabels[i];
                 const start = labelIndices[label];
                 const nextLabelKey = sortedLabels[i+1];
                 const end = nextLabelKey ? labelIndices[nextLabelKey] : optionsBlock.length;
-                
+
                 let optText = optionsBlock.substring(start, end).trim();
                 optText = optText.replace(/^[A-Z]\.\s/, '');
                 options.push(`${label}. ${optText}`);
@@ -128,10 +115,6 @@ function parseTextFile(filePath) {
                 qObj.explanation = explanation;
             }
             questions.push(qObj);
-        } else {
-            if (idx === 0) {
-                console.log(`[DEBUG] Failed to add question. QText len: ${questionText.length}, Options len: ${options.length}`);
-            }
         }
     });
 
@@ -139,19 +122,19 @@ function parseTextFile(filePath) {
 }
 
 function mergeAll() {
-    let finalQuestions = parseQuestionsJs('questions.js');
-    console.log(`Starting with: ${finalQuestions.length} questions.`);
-    const files = ['AIP-C01 V12.35.txt'];
+    const files = [
+        'Associate-Developer-Apache-Spark-3.5 V12.65.txt',
+        'Associate-Developer-Apache-Spark V12.35.txt'
+    ];
+    const finalQuestions = [];
     const existingSet = new Set();
-    finalQuestions.forEach(q => existingSet.add(normalizeText(q.question)));
-    let totalAdded = 0;
 
     files.forEach(file => {
         if (fs.existsSync(file)) {
             console.log(`Processing ${file}...`);
             const newQs = parseTextFile(file);
             console.log(`  Parsed ${newQs.length} valid questions from ${file}`);
-            
+
             let addedFromFile = 0;
             let skippedShort = 0;
             let skippedDupe = 0;
@@ -165,7 +148,6 @@ function mergeAll() {
                     finalQuestions.push(q);
                     existingSet.add(normQ);
                     addedFromFile++;
-                    totalAdded++;
                 } else {
                     skippedDupe++;
                 }
@@ -175,7 +157,6 @@ function mergeAll() {
             if (skippedDupe > 0) console.log(`  Skipped ${skippedDupe} questions (duplicates)`);
         }
     });
-    console.log(`Total new questions added: ${totalAdded}`);
     console.log(`Final total questions: ${finalQuestions.length}`);
     const outputContent = `const quizData = ${JSON.stringify(finalQuestions, null, 4)};`;
     fs.writeFileSync('questions.js', outputContent);
