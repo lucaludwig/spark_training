@@ -26,7 +26,7 @@ const quizData = [
         "explanation": "In Spark's DataFrame API, the dropna() (or equivalently, DataFrameNaFunctions.drop())\nmethod removes rows containing null values.\nBehavior:\nhow=\"any\" → drops rows where any column has a null value.\nhow=\"all\" → drops rows where all columns are null.\n\n\nSince the data scientist wants to drop records with any null field, the correct parameter is\nhow=\"any\".\nCorrect syntax:\nfiltered_users = raw_users.dropna(how=\"any\")\nThis will remove all records that have at least one null value in any column.\nWhy the other options are incorrect:\nA: Uses na.drop(\"any\") but missing parentheses context (works only as\nraw_users.na.drop(\"any\"), which is equivalent to option C).\nB/D: how=\"all\" only removes rows where all values are null - too strict for this use case.\nReference:\nPySpark DataFrame API - DataFrameNaFunctions.drop() and DataFrame.dropna().\nDatabricks Exam Guide (June 2025): Section \"Developing Apache Spark\nDataFrame/DataSet API Applications\" - covers handling missing data and DataFrame\ncleaning operations."
     },
     {
-        "question": "An engineer has two DataFrames: df1 (small) and df2 (large). A broadcast join is used:\npython\nCopyEdit\nfrom pyspark.sql.functions import broadcast\nresult = df2.join(broadcast(df1), on='id', how='inner')\nWhat is the purpose of using broadcast() in this scenario?\nOptions:",
+        "question": "An engineer has two DataFrames: df1 (small) and df2 (large). A broadcast join is used:\nfrom pyspark.sql.functions import broadcast\nresult = df2.join(broadcast(df1), on='id', how='inner')\nWhat is the purpose of using broadcast() in this scenario?\nOptions:",
         "options": [
             "A. It filters the id values before performing the join.",
             "B. It increases the partition size for df1 and df2.",
@@ -39,7 +39,7 @@ const quizData = [
         "explanation": "broadcast(df1) tells Spark to send the small DataFrame (df1) to all worker nodes.\nThis eliminates the need for shuffling df1 during the join.\nBroadcast joins are optimized for scenarios with one large and one small table."
     },
     {
-        "question": "A developer runs:\nWhat is the result?\nOptions:",
+        "question": "A developer runs:\ndf.write.partitionBy(\"color\", \"fruit\").parquet(\"/path/to/output\")\nWhat is the result?\nOptions:",
         "options": [
             "A. It stores all data in a single Parquet file.",
             "B. It throws an error if there are null values in either partition column.",
@@ -270,9 +270,9 @@ const quizData = [
             "D. 40"
         ],
         "answer": [
-            "C"
+            "A"
         ],
-        "explanation": "If each of the 10 nodes runs 4 executors, and each executor is assigned 4 CPU cores:\nExecutors per node = 4\nCores per executor = 4\nTotal executors = 4 * 10 = 40\nTotal cores = 40 executors * 4 cores = 160 cores\nHowever, Spark uses 1 core for overhead on each node when managing multiple executors.\nThus, the practical allocation is:\nTotal usable executors = 4 executors/node × 10 nodes = 40\nTotal cores = 4 cores × 40 executors = 160\nAnswe r : A - but the question asks specifically about \"CPU cores used by the application,\"\nassuming all However, if you are considering 4 executors/node × 4 cores = 16 cores per\nnode, across 10 nodes, that's 160.\nFinal Answe r: A"
+        "explanation": "10 nodes × 4 executors/node = 40 executors.\n40 executors × 4 cores/executor = 160 cores total.\nFinal answer: A (160)"
     },
     {
         "question": "A data engineer needs to join multiple DataFrames and has written the following code:\nfrom pyspark.sql.functions import broadcast\ndata1 = [(1, \"A\"), (2, \"B\")]\ndata2 = [(1, \"X\"), (2, \"Y\")]\ndata3 = [(1, \"M\"), (2, \"N\")]\ndf1 = spark.createDataFrame(data1, [\"id\", \"val1\"])\ndf2 = spark.createDataFrame(data2, [\"id\", \"val2\"])\ndf3 = spark.createDataFrame(data3, [\"id\", \"val3\"])\ndf_joined = df1.join(broadcast(df2), \"id\", \"inner\") \\\n.join(broadcast(df3), \"id\", \"inner\")\nWhat will be the output of this code?",
@@ -337,7 +337,7 @@ const quizData = [
         "answer": [
             "A"
         ],
-        "explanation": "To read from a specific Kafka topic using Structured Streaming, the correct syntax is:\npython\nCopyEdit\n.option(\"subscribe\", \"feed\")\nThis is explicitly defined in the Spark documentation:\n\"subscribe - The Kafka topic to subscribe to. Only one topic can be specified for this option.\"\n(Source: Apache Spark Structured Streaming + Kafka Integration Guide)\n\"subscribe - The Kafka topic to subscribe to. Only one topic can be specified for this option.\"\n(Source: Apache Spark Structured Streaming + Kafka Integration Guide) B . \"subscribe.topic\"\nis invalid.\nC . \"kafka.topic\" is not a recognized option.\nD . \"topic\" is not valid for Kafka source in Spark."
+        "explanation": "To read from a specific Kafka topic using Structured Streaming, the correct syntax is:\n.option(\"subscribe\", \"feed\")\nThis is explicitly defined in the Spark documentation:\n\"subscribe - The Kafka topic to subscribe to. Only one topic can be specified for this option.\"\n(Source: Apache Spark Structured Streaming + Kafka Integration Guide)\n\"subscribe - The Kafka topic to subscribe to. Only one topic can be specified for this option.\"\n(Source: Apache Spark Structured Streaming + Kafka Integration Guide) B . \"subscribe.topic\"\nis invalid.\nC . \"kafka.topic\" is not a recognized option.\nD . \"topic\" is not valid for Kafka source in Spark."
     },
     {
         "question": "A developer is trying to join two tables, sales.purchases_fct and sales.customer_dim, using\nthe following code:\nfact_df = purch_df.join(cust_df, F.col('customer_id') == F.col('custid')) The developer has\ndiscovered that customers in the purchases_fct table that do not exist in the customer_dim\ntable are being dropped from the joined table.\nWhich change should be made to the code to stop these customer records from being\ndropped?",
@@ -501,11 +501,12 @@ const quizData = [
             "A. streaming_df. select (countDistinct (\"Name\") )",
             "B. streaming_df.groupby(\"Id\") .count ()",
             "C. streaming_df.orderBy(\"timestamp\").limit(4)",
-            "D. streaming_df.filter (col(\"count\") < 30).show()\n\nIn Structured Streaming, only a limited subset of operations is supported due to the nature of\nunbounded data. Operations like sorting (orderBy) and global aggregation (countDistinct)\nrequire a full view of the dataset, which is not possible with streaming data unless specific\nwatermarks or windows are defined.\nReview of Each Option:\nA: select(countDistinct(\"Name\"))\nNot allowed - Global aggregation like countDistinct() requires the full dataset and is not\nsupported directly in streaming without watermark and windowing logic.\nReference: Databricks Structured Streaming Guide - Unsupported Operations.\nB: groupby(\"Id\").count()\nSupported - Streaming aggregations over a key (like groupBy(\"Id\")) are supported. Spark\nmaintains intermediate state for each key.\nReference: Databricks Docs → Aggregations in Structured Streaming\n(https://docs.databricks.com/structured-streaming/aggregation.html) C .\norderBy(\"timestamp\").limit(4)\nNot allowed - Sorting and limiting require a full view of the stream (which is infinite), so this is\nunsupported in streaming DataFrames.\nReference: Spark Structured Streaming - Unsupported Operations (ordering without\nwatermark/window not allowed).\nD: filter(col(\"count\") < 30).show()\nNot allowed - show() is a blocking operation used for debugging batch DataFrames; it's not\nallowed on streaming DataFrames.\n\n\nReference: Structured Streaming Programming Guide - Output operations like show() are not\nsupported.\nReference Extract from Official Guide:\n\"Operations like orderBy, limit, show, and countDistinct are not supported in Structured\nStreaming because they require the full dataset to compute a result. Use groupBy(...).agg(...)\ninstead for incremental aggregations.\"\n- Databricks Structured Streaming Programming Guide"
+            "D. streaming_df.filter (col(\"count\") < 30).show()"
         ],
         "answer": [
             "B"
-        ]
+        ],
+        "explanation": "In Structured Streaming, only a limited subset of operations is supported.\nB: groupby(\"Id\").count() is supported — streaming aggregations over a key are allowed, Spark maintains intermediate state for each key.\nA: countDistinct() requires the full dataset and is not supported in streaming without watermark/windowing.\nC: orderBy().limit() requires a full view of the stream and is unsupported.\nD: show() is a blocking batch operation, not allowed on streaming DataFrames. Use writeStream instead."
     },
     {
         "question": "Given the code:\ndf = spark.read.csv(\"large_dataset.csv\")\nfiltered_df = df.filter(col(\"error_column\").contains(\"error\"))\nmapped_df = filtered_df.select(split(col(\"timestamp\"), \" \").getItem(0).alias(\"date\"),\nlit(1).alias(\"count\")) reduced_df = mapped_df.groupBy(\"date\").sum(\"count\")\nreduced_df.count() reduced_df.show() At which point will Spark actually begin processing the\ndata?",
@@ -544,7 +545,7 @@ const quizData = [
         "answer": [
             "D"
         ],
-        "explanation": "The provided code defines a Pandas UDF of type Series-to-Series, where a new instance of\nthe language model is created on each call, which happens per batch. This is inefficient and\nresults in significant overhead due to repeated model initialization.\nTo reduce the frequency of model loading, the engineer should convert the UDF to an\niterator-based Pandas UDF (Iterator[pd.Series] -> Iterator[pd.Series]). This allows the model\n\n\nto be loaded once per executor and reused across multiple batches, rather than once per\ncall.\nFrom the official Databricks documentation:\n\"Iterator of Series to Iterator of Series UDFs are useful when the UDF initialization is\nexpensive... For example, loading a ML model once per executor rather than once per\nrow/batch.\"\n- Databricks Official Docs: Pandas UDFs\nCorrect implementation looks like:\npython\nCopyEdit\n@pandas_udf(\"string\")\ndef translate_udf(batch_iter: Iterator[pd.Series]) -> Iterator[pd.Series]:\nmodel = get_translation_model(target_lang='es')\nfor batch in batch_iter:\nyield batch.apply(model)\nThis refactor ensures the get_translation_model() is invoked once per executor process, not\nper batch, significantly improving pipeline performance."
+        "explanation": "The provided code defines a Pandas UDF of type Series-to-Series, where a new instance of\nthe language model is created on each call, which happens per batch. This is inefficient and\nresults in significant overhead due to repeated model initialization.\nTo reduce the frequency of model loading, the engineer should convert the UDF to an\niterator-based Pandas UDF (Iterator[pd.Series] -> Iterator[pd.Series]). This allows the model\n\n\nto be loaded once per executor and reused across multiple batches, rather than once per\ncall.\nFrom the official Databricks documentation:\n\"Iterator of Series to Iterator of Series UDFs are useful when the UDF initialization is\nexpensive... For example, loading a ML model once per executor rather than once per\nrow/batch.\"\n- Databricks Official Docs: Pandas UDFs\nCorrect implementation looks like:\n@pandas_udf(\"string\")\ndef translate_udf(batch_iter: Iterator[pd.Series]) -> Iterator[pd.Series]:\nmodel = get_translation_model(target_lang='es')\nfor batch in batch_iter:\nyield batch.apply(model)\nThis refactor ensures the get_translation_model() is invoked once per executor process, not\nper batch, significantly improving pipeline performance."
     },
     {
         "question": "Given the following code snippet in my_spark_app.py:\n\nfrom pyspark.sql import SparkSession\n\nspark = SparkSession.builder.appName(\"CoreComponentsExample\").getOrCreate()\n\ndata = [(\"Alice\", 34), (\"Bob\", 36), (\"Cathy\", 31)]\ncolumns = [\"Name\", \"Age\"]\n\ndf = spark.createDataFrame(data, columns).withColumn(\"Status\", \"Pass\")\ndf_filtered = df.filter(df.Age > 35)\ndf_filtered.show()\n\nspark.stop()\n\nWhat is the role of the driver node?",
@@ -602,7 +603,7 @@ const quizData = [
         "question": "A data engineer needs to write a Streaming DataFrame as Parquet files.\nGiven the code:\nWhich code fragment should be inserted to meet the requirement?\nA)\nB)\nC)\n \nD)\n \nWhich code fragment should be inserted to meet the requirement?",
         "options": [
             "A. .format(\"parquet\")\n.option(\"location\", \"path/to/destination/dir\")",
-            "B. CopyEdit\n.option(\"format\", \"parquet\")\n.option(\"destination\", \"path/to/destination/dir\")",
+            "B. .option(\"format\", \"parquet\")\n.option(\"destination\", \"path/to/destination/dir\")",
             "C. .option(\"format\", \"parquet\")\n.option(\"location\", \"path/to/destination/dir\")",
             "D. .format(\"parquet\")\n.option(\"path\", \"path/to/destination/dir\")"
         ],
@@ -661,7 +662,7 @@ const quizData = [
         "answer": [
             "C"
         ],
-        "explanation": ".na.drop(how='any') drops any row that has at least one null value.\nThis is exactly what's needed when the goal is to retain only fully complete records.\nUsage:CopyEdit\nfiltered_df = users_raw_df.na.drop(how='any')\n\n\nExplanation of incorrect options:\nA: thresh=0 is invalid - thresh must be ≥ 1.\nB: how='all' drops only rows where all columns are null (too lenient).\nD: spark.na.drop doesn't support mixing how and thresh in that way; it's incorrect syntax."
+        "explanation": ".na.drop(how='any') drops any row that has at least one null value.\nThis is exactly what's needed when the goal is to retain only fully complete records.\nUsage:filtered_df = users_raw_df.na.drop(how='any')\n\n\nExplanation of incorrect options:\nA: thresh=0 is invalid - thresh must be ≥ 1.\nB: how='all' drops only rows where all columns are null (too lenient).\nD: spark.na.drop doesn't support mixing how and thresh in that way; it's incorrect syntax."
     },
     {
         "question": "A data engineer needs to write a DataFrame df to a Parquet file, partitioned by the column\ncountry, and overwrite any existing data at the destination path.\nWhich code should the data engineer use to accomplish this task in Apache Spark?",
@@ -758,14 +759,14 @@ const quizData = [
         "question": "A data scientist of an e-commerce company is working with user data obtained from its\nsubscriber database and has stored the data in a DataFrame df_user. Before further\nprocessing the data, the data scientist wants to create another DataFrame df_user_non_pii\nand store only the non-PII columns in this DataFrame. The PII columns in df_user are\nfirst_name, last_name, email, and birthdate.\nWhich code snippet can be used to meet this requirement?",
         "options": [
             "A. df_user_non_pii = df_user.drop(\"first_name\", \"last_name\", \"email\", \"birthdate\")",
-            "B. df_user_non_pii = df_user.drop(\"first_name\", \"last_name\", \"email\", \"birthdate\")",
+            "B. df_user_non_pii = df_user.drop([\"first_name\", \"last_name\", \"email\", \"birthdate\"])",
             "C. df_user_non_pii = df_user.dropfields(\"first_name\", \"last_name\", \"email\", \"birthdate\")",
             "D. df_user_non_pii = df_user.dropfields(\"first_name, last_name, email, birthdate\")"
         ],
         "answer": [
             "A"
         ],
-        "explanation": "To remove specific columns from a PySpark DataFrame, the drop() method is used. This\nmethod returns a new DataFrame without the specified columns. The correct syntax for\ndropping multiple columns is to pass each column name as a separate argument to the\ndrop() method.\nCorrect Usage:\ndf_user_non_pii = df_user.drop(\"first_name\", \"last_name\", \"email\", \"birthdate\") This line of\ncode will return a new DataFrame df_user_non_pii that excludes the specified PII columns.\nExplanation of Options:\nA . Correct. Uses the drop() method with multiple column names passed as separate\narguments, which is the standard and correct usage in PySpark.\nB . Although it appears similar to Option A, if the column names are not enclosed in quotes or\nif there's a syntax error (e.g., missing quotes or incorrect variable names), it would result in\nan error. However, as written, it's identical to Option A and thus also correct.\nC . Incorrect. The dropfields() method is not a method of the DataFrame class in PySpark. It's\nused with StructType columns to drop fields from nested structures, not top-level DataFrame\ncolumns.\nD . Incorrect. Passing a single string with comma-separated column names to dropfields() is\nnot valid syntax in PySpark.\nReference:\nPySpark Documentation: DataFrame.drop\nStack Overflow Discussion: How to delete columns in PySpark DataFrame"
+        "explanation": "To remove specific columns from a PySpark DataFrame, the drop() method is used.\nCorrect syntax: df_user.drop(\"col1\", \"col2\") — pass each column name as a separate string argument.\nA: Correct. Uses drop() with multiple column names as separate arguments.\nB: Incorrect. drop() does not accept a list — use separate string arguments, not a Python list.\nC: Incorrect. dropfields() is not a DataFrame method — it's used for nested StructType fields only.\nD: Incorrect. dropfields() with a single comma-separated string is not valid PySpark syntax."
     },
     {
         "question": "A data scientist is working with a massive dataset that exceeds the memory capacity of a\nsingle machine. The data scientist is considering using Apache Spark™ instead of traditional\nsingle-machine languages like standard Python scripts.\nWhich two advantages does Apache Spark™ offer over a normal single-machine language in\n\n\nthis scenario? (Choose 2 answers)",
@@ -897,7 +898,7 @@ const quizData = [
         "answer": [
             "D"
         ],
-        "explanation": "To sort a PySpark DataFrame by multiple columns with mixed sort directions, the correct\nusage is:\npython\nCopyEdit\ndf.orderBy(\"age\", \"salary\", ascending=[True, False])\nage will be sorted in ascending order\nsalary will be sorted in descending order\nThe orderBy() and sort() methods in PySpark accept a list of booleans to specify the sort\ndirection for each column.\nDocumentation Reference: PySpark API - DataFrame.orderBy"
+        "explanation": "To sort a PySpark DataFrame by multiple columns with mixed sort directions, the correct\nusage is:\ndf.orderBy(\"age\", \"salary\", ascending=[True, False])\nage will be sorted in ascending order\nsalary will be sorted in descending order\nThe orderBy() and sort() methods in PySpark accept a list of booleans to specify the sort\ndirection for each column.\nDocumentation Reference: PySpark API - DataFrame.orderBy"
     },
     {
         "question": "Which command overwrites an existing JSON file when writing a DataFrame?",
@@ -1056,7 +1057,7 @@ const quizData = [
         "explanation": "The Spark configuration spark.executor.cores defines how many concurrent tasks can be\nexecuted within a single executor process.\nEach executor is assigned a number of CPU cores.\nEach core executes one task at a time.\nTherefore, increasing spark.executor.cores allows an executor to run more tasks\n\n\nconcurrently.\nExample:\n--conf spark.executor.cores=4\n→ Each executor can run 4 parallel tasks.\nWhy the other options are incorrect:\nB (spark.task.maxFailures): Sets retry attempts for failed tasks.\nC (spark.executor.memory): Sets executor memory, not concurrency.\nD (spark.sql.shuffle.partitions): Defines number of shuffle partitions, not executor\nconcurrency.\nReference:\nSpark Configuration Guide - Executor cores, tasks, and parallelism.\nDatabricks Exam Guide (June 2025): Section \"Apache Spark Architecture and Components\"\n- executor configuration, CPU cores, and parallel task execution."
     },
     {
-        "question": "A Spark developer wants to improve the performance of an existing PySpark UDF that runs a\nhash function that is not available in the standard Spark functions library. The existing UDF\ncode is:\nimport hashlib\nimport pyspark.sql.functions as sf\nfrom pyspark.sql.types import StringType\ndef shake_256(raw):\nreturn hashlib.shake_256(raw.encode()).hexdigest(20)\nshake_256_udf = sf.udf(shake_256, StringType())\nThe developer wants to replace this existing UDF with a Pandas UDF to improve\nperformance. The developer changes the definition of shake_256_udf to this:CopyEdit\nshake_256_udf = sf.pandas_udf(shake_256, StringType()) However, the developer receives\nthe error:\nWhat should the signature of the shake_256() function be changed to in order to fix this\nerror?",
+        "question": "A Spark developer wants to improve the performance of an existing PySpark UDF that runs a\nhash function that is not available in the standard Spark functions library. The existing UDF\ncode is:\nimport hashlib\nimport pyspark.sql.functions as sf\nfrom pyspark.sql.types import StringType\ndef shake_256(raw):\nreturn hashlib.shake_256(raw.encode()).hexdigest(20)\nshake_256_udf = sf.udf(shake_256, StringType())\nThe developer wants to replace this existing UDF with a Pandas UDF to improve\nperformance. The developer changes the definition of shake_256_udf to this:shake_256_udf = sf.pandas_udf(shake_256, StringType()) However, the developer receives\nthe error:\nWhat should the signature of the shake_256() function be changed to in order to fix this\nerror?",
         "options": [
             "A. def shake_256(df: pd.Series) -> str:",
             "B. def shake_256(df: Iterator[pd.Series]) -> Iterator[pd.Series]:",
@@ -1500,11 +1501,11 @@ const quizData = [
         "explanation": "To compare a column value with a Python literal constant in a DataFrame expression, use\nF.lit() to convert it into a Spark literal.\n\n\nCorrect refactor:\nfrom pyspark.sql import functions as F\nmin_price = 110.50\nresult_df = prices_df.filter(F.col(\"price\") > F.lit(min_price)).agg(F.count(\"*\")) This avoids type\nmismatches and ensures Spark executes the filter expression on the cluster.\nWhy the other options are incorrect:\nB: where() syntax is valid, but F.lit(\"price\") is incorrect - wraps string literal, not a column.\nC: withColumn adds a column, not needed for this aggregation.\nD: Comparison logic reversed.\nReference:\nPySpark SQL Functions - lit(), col(), and DataFrame filters.\nDatabricks Exam Guide (June 2025): Section \"Developing Apache Spark\nDataFrame/DataSet API Applications\" - filtering, literals, and aggregations."
     },
     {
-        "question": "A Data Analyst is working on the DataFrame sensor_df, which contains two columns:\nWhich code fragment returns a DataFrame that splits the record column into separate\ncolumns and has one array item per row?\nA)\nB)\nC)\nD)",
+        "question": "A Data Analyst is working on the DataFrame sensor_df, which contains two columns:\nWhich code fragment returns a DataFrame that splits the record column into separate\ncolumns and has one array item per row?",
         "options": [
             "A. exploded_df = sensor_df.withColumn(\"record_exploded\", explode(\"record\")) exploded_df =\nexploded_df.select(\"record_datetime\", \"sensor_id\", \"status\", \"health\")",
             "B. exploded_df = exploded_df.select(\n\"record_datetime\",\n\"record_exploded.sensor_id\",\n\"record_exploded.status\",\n\"record_exploded.health\"\n)\nexploded_df = sensor_df.withColumn(\"record_exploded\", explode(\"record\"))",
-            "C. exploded_df = exploded_df.select(\n\n\n\"record_datetime\",\n\"record_exploded.sensor_id\",\n\"record_exploded.status\",\n\"record_exploded.health\"\n)\nexploded_df = sensor_df.withColumn(\"record_exploded\", explode(\"record\"))",
+            "C. exploded_df = sensor_df.withColumn(\"record_exploded\", explode(\"record\"))\nexploded_df = exploded_df.select(\n\"record_datetime\",\n\"record_exploded.sensor_id\",\n\"record_exploded.status\",\n\"record_exploded.health\"\n)",
             "D. exploded_df = exploded_df.select(\"record_datetime\", \"record_exploded\")"
         ],
         "answer": [
@@ -1513,7 +1514,7 @@ const quizData = [
         "explanation": "To flatten an array of structs into individual rows and access fields within each struct, you\nmust:\nUse explode() to expand the array so each struct becomes its own row.\nAccess the struct fields via dot notation (e.g., record_exploded.sensor_id).\nOption C does exactly that:\nFirst, explode the record array column into a new column record_exploded.\nThen, access fields of the struct using the dot syntax in select.\nThis is standard practice in PySpark for nested data transformation.\nFinal answer: C"
     },
     {
-        "question": "Given:\npython\nCopyEdit\nspark.sparkContext.setLogLevel(\"<LOG_LEVEL>\")\nWhich set contains the suitable configuration settings for Spark driver LOG_LEVELs?",
+        "question": "Given:\nspark.sparkContext.setLogLevel(\"<LOG_LEVEL>\")\nWhich set contains the suitable configuration settings for Spark driver LOG_LEVELs?",
         "options": [
             "A. ALL, DEBUG, FAIL, INFO",
             "B. ERROR, WARN, TRACE, OFF",
