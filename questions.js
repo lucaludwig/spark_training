@@ -4081,9 +4081,9 @@ const quizData = [
             "E. spark.DataFrameWriter(itemsDf).format(\"avro\").write(fileLocation)"
         ],
         "answer": [
-            "A"
+            "B"
         ],
-        "explanation": "The trick in this question is knowing the \"modes\" of the DataFrameWriter. Mode ignore will ignore if\na file already exists and not replace that file, but also not throw an error. Mode errorifexists will\nthrow an error, and is the default mode of the DataFrameWriter. The question NO:\nexplicitly calls for the DataFrame to be \"silently\" written if it does not exist, so you need to specify\nmode(\"ignore\") here to avoid having Spark communicate any error to you if the file already exists.\nThe `overwrite' mode would not be right here, since, although it would be silent, it would overwrite\nthe already-existing file. This is not what the question asks for.\nIt is worth noting that the option starting with spark.DataFrameWriter(itemsDf) cannot work, since\nspark references the SparkSession object, but that object does not provide the DataFrameWriter.\nAs you can see in the documentation (below), DataFrameWriter is part of PySpark's SQL API, but not\nof its SparkSession API.\nMore info:\nDataFrameWriter: pyspark.sql.DataFrameWriter.save - PySpark 3.1.1 documentation SparkSession\nAPI: Spark SQL - PySpark 3.1.1 documentation Static notebook | Dynamic notebook: See test 1"
+        "explanation": "The question asks for 'silently' writing, meaning mode(\"ignore\") is needed — this mode writes if the file doesn't exist and does nothing (no error) if it does.\nA: .avro() is not a valid DataFrameWriter method in PySpark. Only .parquet(), .json(), .csv(), .orc(), .text() exist as shortcuts.\nB: Correct. Uses .format(\"avro\") with mode(\"ignore\") for silent writing.\nC: mode(\"errorifexists\") is the default and throws an error — not silent.\nD: .save comes before .format/.write — wrong chain order.\nE: spark.DataFrameWriter() is not valid — DataFrameWriter is accessed via df.write, not constructed from SparkSession."
     },
     {
         "question": "Which of the following describes the role of the cluster manager?",
